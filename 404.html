@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=3.0" name="viewport" />
+
+        <!-- section:seometa -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Discord" />
+        <meta property="og:title" content="Discord - A New Way to Chat with Friends & Communities" />
+        <meta property="og:description"
+                content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities." />
+        <meta property="og:image" content="undefined//discord.com/assets/652f40427e1f5186ad54836074898279.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@discord" />
+        <meta name="twitter:creator" content="@discord" />
+        <!-- endsection -->
+        <script>
+                window.__OVERLAY__ = /overlay/.test(location.pathname);
+                window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname);
+                window.GLOBAL_ENV = {
+                        API_ENDPOINT: '//' + window.location.host + '/d/api',
+                        API_VERSION: 9,
+                        GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
+                        // 'ws://' + window.location.host,
+                        RELEASE_CHANNEL: 'stable',
+                        HTML_TIMESTAMP: Date.now(),
+                        ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
+                        WEBAPP_ENDPOINT: "//" + window.location.host,
+                        CDN_HOST: 'cdn.discordapp.com',
+                        ASSET_ENDPOINT: "//" + window.location.host,
+                        MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
+                        WIDGET_ENDPOINT: '//discord.com/widget',
+                        INVITE_HOST: 'discord.gg',
+                        GUILD_TEMPLATE_HOST: 'discord.new',
+                        GIFT_CODE_HOST: 'discord.gift',
+                        MARKETING_ENDPOINT: '//discord.com',
+                        BRAINTREE_KEY: 'production_5st77rrc_49pp2rp4phym7387',
+                        STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
+                        NETWORKING_ENDPOINT: '//router.discordapp.net',
+                        RTC_LATENCY_ENDPOINT: '//latency.discord.media/rtc',
+                        ACTIVITY_APPLICATION_HOST: 'discordsays.com',
+                        PROJECT_ENV: 'production',
+                        REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
+                        SENTRY_TAGS: { "buildId": "7956ae0a7fef17564b5e718757ad1a38d2322063", "buildType": "normal" },
+                        MIGRATION_SOURCE_ORIGIN: 'https://discord.com',
+                        MIGRATION_DESTINATION_ORIGIN: window.location.protocol + "//" + window.location.host,
+                };
+                Object.defineProperty(window, "localStorage_", {
+                        value: window.localStorage
+                });
+                const localStorage = window.localStorage;
+                var getModule
+                var findModule
+        </script>
+</head>
+
+<body>
+        <div id="app-mount"></div>
+        <script src="/assets/9af08cab5ec8da0028ac.js"></script>
+        <script src="/assets/12ce378cc6190128aac5.js"></script>
+        <script src="/assets/180d44fd394555f21790.js"></script>
+        <script src="/assets/02be0d5b4681a76d9def.js"></script>
+        <script>
+                window.onload = function () {
+                        getModule = (n, f = true) => { // 'f' is whether to return the first module found if it goes by display name
+                                const cache = () => {
+                                        let webp = window.webpackChunkdiscord_app.push([
+                                                [Symbol()], {},
+                                                _ => _.c
+                                        ]);
+                                        window.webpackChunkdiscord_app.pop();
+                                        return webp;
+                                };
+                                let findAllModules = (filter = (m) => m) => {
+                                        let modules = [];
+                                        for (let item in cache()) {
+                                                if (Object.hasOwnProperty.call(cache(), item)) {
+                                                        let element = cache()[item].exports;
+                                                        if (!element) {
+                                                                continue
+                                                        }
+                                                        if (filter(element)) {
+                                                                modules.push(element)
+                                                        }
+                                                }
+                                        }
+                                        return modules
+                                };
+                                let x = false;
+                                let mod;
+                                window.webpackChunkdiscord_app.push([
+                                        [Math.random()], {}, (e) => {
+                                                mod = mod || Object.values(e.c).find(m => m?.exports?.Z?.[n]);
+                                        }
+                                ]);
+                                window.webpackChunkdiscord_app.pop();
+                                if (typeof mod === "undefined") {
+                                        window.webpackChunkdiscord_app.push([
+                                                [Math.random()], {}, (e) => {
+                                                        mod = mod || Object.values(e.c).find(m => m?.exports?.[n]);
+                                                }
+                                        ]);
+                                        window.webpackChunkdiscord_app.pop();
+                                }
+                                if (typeof mod === "undefined") {
+                                        x = true;
+                                        if (f == true) {
+                                                mod = mod || (typeof findAllModules(m => m?.Z?.displayName === n) !== "undefined") ? findAllModules(m => m?.Z?.displayName === n)?.[0] : findAllModules(m => m?.displayName === n)?.[0];
+                                        } else {
+                                                mod = mod || (typeof findAllModules(m => m?.Z?.displayName === n) !== "undefined") ? findAllModules(m => m?.Z?.displayName === n) : findAllModules(m => m?.displayName === n);
+                                        }
+                                }
+                                if (x) {
+                                        return (typeof mod?.Z !== "undefined") ? mod?.Z : mod;
+                                }
+                                else if (x == false) {
+                                        return (typeof mod?.exports?.Z !== "undefined") ? mod?.exports?.Z : mod?.exports;
+                                }
+                                return undefined;
+                        }
+                        findModule = (n, b) => {
+                                (d = typeof b === "undefined" ? true : b,
+                                        n = n.toLowerCase(),
+                                        m = []);
+                                webpackChunkdiscord_app.push([
+                                        [Math.random()], {},
+                                        (e) => {
+                                                m.push(...Object.values(e.c).filter(m => m?.exports && ((m?.exports?.Z && Object.keys(m.exports.Z).some(key => key.toLowerCase().includes(n))) || (m.exports?.Z?.prototype && Object.keys(m.exports.Z.prototype).some(key => key.toLowerCase().includes(n))) || Object.keys(m.exports).some(key => key.toLowerCase().includes(n)))))
+                                        }
+                                ]);
+                                webpackChunkdiscord_app.pop();
+                                if (d) {
+                                        m.forEach(f => m.push(typeof f?.exports?.Z === "undefined" ? f?.exports : f?.exports?.Z));
+                                        for (var i = 0; i < m.length; i++) {
+                                                m.forEach((f, i) => typeof f?.id === "undefined" ? m = m : m.splice(i, 1));
+                                        }
+                                        return [...m].filter(m => m?.Window?.name !== "Window");
+                                } else {
+                                        return [...m].filter(m => m?.Window?.name !== "Window");
+                                };
+                        }
+                };
+                i = setInterval(() => {
+                        let buttonLogin = document.getElementsByClassName("marginBottom8-emkd0_ button-1cRKG6 button-f2h6uQ lookFilled-yCfaCM colorBrand-I6CyqQ sizeLarge-3mScP9 fullWidth-fJIsjq grow-2sR_-F")[0];
+                        if (buttonLogin) {
+                                buttonLogin.addEventListener("click", () => {
+                                        const input = document.getElementsByClassName("inputDefault-3FGxgL input-2g-os5")[0];
+                                        getModule('loginToken').loginToken(input.value);
+                                });
+
+                                const email = document.getElementsByClassName("marginBottom20-315RVT")[0];
+                                email.parentElement.removeChild(email);
+
+                                const input_ = document.getElementsByClassName("label-2bTGzo title-3hptVQ defaultColor-2cKwKo defaultMarginlabel-1h4HPn")[0]
+
+                                input_.innerHTML = "Token";
+                                input_.id = "token";
+
+                                const QR = document.getElementsByClassName("transitionGroup-bPT0qU qrLogin-1ejtpI")[0];
+                                QR.parentElement.removeChild(QR);
+
+                                const dot = document.getElementsByClassName("verticalSeparator-2r9gHa")[0];
+                                dot.parentElement.removeChild(dot);
+                                clearInterval(i);
+                        }
+                }, 250);
+        </script>
+</body>
+
+</html>

@@ -82,7 +82,7 @@
                 const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
                 var callSetIntents = () => {
                         const privilegedIntents = [];
-                        alert("This bot requires privileged intent `MESSAGE_CONTENT`\n\nMake sure you have enabled this intent in the bot settings.");
+                        alert("Login with bot requires privileged intent `MESSAGE_CONTENT`\n\nMake sure you have enabled this intent in the bot settings.");
                         if (!confirm('[Optional] Do you want to use the `GUILD_PRESENCES` intent?')) {
                                 privilegedIntents.push('GUILD_PRESENCES');
                         }

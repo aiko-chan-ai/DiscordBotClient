@@ -3,7 +3,7 @@
 > Thanks for [ChrisEric](https://github.com/CE1CECL)
 
 > **Note**
-> Enable all intents
+> Enable `MessageCreate` intent, other intents are optional
 
 ![image](https://user-images.githubusercontent.com/71698422/204597818-cdc305c2-e753-4546-ad51-3da41721aef0.png)
 

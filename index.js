@@ -66,7 +66,8 @@ const handlerRequest = (url, bot, req, res) => {
       url.includes('billing/subscription') ||
       url.includes('billing/payment') ||
       url.includes('activities/guilds') ||
-      url.includes('interactions')
+      url.includes('interactions') ||
+      url.includes('premium/subscriptions')
     ) {
       return res.status(200).send([]);
     } else if (url.includes('billing/country-code')) {

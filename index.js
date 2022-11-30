@@ -39,11 +39,20 @@ const handlerRequest = (url, bot, req, res) => {
       'users/@me/settings',
       'settings-proto',
       'science',
+      'affinities',
+      'users/@me/harvest',
+      'oauth2',
     ].some(path => url.includes(path));
     if (blacklist) return res.status(404).send({
       message: 'Bot is not authorized to access this endpoint :))'
     });
-    if (url.includes('/profile')) {
+    if (url.includes('application-commands/search')) {
+      return res.status(200).send({
+        "applications": [],
+        "application_commands": [],
+        "cursor": null
+      });
+    } else if (url.includes('/profile')) {
       return res.status(200).send({
         user: {},
         connected_accounts: [],
@@ -56,7 +65,8 @@ const handlerRequest = (url, bot, req, res) => {
     } else if (
       url.includes('billing/subscription') ||
       url.includes('billing/payment') ||
-      url.includes('activities/guilds')
+      url.includes('activities/guilds') ||
+      url.includes('interactions')
     ) {
       return res.status(200).send([]);
     } else if (url.includes('billing/country-code')) {
@@ -95,9 +105,11 @@ app.all('/asset*', function (req, res) {
   console.log('Require Assets:', trs);
   if (trs.includes('02be0d5b4681a76d9def.js') && trs.endsWith('.js')) {
     res.set('Cache-Control', 'no-store');
+    console.log('Load script target');
     return res.send(fs.readFileSync('./script/02be0d5b4681a76d9def.js'));
   }
   req.pipe(request("https://discord.com" + trs)).pipe(res);
+  /*
   if (trs.endsWith('js')) {
     request("https://discord.com" + trs ,undefined, (err, res, body) => {
       if (err) { return console.log(err); }
@@ -107,6 +119,7 @@ app.all('/asset*', function (req, res) {
       }
     });
   }
+  */
 });
 app.all("*", (req, res) => {
   res.send(html);

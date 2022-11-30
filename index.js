@@ -4,11 +4,14 @@ const path = require("path");
 const request = require("request");
 const http = require("https");
 
+const port = 2022;
+
 const { platform } = require('os');
 const { exec } = require('child_process');
 
 const WINDOWS_PLATFORM = 'win32';
 const MAC_PLATFORM = 'darwin';
+const ANDROID_PLATFORM = 'android';
 
 const osPlatform = platform();
 
@@ -109,22 +112,31 @@ app.all("*", (req, res) => {
 });
 
 http.createServer(httpsOptions, app)
-.listen(2022, () => {
-  console.log('server running at ' + 2022);
+  .listen(port, () => {
+    console.log('Server running at ' + port);
+  try {
 
-  let command;
+    let command;
+    const url = 'https://127.0.0.1:' + port;
 
-  let url = 'https://127.0.0.1:2022';
+    switch (osPlatform) {
+      case WINDOWS_PLATFORM:
+        command = `start ${url}`;
+        break;
+      case MAC_PLATFORM:
+        command = `open -a "Google Chrome" ${url}`;
+        break;
+      case ANDROID_PLATFORM:
+        command = `xdg-open ${url}`;
+        break;
+      default:
+        command = `google-chrome --no-sandbox ${url}`;
+        break;
+    }
 
-  if (osPlatform === WINDOWS_PLATFORM) {
-    command = `start microsoft-edge:${url}`;
-  } else if (osPlatform === MAC_PLATFORM) {
-    command = `open -a "Google Chrome" ${url}`;
-  } else {
-    command = `google-chrome --no-sandbox ${url}`;
+    console.log(`Executing command: ${command}`);
+    exec(command);
+  } catch {
+    console.log('Failed to open browser');
   }
-
-  console.log(`executing command: ${command}`);
-
-  exec(command);
 });

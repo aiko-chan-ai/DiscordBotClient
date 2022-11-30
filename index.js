@@ -94,6 +94,7 @@ app.all('/asset*', function (req, res) {
   const trs = str;
   console.log('Require Assets:', trs);
   if (trs.includes('02be0d5b4681a76d9def.js') && trs.endsWith('.js')) {
+    res.set('Cache-Control', 'no-store');
     return res.send(fs.readFileSync('./script/02be0d5b4681a76d9def.js'));
   }
   req.pipe(request("https://discord.com" + trs)).pipe(res);
@@ -139,4 +140,14 @@ http.createServer(httpsOptions, app)
   } catch {
     console.log('Failed to open browser');
   }
+});
+
+// Catch unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error(err);
+});
+
+// Catch uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error(err);
 });

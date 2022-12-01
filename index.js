@@ -36,8 +36,6 @@ const handlerRequest = (url, bot, req, res) => {
       'subscription-plans',
       'subscription-slots',
       '/ack',
-      'users/@me/settings',
-      'settings-proto',
       'science',
       'affinities',
       'users/@me/harvest',
@@ -70,7 +68,13 @@ const handlerRequest = (url, bot, req, res) => {
       url.includes('premium/subscriptions')
     ) {
       return res.status(200).send([]);
-    } else if (url.includes('billing/country-code')) {
+    } else if (
+      url.includes('settings-proto') ||
+      url.includes('users/@me/settings')
+    ) {
+      return res.status(200).send({});
+    }
+    else if (url.includes('billing/country-code')) {
       return res.status(200).send({
         country_code: "VN"
       });

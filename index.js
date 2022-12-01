@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const request = require("request");
 const http = require("https");
+const axios = require("axios");
 
 const port = 2022;
 
@@ -35,7 +36,6 @@ const handlerRequest = (url, bot, req, res) => {
       'entitlements',
       'subscription-plans',
       'subscription-slots',
-      '/ack',
       'science',
       'affinities',
       'users/@me/harvest',
@@ -61,11 +61,15 @@ const handlerRequest = (url, bot, req, res) => {
         user_profile: {}
       });
     } else if (
-      url.includes('billing/subscription') ||
-      url.includes('billing/payment') ||
-      url.includes('activities/guilds') ||
-      url.includes('interactions') ||
-      url.includes('premium/subscriptions')
+      [
+        'users/@me/mentions',
+        'billing/',
+        'activities/guilds',
+        'interactions',
+        'premium/subscriptions',
+        'relationships',
+        'messages/search',
+      ].some(path => url.includes(path))
     ) {
       return res.status(200).send([]);
     } else if (
@@ -73,6 +77,29 @@ const handlerRequest = (url, bot, req, res) => {
       url.includes('users/@me/settings')
     ) {
       return res.status(200).send({});
+    } else if (url.includes('/threads/search?archived=true')) {
+      const cid = /\d{17,19}/.exec(url)[0];
+      axios.get(`https://discord.com/api/v9/channels/${cid}/threads/archived/public`, {
+        headers: {
+          authorization: req.headers.authorization,
+          'user-agent': req.headers['user-agent']
+        },
+      })
+        .then(response => {
+          res.status(200).send(response.data);
+        })
+        .catch(err => {
+          res.status(404).send({
+            message: err.message,
+            error: err.stack,
+            debug: {
+              channelId: cid,
+            }
+          });
+        })
+    }
+    else if (url.includes('/ask')) {
+      return res.status(200).send({ token: null })
     }
     else if (url.includes('billing/country-code')) {
       return res.status(200).send({
@@ -94,8 +121,8 @@ app.all('/d/*', function (req, res) {
   console.log('URL Request', trs);
   if (req.headers?.authorization) {
     req.headers.authorization = `Bot ${req.headers.authorization}`;
+    delete req.headers['User-Agent'];
     req.headers['user-agent'] = 'DiscordBot (https://nodejs.org, 16.0.0)'
-    req.headers['User-Agent'] = 'DiscordBot (https://nodejs.org, 16.0.0)'
   }
   handlerRequest(trs, true, req, res);
 });
@@ -133,32 +160,32 @@ app.all("*", (req, res) => {
 http.createServer(httpsOptions, app)
   .listen(port, () => {
     console.log('Server running at ' + port);
-  try {
+    try {
 
-    let command;
-    const url = 'https://127.0.0.1:' + port;
+      let command;
+      const url = 'https://127.0.0.1:' + port;
 
-    switch (osPlatform) {
-      case WINDOWS_PLATFORM:
-        command = `start ${url}`;
-        break;
-      case MAC_PLATFORM:
-        command = `open -a "Google Chrome" ${url}`;
-        break;
-      case ANDROID_PLATFORM:
-        command = `xdg-open ${url}`;
-        break;
-      default:
-        command = `google-chrome --no-sandbox ${url}`;
-        break;
+      switch (osPlatform) {
+        case WINDOWS_PLATFORM:
+          command = `start ${url}`;
+          break;
+        case MAC_PLATFORM:
+          command = `open -a "Google Chrome" ${url}`;
+          break;
+        case ANDROID_PLATFORM:
+          command = `xdg-open ${url}`;
+          break;
+        default:
+          command = `google-chrome --no-sandbox ${url}`;
+          break;
+      }
+
+      console.log(`Executing command: ${command}`);
+      exec(command);
+    } catch {
+      console.log('Failed to open browser');
     }
-
-    console.log(`Executing command: ${command}`);
-    exec(command);
-  } catch {
-    console.log('Failed to open browser');
-  }
-});
+  });
 
 // Catch unhandled promise rejections
 process.on('unhandledRejection', (err) => {

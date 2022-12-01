@@ -21,11 +21,14 @@
 - **Manage Channels** (Add, Delete, Name, Permissions, Invites, Webhooks, Slowmode, NSFW, Topic, Forums, Threads)
 - **Messages** (Send, View History, Embeds, View Reactions, Add/Remove Reactions, Delete, Edit, Pin)
 - **Create a Guild** (if the bot has fewer than 10 Servers)
-- **Voice Support** (Text-in-Voice)
+- **Voice Support** (Text-in-Voice and watch the user using the camera)
 - **Use Emojis from other servers** (Nitro)
 - **GIF Search**
 - **Send Files**
 - **DM's** (DM's will show up, after a user dms the bot)
+
+> **Note**
+> Don't use the message search bar, it may cause the application to crash
 
 ---
 

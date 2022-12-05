@@ -13,6 +13,7 @@ const { exec } = require('child_process');
 const WINDOWS_PLATFORM = 'win32';
 const MAC_PLATFORM = 'darwin';
 const ANDROID_PLATFORM = 'android';
+const LINUX_PLATFORM = 'linux';
 
 const osPlatform = platform();
 
@@ -174,6 +175,9 @@ http.createServer(httpsOptions, app)
           break;
         case ANDROID_PLATFORM:
           command = `xdg-open ${url}`;
+          break;
+        case LINUX_PLATFORM:
+          command = `firefox ${url}`;
           break;
         default:
           command = `google-chrome --no-sandbox ${url}`;

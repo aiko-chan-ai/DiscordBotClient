@@ -99,7 +99,7 @@ const handlerRequest = (url, bot, req, res) => {
           });
         })
     }
-    else if (url.includes('/ask')) {
+    else if (url.includes('/ask') || url.includes('/ack')) {
       return res.status(200).send({ token: null })
     }
     else if (url.includes('billing/country-code')) {

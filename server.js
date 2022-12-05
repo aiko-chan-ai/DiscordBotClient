@@ -210,10 +210,11 @@ module.exports = async function (port) {
   }
   return new Promise((resolve, reject) => {
     http.createServer(httpsOptions, app)
-      .listen(port, (err) => {
-        if (err) return resolve(false);
+      .listen(port, () => {
         resolve(true);
         console.log(`Server is running on port ${port}`);
+      }).once('error', (err) => {
+        resolve(false);
       });
   });
 }

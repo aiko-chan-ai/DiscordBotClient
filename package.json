@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "electron.js",
 	"dependencies": {
@@ -9,7 +9,7 @@
 		"node-fetch": "^2.6.7",
 		"request": "^2.88.2"
 	},
-	"appId": "com.electron.discord-bot-client",
+	"appId": "com.aiko.discord-bot-client",
 	"devDependencies": {
 		"electron": "^15.5.7",
 		"electron-builder": "^23.6.0"

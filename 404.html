@@ -206,11 +206,355 @@
 
                                 if (!intentBot) {
                                         callSetIntents();
-                                } else if(confirm(`Do you want to set new intents?\nOld intents: ${intentBot}`)) {
+                                } else if (confirm(`Do you want to set new intents?\nOld intents: ${intentBot}`)) {
                                         callSetIntents();
                                 }
                         }
                 }, 250);
+        </script>
+        <script>
+                // Embed script
+                // MessageEmbed v13
+
+                const Colors = {
+                        DEFAULT: 0x000000,
+                        WHITE: 0xffffff,
+                        AQUA: 0x1abc9c,
+                        GREEN: 0x57f287,
+                        BLUE: 0x3498db,
+                        YELLOW: 0xfee75c,
+                        PURPLE: 0x9b59b6,
+                        LUMINOUS_VIVID_PINK: 0xe91e63,
+                        FUCHSIA: 0xeb459e,
+                        GOLD: 0xf1c40f,
+                        ORANGE: 0xe67e22,
+                        RED: 0xed4245,
+                        GREY: 0x95a5a6,
+                        NAVY: 0x34495e,
+                        DARK_AQUA: 0x11806a,
+                        DARK_GREEN: 0x1f8b4c,
+                        DARK_BLUE: 0x206694,
+                        DARK_PURPLE: 0x71368a,
+                        DARK_VIVID_PINK: 0xad1457,
+                        DARK_GOLD: 0xc27c0e,
+                        DARK_ORANGE: 0xa84300,
+                        DARK_RED: 0x992d22,
+                        DARK_GREY: 0x979c9f,
+                        DARKER_GREY: 0x7f8c8d,
+                        LIGHT_GREY: 0xbcc0c0,
+                        DARK_NAVY: 0x2c3e50,
+                        BLURPLE: 0x5865f2,
+                        GREYPLE: 0x99aab5,
+                        DARK_BUT_NOT_BLACK: 0x2c2f33,
+                        NOT_QUITE_BLACK: 0x23272a,
+                }
+
+                function cloneObject(obj) {
+                        return Object.assign(Object.create(obj), obj);
+                }
+
+                function resolveColor(color) {
+                        if (typeof color === 'string') {
+                                if (color === 'RANDOM') return Math.floor(Math.random() * (0xffffff + 1));
+                                if (color === 'DEFAULT') return 0;
+                                color = Colors[color] ?? parseInt(color.replace('#', ''), 16);
+                        } else if (Array.isArray(color)) {
+                                color = (color[0] << 16) + (color[1] << 8) + color[2];
+                        }
+
+                        if (color < 0 || color > 0xffffff) throw new RangeError('COLOR_RANGE');
+                        else if (Number.isNaN(color)) throw new TypeError('COLOR_CONVERT');
+
+                        return color;
+                }
+
+                class MessageEmbed {
+                        constructor(data = {}, skipValidation = false) {
+                                this.setup(data, skipValidation);
+                        }
+
+                        setup(data, skipValidation) {
+                                this.type = data.type ?? 'rich';
+
+                                this.title = data.title ?? null;
+
+                                this.description = data.description ?? null;
+
+                                this.url = data.url ?? null;
+
+                                this.color = 'color' in data ? resolveColor(data.color) : null;
+
+                                this.timestamp = 'timestamp' in data ? new Date(data.timestamp).getTime() : null;
+
+                                this.fields = [];
+                                if (data.fields) {
+                                        this.fields = skipValidation ? data.fields.map(cloneObject) : this.constructor.normalizeFields(data.fields);
+                                }
+
+                                this.thumbnail = data.thumbnail
+                                        ? {
+                                                url: data.thumbnail.url,
+                                                proxyURL: data.thumbnail.proxyURL ?? data.thumbnail.proxy_url,
+                                                height: data.thumbnail.height,
+                                                width: data.thumbnail.width,
+                                        }
+                                        : null;
+
+                                this.image = data.image
+                                        ? {
+                                                url: data.image.url,
+                                                proxyURL: data.image.proxyURL ?? data.image.proxy_url,
+                                                height: data.image.height,
+                                                width: data.image.width,
+                                        }
+                                        : null;
+
+                                this.video = data.video
+                                        ? {
+                                                url: data.video.url,
+                                                proxyURL: data.video.proxyURL ?? data.video.proxy_url,
+                                                height: data.video.height,
+                                                width: data.video.width,
+                                        }
+                                        : null;
+
+                                this.author = data.author
+                                        ? {
+                                                name: data.author.name,
+                                                url: data.author.url,
+                                                iconURL: data.author.iconURL ?? data.author.icon_url,
+                                                proxyIconURL: data.author.proxyIconURL ?? data.author.proxy_icon_url,
+                                        }
+                                        : null;
+
+                                this.provider = data.provider
+                                        ? {
+                                                name: data.provider.name,
+                                                url: data.provider.url,
+                                        }
+                                        : null;
+
+                                this.footer = data.footer
+                                        ? {
+                                                text: data.footer.text,
+                                                iconURL: data.footer.iconURL ?? data.footer.icon_url,
+                                                proxyIconURL: data.footer.proxyIconURL ?? data.footer.proxy_icon_url,
+                                        }
+                                        : null;
+                        }
+
+                        get createdAt() {
+                                return this.timestamp ? new Date(this.timestamp) : null;
+                        }
+
+                        get hexColor() {
+                                return this.color ? `#${this.color.toString(16).padStart(6, '0')}` : null;
+                        }
+
+                        get length() {
+                                return (
+                                        (this.title?.length ?? 0) +
+                                        (this.description?.length ?? 0) +
+                                        (this.fields.length >= 1
+                                                ? this.fields.reduce((prev, curr) => prev + curr.name.length + curr.value.length, 0)
+                                                : 0) +
+                                        (this.footer?.text.length ?? 0) +
+                                        (this.author?.name.length ?? 0)
+                                );
+                        }
+
+                        equals(embed) {
+                                return (
+                                        this.type === embed.type &&
+                                        this.author?.name === embed.author?.name &&
+                                        this.author?.url === embed.author?.url &&
+                                        this.author?.iconURL === (embed.author?.iconURL ?? embed.author?.icon_url) &&
+                                        this.color === embed.color &&
+                                        this.title === embed.title &&
+                                        this.description === embed.description &&
+                                        this.url === embed.url &&
+                                        this.timestamp === embed.timestamp &&
+                                        this.fields.length === embed.fields.length &&
+                                        this.fields.every((field, i) => this._fieldEquals(field, embed.fields[i])) &&
+                                        this.footer?.text === embed.footer?.text &&
+                                        this.footer?.iconURL === (embed.footer?.iconURL ?? embed.footer?.icon_url) &&
+                                        this.image?.url === embed.image?.url &&
+                                        this.thumbnail?.url === embed.thumbnail?.url &&
+                                        this.video?.url === embed.video?.url &&
+                                        this.provider?.name === embed.provider?.name &&
+                                        this.provider?.url === embed.provider?.url
+                                );
+                        }
+
+                        _fieldEquals(field, other) {
+                                return field.name === other.name && field.value === other.value && field.inline === other.inline;
+                        }
+
+                        addField(name, value, inline) {
+                                return this.addFields({ name, value, inline });
+                        }
+
+                        addFields(...fields) {
+                                this.fields.push(...this.constructor.normalizeFields(fields));
+                                return this;
+                        }
+
+                        spliceFields(index, deleteCount, ...fields) {
+                                this.fields.splice(index, deleteCount, ...this.constructor.normalizeFields(...fields));
+                                return this;
+                        }
+
+                        setFields(...fields) {
+                                this.spliceFields(0, this.fields.length, fields);
+                                return this;
+                        }
+
+                        setAuthor(options, deprecatedIconURL, deprecatedURL) {
+                                if (options === null) {
+                                        this.author = {};
+                                        return this;
+                                }
+
+                                if (typeof options === 'string') {
+                                        options = { name: options, url: deprecatedURL, iconURL: deprecatedIconURL };
+                                }
+
+                                const { name, url, iconURL } = options;
+                                this.author = { name, url, iconURL };
+                                return this;
+                        }
+
+                        setColor(color) {
+                                this.color = resolveColor(color);
+                                return this;
+                        }
+
+                        setDescription(description) {
+                                this.description = description;
+                                return this;
+                        }
+
+                        setFooter(options, deprecatedIconURL) {
+                                if (options === null) {
+                                        this.footer = undefined;
+                                        return this;
+                                }
+
+                                if (typeof options === 'string') {
+                                        options = { text: options, iconURL: deprecatedIconURL };
+                                }
+
+                                const { text, iconURL } = options;
+                                this.footer = { text, iconURL };
+                                return this;
+                        }
+
+                        setImage(url) {
+                                this.image = { url };
+                                return this;
+                        }
+
+                        setThumbnail(url) {
+                                this.thumbnail = { url };
+                                return this;
+                        }
+
+                        setTimestamp(timestamp = Date.now()) {
+                                if (timestamp instanceof Date) timestamp = timestamp.getTime();
+                                this.timestamp = timestamp;
+                                return this;
+                        }
+
+                        setTitle(title) {
+                                this.title = title;
+                                return this;
+                        }
+
+                        setURL(url) {
+                                this.url = url;
+                                return this;
+                        }
+
+                        toJSON() {
+                                return {
+                                        title: this.title,
+                                        type: 'rich',
+                                        description: this.description,
+                                        url: this.url,
+                                        timestamp: this.timestamp && new Date(this.timestamp),
+                                        color: this.color,
+                                        fields: this.fields,
+                                        thumbnail: this.thumbnail,
+                                        image: this.image,
+                                        author: this.author && {
+                                                name: this.author.name,
+                                                url: this.author.url,
+                                                icon_url: this.author.iconURL,
+                                        },
+                                        footer: this.footer && {
+                                                text: this.footer.text,
+                                                icon_url: this.footer.iconURL,
+                                        },
+                                };
+                        }
+
+                        static normalizeField(name, value, inline = false) {
+                                return {
+                                        name,
+                                        value,
+                                        inline,
+                                };
+                        }
+
+                        static normalizeFields(...fields) {
+                                return fields
+                                        .flat(2)
+                                        .map(field =>
+                                                this.normalizeField(field.name, field.value, typeof field.inline === 'boolean' ? field.inline : false),
+                                        );
+                        }
+                }
+        </script>
+        <script>
+                // Send Message
+                function sendMessage(options) {
+                        if (typeof options !== 'object') {
+                                options = {
+                                        content: `${options}`,
+                                };
+                        }
+                        let { content, embeds } = options;
+                        if (!Array.isArray(embeds)) embeds = [];
+                        const msgObject = {
+                                content,
+                                embeds: embeds.map(embed => {
+                                        if (embed instanceof MessageEmbed) return embed.toJSON();
+                                        return embed;
+                                }) || [],
+                        }
+                        if (typeof getModule !== 'function') return console.log('No getModule');
+                        let token = getModule('getToken').getToken();
+                        let channelId = getModule('getChannelId').getChannelId()
+                        if (!token) throw new Error('No token');
+                        if (!channelId) throw new Error('Channel not found');
+                        if (embeds.length === 0 && !content) throw new Error('No content or embeds');
+                        if (embeds.length > 10) throw new Error('Too many embeds');
+                        if (content?.length > 2000) throw new Error('Content too long');
+                        // Send message
+                        return new Promise((resolve, reject) => {
+                                fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+                                        method: 'POST',
+                                        headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `Bot ${token}`,
+                                        },
+                                        body: JSON.stringify(msgObject),
+                                })
+                                        .then(res => res.json())
+                                        .then(resolve)
+                                        .catch(reject);
+                        })
+                }
         </script>
 </body>
 

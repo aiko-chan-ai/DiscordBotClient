@@ -516,6 +516,319 @@
                 }
         </script>
         <script>
+                // Message Button and Menu
+        function createEnum(keys) {
+                const obj = {};
+                for (const [index, key] of keys.entries()) {
+                        if (key === null) continue;
+                        obj[key] = index;
+                        obj[index] = key;
+                }
+                return obj;
+        }
+
+
+        const MessageComponentTypes = createEnum([
+                null,
+                'ACTION_ROW',
+                'BUTTON',
+                'STRING_SELECT',
+                'TEXT_INPUT',
+                'USER_SELECT',
+                'ROLE_SELECT',
+                'MENTIONABLE_SELECT',
+                'CHANNEL_SELECT',
+        ]);
+
+        const ChannelTypes = createEnum([
+                'GUILD_TEXT',
+                'DM',
+                'GUILD_VOICE',
+                'GROUP_DM',
+                'GUILD_CATEGORY',
+                'GUILD_NEWS',
+                'GUILD_STORE',
+                ...Array(3).fill(null),
+                // 10
+                'GUILD_NEWS_THREAD',
+                'GUILD_PUBLIC_THREAD',
+                'GUILD_PRIVATE_THREAD',
+                'GUILD_STAGE_VOICE',
+                'GUILD_DIRECTORY',
+                'GUILD_FORUM',
+        ]);
+
+        const MessageButtonStyles = createEnum([null, 'PRIMARY', 'SECONDARY', 'SUCCESS', 'DANGER', 'LINK']);
+
+        class BaseMessageComponent {
+                constructor(data) {
+                        this.type = 'type' in data ? BaseMessageComponent.resolveType(data.type) : null;
+                }
+                static resolveType(type) {
+                        return typeof type === 'string' ? type : MessageComponentTypes[type];
+                }
+                static create(data, client) {
+                        let component;
+                        let type = data.type;
+
+                        if (typeof type === 'string') type = MessageComponentTypes[type];
+
+                        switch (type) {
+                                case MessageComponentTypes.ACTION_ROW: {
+                                        component = data instanceof MessageActionRow ? data : new MessageActionRow(data, client);
+                                        break;
+                                }
+                                case MessageComponentTypes.BUTTON: {
+                                        component = data instanceof MessageButton ? data : new MessageButton(data);
+                                        break;
+                                }
+                                case MessageComponentTypes.STRING_SELECT:
+                                case MessageComponentTypes.USER_SELECT:
+                                case MessageComponentTypes.ROLE_SELECT:
+                                case MessageComponentTypes.MENTIONABLE_SELECT:
+                                case MessageComponentTypes.CHANNEL_SELECT: {
+                                        component = data instanceof MessageSelectMenu ? data : new MessageSelectMenu(data);
+                                        break;
+                                }
+                                default:
+                                        if (client) {
+                                                client.emit(Events.DEBUG, `[BaseMessageComponent] Received component with unknown type: ${data.type}`);
+                                        } else {
+                                                throw new TypeError('INVALID_TYPE', 'data.type', 'valid MessageComponentType');
+                                        }
+                        }
+                        return component;
+                }
+        }
+
+
+        function verifyString(
+                data,
+                error = Error,
+                errorMessage = `Expected a string, got ${data} instead.`,
+                allowEmpty = true,
+        ) {
+                if (typeof data !== 'string') throw new error(errorMessage);
+                if (!allowEmpty && data.length === 0) throw new error(errorMessage);
+                return data;
+        }
+
+        function parseEmoji(text) {
+                if (text.includes('%')) text = decodeURIComponent(text);
+                if (!text.includes(':')) return { animated: false, name: text, id: null };
+                const match = text.match(/<?(?:(a):)?(\w{2,32}):(\d{17,19})?>?/);
+                return match && { animated: Boolean(match[1]), name: match[2], id: match[3] ?? null };
+        }
+
+        function resolvePartialEmoji(emoji) {
+                if (!emoji) return null;
+                if (typeof emoji === 'string') return /^\d{17,19}$/.test(emoji) ? { id: emoji } : parseEmoji(emoji);
+                const { id, name, animated } = emoji;
+                if (!id && !name) return null;
+                return { id, name, animated: Boolean(animated) };
+        }
+
+        class MessageSelectMenu extends BaseMessageComponent {
+                constructor(data = {}) {
+                        super({ type: data?.type ? MessageComponentTypes[data.type] : 'STRING_SELECT' });
+                        this.setup(data);
+                }
+
+                setup(data) {
+                        this.customId = data.custom_id ?? data.customId ?? null;
+                        this.placeholder = data.placeholder ?? null;
+                        this.minValues = data.min_values ?? data.minValues ?? null;
+                        this.maxValues = data.max_values ?? data.maxValues ?? null;
+                        this.options = this.constructor.normalizeOptions(data.options ?? []);
+                        this.disabled = data.disabled ?? false;
+                        this.channelTypes =
+                                data.channel_types?.map(channelType =>
+                                        typeof channelType === 'string' ? channelType : ChannelTypes[channelType],
+                                ) ?? [];
+                }
+                setType(type) {
+                        if (!type) type = MessageComponentTypes.STRING_SELECT;
+                        this.type = MessageSelectMenu.resolveType(type);
+                        return this;
+                }
+                addChannelTypes(...channelTypes) {
+                        if (!channelTypes.every(channelType => ChannelTypes[channelType])) {
+                                throw new TypeError('INVALID_TYPE', 'channelTypes', 'Array<ChannelType>');
+                        }
+                        this.channelTypes.push(
+                                ...channelTypes.map(channelType => (typeof channelType === 'string' ? channelType : ChannelTypes[channelType])),
+                        );
+                        return this;
+                }
+                setChannelTypes(...channelTypes) {
+                        if (!channelTypes.every(channelType => ChannelTypes[channelType])) {
+                                throw new TypeError('INVALID_TYPE', 'channelTypes', 'Array<ChannelType>');
+                        }
+                        this.channelTypes = channelTypes.map(channelType =>
+                                typeof channelType === 'string' ? channelType : ChannelTypes[channelType],
+                        );
+                        return this;
+                }
+                setCustomId(customId) {
+                        this.customId = verifyString(customId, RangeError, 'SELECT_MENU_CUSTOM_ID');
+                        return this;
+                }
+                setDisabled(disabled = true) {
+                        this.disabled = disabled;
+                        return this;
+                }
+                setMaxValues(maxValues) {
+                        this.maxValues = maxValues;
+                        return this;
+                }
+                setMinValues(minValues) {
+                        this.minValues = minValues;
+                        return this;
+                }
+                setPlaceholder(placeholder) {
+                        this.placeholder = verifyString(placeholder, RangeError, 'SELECT_MENU_PLACEHOLDER');
+                        return this;
+                }
+                addOptions(...options) {
+                        this.options.push(...this.constructor.normalizeOptions(options));
+                        return this;
+                }
+                setOptions(...options) {
+                        this.spliceOptions(0, this.options.length, options);
+                        return this;
+                }
+                spliceOptions(index, deleteCount, ...options) {
+                        this.options.splice(index, deleteCount, ...this.constructor.normalizeOptions(...options));
+                        return this;
+                }
+                toJSON() {
+                        return {
+                                custom_id: this.customId,
+                                disabled: this.disabled,
+                                placeholder: this.placeholder,
+                                min_values: this.minValues,
+                                max_values: this.maxValues ?? (this.minValues ? this.options.length : undefined),
+                                options: this.options,
+                                channel_types: this.channelTypes.map(type => (typeof type === 'string' ? ChannelTypes[type] : type)),
+                                type: typeof this.type === 'string' ? MessageComponentTypes[this.type] : this.type,
+                        };
+                }
+                static normalizeOption(option) {
+                        let { label, value, description, emoji } = option;
+                        label = verifyString(label, RangeError, 'SELECT_OPTION_LABEL');
+                        value = verifyString(value, RangeError, 'SELECT_OPTION_VALUE');
+                        emoji = emoji ? resolvePartialEmoji(emoji) : null;
+                        description = description ? verifyString(description, RangeError, 'SELECT_OPTION_DESCRIPTION', true) : null;
+
+                        return { label, value, description, emoji, default: option.default ?? false };
+                }
+                static resolveType(type) {
+                        return typeof type === 'string' ? type : MessageComponentTypes[type];
+                }
+                static normalizeOptions(...options) {
+                        return options.flat(Infinity).map(option => this.normalizeOption(option));
+                }
+        }
+
+
+        class MessageButton extends BaseMessageComponent {
+                constructor(data = {}) {
+                        super({ type: 'BUTTON' });
+
+                        this.setup(data);
+                }
+
+                setup(data) {
+                        this.label = data.label ?? null;
+
+                        this.customId = data.custom_id ?? data.customId ?? null;
+
+                        this.style = data.style ? MessageButton.resolveStyle(data.style) : null;
+
+                        this.emoji = data.emoji ? resolvePartialEmoji(data.emoji) : null;
+
+                        this.url = data.url ?? null;
+
+                        this.disabled = data.disabled ?? false;
+                }
+
+                setCustomId(customId) {
+                        this.customId = verifyString(customId, RangeError, 'BUTTON_CUSTOM_ID');
+                        return this;
+                }
+
+                setDisabled(disabled = true) {
+                        this.disabled = disabled;
+                        return this;
+                }
+
+                setEmoji(emoji) {
+                        this.emoji = resolvePartialEmoji(emoji);
+                        return this;
+                }
+
+                setLabel(label) {
+                        this.label = verifyString(label, RangeError, 'BUTTON_LABEL');
+                        return this;
+                }
+
+                setStyle(style) {
+                        this.style = MessageButton.resolveStyle(style);
+                        return this;
+                }
+
+                setURL(url) {
+                        this.url = verifyString(url, RangeError, 'BUTTON_URL');
+                        return this;
+                }
+
+                toJSON() {
+                        return {
+                                custom_id: this.customId,
+                                disabled: this.disabled,
+                                emoji: this.emoji,
+                                label: this.label,
+                                style: MessageButtonStyles[this.style],
+                                type: MessageComponentTypes[this.type],
+                                url: this.url,
+                        };
+                }
+
+                static resolveStyle(style) {
+                        return typeof style === 'string' ? style : MessageButtonStyles[style];
+                }
+        }
+
+
+        class MessageActionRow extends BaseMessageComponent {
+                constructor(data = {}, client = null) {
+                        super({ type: 'ACTION_ROW' });
+                        this.components = data.components?.map(c => BaseMessageComponent.create(c, client)) ?? [];
+                }
+
+                addComponents(...components) {
+                        this.components.push(...components.flat(Infinity).map(c => BaseMessageComponent.create(c)));
+                        return this;
+                }
+
+                setComponents(...components) {
+                        this.spliceComponents(0, this.components.length, components);
+                        return this;
+                }
+                spliceComponents(index, deleteCount, ...components) {
+                        this.components.splice(index, deleteCount, ...components.flat(Infinity).map(c => BaseMessageComponent.create(c)));
+                        return this;
+                }
+
+                toJSON() {
+                        return {
+                                components: this.components.map(c => c.toJSON()),
+                                type: MessageComponentTypes[this.type],
+                        };
+                }
+        }
+        </script>
+        <script>
                 // Send Message
                 function sendMessage(options) {
                         if (typeof options !== 'object') {
@@ -523,30 +836,33 @@
                                         content: `${options}`,
                                 };
                         }
-                        let { content, embeds } = options;
+                        let { content, embeds, components } = options;
                         if (!Array.isArray(embeds)) embeds = [];
+                        if (!Array.isArray(components)) components = [];
                         const msgObject = {
                                 content,
                                 embeds: embeds.map(embed => {
                                         if (embed instanceof MessageEmbed) return embed.toJSON();
                                         return embed;
                                 }) || [],
+                                components: components.map(c => BaseMessageComponent.create(c).toJSON()) || [],
                         }
                         if (typeof getModule !== 'function') return console.log('No getModule');
                         let token = getModule('getToken').getToken();
                         let channelId = getModule('getChannelId').getChannelId()
                         if (!token) throw new Error('No token');
                         if (!channelId) throw new Error('Channel not found');
-                        if (embeds.length === 0 && !content) throw new Error('No content or embeds');
+                        if (embeds.length === 0 && !content && components.length) throw new Error('No content or embeds');
                         if (embeds.length > 10) throw new Error('Too many embeds');
                         if (content?.length > 2000) throw new Error('Content too long');
                         // Send message
+                        const u = new URL(window.location.href)
                         return new Promise((resolve, reject) => {
-                                fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+                                fetch(`${u.origin}/d/api/v9/channels/${channelId}/messages`, {
                                         method: 'POST',
                                         headers: {
                                                 'Content-Type': 'application/json',
-                                                'Authorization': `Bot ${token}`,
+                                                'Authorization': `${token}`,
                                         },
                                         body: JSON.stringify(msgObject),
                                 })

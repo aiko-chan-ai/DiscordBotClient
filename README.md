@@ -32,6 +32,23 @@
 
 ---
 
+## Send Embed, Button, Menu, etc.
+
+<img src='https://cdn.discordapp.com/attachments/820557032016969751/1049681619419676692/image.png'>
+
+```js
+sendEmbed(options)
+```
+
+- `options.content = String`
+- `options.embeds = Array<Embed>`
+- `options.components = Array<MessageActionRow<MessageButton | MessageSelectMenu>>`
+> **Documents:**
+> https://discord.js.org/#/docs/discord.js/v13/typedef/BaseMessageOptions
+
+
+---
+
 ## Build
 
 >  __You need to install [NodeJS](https://nodejs.org/en/download/).__ 

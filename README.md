@@ -37,7 +37,7 @@
 <img src='https://cdn.discordapp.com/attachments/820557032016969751/1049681619419676692/image.png'>
 
 ```js
-sendEmbed(options)
+sendMessage(options)
 ```
 
 - `options.content = String`

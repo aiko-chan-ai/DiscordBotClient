@@ -15,7 +15,7 @@
 	},
 	"build": {
 		"appId": "DiscordBotClient",
-		"productName": "NyanRPC",
+		"productName": "DiscordBotClient",
 		"copyright": "Copyright © 2022 Elysia#1782",
 		"mac": {
 			"category": "public.app-category.social-networking",

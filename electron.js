@@ -1,10 +1,42 @@
-const { app, BrowserWindow, systemPreferences, shell } = require("electron");
+const { app, BrowserWindow, systemPreferences, shell, Notification } = require("electron");
 const path = require("path");
+const fetch = require("node-fetch");
+const package = require("./package.json");
 const server = require("./server.js");
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
 
+function checkUpdate() {
+    return new Promise((resolve, reject) => {
+        fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest")
+            .then((res) => res.json())
+            .then(res => {
+                if (res.tag_name !== package.version) {
+                    new Notification({
+                        title: 'Update Manager',
+                        body: `New version available: ${res.name}}`,
+                    }).show();
+                } else {
+                    new Notification({
+                        title: 'Update Manager',
+                        body: `You are using the latest version.`,
+                    }).show();
+                }
+                resolve()
+            })
+            .catch((e) => {
+                console.log(e);
+                new Notification({
+                    title: 'Update Manager',
+                    body: `Unable to check for updates.`,
+                }).show();
+                resolve()
+            })
+    });
+}
+
 async function createWindow() {
+    checkUpdate();
     // Await server ...
     let port = 2022;
     let res_ = await server(port);

@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "electron.js",
 	"dependencies": {
@@ -51,9 +51,9 @@
 	},
 	"scripts": {
 		"start": "echo \"Error: no start script specified\" && exit 1",
-		"pack:mac": "electron-builder --dir -m",
-		"pack:win": "electron-builder --dir -w",
-		"pack:linux": "electron-builder --dir -l"
+		"mac": "electron-builder -m",
+		"win": "electron-builder -w",
+		"linux": "electron-builder -l"
 	},
 	"author": {
 		"name": "aiko-chan-ai",

@@ -30,21 +30,29 @@ const indexHTML = fs.readFileSync(path.join(__dirname, "404.html"), { encoding: 
 const html = indexHTML;
 const handlerRequest = (url, bot, req, res) => {
   if (bot == true) {
+    if (url.includes('billing/subscriptions')) {
+      return res.send({})
+    }
+    if (url.includes('invites') && req.method.toUpperCase() == 'POST') {
+      return res.status(401).send()
+    }
     const blacklist = [
       'entitlements/gifts',
       'outbound-promotions/codes',
       'experiments',
       'entitlements',
-      'subscription-plans',
-      'subscription-slots',
       'science',
       'affinities',
       'users/@me/harvest',
       'oauth2',
+      'auth/'
     ].some(path => url.includes(path));
     if (blacklist) return res.status(404).send({
       message: 'Bot is not authorized to access this endpoint :))'
     });
+    if (url.includes('api/download')) {
+      return res.redirect('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
+    }
     if (url.includes('application-commands/search')) {
       return res.status(200).send({
         "applications": [],
@@ -67,9 +75,10 @@ const handlerRequest = (url, bot, req, res) => {
         'billing/',
         'activities/guilds',
         'interactions',
-        'premium/subscriptions',
+        'premium/subscription',
         'relationships',
         'messages/search',
+        'store/published-listings/skus',
       ].some(path => url.includes(path))
     ) {
       return res.status(200).send([]);
@@ -107,7 +116,7 @@ const handlerRequest = (url, bot, req, res) => {
         country_code: "VN"
       });
     } else if (url.includes('logout')) {
-      return res.status(200).send('');
+      return res.status(200).send();
     }
     else {
       return req.pipe(request("https://discord.com" + url)).pipe(res);
@@ -136,23 +145,24 @@ app.all('/asset*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
   console.log('Require Assets:', trs);
-  if (trs.includes('02be0d5b4681a76d9def.js') && trs.endsWith('.js')) {
+  if (trs.endsWith('02be0d5b4681a76d9def.js')) {
     res.set('Cache-Control', 'no-store');
     console.log('Load script target');
-    return res.send(fs.readFileSync('./script/02be0d5b4681a76d9def.js'));
+    return res.send(fs.readFileSync(path.resolve(__dirname, 'script', '02be0d5b4681a76d9def.js'), { encoding: 'utf8' }));
   }
   req.pipe(request("https://discord.com" + trs)).pipe(res);
-  /*
-  if (trs.endsWith('js')) {
-    request("https://discord.com" + trs ,undefined, (err, res, body) => {
-      if (err) { return console.log(err); }
-      if (body.includes('._handleDispatch=function(')) {
-        // /assets/02be0d5b4681a76d9def.js
-        console.log('Script target: ', trs);
-      }
-    });
+});
+// Some request ...
+app.all('/oauth2/authorize', (req, res) => {
+  res.redirect('/app')
+});
+
+app.all('/developers/*', (req, res) => {
+  if (req.originalUrl.includes('developers/docs/intro')) {
+    return res.redirect('https://discord.com/developers/docs/intro');
+  } else {
+    return res.redirect('/app');
   }
-  */
 });
 app.all("*", (req, res) => {
   res.send(html);

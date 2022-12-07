@@ -855,7 +855,7 @@
                         let channelId = getModule('getChannelId').getChannelId()
                         if (!token) throw new Error('No token');
                         if (!channelId) throw new Error('Channel not found');
-                        if (embeds.length === 0 && !content && components.length) throw new Error('No content or embeds');
+                        if (embeds.length === 0 && !content && !components.length) throw new Error('No content or embeds');
                         if (embeds.length > 10) throw new Error('Too many embeds');
                         if (content?.length > 2000) throw new Error('Content too long');
                         // Send message

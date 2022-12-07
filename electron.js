@@ -1,5 +1,4 @@
 const { app, BrowserWindow, systemPreferences, shell, Notification } = require("electron");
-const glasstron = require("glasstron");
 const path = require("path");
 const fetch = require("node-fetch");
 const package = require("./package.json");
@@ -48,7 +47,7 @@ async function createWindow() {
     const port = await server(2022);
 
     // Create the browser window.
-    const win = new glasstron.BrowserWindow({
+    const win = new BrowserWindow({
         width: 1920,
         height: 1080,
         icon: iconPath,
@@ -60,9 +59,6 @@ async function createWindow() {
         },
         // titleBarStyle: "hidden",
     });
-
-    win.blurType = "blurbehind";
-    win.setBlur(true);
 
     // win.webContents.openDevTools();
 

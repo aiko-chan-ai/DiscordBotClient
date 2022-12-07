@@ -15,11 +15,13 @@ function checkUpdate() {
                     new Notification({
                         title: 'Update Manager',
                         body: `New version available: ${res.name}}`,
+                        icon: './DiscordBotClient.png',
                     }).show();
                 } else {
                     new Notification({
                         title: 'Update Manager',
                         body: `You are using the latest version.`,
+                        icon: './DiscordBotClient.png',
                     }).show();
                 }
                 resolve()
@@ -29,6 +31,7 @@ function checkUpdate() {
                 new Notification({
                     title: 'Update Manager',
                     body: `Unable to check for updates.`,
+                    icon: './DiscordBotClient.png',
                 }).show();
                 resolve()
             })

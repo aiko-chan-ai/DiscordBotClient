@@ -1,10 +1,13 @@
 const { app, BrowserWindow, systemPreferences, shell, Notification } = require("electron");
+const glasstron = require("glasstron");
 const path = require("path");
 const fetch = require("node-fetch");
 const package = require("./package.json");
 const server = require("./server.js");
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
+
+const iconPath = path.join(__dirname, "DiscordBotClient.png");
 
 function checkUpdate() {
     return new Promise((resolve, reject) => {
@@ -15,13 +18,13 @@ function checkUpdate() {
                     new Notification({
                         title: 'Update Manager',
                         body: `New version available: ${res.name}}`,
-                        icon: './DiscordBotClient.png',
+                        icon: iconPath,
                     }).show();
                 } else {
                     new Notification({
                         title: 'Update Manager',
                         body: `You are using the latest version.`,
-                        icon: './DiscordBotClient.png',
+                        icon: iconPath,
                     }).show();
                 }
                 resolve()
@@ -31,7 +34,7 @@ function checkUpdate() {
                 new Notification({
                     title: 'Update Manager',
                     body: `Unable to check for updates.`,
-                    icon: './DiscordBotClient.png',
+                    icon: iconPath,
                 }).show();
                 resolve()
             })
@@ -41,34 +44,39 @@ function checkUpdate() {
 async function createWindow() {
     checkUpdate();
     // Await server ...
-    let port = 2022;
-    let res_ = await server(port);
-    while (!res_) {
-        port++;
-        res_ = await server(port);
-    }
+    const port = await server(2022);
+
     // Create the browser window.
-    const win = new BrowserWindow({
+    const win = new glasstron.BrowserWindow({
         width: 1920,
         height: 1080,
-        icon: path.join(__dirname, "/DiscordBotClient.png"),
+        icon: iconPath,
         webPreferences: {
-            webSecurity: true,
+            webSecurity: false,
             nodeIntegration: false,
             enableRemoteModule: false,
             contextIsolation: true,
         },
+        // titleBarStyle: "hidden",
     });
+
+    win.blurType = "blurbehind";
+    win.setBlur(true);
+
+    win.webContents.openDevTools();
 
     if (systemPreferences && systemPreferences.askForMediaAccess) systemPreferences.askForMediaAccess("microphone");
     win.webContents.on("new-window", function (e, url) {
         e.preventDefault();
         return shell.openExternal(url);
     });
+    
     win.loadURL(`https://localhost:${port}`);
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    setTimeout(createWindow, process.platform == "linux" ? 1000 : 0)
+});
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {

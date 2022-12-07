@@ -6,6 +6,7 @@ const package = require("./package.json");
 const server = require("./server.js");
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
+app.setAppUserModelId('DiscordBotClient');
 
 const iconPath = path.join(__dirname, "DiscordBotClient.png");
 
@@ -63,7 +64,7 @@ async function createWindow() {
     win.blurType = "blurbehind";
     win.setBlur(true);
 
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
     if (systemPreferences && systemPreferences.askForMediaAccess) systemPreferences.askForMediaAccess("microphone");
     win.webContents.on("new-window", function (e, url) {

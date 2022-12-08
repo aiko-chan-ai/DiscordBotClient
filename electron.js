@@ -71,9 +71,7 @@ async function createWindow() {
     win.loadURL(`https://localhost:${port}`);
 }
 
-app.whenReady().then(() => {
-    setTimeout(createWindow, process.platform == "linux" ? 1000 : 0)
-});
+app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {

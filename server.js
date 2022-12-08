@@ -80,6 +80,9 @@ const handlerRequest = (url, bot, req, res) => {
     if (url.includes('invites') && req.method.toUpperCase() == 'POST') {
       return res.status(401).send()
     }
+    if (url.includes('auth/logout')) {
+      return res.status(204).send()
+    }
     const blacklist = [
       'entitlements/gifts',
       'outbound-promotions/codes',

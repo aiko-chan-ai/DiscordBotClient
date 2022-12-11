@@ -23,7 +23,7 @@ function checkUpdate() {
                 } else {
                     new Notification({
                         title: 'Update Manager',
-                        body: `You are using the latest version.`,
+                        body: `You are using the latest version (v${package.version})`,
                         icon: iconPath,
                     }).show();
                 }
@@ -33,7 +33,7 @@ function checkUpdate() {
                 console.log(e);
                 new Notification({
                     title: 'Update Manager',
-                    body: `Unable to check for updates.`,
+                    body: `Unable to check for updates (v${package.version})`,
                     icon: iconPath,
                 }).show();
                 resolve()

@@ -2,7 +2,7 @@
 
 ## Download > [Releases](https://github.com/aiko-chan-ai/DiscordBotClient/releases)
  
-> Thanks for [ChrisEric](https://github.com/CE1CECL)
+> Thanks to [ChrisEric](https://github.com/CE1CECL)
 
 > **Note**
 > Enable `MessageContent` intent, other intents are optional

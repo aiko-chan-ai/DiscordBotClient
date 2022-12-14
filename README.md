@@ -1,5 +1,9 @@
 # DiscordBotClient
 
+## Electron app ?
+
+> see branch `electron`
+
 ## Download > [Releases](https://github.com/aiko-chan-ai/DiscordBotClient/releases)
  
 > Thanks to [ChrisEric](https://github.com/CE1CECL)

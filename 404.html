@@ -1485,18 +1485,22 @@
                 function getGuildMemberListId() {
                         const channel = getCurrentChannel();
                         if (!channel) return null;
-                        const array = [];
+                        let array = [];
+                        const allow = [];
+                        const deny = [];
                         const guild = client?.getGuild(channel.guild_id);
                         const allId = Object.keys(channel.permissionOverwrites);
                         for (const id of allId) {
                                 if (checkBitfield(channel.permissionOverwrites[id].allow)) {
-                                        array.push(`allow:${id}`)
+                                        allow.push(`${id}`)
                                 }
                                 if (checkBitfield(channel.permissionOverwrites[id].deny)) {
-                                        array.push(`deny:${id}`)
+                                        deny.push(`${id}`)
                                 }
                         }
-                        array.sort();
+                        allow.sort();
+                        deny.sort();
+                        deny.length ? array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`))) : null;
                         console.log(array);
                         return array.length == 0 ? 'everyone' : murmurhash3_32_gc(array.join(','))
                 }

@@ -106,7 +106,9 @@ const handlerRequest = (url, bot, req, res) => {
       'affinities',
       'users/@me/harvest',
       'oauth2',
-      'auth/'
+      'auth/',
+      'applications/public',
+      'notes'
     ].some(path => url.includes(path));
     if (blacklist) return res.status(404).send({
       message: 'Bot is not authorized to access this endpoint :))'

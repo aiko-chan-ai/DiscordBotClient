@@ -1473,6 +1473,10 @@
                 }
         </script>
         <script>
+                const VIEW_CHANNEL_PERMISSION = 1n << 10n;
+                function checkBitfield(permission) {
+                        return (permission & VIEW_CHANNEL_PERMISSION) === VIEW_CHANNEL_PERMISSION;
+                }
                 function getCurrentChannel() {
                         const channelId = getModule('getChannelId').getChannelId();
                         if (!channelId) return null;

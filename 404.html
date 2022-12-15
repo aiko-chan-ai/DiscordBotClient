@@ -20,6 +20,7 @@
         <script>
                 var client;
                 var tryFetchMemberList = false;
+                var lasestGuildIdVoiceConnect = 0;
                 window.__OVERLAY__ = /overlay/.test(location.pathname);
                 window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname);
                 window.GLOBAL_ENV = {

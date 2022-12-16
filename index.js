@@ -159,14 +159,18 @@ app.all('/sticker*', function (req, res) {
   const trs = str;
   req.pipe(request("https://discord.com" + trs)).pipe(res);
 });
-app.all('/asset*', function (req, res) {
+app.all('/assets*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
   console.log('Require Assets:', trs);
-  if (trs.endsWith('02be0d5b4681a76d9def.js')) {
+  const patchList = [
+    '02be0d5b4681a76d9def.js',
+    '087faa3fe576396cad3c.js',
+  ]
+  if (patchList.some(patch => trs.endsWith(patch))) {
     res.set('Cache-Control', 'no-store');
-    console.log('Load script target');
-    return res.send(fs.readFileSync(path.resolve(__dirname, 'script', '02be0d5b4681a76d9def.js'), { encoding: 'utf8' }));
+    console.log('Load script target', trs);
+    return res.send(fs.readFileSync(path.resolve(__dirname, 'script', trs.replace('/assets/', '')), { encoding: 'utf8' }));
   }
   req.pipe(request("https://discord.com" + trs)).pipe(res);
 });

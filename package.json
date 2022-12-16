@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "electron.js",
 	"dependencies": {

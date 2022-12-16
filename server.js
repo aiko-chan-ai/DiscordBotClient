@@ -70,7 +70,12 @@ const app = express();
 
 let html = '';
 
-let scriptTarget = '';
+let scriptTarget = {};
+
+const patchList = [
+  '02be0d5b4681a76d9def',
+  '087faa3fe576396cad3c',
+]
 
 const handlerRequest = (url, bot, req, res) => {
   if (bot == true) {
@@ -208,10 +213,10 @@ app.all('/asset*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
   console.log('Require Assets:', trs);
-  if (trs.endsWith('02be0d5b4681a76d9def.js')) {
+  if (patchList.some(patch => trs.endsWith(`${patch}.js`))) {
     res.set('Cache-Control', 'no-store');
-    console.log('Load script target');
-    return res.send(scriptTarget);
+    console.log('Load script target', trs);
+    return res.send(scriptTarget[trs.replace('/assets/', '').replace('.js', '')]);
   }
   req.pipe(request("https://discord.com" + trs)).pipe(res);
 });
@@ -246,8 +251,10 @@ async function start(port) {
   if (!html) {
     html = await getData('https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/404.html')
   }
-  if (!scriptTarget) {
-    scriptTarget = await getData('https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/script/02be0d5b4681a76d9def.js')
+  if (!Object.keys(scriptTarget).length) {
+    await Promise.all(patchList.map(async script => {
+      scriptTarget[script] = await getData(`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/script/${script}.js`)
+    }));
   }
   return new Promise((resolve, reject) => {
     http.createServer(httpsOptions, app)

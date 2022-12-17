@@ -60,6 +60,7 @@
                 var allGuild = 0;
                 var intentBot = localStorage_.getItem("intents");
                 var membersOnline, membersOffline, funcUpdate;
+                var lastTimeDelay = 0;
                 const IntentFlags = {
                         GUILDS: 1 << 0,
                         GUILD_MEMBERS: 1 << 1,

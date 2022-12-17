@@ -1643,7 +1643,7 @@
                 Permissions.defaultBit = BigInt(0);
                 // Discord.js Bitfield
                 function checkPermissionGuild(guild, channel, member) {
-                        if (guild.ownerId == member.userId) return new Permissions(Permissions.ALL).freeze();
+                        if (guild.ownerId == member.user.id) return new Permissions(Permissions.ALL).freeze();
                         const roles = Object.keys(guild.roles).filter(r => member.roles.includes(r) || r == guild.id);
                         const permissions = new Permissions(roles.map(role => guild.roles[role].permissions));
                         if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {

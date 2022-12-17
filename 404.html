@@ -27,7 +27,6 @@
                         API_ENDPOINT: '//' + window.location.host + '/d/api',
                         API_VERSION: 9,
                         GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
-                        // 'ws://' + window.location.host,
                         RELEASE_CHANNEL: 'stable',
                         HTML_TIMESTAMP: Date.now(),
                         ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
@@ -60,6 +59,7 @@
                 var loadFullGuild = 0;
                 var allGuild = 0;
                 var intentBot = localStorage_.getItem("intents");
+                var membersOnline, membersOffline, funcUpdate;
                 const IntentFlags = {
                         GUILDS: 1 << 0,
                         GUILD_MEMBERS: 1 << 1,

@@ -4,7 +4,7 @@
 
 > see branch `electron`
 
-## [BotClient API]()
+## [BotClient API](https://github.com/aiko-chan-ai/DiscordBotClient/blob/main/API.md)
 
 ## Download > [Releases](https://github.com/aiko-chan-ai/DiscordBotClient/releases)
  

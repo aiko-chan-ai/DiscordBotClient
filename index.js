@@ -167,6 +167,16 @@ app.all('/assets*', function (req, res) {
     '02be0d5b4681a76d9def.js',
     '087faa3fe576396cad3c.js',
   ]
+  /*
+  if (trs.endsWith('js')) {
+    request("https://discord.com" + trs, undefined, (err, res, body) => {
+      if (err) { return console.log(err); }
+      if (body.includes('keyword')) {
+        console.log('Script target find: ', trs);
+      }
+    });
+  }
+  */
   if (patchList.some(patch => trs.endsWith(patch))) {
     res.set('Cache-Control', 'no-store');
     console.log('Load script target', trs);

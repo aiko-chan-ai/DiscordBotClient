@@ -62,7 +62,6 @@ async function createWindow() {
             contextIsolation: true,
         },
         title: "DiscordBotClient",
-        transparent: true,
         // titleBarStyle: "hidden",
     });
 

@@ -54,13 +54,10 @@
                         value: window.localStorage
                 });
                 const localStorage = window.localStorage;
-                var getModule;
-                var findModule;
+                var getModule, findModule, readyData, emitReady, getStatus, membersOnline, membersOffline, funcUpdate, guildIdCurrent, channelIdCurrent;
                 var loadFullGuild = 0;
                 var allGuild = 0;
                 var intentBot = localStorage_.getItem("intents");
-                var getStatus;
-                var membersOnline, membersOffline, funcUpdate, guildIdCurrent, channelIdCurrent;
                 var lastTimeDelay = 0;
                 const IntentFlags = {
                         GUILDS: 1 << 0,

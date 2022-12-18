@@ -67,6 +67,8 @@ MXMU3kbLmHTA/2AqctrTPCND+sZRHPZySuxhMmDrGViKfSzvxA6VQTWcziqUWXWX
 
 const app = express();
 
+let logger;
+
 
 let html = '';
 
@@ -196,7 +198,7 @@ const handlerRequest = (url, bot, req, res) => {
 app.all('/d/*', function (req, res) {
   const str = req.originalUrl;
   const trs = str.slice('\x32');
-  console.log('URL Request', trs);
+  (0, logger?.info || console.log)('URL Request', trs);
   if (req.headers?.authorization) {
     req.headers.authorization = `Bot ${req.headers.authorization}`;
     delete req.headers['User-Agent'];
@@ -212,10 +214,10 @@ app.all('/sticker*', function (req, res) {
 app.all('/asset*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
-  console.log('Require Assets:', trs);
+  (0, logger?.info || console.log)('Require Assets:', trs);
   if (patchList.some(patch => trs.endsWith(`${patch}.js`))) {
     res.set('Cache-Control', 'no-store');
-    console.log('Load script target', trs);
+    (0, logger?.info || console.log)('Load script target', trs);
     return res.send(scriptTarget[trs.replace('/assets/', '').replace('.js', '')]);
   }
   req.pipe(request("https://discord.com" + trs)).pipe(res);
@@ -239,15 +241,16 @@ app.all("*", (req, res) => {
 
 // Catch unhandled promise rejections
 process.on('unhandledRejection', (err) => {
-  console.error(err);
+  (0, logger?.error || console.error)(err);
 });
 
 // Catch uncaught exceptions
 process.on('uncaughtException', (err) => {
-  console.error(err);
+  (0, logger?.error || console.error)(err);
 });
 
-async function start(port) {
+async function start(port, log_) {
+  if (!logger) logger = log_;
   if (!html) {
     html = await getData('https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/404.html')
   }
@@ -260,9 +263,9 @@ async function start(port) {
     http.createServer(httpsOptions, app)
       .listen(port, () => {
         resolve(port);
-        console.log(`Server is running on port ${port}`);
+        (0, logger?.info || console.log)(`Server is running on port ${port}`);
       }).once('error', (err) => {
-        resolve(start(port + 1));
+        resolve(start(port + 1, log_));
       });
   });
 }

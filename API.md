@@ -59,6 +59,11 @@ const module = findModule('loginToken')
 console.log(module)
 ```
 
+### getStatus
+```js
+getStatus('userId')
+```
+
 ## Global Variables
 
 #### `client`

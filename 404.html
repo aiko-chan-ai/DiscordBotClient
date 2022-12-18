@@ -59,6 +59,7 @@
                 var loadFullGuild = 0;
                 var allGuild = 0;
                 var intentBot = localStorage_.getItem("intents");
+                var getStatus;
                 var membersOnline, membersOffline, funcUpdate, guildIdCurrent, channelIdCurrent;
                 var lastTimeDelay = 0;
                 const IntentFlags = {
@@ -1643,7 +1644,7 @@
                 Permissions.defaultBit = BigInt(0);
                 // Discord.js Bitfield
                 function checkPermissionGuild(guild, channel, member) {
-                        if (guild.ownerId == member.user.id) return new Permissions(Permissions.ALL).freeze();
+                        if (guild.ownerId == (member?.user?.id || member.userId)) return new Permissions(Permissions.ALL).freeze();
                         const roles = Object.keys(guild.roles).filter(r => member.roles.includes(r) || r == guild.id);
                         const permissions = new Permissions(roles.map(role => guild.roles[role].permissions));
                         if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -1670,7 +1671,7 @@
                                         everyoneOverwrites = overwrite;
                                 } else if (roles.includes(overwrite.id)) {
                                         roleOverwrites.push(overwrite);
-                                } else if (overwrite.id === member.userId) {
+                                } else if (overwrite.id === (member?.user?.id || member.userId)) {
                                         memberOverwrites = overwrite;
                                 }
                         }

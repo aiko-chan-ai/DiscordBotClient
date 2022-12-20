@@ -4,7 +4,7 @@ const path = require("path");
 const request = require("request");
 const axios = require("axios");
 
-const port = 2022;
+const port = process.env.PORT || 2022;
 
 const app = express();
 

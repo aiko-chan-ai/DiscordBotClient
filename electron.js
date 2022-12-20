@@ -70,6 +70,8 @@ async function createWindow() {
     // Create the server
     const port = await server(2022, log);
 
+    createNotification('Proxy Server', `Proxy server started on port ${port}`);
+
     if (!app.isPackaged) win.webContents.openDevTools();
 
     if (systemPreferences && systemPreferences.askForMediaAccess) systemPreferences.askForMediaAccess("microphone");

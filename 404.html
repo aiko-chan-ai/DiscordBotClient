@@ -59,6 +59,7 @@
                 var allGuild = 0;
                 var intentBot = localStorage_.getItem("intents");
                 var lastTimeDelay = 0;
+                var eDispatch;
                 const IntentFlags = {
                         GUILDS: 1 << 0,
                         GUILD_MEMBERS: 1 << 1,

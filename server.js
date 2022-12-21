@@ -199,11 +199,26 @@ app.all('/d/*', function (req, res) {
   const str = req.originalUrl;
   const trs = str.slice('\x32');
   (0, logger?.info || console.log)('URL Request', trs);
-  if (req.headers?.authorization) {
-    req.headers.authorization = `Bot ${req.headers.authorization}`;
-    delete req.headers['User-Agent'];
-    req.headers['user-agent'] = 'DiscordBot (https://nodejs.org, 16.0.0)'
+  let headers = {
+    'user-agent': 'DiscordBot (https://nodejs.org, 16.0.0)',
+    authorization: `Bot ${req.headers.authorization}`,
   }
+  Object.keys(req.headers).forEach(key => {
+    if ([
+      'cookie',
+      'x-',
+      'sec-',
+      'referer',
+      'origin',
+      'authorization',
+      'user-agent',
+    ].some(prefix => key.toLowerCase().startsWith(prefix))) {
+      return;
+    } else {
+      headers[key] = req.headers[key];
+    }
+  });
+  req.headers = headers;
   handlerRequest(trs, true, req, res);
 });
 app.all('/sticker*', function (req, res) {

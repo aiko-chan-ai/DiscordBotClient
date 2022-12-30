@@ -25,7 +25,7 @@ function createNotification(title, description, silent = false, callbackWhenClic
 
 log.info('App starting...');
 
-const iconPath = path.join(__dirname, "DiscordBotClient.png");
+const iconPath = path.join(__dirname, "DiscordBotClient.ico");
 
 function checkUpdate() {
     log.info('Checking for updates...');

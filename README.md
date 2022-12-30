@@ -2,7 +2,7 @@
 
 ## Web:
 
-> Using extension
+> Using extension https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/extension.rar
 
 > Source: https://github.com/aikodbc/aikodbc.github.io
 

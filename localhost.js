@@ -149,7 +149,7 @@ app.all('/d/*', function (req, res) {
   console.log('URL Request', trs);
   let headers = {
     'user-agent': 'DiscordBot (https://nodejs.org, 16.0.0)',
-    authorization: `Bot ${req.headers.authorization}`,
+    authorization: `${req.headers.authorization}`,
   }
   Object.keys(req.headers).forEach(key => {
     if ([

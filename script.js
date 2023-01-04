@@ -15,6 +15,8 @@ if (typeof chrome !== "undefined") {
 
 if (chr) extraInfoSpecRequest.push("extraHeaders") && extraInfoSpecResponse.push("extraHeaders");
 
+var token = null;
+
 function handlerStore(details) {
 	const url = details.url;
 	if (url.includes('store/published-listings/skus/')) {
@@ -68,7 +70,7 @@ function handlerAPI(details) {
 		return { redirectUrl: 'https://aikodbc.github.io/billingcode.json' };
 	}
 	if (url.includes('logout')) {
-		return { redirectUrl: 'https://aikodbc.github.io/empty' };
+		return { redirectUrl: 'https://aikodbc.github.io/empty.json' };
 	}
 	else if (url.includes('/ask') || url.includes('/ack')) {
 		return { redirectUrl: 'https://aikodbc.github.io/ack.json' }
@@ -101,9 +103,15 @@ function handlerAPI(details) {
 	}
 }
 
+
 chrome.webRequest.onBeforeRequest.addListener(function (details) {
 	if (chr) if (details.initiator !== "https://" + dbcloginurl) return;
 	if (fir) if (!details.originUrl.includes(dbcloginurl)) return;
+	// handler discord api
+	if (details.url.includes('/threads/search?archived=true')) {
+		const cid = /\d{17,19}/.exec(details.url)[0];
+		return { redirectUrl: `https://discord.com/api/v9/channels/${cid}/threads/archived/public` };
+	}
 	if (!details.url.includes(dbcloginurl)) return;
 	console.log(details.method, details.url, details.requestHeaders);
 	let r = handlerStore(details) || handlerAssets(details) || handlerAPI(details);
@@ -111,7 +119,7 @@ chrome.webRequest.onBeforeRequest.addListener(function (details) {
 }, {
 	urls: ["<all_urls>"],
 },
-["blocking"]);
+	["blocking"]);
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
 	function (details) {
@@ -135,6 +143,33 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 			console.log('Discord Asset Request', details.requestHeaders);
 			return { requestHeaders: details.requestHeaders };
 		} else if (details.url.includes('https://discord.com/api')) {
+			let token_ = details.requestHeaders?.find((e) => e.name.toLowerCase() === "authorization")?.value;
+			if (token_ && token !== token_) {
+				token = token_;
+			}
+			if (details.url.includes('threads/archived/public')) {
+				console.log('Using token', token, 'for', details.url);
+				return {
+					requestHeaders: [
+						{
+							name: 'Authorization',
+							value: token
+						},
+						{
+							name: 'User-Agent',
+							value: 'DiscordBot (https://nodejs.org, 16.0.0)'
+						},
+						{
+							name: 'Origin',
+							value: 'https://discord.com'
+						},
+						{
+							name: 'Referer',
+							value: 'https://discord.com'
+						}
+					]
+				}
+			}
 			console.log('Discord API Request', details);
 			const arr = [
 				'cookie',

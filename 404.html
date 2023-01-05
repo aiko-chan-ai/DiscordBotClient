@@ -842,7 +842,7 @@
                                         method: 'GET',
                                         headers: {
                                                 'Content-Type': 'application/json',
-                                                'Authorization': `${token}`,
+                                                'Authorization': `Bot ${token}`,
                                         },
                                 })
                                         .then(res => res.json())
@@ -883,7 +883,7 @@
                                         method: 'POST',
                                         headers: {
                                                 'Content-Type': 'application/json',
-                                                'Authorization': `${token}`,
+                                                'Authorization': `Bot ${token}`,
                                         },
                                         body: JSON.stringify(msgObject),
                                 })

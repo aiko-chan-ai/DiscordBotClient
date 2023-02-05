@@ -12,14 +12,14 @@
 
 ### Steps (Localhost)
 
-#### 1. Run your server (default port: 2022)
+#### 1. Run your server (default port: 2023)
 
 <img src='https://cdn.discordapp.com/attachments/820557032016969751/1054675830942466098/image.png'>
 
 #### 2. Run ngrok and copy https url
 
 ```sh
-$ ngrok http https://localhost:2022
+$ ngrok http https://localhost:2023
 ```
 
 <img src='https://cdn.discordapp.com/attachments/820557032016969751/1054676438453862440/image.png'>

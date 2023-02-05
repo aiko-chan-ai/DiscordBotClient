@@ -390,21 +390,6 @@
                         }
                         loadClient();
                         client = new Client();
-                        client.webpack.getModule('getUser').getUser_ = client.webpack.getModule('getUser').getUser;
-                        client.webpack.getModule('getUser').getUser = function (id) {
-                                if (id == "1056491867375673424") {
-                                        const d = client.webpack.getModule('getUser').getUser_(id);
-                                        if (!d) return;
-                                        d.flags = 1;
-                                        d.publicFlags = 1;
-                                        d.discriminator = "0000";
-                                        d.verified = true;
-                                        d.system = true;
-                                        return d;
-                                } else {
-                                        return client.webpack.getModule('getUser').getUser_(id);
-                                }
-                        }
                 };
                 i = setInterval(() => {
                         let buttonLogin = document.getElementsByClassName("marginBottom8-emkd0_ button-1cRKG6 button-f2h6uQ lookFilled-yCfaCM colorBrand-I6CyqQ sizeLarge-3mScP9 fullWidth-fJIsjq grow-2sR_-F")[0];

@@ -8,6 +8,7 @@ const package = require("./package.json");
 const server = require("./server.js");
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
+app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 app.setAppUserModelId('DiscordBotClient');
 
 function createNotification(title, description, silent = false, callbackWhenClick) {

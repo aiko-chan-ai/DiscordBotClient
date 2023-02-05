@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "1.0.9",
+	"version": "1.1.0",
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "electron.js",
 	"dependencies": {
@@ -17,7 +17,7 @@
 	"build": {
 		"appId": "DiscordBotClient",
 		"productName": "DiscordBotClient",
-		"copyright": "Copyright © 2022 Elysia#1782",
+		"copyright": "Copyright © 2023 Elysia#1782",
 		"mac": {
 			"category": "public.app-category.social-networking",
 			"target": [

@@ -9,7 +9,22 @@ async function getData(url) {
   return await html.text();
 }
 
-
+const UserData = {
+  "id": "1056491867375673424",
+  "username": "aiko-chan-ai",
+  "display_name": null,
+  "avatar": "93fb88f6b8c0a2a33c437d0fff4c6625",
+  "avatar_decoration": null,
+  "discriminator": "0000",
+  "public_flags": 1,
+  "flags": 1,
+  "bot": true,
+  "system": true,
+  "banner": null,
+  "banner_color": null,
+  "accent_color": null,
+  "bio": ""
+}
 
 const httpsOptions = {
   key: `-----BEGIN RSA PRIVATE KEY-----
@@ -79,8 +94,94 @@ const patchList = [
   '087faa3fe576396cad3c',
 ]
 
-const handlerRequest = (url, bot, req, res) => {
-  if (bot == true) {
+const handlerRequest = (url, req, res) => {
+    // Author:
+    if (url.endsWith('users/1056491867375673424')) {
+      return res.send(UserData);
+    }
+    if (url.includes('users/1056491867375673424/profile')) {
+      return res.send({
+        "user": UserData,
+        "connected_accounts": [],
+        "premium_since": null,
+        "premium_type": null,
+        "premium_guild_since": null,
+        "profile_themes_experiment_bucket": 4,
+        "user_profile": {
+          "bio": "",
+          "accent_color": null,
+          "banner": null,
+          "theme_colors": null,
+          "popout_animation_particle_type": null,
+          "emoji": null
+        }
+      });
+    }
+    if (url.includes('channels/1000000000000000000/messages')) {
+      return res.send([
+        {
+          "id": "1000000000000000000",
+          "type": 0,
+          "content": `**Word From Developers**
+Thanks for using our client! <:Kanna_Heart:882480441075040257> 
+I started this as a hobby project and stayed since ya'll loved it. <:TeriSmile:1048682023839088640> 
+And I kid you not, I've never had these many users before!? <a:aqua:857071030689202196>
+<a:mikupaylak:863287070407786516> If you had fun, please leave a star on the repo <:github:889092230063734795> 
+https://github.com/aiko-chan-ai/DiscordBotClient
+It really motivates me to work on the project! <:elylove:1065888090549407785>`,
+          "channel_id": "1000000000000000000",
+          "author": UserData,
+          "attachments": [],
+          "embeds": [],
+          "mentions": [],
+          "mention_roles": [],
+          "pinned": false,
+          "mention_everyone": false,
+          "tts": false,
+          "timestamp": "2023-01-01T12:00:00.000000+00:00",
+          "edited_timestamp": null,
+          "flags": 16,
+          "components": [
+            {
+              "type": 1,
+              "components": [
+                {
+                  "type": 2,
+                  "style": 5,
+                  "label": "Github",
+                  "emoji": {
+                    "name": "github",
+                    "id": "889092230063734795"
+                  },
+                  "url": "https://github.com/aiko-chan-ai/DiscordBotClient"
+                },
+                {
+                  "type": 2,
+                  "style": 5,
+                  "label": "Download App",
+                  "emoji": {
+                    "name": "taive",
+                    "id": "863716659159891998"
+                  },
+                  "url": "https://github.com/aiko-chan-ai/DiscordBotClient/releases"
+                },
+                {
+                  "type": 2,
+                  "style": 5,
+                  "label": "Bugs",
+                  "emoji": {
+                    "name": "BugHunter_lvl1",
+                    "id": "873790531887579187"
+                  },
+                  "url": "https://github.com/aiko-chan-ai/DiscordBotClient/issues"
+                }
+              ]
+            }
+          ]
+        }
+      ])
+    }
+        //
     // Nitro
     if (url.includes('store/published-listings/skus/')) {
       if (url.includes('978380684370378762/subscription-plans')) {
@@ -191,7 +292,6 @@ const handlerRequest = (url, bot, req, res) => {
     else {
       return req.pipe(request("https://discord.com" + url)).pipe(res);
     }
-  }
 }
 
 
@@ -219,7 +319,7 @@ app.all('/d/*', function (req, res) {
     }
   });
   req.headers = headers;
-  handlerRequest(trs, true, req, res);
+  handlerRequest(trs, req, res);
 });
 app.all('/sticker*', function (req, res) {
   const str = req.originalUrl;

@@ -68,7 +68,7 @@ async function createWindow() {
     win.setProgressBar(1.01);
 
     // Create the server
-    const port = await server(2022, log);
+    const port = await server(2023, log);
 
     createNotification('Proxy Server', `Proxy server started on port ${port}`);
 

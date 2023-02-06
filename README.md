@@ -1,6 +1,6 @@
 # DiscordBotClient
 
-## Web:
+## Web (out of date, v1.0.9):
 
 > Using extension https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/extension.zip
 

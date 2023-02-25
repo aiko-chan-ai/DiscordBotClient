@@ -4,6 +4,7 @@ const request = require('request');
 const axios = require('axios');
 const { PreloadedUserSettings } = require('discord-protos');
 const settingDefault = require('./setting-proto.js');
+require('./arRPC/src/index.js');
 
 function getDataFromRequest(req, res, callback) {
 	var data = '';
@@ -1183,7 +1184,6 @@ module.exports = function (app) {
 			'science',
 			'affinities',
 			'users/@me/harvest',
-			'oauth2',
 			'auth/',
 			'applications/public',
 			'notes',
@@ -1192,6 +1192,11 @@ module.exports = function (app) {
 			return res.status(404).send({
 				message: 'Bot is not authorized to access this endpoint :))',
 			});
+		if (url.includes('oauth2/') && !url.includes('assets') && !url.includes('rpc')) {
+			return res.status(404).send({
+				message: 'Bot is not authorized to access this endpoint :))',
+			});
+		}
 		if (url.includes('api/download')) {
 			return res.redirect(
 				'https://github.com/aiko-chan-ai/DiscordBotClient/releases',

@@ -1,0 +1,22 @@
+{
+  "name": "arrpc",
+  "version": "3.1.0",
+  "description": "Open Discord RPC server for atypical setups",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenAsar/arrpc.git"
+  },
+  "author": "OpenAsar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OpenAsar/arrpc/issues"
+  },
+  "homepage": "https://github.com/OpenAsar/arrpc#readme",
+  "dependencies": {
+    "ws": "^8.11.0"
+  }
+}

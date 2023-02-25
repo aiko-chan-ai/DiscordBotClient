@@ -4,6 +4,7 @@ const http = require('https');
 const axios = require('axios');
 const fetch = require('node-fetch');
 const { PreloadedUserSettings } = require('discord-protos');
+
 const settingDefault = {
 	data1: {
 		versions: { clientVersion: 0, serverVersion: 0, dataVersion: 18 },
@@ -1282,7 +1283,6 @@ const handlerRequest = (url, req, res) => {
 		'science',
 		'affinities',
 		'users/@me/harvest',
-		'oauth2',
 		'auth/',
 		'applications/public',
 		'notes',
@@ -1291,6 +1291,15 @@ const handlerRequest = (url, req, res) => {
 		return res.status(404).send({
 			message: 'Bot is not authorized to access this endpoint :))',
 		});
+	if (
+		url.includes('oauth2/') &&
+		!url.includes('assets') &&
+		!url.includes('rpc')
+	) {
+		return res.status(404).send({
+			message: 'Bot is not authorized to access this endpoint :))',
+		});
+	}
 	if (url.includes('api/download')) {
 		return res.redirect(
 			'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
@@ -1453,6 +1462,7 @@ process.on('uncaughtException', (err) => {
 });
 
 async function start(port, log_) {
+	await require('./arRPC/src/index.js');
 	if (!logger) logger = log_;
 	if (!html) {
 		html = await getData(

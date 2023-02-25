@@ -1958,6 +1958,38 @@
                         };
                 }
         </script>
+        <script>
+                (async() => {
+                        function checkUpdate() {
+                                return new Promise((resolve, reject) => {
+                                        fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest")
+                                                .then((res) => res.json())
+                                                .then(res => resolve(res.tag_name))
+                                                .catch((e) => resolve('0.0.0'))
+                                });
+                        }
+                        function getLatestCommit() {
+                                return new Promise((resolve, reject) => {
+                                        fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/commits")
+                                                .then((res) => res.json())
+                                                .then(res => resolve(res[0].sha.slice(0, 6)))
+                                                .catch((e) => resolve('000000'))
+                                });
+                        }
+                        const version = await checkUpdate();
+                        const hash = await getLatestCommit();
+                        setInterval(() => {
+                                if (!version || !hash) return;
+                                const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 161055 (c7e0778)');
+                                if (!host || document.querySelector('#dbclient-ver')) return;
+                                const el = document.createElement('span');
+                                el.id = 'dbclient-ver';
+                                el.textContent = `BotClient ${version} (${hash})`;
+                                el.onclick = () => window.open('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
+                                host.append(document.createTextNode('\n'), el);
+                        }, 2_000);
+                })()
+        </script>
 </body>
 
 </html>

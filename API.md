@@ -69,19 +69,13 @@ getStatus('userId')
 #### `client`
 > [DiscordBotClient](https://github.com/aiko-chan-ai/DiscordBotClient/blob/main/API.md#DiscordBotClient)
 
-#### `tryFetchMemberList`
-> Boolean
-
 #### `localStorage_`
 > window.localStorage
 
-#### `loadFullGuild`, `allGuild`, `intentBot`, `lastTimeDelay`
+#### `loadFullGuild`, `allGuild`, `intentBot`
 > number
 
-#### `membersOnline`, `membersOffline`
-> Array[Object]
-
-#### `guildIdCurrent`, `channelIdCurrent`, `lasestGuildIdVoiceConnect`
+#### `lasestGuildIdVoiceConnect`
 > Snowflake (string)
 
 

@@ -38,10 +38,6 @@ const UserData = {
 };
 
 module.exports = function (app) {
-	const indexHTML = fs.readFileSync(path.join(__dirname, '404.html'), {
-		encoding: 'utf8',
-	});
-	const html = indexHTML;
 	const handlerRequest = (url, req, res) => {
 		// Author:
 		if (url.endsWith('users/1056491867375673424')) {
@@ -1354,6 +1350,6 @@ module.exports = function (app) {
 		}
 	});
 	app.all('*', (req, res) => {
-		res.send(html);
+		res.sendFile(path.resolve(__dirname, '404.html'));
 	});
 };

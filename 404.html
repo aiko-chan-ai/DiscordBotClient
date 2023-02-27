@@ -571,6 +571,11 @@
                 function replaceLoginScreen() {
                         let buttonLogin = document.getElementsByClassName("marginBottom8-emkd0_ button-1cRKG6 button-f2h6uQ lookFilled-yCfaCM colorBrand-I6CyqQ sizeLarge-3mScP9 fullWidth-fJIsjq grow-2sR_-F")[0];
                         if (buttonLogin) {
+                                if (!intentBot) {
+                                        callSetIntents();
+                                } else {
+                                        clearInterval(i);
+                                }
                                 buttonLogin.addEventListener("click", () => {
                                         const input = document.getElementsByClassName("inputDefault-3FGxgL input-2g-os5")[0];
                                         getModule('loginToken').loginToken(input.value);
@@ -600,12 +605,6 @@
                                 forgot_pw.addEventListener("click", () => {
                                         callSetIntents();
                                 });
-                                if (!intentBot) {
-                                        callSetIntents();
-                                        window.location.reload();
-                                } else {
-                                        clearInterval(i);
-                                }
                         }
                 }
                 i = setInterval(() => {

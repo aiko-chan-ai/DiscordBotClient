@@ -398,7 +398,7 @@
                         input_.innerHTML = `Bot Token | Intents: ${intents.toArray().filter(i => ['MESSAGE_CONTENT', 'GUILD_PRESENCES', 'GUILD_MEMBERS'].includes(i)).join(', ')}`;
                         return input_;
                 }
-                var callSetIntents = () => {
+                var callSetIntents = (reload = false) => {
                         const privilegedIntents = [];
                         alert("Login with bot requires privileged intent `MESSAGE_CONTENT`\n\nMake sure you have enabled this intent in the bot settings.");
                         if (!confirm('[Optional] Do you want to use the `GUILD_PRESENCES` intent?')) {
@@ -409,7 +409,7 @@
                         }
                         intentBot = getIntents(...privilegedIntents);
                         localStorage_.setItem('intents', intentBot);
-                        updateIntentsText();
+                        reload ? updateIntentsText() : location.reload();
                 }
         </script>
 </head>
@@ -603,7 +603,7 @@
                                 recreateNode(forgot_pw, true);
                                 forgot_pw = document.getElementsByClassName('marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-f2h6uQ lookLink-15mFoz lowSaturationUnderline-Z6CW6z colorLink-1Md3RZ sizeMin-DfpWCE grow-2sR_-F')[0];
                                 forgot_pw.addEventListener("click", () => {
-                                        callSetIntents();
+                                        callSetIntents(true);
                                 });
                         }
                 }

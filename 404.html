@@ -319,7 +319,85 @@
                         AUTO_MODERATION_CONFIGURATION: 1 << 20,
                         AUTO_MODERATION_EXECUTION: 1 << 21,
                 };
+                class BitField {
+                        constructor(bits = this.constructor.defaultBit) {
+                                this.bitfield = this.constructor.resolve(bits);
+                        }
+                        any(bit) {
+                                return (this.bitfield & this.constructor.resolve(bit)) !== this.constructor.defaultBit;
+                        }
+                        equals(bit) {
+                                return this.bitfield === this.constructor.resolve(bit);
+                        }
+                        has(bit) {
+                                bit = this.constructor.resolve(bit);
+                                return (this.bitfield & bit) === bit;
+                        }
+                        missing(bits, ...hasParams) {
+                                return new this.constructor(bits).remove(this).toArray(...hasParams);
+                        }
+                        freeze() {
+                                return Object.freeze(this);
+                        }
+                        add(...bits) {
+                                let total = this.constructor.defaultBit;
+                                for (const bit of bits) {
+                                        total |= this.constructor.resolve(bit);
+                                }
+                                if (Object.isFrozen(this)) return new this.constructor(this.bitfield | total);
+                                this.bitfield |= total;
+                                return this;
+                        }
+                        remove(...bits) {
+                                let total = this.constructor.defaultBit;
+                                for (const bit of bits) {
+                                        total |= this.constructor.resolve(bit);
+                                }
+                                if (Object.isFrozen(this)) return new this.constructor(this.bitfield & ~total);
+                                this.bitfield &= ~total;
+                                return this;
+                        }
+                        serialize(...hasParams) {
+                                const serialized = {};
+                                for (const [flag, bit] of Object.entries(this.constructor.FLAGS)) serialized[flag] = this.has(bit, ...hasParams);
+                                return serialized;
+                        }
+                        toArray(...hasParams) {
+                                return Object.keys(this.constructor.FLAGS).filter(bit => this.has(bit, ...hasParams));
+                        }
+                        toJSON() {
+                                return typeof this.bitfield === 'number' ? this.bitfield : this.bitfield.toString();
+                        }
+                        valueOf() {
+                                return this.bitfield;
+                        }
+                        *[Symbol.iterator]() {
+                                yield* this.toArray();
+                        }
+                        static resolve(bit) {
+                                const { defaultBit } = this;
+                                if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
+                                if (bit instanceof BitField) return bit.bitfield;
+                                if (Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, defaultBit);
+                                if (typeof bit === 'string') {
+                                        if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
+                                        if (!isNaN(bit)) return typeof defaultBit === 'bigint' ? BigInt(bit) : Number(bit);
+                                }
+                                throw new RangeError('BITFIELD_INVALID', bit);
+                        }
+                }
+                BitField.FLAGS = {};
+                BitField.defaultBit = 0;
+                class Intents extends BitField { }
+                Intents.FLAGS = IntentFlags;
                 const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
+                function updateIntentsText() {
+                        const intents = new Intents(intentBot ?? 0);
+                        const input_ = document.getElementsByClassName("label-2bTGzo title-3hptVQ defaultColor-2cKwKo defaultMarginlabel-1h4HPn")[0]
+                        if (!input_) return;
+                        input_.innerHTML = `Bot Token | Intents: ${intents.toArray().filter(i => ['MESSAGE_CONTENT', 'GUILD_PRESENCES', 'GUILD_MEMBERS'].includes(i)).join(', ')}`;
+                        return input_;
+                }
                 var callSetIntents = () => {
                         const privilegedIntents = [];
                         alert("Login with bot requires privileged intent `MESSAGE_CONTENT`\n\nMake sure you have enabled this intent in the bot settings.");
@@ -331,6 +409,7 @@
                         }
                         intentBot = getIntents(...privilegedIntents);
                         localStorage_.setItem('intents', intentBot);
+                        updateIntentsText();
                 }
         </script>
 </head>
@@ -479,41 +558,62 @@
                         loadClient();
                         client = new Client();
                 };
-                i = setInterval(() => {
+                function recreateNode(el, withChildren) {
+                        if (withChildren) {
+                                el.parentNode.replaceChild(el.cloneNode(true), el);
+                        }
+                        else {
+                                var newEl = el.cloneNode(false);
+                                while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+                                el.parentNode.replaceChild(newEl, el);
+                        }
+                }
+                function replaceLoginScreen() {
                         let buttonLogin = document.getElementsByClassName("marginBottom8-emkd0_ button-1cRKG6 button-f2h6uQ lookFilled-yCfaCM colorBrand-I6CyqQ sizeLarge-3mScP9 fullWidth-fJIsjq grow-2sR_-F")[0];
                         if (buttonLogin) {
                                 buttonLogin.addEventListener("click", () => {
                                         const input = document.getElementsByClassName("inputDefault-3FGxgL input-2g-os5")[0];
                                         getModule('loginToken').loginToken(input.value);
                                 });
-
                                 const email = document.getElementsByClassName("marginBottom20-315RVT")[0];
                                 email.parentElement.removeChild(email);
-
-                                const input_ = document.getElementsByClassName("label-2bTGzo title-3hptVQ defaultColor-2cKwKo defaultMarginlabel-1h4HPn")[0]
-
-                                input_.innerHTML = "Token";
+                                const input_ = updateIntentsText();
                                 input_.id = "token";
-
                                 const QR = document.getElementsByClassName("transitionGroup-bPT0qU qrLogin-1ejtpI")[0];
                                 QR.parentElement.removeChild(QR);
-
                                 const dot = document.getElementsByClassName("verticalSeparator-2r9gHa")[0];
                                 dot.parentElement.removeChild(dot);
-                                clearInterval(i);
-
+                                const need_an_acc = document.getElementsByClassName('needAccount-MrvMN7')[0];
+                                need_an_acc.innerHTML = 'Need a bot?';
+                                let reg = document.getElementsByClassName('smallRegisterLink-1qEJhz linkButton-2ax8wP button-f2h6uQ lookLink-15mFoz lowSaturationUnderline-Z6CW6z colorLink-1Md3RZ sizeMin-DfpWCE grow-2sR_-F')[0]
+                                reg.innerHTML = 'Create one here';
+                                recreateNode(reg, true);
+                                reg = document.getElementsByClassName('smallRegisterLink-1qEJhz linkButton-2ax8wP button-f2h6uQ lookLink-15mFoz lowSaturationUnderline-Z6CW6z colorLink-1Md3RZ sizeMin-DfpWCE grow-2sR_-F')[0];
+                                reg.addEventListener("click", () => {
+                                        // redirect to bot maker
+                                        window.open("https://discord.com/developers/applications");
+                                });
+                                let forgot_pw = document.getElementsByClassName('marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-f2h6uQ lookLink-15mFoz lowSaturationUnderline-Z6CW6z colorLink-1Md3RZ sizeMin-DfpWCE grow-2sR_-F')[0];
+                                forgot_pw.innerHTML = `Do you want to set new intents? Click here`
+                                recreateNode(forgot_pw, true);
+                                forgot_pw = document.getElementsByClassName('marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-f2h6uQ lookLink-15mFoz lowSaturationUnderline-Z6CW6z colorLink-1Md3RZ sizeMin-DfpWCE grow-2sR_-F')[0];
+                                forgot_pw.addEventListener("click", () => {
+                                        callSetIntents();
+                                });
                                 if (!intentBot) {
                                         callSetIntents();
-                                } else if (confirm(`Do you want to set new intents?\nOld intents: ${intentBot}`)) {
-                                        callSetIntents();
+                                } else {
+                                        clearInterval(i);
                                 }
                         }
+                }
+                i = setInterval(() => {
+                        replaceLoginScreen();
                 }, 250);
         </script>
         <script>
                 // Embed script
                 // MessageEmbed v13
-
                 const Colors = {
                         DEFAULT: 0x000000,
                         WHITE: 0xffffff,
@@ -559,10 +659,8 @@
                         } else if (Array.isArray(color)) {
                                 color = (color[0] << 16) + (color[1] << 8) + color[2];
                         }
-
                         if (color < 0 || color > 0xffffff) throw new RangeError('COLOR_RANGE');
                         else if (Number.isNaN(color)) throw new TypeError('COLOR_CONVERT');
-
                         return color;
                 }
 
@@ -1823,76 +1921,6 @@
                         return permission.has('VIEW_CHANNEL');
                 }
 
-                class BitField {
-                        constructor(bits = this.constructor.defaultBit) {
-                                this.bitfield = this.constructor.resolve(bits);
-                        }
-                        any(bit) {
-                                return (this.bitfield & this.constructor.resolve(bit)) !== this.constructor.defaultBit;
-                        }
-                        equals(bit) {
-                                return this.bitfield === this.constructor.resolve(bit);
-                        }
-                        has(bit) {
-                                bit = this.constructor.resolve(bit);
-                                return (this.bitfield & bit) === bit;
-                        }
-                        missing(bits, ...hasParams) {
-                                return new this.constructor(bits).remove(this).toArray(...hasParams);
-                        }
-                        freeze() {
-                                return Object.freeze(this);
-                        }
-                        add(...bits) {
-                                let total = this.constructor.defaultBit;
-                                for (const bit of bits) {
-                                        total |= this.constructor.resolve(bit);
-                                }
-                                if (Object.isFrozen(this)) return new this.constructor(this.bitfield | total);
-                                this.bitfield |= total;
-                                return this;
-                        }
-                        remove(...bits) {
-                                let total = this.constructor.defaultBit;
-                                for (const bit of bits) {
-                                        total |= this.constructor.resolve(bit);
-                                }
-                                if (Object.isFrozen(this)) return new this.constructor(this.bitfield & ~total);
-                                this.bitfield &= ~total;
-                                return this;
-                        }
-                        serialize(...hasParams) {
-                                const serialized = {};
-                                for (const [flag, bit] of Object.entries(this.constructor.FLAGS)) serialized[flag] = this.has(bit, ...hasParams);
-                                return serialized;
-                        }
-                        toArray(...hasParams) {
-                                return Object.keys(this.constructor.FLAGS).filter(bit => this.has(bit, ...hasParams));
-                        }
-                        toJSON() {
-                                return typeof this.bitfield === 'number' ? this.bitfield : this.bitfield.toString();
-                        }
-                        valueOf() {
-                                return this.bitfield;
-                        }
-                        *[Symbol.iterator]() {
-                                yield* this.toArray();
-                        }
-                        static resolve(bit) {
-                                const { defaultBit } = this;
-                                if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
-                                if (bit instanceof BitField) return bit.bitfield;
-                                if (Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, defaultBit);
-                                if (typeof bit === 'string') {
-                                        if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
-                                        if (!isNaN(bit)) return typeof defaultBit === 'bigint' ? BigInt(bit) : Number(bit);
-                                }
-                                throw new RangeError('BITFIELD_INVALID', bit);
-                        }
-                }
-                BitField.FLAGS = {};
-                BitField.defaultBit = 0;
-                //
                 class Permissions extends BitField {
                         missing(bits, checkAdmin = true) {
                                 return checkAdmin && this.has(this.constructor.FLAGS.ADMINISTRATOR) ? [] : super.missing(bits);

@@ -43,6 +43,12 @@ let channel = getCurrentChannel()
 console.log(channel)
 ```
 
+#### getCurrentGuild
+```js
+let guild = getCurrentGuild()
+console.log(guild)
+```
+
 #### [sendMessage](https://github.com/aiko-chan-ai/DiscordBotClient/blob/main/README.md#send-embed-button-menu-etc)
 ```js
 sendMessage('Hello World')
@@ -57,6 +63,11 @@ module.loginToken('BotToken')
 ```js
 const module = findModule('loginToken')
 console.log(module)
+```
+
+#### switchToken
+```js
+switchToken('BotToken')
 ```
 
 ### getStatus

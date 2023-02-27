@@ -1164,7 +1164,7 @@ module.exports = function (app) {
 			}
 		}
 		if (url.includes('billing/subscriptions')) {
-			return res.send({});
+			return res.send([]);
 		}
 		if (url.includes('invites') && req.method.toUpperCase() == 'POST') {
 			return res.status(401).send();

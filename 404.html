@@ -2100,8 +2100,8 @@
                                 else m.position = role.position;
                                 return m;
                         });
-                        const membersOnline = members_patch.filter(m => m.status !== 'offline').sort((x, y) => y.position - x.position)
-                        const membersOffline = members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position)
+                        const membersOnline = members_patch.filter(m => m.status !== 'offline').sort((x, y) => y.position - x.position);
+                        const membersOffline = members_patch.length > 1000 ? [] : members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
                         // Group
                         function getGroup(arr, off) {
                                 let all = []

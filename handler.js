@@ -6,6 +6,9 @@ const { PreloadedUserSettings } = require('discord-protos');
 const settingDefault = require('./setting-proto.js');
 require('./arRPC/src/index.js');
 
+const userAgent =
+	'DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v1.1.2)';
+
 function getDataFromRequest(req, res, callback) {
 	var data = '';
 	req.on('data', function (chunk) {
@@ -1188,7 +1191,11 @@ module.exports = function (app) {
 			return res.status(404).send({
 				message: 'Bot is not authorized to access this endpoint :))',
 			});
-		if (url.includes('oauth2/') && !url.includes('assets') && !url.includes('rpc')) {
+		if (
+			url.includes('oauth2/') &&
+			!url.includes('assets') &&
+			!url.includes('rpc')
+		) {
 			return res.status(404).send({
 				message: 'Bot is not authorized to access this endpoint :))',
 			});
@@ -1205,15 +1212,48 @@ module.exports = function (app) {
 				cursor: null,
 			});
 		} else if (url.includes('/profile')) {
-			return res.status(200).send({
-				user: {},
-				connected_accounts: [],
-				premium_since: null,
-				premium_type: null,
-				premium_guild_since: null,
-				profile_themes_experiment_bucket: -1,
-				user_profile: {},
-			});
+			const BotToken = req.headers.authorization;
+			const url_ = new URL(`https://discord.com${url}`);
+			const id = url_.pathname.match(/\d{17,19}/)[0];
+			// const guild_id = url_.searchParams.get('guild_id');
+			axios
+				.get(`https://discord.com/api/v9/users/${id}`, {
+					headers: {
+						Authorization: BotToken,
+						'Content-Type': 'application/json',
+						'User-Agent': userAgent,
+					},
+				})
+				.then(({ data }) => {
+					return res.status(200).send({
+						user: data,
+						connected_accounts: [],
+						premium_since: null,
+						premium_type: data.banner ? 2 : null,
+						premium_guild_since: null,
+						profile_themes_experiment_bucket: -1,
+						mutual_friends_count: 0,
+						mutual_guilds: [],
+						user_profile: {
+							bio: null,
+							accent_color: data.accent_color,
+							banner: data.banner,
+							popout_animation_particle_type: null,
+							emoji: null,
+						},
+					});
+				})
+				.catch(() => {
+					return res.status(200).send({
+						user: {},
+						connected_accounts: [],
+						premium_since: null,
+						premium_type: null,
+						premium_guild_since: null,
+						profile_themes_experiment_bucket: -1,
+						user_profile: {},
+					});
+				});
 		} else if (
 			[
 				'users/@me/mentions',
@@ -1228,16 +1268,26 @@ module.exports = function (app) {
 		) {
 			return res.status(200).send([]);
 		} else if (url.includes('settings-proto/1')) {
-            if (req.method.toUpperCase() == 'GET') return res.send({
-				settings: PreloadedUserSettings.toBase64(settingDefault.data1),
-			});
-            const callback = (req, res) => {
-                const decoded = PreloadedUserSettings.fromBase64(req.body.settings);
-                settingDefault.data1 = Object.assign(settingDefault.data1, decoded);
-                return res.send({
-                    settings: PreloadedUserSettings.toBase64(settingDefault.data1),
-                });
-            }
+			if (req.method.toUpperCase() == 'GET')
+				return res.send({
+					settings: PreloadedUserSettings.toBase64(
+						settingDefault.data1,
+					),
+				});
+			const callback = (req, res) => {
+				const decoded = PreloadedUserSettings.fromBase64(
+					req.body.settings,
+				);
+				settingDefault.data1 = Object.assign(
+					settingDefault.data1,
+					decoded,
+				);
+				return res.send({
+					settings: PreloadedUserSettings.toBase64(
+						settingDefault.data1,
+					),
+				});
+			};
 			return getDataFromRequest(req, res, callback);
 		} else if (url.includes('settings-proto/2')) {
 			return res.send({
@@ -1251,7 +1301,7 @@ module.exports = function (app) {
 					{
 						headers: {
 							authorization: req.headers.authorization,
-							'user-agent': req.headers['user-agent'],
+							'user-agent': userAgent,
 						},
 					},
 				)

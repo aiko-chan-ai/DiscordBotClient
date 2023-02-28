@@ -2121,6 +2121,8 @@
                         const membersOffline = members_patch.length > 1000 ? [] : members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
                         // Group
                         function getGroup(arr, off) {
+                                // user is sorted alphabetically, not by id
+                                // disable user sorting to increase performance
                                 let all = []
                                 let all2 = []
                                 const list_ = {}
@@ -2138,7 +2140,14 @@
                                                 group: list_[key].group
                                         });
                                         all2.push(list_[key].group);
+                                        /*
                                         all = [...all, ...(list_[key].members.sort((x, y) => (x.userId || x.user.id) - (y.userId || y.user.id)).map(m => {
+                                                return {
+                                                        member: m
+                                                }
+                                        }))]
+                                        */
+                                        all = [...all, ...(list_[key].members.map(m => {
                                                 return {
                                                         member: m
                                                 }
@@ -2153,7 +2162,14 @@
                                                 group: d
                                         });
                                         all2.push(d);
+                                        /*
                                         all = [...all, ...(off.sort((x, y) => (x.userId || x.user.id) - (y.userId || y.user.id)).map(m => {
+                                                return {
+                                                        member: m
+                                                }
+                                        }))]
+                                        */
+                                        all = [...all, ...(off.map(m => {
                                                 return {
                                                         member: m
                                                 }

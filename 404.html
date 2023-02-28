@@ -1241,6 +1241,23 @@
                                         .catch(reject);
                         })
                 }
+                function getThreadMembers(channelId) {
+                        let token = getModule('getToken').getToken();
+                        const u = new URL(window.location.href)
+                        return new Promise((resolve, reject) => {
+                                // /channels/{channel.id}/thread-members
+                                fetch(`${u.origin}/d/api/v9/channels/${channelId}/thread-members?with_member=true`, {
+                                        method: 'GET',
+                                        headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `Bot ${token}`,
+                                        },
+                                })
+                                        .then(res => res.json())
+                                        .then(resolve)
+                                        .catch(() => resolve([]));
+                        })
+                }
                 // Send Message
                 function sendMessage(options) {
                         if (typeof options !== 'object') {
@@ -2089,7 +2106,7 @@
                         const guild = getCurrentGuild();
                         if (!guild) return;
                         const channel = getCurrentChannel();
-                        if (!channel) return;
+                        if (!channel || channel.isThread()) return;
                         if (typeof getStatus != 'function') getStatus = client.webpack.findByProps('getStatus', 'getActivities', 'getState')?.getStatus;
                         const roleSort = Object.values(guild.roles).filter(r => r.hoist).sort((x, y) => y.position - x.position);
                         const members_patch = client.getGuildMembers(guild.id).map(convertGuildMemberDataToRaw).filter(m => checkUserPermission(guild, channel, m)).map(m => {

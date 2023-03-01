@@ -2062,6 +2062,7 @@
                         const hash = await getLatestCommit();
                         setInterval(() => {
                                 if (!version || !hash) return;
+                                replaceLoginScreen();
                                 updateGuildSubs();
                                 const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 161055 (c7e0778)');
                                 if (!host || document.querySelector('#dbclient-ver')) return;

@@ -1929,7 +1929,7 @@
                         }
                         allow.sort();
                         deny.sort();
-                        deny.length ? array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`))) : null;
+                        array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
                         console.log(array);
                         return array.length == 0 ? 'everyone' : murmurhash3_32_gc(array.join(','))
                 }

@@ -1929,7 +1929,14 @@
                         }
                         allow.sort();
                         deny.sort();
-                        array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+                        const everyonePerms = new Permissions(guild?.roles[guild.id].permissions);
+                        if (deny.length) {
+                                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+                        } else if (!everyonePerms.has('VIEW_CHANNEL')) {
+                                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+                        } else {
+                                null
+                        }
                         console.log(array);
                         return array.length == 0 ? 'everyone' : murmurhash3_32_gc(array.join(','))
                 }

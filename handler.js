@@ -1204,6 +1204,9 @@ module.exports = function (app) {
 				'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 			);
 		}
+		if (url.includes('hypesquad/online')) {
+			return res.status(204).send();
+		}
 		if (url.includes('application-commands/search')) {
 			return res.status(200).send({
 				applications: [],

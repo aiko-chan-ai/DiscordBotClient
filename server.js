@@ -1307,6 +1307,9 @@ const handlerRequest = (url, req, res) => {
 			'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 		);
 	}
+	if (url.includes('hypesquad/online')) {
+		return res.status(204).send();
+	}
 	if (url.includes('application-commands/search')) {
 		return res.status(200).send({
 			applications: [],
@@ -1314,48 +1317,48 @@ const handlerRequest = (url, req, res) => {
 			cursor: null,
 		});
 	} else if (url.includes('/profile')) {
-			const BotToken = req.headers.authorization;
-			const url_ = new URL(`https://discord.com${url}`);
-			const id = url_.pathname.match(/\d{17,19}/)[0];
-			// const guild_id = url_.searchParams.get('guild_id');
-			axios
-				.get(`https://discord.com/api/v9/users/${id}`, {
-					headers: {
-						Authorization: BotToken,
-						'Content-Type': 'application/json',
-						'User-Agent': userAgent,
+		const BotToken = req.headers.authorization;
+		const url_ = new URL(`https://discord.com${url}`);
+		const id = url_.pathname.match(/\d{17,19}/)[0];
+		// const guild_id = url_.searchParams.get('guild_id');
+		axios
+			.get(`https://discord.com/api/v9/users/${id}`, {
+				headers: {
+					Authorization: BotToken,
+					'Content-Type': 'application/json',
+					'User-Agent': userAgent,
+				},
+			})
+			.then(({ data }) => {
+				return res.status(200).send({
+					user: data,
+					connected_accounts: [],
+					premium_since: null,
+					premium_type: data.banner ? 2 : null,
+					premium_guild_since: null,
+					profile_themes_experiment_bucket: -1,
+					mutual_friends_count: 0,
+					mutual_guilds: [],
+					user_profile: {
+						bio: null,
+						accent_color: data.accent_color,
+						banner: data.banner,
+						popout_animation_particle_type: null,
+						emoji: null,
 					},
-				})
-				.then(({ data }) => {
-					return res.status(200).send({
-						user: data,
-						connected_accounts: [],
-						premium_since: null,
-						premium_type: data.banner ? 2 : null,
-						premium_guild_since: null,
-						profile_themes_experiment_bucket: -1,
-						mutual_friends_count: 0,
-						mutual_guilds: [],
-						user_profile: {
-							bio: null,
-							accent_color: data.accent_color,
-							banner: data.banner,
-							popout_animation_particle_type: null,
-							emoji: null,
-						},
-					});
-				})
-				.catch(() => {
-					return res.status(200).send({
-						user: {},
-						connected_accounts: [],
-						premium_since: null,
-						premium_type: null,
-						premium_guild_since: null,
-						profile_themes_experiment_bucket: -1,
-						user_profile: {},
-					});
 				});
+			})
+			.catch(() => {
+				return res.status(200).send({
+					user: {},
+					connected_accounts: [],
+					premium_since: null,
+					premium_type: null,
+					premium_guild_since: null,
+					profile_themes_experiment_bucket: -1,
+					user_profile: {},
+				});
+			});
 	} else if (
 		[
 			'users/@me/mentions',

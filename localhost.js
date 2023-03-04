@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const http = require("https");
+require('./arRPC/src/index.js');
 
 const port = 2023;
 

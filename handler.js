@@ -4,7 +4,6 @@ const request = require('request');
 const axios = require('axios');
 const { PreloadedUserSettings } = require('discord-protos');
 const settingDefault = require('./setting-proto.js');
-require('./arRPC/src/index.js');
 const { version } = require('./package.json');
 const userAgent = `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
 

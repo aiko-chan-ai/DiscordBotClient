@@ -1372,22 +1372,12 @@ module.exports = function (app) {
 		const str = req.originalUrl;
 		const trs = str;
 		console.log('Require Assets:', trs);
-		const patchList = [
-			'02be0d5b4681a76d9def.js',
-			'087faa3fe576396cad3c.js',
-		];
+		const patchList = fs.readdirSync(path.resolve(__dirname, 'script'));
 		if (patchList.some((patch) => trs.endsWith(patch))) {
 			res.set('Cache-Control', 'no-store');
 			console.log('Load script target', trs);
-			return res.send(
-				fs.readFileSync(
-					path.resolve(
-						__dirname,
-						'script',
-						trs.replace('/assets/', ''),
-					),
-					{ encoding: 'utf8' },
-				),
+			return res.sendFile(
+				path.resolve(__dirname, 'script', trs.replace('/assets/', '')),
 			);
 		}
 		req.pipe(request('https://discord.com' + trs)).pipe(res);

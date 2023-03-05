@@ -1331,12 +1331,16 @@ module.exports = function (app) {
 		}
 	};
 
+	app.get('/ping', function (req, res) {
+		res.status(200).send('pong');
+	});
+
 	app.all('/d/*', function (req, res) {
 		const str = req.originalUrl;
 		const trs = str.slice('\x32');
 		console.log('URL Request', trs);
 		let headers = {
-			'user-agent': 'DiscordBot (https://nodejs.org, 16.0.0)',
+			'user-agent': userAgent,
 			authorization: `${req.headers.authorization}`,
 		};
 		Object.keys(req.headers).forEach((key) => {

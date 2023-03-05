@@ -502,12 +502,10 @@
                         // Load RPC
                         (() => {
                                 let Dispatcher, lookupAsset, lookupApp, apps = {};
-
-                                const ws = new WebSocket('ws://127.0.0.1:1337'); // connect to arRPC bridge websocket
+                                const ws = new WebSocket(`ws://${location.hostname}:1337`); // connect to arRPC bridge websocket
                                 ws.onmessage = async x => {
                                         msg = JSON.parse(x.data);
                                         console.log(msg);
-
                                         if (!Dispatcher) {
                                                 const wpRequire = window.webpackChunkdiscord_app.push([[Symbol()], {}, x => x]);
                                                 const cache = wpRequire.c;
@@ -522,7 +520,6 @@
                                                                 break;
                                                         }
                                                 }
-
                                                 const factories = wpRequire.m;
                                                 for (const id in factories) {
                                                         if (factories[id].toString().includes('getAssetImage: size must === [number, number] for Twitch')) {
@@ -534,23 +531,17 @@
                                                                 break;
                                                         }
                                                 }
-
                                                 lookupApp = async appId => {
                                                         const res = await fetch(`https://discord.com/api/v9/oauth2/applications/${appId}/rpc`);
                                                         return res.json();
                                                 }
                                         }
-
-                                        // if (msg.activity?.assets?.large_image) msg.activity.assets.large_image = await lookupAsset(msg.activity.application_id, msg.activity.assets.large_image);
-                                        // if (msg.activity?.assets?.small_image) msg.activity.assets.small_image = await lookupAsset(msg.activity.application_id, msg.activity.assets.small_image);
-
                                         if (msg.activity) {
                                                 const appId = msg.activity.application_id;
                                                 if (!apps[appId]) apps[appId] = await lookupApp(appId);
                                                 const app = apps[appId];
                                                 if (!msg.activity.name) msg.activity.name = app.name;
                                         }
-
                                         Dispatcher.dispatch({ type: "LOCAL_ACTIVITY_UPDATE", ...msg }); // set RPC status
                                 };
                         })();

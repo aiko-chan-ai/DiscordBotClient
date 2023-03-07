@@ -1271,9 +1271,6 @@ const handlerRequest = (url, req, res) => {
 	if (url.includes('billing/subscriptions')) {
 		return res.send([]);
 	}
-	if (url.includes('invites') && req.method.toUpperCase() == 'POST') {
-		return res.status(401).send();
-	}
 	if (url.includes('auth/logout')) {
 		return res.status(204).send();
 	}

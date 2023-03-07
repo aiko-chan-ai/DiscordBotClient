@@ -545,9 +545,6 @@
                                         Dispatcher.dispatch({ type: "LOCAL_ACTIVITY_UPDATE", ...msg }); // set RPC status
                                 };
                         })();
-                        // LoadClient
-                        loadClient();
-                        client = new Client();
                 };
                 function recreateNode(el, withChildren) {
                         if (withChildren) {
@@ -1883,7 +1880,7 @@
                                                         inviteKey: e
                                                 })
                                         }
-                                }, b(), console.log("%c[DiscordBotClient] %cLoaded successfully!", "color: purple", "")
+                                }, b(), console.log("%c[DiscordBotClient] %cLoaded successfully!", "color: purple", ""), (client = new Client())
                         }();
                 }
         </script>
@@ -2060,7 +2057,9 @@
                         const hash = await getLatestCommit();
                         setInterval(() => {
                                 if (!version || !hash) return;
-                                if (!client) loadClient();
+                                if (!client) {
+                                        loadClient();
+                                }
                                 updateGuildSubs();
                                 const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 161055 (c7e0778)');
                                 if (!host || document.querySelector('#dbclient-ver')) return;

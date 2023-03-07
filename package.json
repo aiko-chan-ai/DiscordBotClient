@@ -19,6 +19,7 @@
 	"build": {
 		"appId": "DiscordBotClient",
 		"productName": "DiscordBotClient",
+		"electronVersion": "15.5.7",
 		"copyright": "Copyright © 2023 Elysia#1782",
 		"mac": {
 			"category": "public.app-category.social-networking",

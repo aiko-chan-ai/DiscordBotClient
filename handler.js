@@ -176,7 +176,10 @@ module.exports = function (app) {
 					BotToken.replace('Bot ', '').split('.')[0],
 					'base64',
 				).toString();
-				const settings = cacheSettings.get(uid) || settingDefault;
+				if (cacheSettings.get(uid) == undefined) {
+					cacheSettings.set(uid, settingDefault);
+				}
+				const settings = cacheSettings.get(uid);
 				const decoded = PreloadedUserSettings.fromBase64(
 					req.body.settings,
 				);

@@ -309,6 +309,7 @@ module.exports = function (app) {
 		}
 	});
 	app.all('*', (req, res) => {
+		if (req.originalUrl.endsWith('.map')) return res.status(404).send();
 		res.sendFile(path.resolve(__dirname, '404.html'));
 	});
 };

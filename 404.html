@@ -2075,9 +2075,10 @@
                 })()
         </script>
         <script>
-                function convertGuildMemberDataToRaw(data) {
+                function convertGuildMemberDataToRaw(data, allUsers) {
+                        const user = allUsers[data.userId] || { id: data.userId };
                         return {
-                                user: { id: data.userId },
+                                user,
                                 roles: data.roles,
                                 premium_since: data.premiumSince,
                                 pending: data.isPending,
@@ -2110,7 +2111,11 @@
                         if (!channel || channel.isThread()) return;
                         if (typeof getStatus != 'function') getStatus = client.webpack.findByProps('getStatus', 'getActivities', 'getState')?.getStatus;
                         const roleSort = Object.values(guild.roles).filter(r => r.hoist).sort((x, y) => y.position - x.position);
-                        const members_patch = client.getGuildMembers(guild.id).map(convertGuildMemberDataToRaw).filter(m => checkUserPermission(guild, channel, m)).map(m => {
+                        const allGuildsMembers = client.webpack.getModule('getMembers').getMutableAllGuildsAndMembers();
+                        const allUsers = client.webpack.getModule('getUser').getUsers();
+                        const members_patch = Object.values(allGuildsMembers[guild.id])
+                        .map(m => convertGuildMemberDataToRaw(m , allUsers))
+                        .filter(m => checkUserPermission(guild, channel, m)).map(m => {
                                 m.status = getStatus(m.userId || m.user.id) || 'offline'
                                 const role = roleSort.find(r => m.roles.includes(r.id));
                                 m.hoistRoleId = role?.id
@@ -2122,8 +2127,6 @@
                         const membersOffline = members_patch.length > 1000 ? [] : members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
                         // Group
                         function getGroup(arr, off) {
-                                // user is sorted alphabetically, not by id
-                                // disable user sorting to increase performance
                                 let all = []
                                 let all2 = []
                                 const list_ = {}
@@ -2137,17 +2140,15 @@
                                         }
                                 }
                                 for (const key in list_) {
+                                        list_[key].members.sort((x, y) =>
+                                                (x.nick || x.user.username || '').localeCompare(
+                                                        y.nick || y.user.username || '',
+                                                ),
+                                        );
                                         all.push({
                                                 group: list_[key].group
                                         });
                                         all2.push(list_[key].group);
-                                        /*
-                                        all = [...all, ...(list_[key].members.sort((x, y) => (x.userId || x.user.id) - (y.userId || y.user.id)).map(m => {
-                                                return {
-                                                        member: m
-                                                }
-                                        }))]
-                                        */
                                         all = [...all, ...(list_[key].members.map(m => {
                                                 return {
                                                         member: m
@@ -2163,13 +2164,6 @@
                                                 group: d
                                         });
                                         all2.push(d);
-                                        /*
-                                        all = [...all, ...(off.sort((x, y) => (x.userId || x.user.id) - (y.userId || y.user.id)).map(m => {
-                                                return {
-                                                        member: m
-                                                }
-                                        }))]
-                                        */
                                         all = [...all, ...(off.map(m => {
                                                 return {
                                                         member: m
@@ -2197,7 +2191,9 @@
                                 ops,
                                 groups: groups.group,
                                 member_count: client.getGuildMembers(guild.id).length,
-                                online_count: membersOnline.length
+                                online_count: membersOnline.length,
+                                memberCount: client.getGuildMembers(guild.id).length,
+                                type: 'GUILD_MEMBER_LIST_UPDATE',
                         }
                         window.Wxt.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__)
                 }

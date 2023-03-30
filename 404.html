@@ -2184,15 +2184,16 @@
                                 range: [0, 99]
                         }];
                         var id_ = getGuildMemberListId()
-                        console.log("force emit GUILD_MEMBER_LIST_UPDATE with", id_)
+                        console.log("force emit GUILD_MEMBER_LIST_UPDATE with", id_);
+                        let member_count = client.getGuildMembers(guild.id).length;
                         const d__ = {
                                 guild_id: guild.id,
                                 id: id_,
                                 ops,
                                 groups: groups.group,
-                                member_count: client.getGuildMembers(guild.id).length,
+                                member_count,
                                 online_count: membersOnline.length,
-                                memberCount: client.getGuildMembers(guild.id).length,
+                                memberCount: member_count,
                                 type: 'GUILD_MEMBER_LIST_UPDATE',
                         }
                         window.Wxt.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__)

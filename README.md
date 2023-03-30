@@ -1,5 +1,7 @@
 # DiscordBotClient
 
+- Discord Build: [161052 (c7e0778)](https://beta.discord.sale/builds/c7e077847023c7640e5f7ea9d593afb21394f812)
+
 ## Web (out of date, v1.0.9):
 
 > Using extension https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/extension.zip

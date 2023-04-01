@@ -4,6 +4,11 @@ const port = process.env.PORT || 2023;
 
 const app = express();
 
+app.use('*', async (req, res, next) => {
+	res.setHeader('access-control-allow-origin', '*');
+	next();
+});
+
 require('./handler')(app);
 
 app.listen(port, () => {

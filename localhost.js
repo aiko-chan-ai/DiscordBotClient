@@ -23,6 +23,11 @@ const httpsOptions = {
 
 const app = express();
 
+app.use('*', async (req, res, next) => {
+	res.setHeader('access-control-allow-origin', '*');
+	next();
+});
+
 require('./handler')(app);
 
 http.createServer(httpsOptions, app)

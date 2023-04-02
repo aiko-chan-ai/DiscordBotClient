@@ -5,7 +5,7 @@ const log = require('electron-log');
 const path = require("path");
 const fetch = require("node-fetch");
 const package = require("./package.json");
-// const server = require("./server.js");
+const server = require("./server.js");
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");

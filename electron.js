@@ -1,11 +1,11 @@
 const { app, BrowserWindow, systemPreferences, shell, Notification } = require("electron");
-
 const log = require('electron-log');
-
 const path = require("path");
 const fetch = require("node-fetch");
 const package = require("./package.json");
 const server = require("./server.js");
+const { version } = package;
+const userAgent = `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
@@ -50,7 +50,7 @@ function checkUpdate() {
 }
 
 async function createWindow() {
-    checkUpdate();
+    // checkUpdate();
     // Create the browser window.
     const win = new BrowserWindow({
         width: 1920,

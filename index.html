@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=3.0" name="viewport" />
+
+    <!-- section:seometa -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Discord" />
+    <meta property="og:title" content="Discord - A New Way to Chat with Friends & Communities" />
+    <meta property="og:description"
+        content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities." />
+    <meta property="og:image" content="undefined//canary.discord.com/assets/652f40427e1f5186ad54836074898279.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@discord" />
+    <meta name="twitter:creator" content="@discord" />
+    <!-- endsection -->
+    <script>
+        var client;
+        var lasestGuildIdVoiceConnect = 0;
+        var currentChannelId = 0;
+        /*
+        var allGuilds = 0;
+        var loadFullGuild = 0;
+        var readyData;
+        var metadataReady = null;
+        var timeoutReady = null;
+        */
+        var localStorage_ = window.localStorage;
+        var getStatus;
+        var intentBot = localStorage_.getItem('intents');
+        const IntentFlags = {
+            GUILDS: 1 << 0,
+            GUILD_MEMBERS: 1 << 1,
+            GUILD_BANS: 1 << 2,
+            GUILD_EMOJIS_AND_STICKERS: 1 << 3,
+            GUILD_INTEGRATIONS: 1 << 4,
+            GUILD_WEBHOOKS: 1 << 5,
+            GUILD_INVITES: 1 << 6,
+            GUILD_VOICE_STATES: 1 << 7,
+            GUILD_PRESENCES: 1 << 8,
+            GUILD_MESSAGES: 1 << 9,
+            GUILD_MESSAGE_REACTIONS: 1 << 10,
+            GUILD_MESSAGE_TYPING: 1 << 11,
+            DIRECT_MESSAGES: 1 << 12,
+            DIRECT_MESSAGE_REACTIONS: 1 << 13,
+            DIRECT_MESSAGE_TYPING: 1 << 14,
+            MESSAGE_CONTENT: 1 << 15,
+            GUILD_SCHEDULED_EVENTS: 1 << 16,
+            // https://discord.com/developers/docs/topics/gateway#list-of-intents
+            AUTO_MODERATION_CONFIGURATION: 1 << 20,
+            AUTO_MODERATION_EXECUTION: 1 << 21,
+        };
+        class BitField {
+            constructor(bits = this.constructor.defaultBit) {
+                this.bitfield = this.constructor.resolve(bits);
+            }
+            any(bit) {
+                return (this.bitfield & this.constructor.resolve(bit)) !== this.constructor.defaultBit;
+            }
+            equals(bit) {
+                return this.bitfield === this.constructor.resolve(bit);
+            }
+            has(bit) {
+                bit = this.constructor.resolve(bit);
+                return (this.bitfield & bit) === bit;
+            }
+            missing(bits, ...hasParams) {
+                return new this.constructor(bits).remove(this).toArray(...hasParams);
+            }
+            freeze() {
+                return Object.freeze(this);
+            }
+            add(...bits) {
+                let total = this.constructor.defaultBit;
+                for (const bit of bits) {
+                    total |= this.constructor.resolve(bit);
+                }
+                if (Object.isFrozen(this)) return new this.constructor(this.bitfield | total);
+                this.bitfield |= total;
+                return this;
+            }
+            remove(...bits) {
+                let total = this.constructor.defaultBit;
+                for (const bit of bits) {
+                    total |= this.constructor.resolve(bit);
+                }
+                if (Object.isFrozen(this)) return new this.constructor(this.bitfield & ~total);
+                this.bitfield &= ~total;
+                return this;
+            }
+            serialize(...hasParams) {
+                const serialized = {};
+                for (const [flag, bit] of Object.entries(this.constructor.FLAGS)) serialized[flag] = this.has(bit, ...hasParams);
+                return serialized;
+            }
+            toArray(...hasParams) {
+                return Object.keys(this.constructor.FLAGS).filter(bit => this.has(bit, ...hasParams));
+            }
+            toJSON() {
+                return typeof this.bitfield === 'number' ? this.bitfield : this.bitfield.toString();
+            }
+            valueOf() {
+                return this.bitfield;
+            }
+            *[Symbol.iterator]() {
+                yield* this.toArray();
+            }
+            static resolve(bit) {
+                const { defaultBit } = this;
+                if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
+                if (bit instanceof BitField) return bit.bitfield;
+                if (Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, defaultBit);
+                if (typeof bit === 'string') {
+                    if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
+                    if (!isNaN(bit)) return typeof defaultBit === 'bigint' ? BigInt(bit) : Number(bit);
+                }
+                throw new RangeError('BITFIELD_INVALID', bit);
+            }
+        }
+        BitField.FLAGS = {};
+        BitField.defaultBit = 0;
+        class Intents extends BitField { }
+        Intents.FLAGS = IntentFlags;
+        const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
+        function updateIntentsText() {
+            const intents = new Intents(intentBot ?? 0);
+            const input_ = document.getElementsByClassName("label-7akf7- eyebrow-2wJAoF defaultColor-3Olr-9 defaultMarginlabel-26Urq5")[0]
+            if (!input_) return;
+            input_.innerHTML = `Bot Token | Intents: ${intents.toArray().filter(i => ['MESSAGE_CONTENT', 'GUILD_PRESENCES', 'GUILD_MEMBERS'].includes(i)).join(', ')}`;
+            return input_;
+        }
+        function recreateNode(el, withChildren) {
+            if (withChildren) {
+                el.parentNode.replaceChild(el.cloneNode(true), el);
+            }
+            else {
+                var newEl = el.cloneNode(false);
+                while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+                el.parentNode.replaceChild(newEl, el);
+            }
+        }
+        var callSetIntents = (reload = false) => {
+            const privilegedIntents = [];
+            alert("Login with bot requires privileged intent `MESSAGE_CONTENT`\n\nMake sure you have enabled this intent in the bot settings.");
+            if (!confirm('[Optional] Do you want to use the `GUILD_PRESENCES` intent?')) {
+                privilegedIntents.push('GUILD_PRESENCES');
+            }
+            if (!confirm('[Optional] Do you want to use the `GUILD_MEMBERS` intent?')) {
+                privilegedIntents.push('GUILD_MEMBERS');
+            }
+            intentBot = getIntents(...privilegedIntents);
+            localStorage_.setItem('intents', intentBot);
+            reload ? updateIntentsText() : location.reload();
+        }
+        function replaceLoginScreen() {
+
+            let buttonLogin = document.getElementsByClassName(
+                'marginBottom8-emkd0_ button-1cRKG6 button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeLarge-2xP3-w fullWidth-3M-YBR grow-2T4nbg',
+            )[0];
+            if (buttonLogin) {
+                if (!intentBot) {
+                    callSetIntents();
+                } else {
+                    clearInterval(i);
+                }
+                buttonLogin.addEventListener('click', () => {
+                    const input = document.getElementsByClassName(
+                        'inputDefault-Ciwd-S input-3O04eu',
+                    )[0];
+                    DiscordTools.webpack.findByProps('loginToken').loginToken(input.value);
+                });
+                const email = document.getElementsByClassName('marginBottom20-315RVT')[0];
+                email.parentElement.removeChild(email);
+                const input_ = updateIntentsText();
+                input_.id = 'token';
+                const QR = document.getElementsByClassName(
+                    'transitionGroup-14WiKS qrLogin-1ejtpI',
+                )[0];
+                QR.parentElement.removeChild(QR);
+                const dot = document.getElementsByClassName('verticalSeparator-2r9gHa')[0];
+                dot.parentElement.removeChild(dot);
+                const need_an_acc =
+                    document.getElementsByClassName('needAccount-MrvMN7')[0];
+                need_an_acc.innerHTML = 'Need a bot?';
+                let reg = document.getElementsByClassName(
+                    'smallRegisterLink-1qEJhz linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                reg.innerHTML = 'Create one here';
+                recreateNode(reg, true);
+                reg = document.getElementsByClassName(
+                    'smallRegisterLink-1qEJhz linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                reg.addEventListener('click', () => {
+                    // redirect to bot maker
+                    window.open('https://discord.com/developers/applications');
+                });
+                let forgot_pw = document.getElementsByClassName(
+                    'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                forgot_pw.innerHTML = `Do you want to set new intents? Click here`;
+                recreateNode(forgot_pw, true);
+                forgot_pw = document.getElementsByClassName(
+                    'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                forgot_pw.addEventListener('click', () => {
+                    callSetIntents(true);
+                });
+            }
+
+        }
+        i = setInterval(() => {
+            replaceLoginScreen();
+        }, 250);
+        function getGuildMember(gid, mid) {
+            let token = DiscordTools.webpack.findByProps('getToken').getToken();
+            const u = new URL(window.location.href)
+            return new Promise((resolve, reject) => {
+                fetch(`${u.origin}/d/api/v10/guilds/${gid}/members/${mid}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bot ${token}`,
+                    },
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(reject);
+            })
+        }
+        function getThreadMembers(channelId) {
+            let token = DiscordTools.webpack.findByProps('getToken').getToken();
+            const u = new URL(window.location.href)
+            return new Promise((resolve, reject) => {
+                // /channels/{channel.id}/thread-members
+                fetch(`${u.origin}/d/api/v10/channels/${channelId}/thread-members?with_member=true`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bot ${token}`,
+                    },
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(() => resolve([]));
+            })
+        }
+    </script>
+    <script>
+        var getModule;
+        window.onload = () => {
+            !function () { "use strict"; function e() { let e = window.webpackChunkdiscord_app.push([[Symbol()], {}, e => e]); return window.webpackChunkdiscord_app.pop(), e } function t() { let t = []; for (let n of Object.values(e().c)) n.exports && n.exports !== window && t.push(n.exports); return t } function n(e) { return t().find(e) } function r(e) { return t().filter(e) } function o(e, t = !1) { var o = t ? [] : null; let i = (t ? r : n)(function (n) { let r = e(n); return r && (t ? o.push(r) : o = r), r }); return t ? o.map((e, t) => "string" == typeof e ? i[t][e] : i[t]) : "string" == typeof o ? i[o] : i } function i(e, t) { if (e?.displayName === t || "function" == typeof e?.getName && e.getName() === t) return !0; for (let n of Object.getOwnPropertyNames(e)) { try { e[n] } catch { console.warn("%c[discord.js-pure] %cFailed to access property", "color: purple", "", n, e); continue } if (e[n]?.displayName === t || "function" == typeof e[n]?.getName && e[n]?.getName() === t) return n } } function s(e, t) { var n = null; for (let r of t) { if (e && ["object", "function"].includes(typeof e) && r in e) continue; let o = null; for (let i of Object.getOwnPropertyNames(e)) { if ("default" !== i && i.length > 3) continue; let s = e[i]; if (s && ["object", "function"].includes(typeof s) && r in s) { o = i; break } } if (!o) return; n = o } return n || !0 } function l(t, n = !1) { if ("string" == typeof t) { let r = t; t = { test: e => !!e.includes && e.includes(r) } } let { m: o, c: i } = e(), s = Object.entries(o).filter(([, e]) => t.test(e.toString())); if (!n) return i[s.find(([e]) => i[e]?.exports)?.[0] || null]?.exports; { let l = []; for (let [a] of s) { let u = i[a]?.exports; u && l.push(u) } return l } } var a = { get modules() { return t() }, find: n, findAll: r, findByID: t => e().c[t = parseInt(t)]?.exports, findByDisplayName: e => o(t => i(t, e)), findByDisplayNameAll: e => o(t => i(t, e), !0), findByProps: (...e) => o(t => s(t, e)), findByPropsAll: (...e) => o(t => s(t, e), !0), findByCode: e => l(e), findByCodeAll: e => l(e, !0), _getModule(e, t = !1) { if (e.length > 1) return this.findByProps(...e); if (e[0] instanceof RegExp) return l(e[0], t); if (Array.isArray(e[0])) return (t ? this.findByPropsAll : this.findByProps)(...e[0]); { let a = e[0]; switch (typeof a) { case "function": return (t ? r : n)(a); case "number": return this.findByID(a); default: return o(e => i(e, a) || s(e, [a]), t) } } }, getModule(...e) { return this._getModule(e) }, getModules(...e) { return this._getModule(e, !0) } }; function u(e) { let t; return () => t ?? (t = e()) } let d = function (e) { let t = u(e); return new Proxy(function () { }, { get: (e, n) => t()[n], set: (e, n, r) => t()[n] = r, has: (e, n) => n in t(), apply: (e, n, r) => t().apply(n, r), ownKeys: () => Reflect.ownKeys(t()), construct: (e, n) => Reflect.construct(t(), n), deleteProperty: (e, n) => delete t()[n], defineProperty: (e, n, r) => !!Object.defineProperty(t(), n, r), getPrototypeOf: () => Object.getPrototypeOf(t()) }) }; var c = Object.freeze({ __proto__: null, makeLazy: u, lazy: d }), p = d(() => ({ datetime: a.findByProps("parseZone"), hljs: a.findByProps("highlight"), markdown: a.findByProps("parseBlock"), string: a.findByProps("toASCII"), timestamp: a.findByProps("fromTimestamp"), URL: a.findByProps("Url"), app: a.findByProps("os"), constants: a.findByProps("ACTIVITY_PLATFORM_TYPES"), React: a.findByProps("createElement"), ReactDOM: a.findByProps("render"), strings: a.findByProps("DISCORD_DESC_SHORT"), analytics: a.findByProps("AnalyticEventConfigs"), dispatcher: a.findByProps("getUsers")._dispatcher, http: a.findByProps("getAPIBaseURL"), socket: a.findByProps("getSocket").getSocket(), transitionTo: a.findByCode("transitionTo - ") })); let { datetime: g, hljs: f, markdown: h, string: y, timestamp: m, URL: M } = p, w = e => new Promise(t => setTimeout(t, e)), _ = d(() => new (a.findByProps("logger")).logger.constructor("discord.js-pure")); function b() { let e = document.createElement("iframe"); return document.body.appendChild(e), window.localStorage ??= e.contentWindow?.localStorage, e.remove(), window.localStorage } let v = (e, t, n) => a.findByProps("createBotMessage").createBotMessage(e, t, n), P = (e, t) => a.findByProps("receiveMessage").receiveMessage(e, t), T = e => a.findByProps("setDeveloperOptionSettings").setDeveloperOptionSettings(e), B = e => a.findByProps("toggleGuildFolderExpand").toggleGuildFolderExpand(e); var C = Object.freeze({ __proto__: null, datetime: g, hljs: f, markdown: h, string: y, timestamp: m, URL: M, random: function (e, t) { return t < e && ([e, t] = [t, e]), Math.floor(Math.random() * (t - e)) + e }, sleep: w, logger: _, loadLocalStorage: b, createCommand: function (e, t, n, r, o, i = 0) { _.log(`Registering command ${e}...`); let s = a.findByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS; n.forEach(e => { e.displayName = e.name, e.displayDescription = e.description, e.choices && e.choices.forEach(e => { e.displayName = e.name }) }); let l = function (e) { e.forEach(e => { delete e.focused }), o(e) }; s.push({ applicationId: "-1", description: t, displayDescription: t, displayName: e, id: `-${s.length + 1}`, execute: l, name: e, inputType: i, options: n, type: r }) }, createMessage: v, sendLocalMessage: P, editDeveloperOptions: T, toggleGuildFolder: B, lazy: c }); let k = new Map, G = []; var S = { _patchModule(e, t, n, r, o) { if (!t) throw TypeError("Must specify the module to patch"); if (!n) throw TypeError("Must specify what function to patch"); if ("function" != typeof t[n]) throw TypeError("Function to patch not found"); if (!r) throw TypeError("Must specify a callback"); o = o || Symbol(); let i = t[n]; k[n] || (k[n] = t[n]); let s = G.find(e => e.signature === o); s || G.push({ signature: o, patchType: e, patchOn: n, callback: r }); let l = () => this.unpatch(t, n, o); switch (e) { case "before": return i = t[n], t[n] = function () { let e = r.apply(this, arguments); function t(e, t, n) { return e?.result ? e.result : e?.arguments ? i.apply(t, e.arguments) : i.apply(t, n) } return e instanceof Promise ? e.then(e => t(e, this, arguments)) : t(e, this, arguments) }, l; case "after": return i = t[n], t[n] = function () { let e = i.apply(this, arguments); return e instanceof Promise ? e.then(e => r.apply(this, [arguments, e])) : r.apply(this, [arguments, e]) }, l; case "instead": return i = t[n], t[n] = r, l; default: throw TypeError("Invalid patch type, must be one of: [before, after, instead]") } }, before(e, t, n, r) { this._patchModule("before", e, t, n, r) }, instead(e, t, n, r) { this._patchModule("instead", e, t, n, r) }, after(e, t, n, r) { this._patchModule("after", e, t, n, r) }, unpatch(e, t, n) { if (!e) throw TypeError("You must specify a module to unpatch"); if (!t) throw TypeError("You must specify a function to unpatch"); if (void 0 === n) { e[t] = k[t]; for (var r = 0; r < G.length; r += 1)G[r].patchOn == t && G.splice(r, 1) } else for (let o of (this.unpatchAll(e, t), !function (e) { for (var t = 0; t < G.length; t += 1)G[t].signature == e && G.splice(t, 1) }(n), G)) this._patchModule(o.patchType, e, o.patchOn, o.callback, o.signature) }, unpatchAll(e, t) { if (!e) throw TypeError("You must specify a module to unpatch"); if (!t) throw TypeError("You must specify a function to unpatch"); e[t] = k[t] } }; let I = e => a.findByProps("loginToken").loginToken(e), O = e => a.findByProps("hideToken").getToken(e), E = () => a.getModule("getLastSelectedGuildId").getGuildId(), j = () => a.getModule("getLastSelectedChannelId").getChannelId(), { transitionTo: D } = p; function A(e) { let t = []; for (let n of Object.getOwnPropertyNames(D)) { let r = D[n]; "function" == typeof r && r.toString().includes(e) && t.push(r) } return t.length > 1 ? t : t?.[0] } var N = { get history() { let R = A("(){return"); for (let U of R) { let F = U(); if (F) return F } }, route: e => A("transitionTo - Transitioning to ")(e), replace: e => A("Replacing route with ")(e), back: () => A(".goBack()")(), forward: () => A(".goForward()")(), guild: e => A("transitionToGuild")(e), channel(e) { return this.message(e) }, message(e, t) { let n = a.findByProps("getChannel").getChannel(e)?.guild_id; return A("transitionToGuild")(n, e, t) } }; let { React: x, ReactDOM: L } = p; var z = Object.freeze({ __proto__: null, React: x, ReactDOM: L, showToast: function (e, t) { a.findByProps("showToast").showToast({ message: e, type: t || 0 }) }, showNotification: function (e, t, n = "https://cdn.discordapp.com/embed/avatars/0.png", { sound: r = "message1", volume: o = .4 }) { a.findByProps("showNotification").showNotification(n, e, t, null, { sound: r, volume: o }) }, playSound: function (e = "message1", t = .4) { a.findByProps("playSound").playSound(e, t) } }); let { socket: q, dispatcher: Y, http: $, strings: K, constants: W, app: Q, analytics: H } = p, { currentGuild: V, currentChannel: Z } = { get currentGuild() { a.getModule("getGuild", "getGuilds").getGuild(E()) }, get currentChannel() { a.getModule("hasChannel").getChannel(j()) } }; var J = Object.freeze({ __proto__: null, __version__: { version: "5.0", nightly: !0 }, socket: q, dispatcher: Y, http: $, strings: K, constants: W, app: Q, analytics: H, currentGuild: V, currentChannel: Z, utils: C, transitionTo: N, ui: z, webpack: a, patcher: S, dispatch: function (e, t) { _.verbose(`DirtyDispatching ${e.toUpperCase()}...`), t.type = e.toUpperCase(); let { dispatcher: n } = p; n.isDispatching() ? setTimeout(n.dispatch.bind(n, t), 0) : n.dispatch(t) }, loginToken: I, getToken: O }); window.DiscordTools = J, window.Client = class { constructor() { this.events = {}, this._connected = !1 } get connected() { return this._connected } connect() { S.after(p.socket, "_handleDispatchWithoutQueueing", (async function (e, t) { await this.emit(e[1].toLowerCase(), e[0]) }).bind(this), "__discord.js-pure_internal_client_hook"), this._connected = !0, _.info("Successfully hooked into the client!") } disconnect() { S.unpatch(p.socket, "_handleDispatchWithoutQueueing", "__discord.js-pure_internal_client_hook"), this._connected = !1, _.info("Successfully unhooked from the client!") } on(e, t, n = !1) { if (n) return void 0 === this.events[e] && (this.events[e] = []), this.events[e].push(t), () => this.events[e].splice(this.events[e].indexOf(t), 1); { let r = (async function (e) { this._connected && await t(e) }).bind(this); return p.dispatcher.subscribe(e.toUpperCase(), r), () => p.dispatcher.unsubscribe(e.toUpperCase(), r) } } async emit(e, t) { if (void 0 !== this.events[e]) for (let n of this.events[e]) try { await n(t) } catch (r) { _.error(`Error in '${e}', callback: '${r}'`) } } get sessionID() { return a.getModule("getSessionId").getSessionId() } get fingerprint() { return a.getModule("getFingerprint").getFingerprint() } get requiredAction() { return a.getModule("getAction").getAction() } get user() { return a.getModule("getCurrentUser").getCurrentUser() } get guilds() { return a.getModule("getGuild", "getGuilds").getGuilds() } get guildFolders() { return a.getModule("getSortedGuilds").getSortedGuilds() } get privateChannels() { return a.getModule("getMutablePrivateChannels").getSortedPrivateChannels() } getGuild(e) { return a.getModule("getGuild", "getGuilds").getGuild(e) } joinGuild(e, t = !1) { return a.getModule("joinGuild").joinGuild(e, { lurker: t }) } getGuildChannels(e) { return Object.values(a.getModule("getMutableGuildChannelsForGuild").getMutableGuildChannelsForGuild(e)) } getChannel(e) { return a.getModule("hasChannel").getChannel(e) } getChannelThreads(e) { return a.getModule("getAllThreadsForParent").getAllThreadsForParent(e) } createDM(...e) { return a.getModule("openPrivateChannel").openPrivateChannel(e).then(e => this.getChannel(e)) } getUser(e) { return a.getModule("getUser").getUser(e) } getGuildMember(e, t) { return a.getModule("getMember").getMember(e, t) } getGuildMembers(e) { return a.getModule("getMembers").getMembers(e) } requestGuildMembers(e, { query: t = "", limit: n = 10, presences: r = !0, userIDs: o = [] }) { return o ? a.getModule("requestMembers").requestMembersById(e, o, r) : a.getModule("requestMembers").requestMembers(e, t, n, r) } startTyping(e) { return a.getModule("startTyping").startTyping(e) } stopTyping(e) { return a.getModule("stopTyping").stopTyping(e) } getChannelMessages(e) { return a.getModule("getMessages").getMessages(e) } sendMessage(e, t = "", { tts: n = !1, messageReference: r = null, allowedMentions: o = null, stickerIDs: i = null }) { if (!t && !i) throw TypeError("Must provide either content or stickerIDs"); if (!e) throw TypeError("Must provide a channel ID"); let s = {}; return null != r && (s.messageReference = r), null != o && (s.allowedMentions = o), null != i && (s.stickerIds = i), a.getModule("sendMessage").sendMessage(e, { content: t, tts: n, invalidEmojis: [], validNonShortcutEmojis: [] }, null, s) } sendEphemeralMessage(e, t = "", n, { author: r, type: o = 0, tts: i = !1, stickerIDs: s = [], messageReference: l, allowedMentions: a }) { let u = v(e, t, n); return u.author = r || this.user, u.type = o, u.tts = i, u.sticker_ids = s, u.message_reference = l, u.allowed_mentions = a, P(u.channel_id, u) } sendClydeMessage(e, t, n) { return a.getModule("sendBotMessage").sendBotMessage(e, t, n) } sendClydeError(e) { return a.getModule("sendBotMessage").sendClydeError(e) } acceptInvite(e, t = !0) { e = e.replace(/(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite|discord\.com\/invite)\/?/, ""); let n = a.getModule("acceptInvite"); return (t ? n.acceptInviteAndTransitionToInviteChannel : n.acceptInvite)({ inviteKey: e }) } }, b(), console.log("%c[discord.js-pure] %cLoaded successfully!", "color: purple", "") }();
+            client = new Client();
+            getModule = DiscordTools.webpack.findByProps;
+        }
+    </script>
+    <script>
+        const VIEW_CHANNEL_PERMISSION = 1n << 10n;
+        function checkBitfield(permission) {
+            return (permission & VIEW_CHANNEL_PERMISSION) === VIEW_CHANNEL_PERMISSION;
+        }
+        function getCurrentChannel() {
+            return DiscordTools.webpack.getModule("hasChannel").getChannel(currentChannelId)
+        }
+        function getCurrentGuild() {
+            return DiscordTools.webpack.getModule("getGuild", "getGuilds").getGuild(DiscordTools.webpack.findByProps('getLastSelectedGuildId').getLastSelectedGuildId())
+        }
+        function getGuildMemberListId() {
+            const channel = getCurrentChannel();
+            let array = [];
+            const allow = [];
+            const deny = [];
+            const guild = getCurrentGuild();
+            if (!guild || !channel) return null;
+            const allId = Object.keys(channel.permissionOverwrites);
+            for (const id of allId) {
+                if (checkBitfield(channel.permissionOverwrites[id].allow)) {
+                    allow.push(`${id}`)
+                }
+                if (checkBitfield(channel.permissionOverwrites[id].deny)) {
+                    deny.push(`${id}`)
+                }
+            }
+            allow.sort();
+            deny.sort();
+            const everyonePerms = new Permissions(guild?.roles[guild.id].permissions);
+            if (deny.length) {
+                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+            } else if (!everyonePerms.has('VIEW_CHANNEL')) {
+                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+            } else {
+                null
+            }
+            console.log(array);
+            return array.length == 0 ? 'everyone' : DiscordTools.webpack.findByProps('v3').v3(array.join(','))
+        }
+        function checkUserPermission(guild, channel, user) {
+            const permission = checkPermissionGuild(guild, channel, user);
+            return permission.has('VIEW_CHANNEL');
+        }
+
+        class Permissions extends BitField {
+            missing(bits, checkAdmin = true) {
+                return checkAdmin && this.has(this.constructor.FLAGS.ADMINISTRATOR) ? [] : super.missing(bits);
+            }
+            any(permission, checkAdmin = true) {
+                return (checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) || super.any(permission);
+            }
+            has(permission, checkAdmin = true) {
+                return (checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) || super.has(permission);
+            }
+            toArray() {
+                return super.toArray(false);
+            }
+        }
+        Permissions.FLAGS = {
+            CREATE_INSTANT_INVITE: 1n << 0n,
+            KICK_MEMBERS: 1n << 1n,
+            BAN_MEMBERS: 1n << 2n,
+            ADMINISTRATOR: 1n << 3n,
+            MANAGE_CHANNELS: 1n << 4n,
+            MANAGE_GUILD: 1n << 5n,
+            ADD_REACTIONS: 1n << 6n,
+            VIEW_AUDIT_LOG: 1n << 7n,
+            PRIORITY_SPEAKER: 1n << 8n,
+            STREAM: 1n << 9n,
+            VIEW_CHANNEL: 1n << 10n,
+            SEND_MESSAGES: 1n << 11n,
+            SEND_TTS_MESSAGES: 1n << 12n,
+            MANAGE_MESSAGES: 1n << 13n,
+            EMBED_LINKS: 1n << 14n,
+            ATTACH_FILES: 1n << 15n,
+            READ_MESSAGE_HISTORY: 1n << 16n,
+            MENTION_EVERYONE: 1n << 17n,
+            USE_EXTERNAL_EMOJIS: 1n << 18n,
+            VIEW_GUILD_INSIGHTS: 1n << 19n,
+            CONNECT: 1n << 20n,
+            SPEAK: 1n << 21n,
+            MUTE_MEMBERS: 1n << 22n,
+            DEAFEN_MEMBERS: 1n << 23n,
+            MOVE_MEMBERS: 1n << 24n,
+            USE_VAD: 1n << 25n,
+            CHANGE_NICKNAME: 1n << 26n,
+            MANAGE_NICKNAMES: 1n << 27n,
+            MANAGE_ROLES: 1n << 28n,
+            MANAGE_WEBHOOKS: 1n << 29n,
+            MANAGE_EMOJIS_AND_STICKERS: 1n << 30n,
+            USE_APPLICATION_COMMANDS: 1n << 31n,
+            REQUEST_TO_SPEAK: 1n << 32n,
+            MANAGE_EVENTS: 1n << 33n,
+            MANAGE_THREADS: 1n << 34n,
+            CREATE_PUBLIC_THREADS: 1n << 35n,
+            CREATE_PRIVATE_THREADS: 1n << 36n,
+            SEND_MESSAGES_IN_THREADS: 1n << 38n,
+            START_EMBEDDED_ACTIVITIES: 1n << 39n,
+            MODERATE_MEMBERS: 1n << 40n,
+        };
+        Permissions.ALL = Object.values(Permissions.FLAGS).reduce((all, p) => all | p, 0n);
+        Permissions.DEFAULT = BigInt(104324673);
+        Permissions.STAGE_MODERATOR =
+            Permissions.FLAGS.MANAGE_CHANNELS | Permissions.FLAGS.MUTE_MEMBERS | Permissions.FLAGS.MOVE_MEMBERS;
+        Permissions.defaultBit = BigInt(0);
+        // Discord.js Bitfield
+        function checkPermissionGuild(guild, channel, member) {
+            if (guild.ownerId == (member?.user?.id || member.userId)) return new Permissions(Permissions.ALL).freeze();
+            const roles = Object.keys(guild.roles).filter(r => member.roles.includes(r) || r == guild.id);
+            const permissions = new Permissions(roles.map(role => guild.roles[role].permissions));
+            if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+                return new Permissions(Permissions.ALL).freeze();
+            }
+            const overwrites = overwritesFor(member, roles, channel);
+            return permissions
+                .remove(overwrites.everyone?.deny ?? Permissions.defaultBit)
+                .add(overwrites.everyone?.allow ?? Permissions.defaultBit)
+                .remove(overwrites.roles.length > 0 ? overwrites.roles.map(role => role.deny) : Permissions.defaultBit)
+                .add(overwrites.roles.length > 0 ? overwrites.roles.map(role => role.allow) : Permissions.defaultBit)
+                .remove(overwrites.member?.deny ?? Permissions.defaultBit)
+                .add(overwrites.member?.allow ?? Permissions.defaultBit)
+                .freeze();
+        }
+        function overwritesFor(member, roles, channel) {
+            if (!member) return [];
+            const roleOverwrites = [];
+            let memberOverwrites;
+            let everyoneOverwrites;
+
+            for (const overwrite of Object.values(channel.permissionOverwrites)) {
+                if (overwrite.id === channel.guild_id) {
+                    everyoneOverwrites = overwrite;
+                } else if (roles.includes(overwrite.id)) {
+                    roleOverwrites.push(overwrite);
+                } else if (overwrite.id === (member?.user?.id || member.userId)) {
+                    memberOverwrites = overwrite;
+                }
+            }
+
+            return {
+                everyone: everyoneOverwrites,
+                roles: roleOverwrites,
+                member: memberOverwrites,
+            };
+        }
+    </script>
+    <script>
+        (async () => {
+            function checkUpdate() {
+                return new Promise((resolve, reject) => {
+                    fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest")
+                        .then((res) => res.json())
+                        .then(res => resolve(res.tag_name))
+                        .catch((e) => resolve('0.0.0'))
+                });
+            }
+            function getLatestCommit() {
+                return new Promise((resolve, reject) => {
+                    fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/commits")
+                        .then((res) => res.json())
+                        .then(res => resolve(res[0].sha.slice(0, 6)))
+                        .catch((e) => resolve('000000'))
+                });
+            }
+            const version = await checkUpdate();
+            const hash = await getLatestCommit();
+            setInterval(() => {
+                if (!version || !hash) return;
+                updateGuildSubs();
+                const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'canary 185845 (151343e)');
+                if (!host || document.querySelector('#dbclient-ver')) return;
+                const el = document.createElement('span');
+                el.id = 'dbclient-ver';
+                el.textContent = `BotClient ${version} (${hash})`;
+                el.onclick = () => window.open('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
+                host.append(document.createTextNode('\n'), el);
+            }, 2_000);
+        })()
+    </script>
+    <script>
+        function convertGuildMemberDataToRaw(data, allUsers) {
+            const user = allUsers[data.userId] || { id: data.userId };
+            return {
+                user,
+                roles: data.roles,
+                premium_since: data.premiumSince,
+                pending: data.isPending,
+                nick: data.nick,
+                joined_at: data.joinedAt,
+                flags: data.flags,
+                communication_disabled_until: data.communicationDisabledUntil,
+                avatar: data.avatar
+            }
+        }
+        function convertUserToRaw(data) {
+            return {
+                "username": data.username,
+                "id": data.id,
+                "display_name": null,
+                "discriminator": data.discriminator,
+                "bot": data.bot,
+                "avatar": "93d46972bd7707f8466f755dcf7222ec",
+                "publicFlags": data.publicFlags,
+                "avatarDecoration": data.avatarDecoration
+            }
+        }
+        function updateGuildSubs(channelId) {
+            channelId ? currentChannelId = channelId : null;
+            const guild = getCurrentGuild();
+            if (!guild) return;
+            const channel = getCurrentChannel();
+            if (!channel || channel.isThread()) return;
+            if (typeof getStatus != 'function') getStatus = DiscordTools.webpack.findByProps('getStatus', 'getActivities', 'getState')?.getStatus;
+            const roleSort = Object.values(guild.roles).filter(r => r.hoist).sort((x, y) => y.position - x.position);
+            const allGuildsMembers = DiscordTools.webpack.findByProps('getMembers').getMutableAllGuildsAndMembers();
+            const allUsers = DiscordTools.webpack.findByProps('getUser').getUsers();
+            const members_patch = Object.values(allGuildsMembers[guild.id])
+                .map(m => convertGuildMemberDataToRaw(m, allUsers))
+                .filter(m => checkUserPermission(guild, channel, m)).map(m => {
+                    m.status = getStatus(m.userId || m.user.id) || 'offline'
+                    const role = roleSort.find(r => m.roles.includes(r.id));
+                    m.hoistRoleId = role?.id
+                    if (!role) m.position = 0;
+                    else m.position = role.position;
+                    return m;
+                });
+            const membersOnline = members_patch.filter(m => m.status !== 'offline').sort((x, y) => y.position - x.position);
+            const membersOffline = members_patch.length > 1000 ? [] : members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
+            // Group
+            function getGroup(arr, off) {
+                let all = []
+                let all2 = []
+                const list_ = {}
+                for (const member of arr) {
+                    list_[member.hoistRoleId || 'online'] = {
+                        group: {
+                            id: member.hoistRoleId || 'online',
+                            count: (list_[member.hoistRoleId || 'online']?.group?.count || 0) + 1
+                        },
+                        members: [member, ...(list_[member.hoistRoleId || 'online']?.members || [])]
+                    }
+                }
+                for (const key in list_) {
+                    list_[key].members.sort((x, y) =>
+                        (x.nick || x.user.username || '').localeCompare(
+                            y.nick || y.user.username || '',
+                        ),
+                    );
+                    all.push({
+                        group: list_[key].group
+                    });
+                    all2.push(list_[key].group);
+                    all = [...all, ...(list_[key].members.map(m => {
+                        return {
+                            member: m
+                        }
+                    }))]
+                }
+                if (off.length > 0) {
+                    let d = {
+                        id: "offline",
+                        count: off.length
+                    }
+                    all.push({
+                        group: d
+                    });
+                    all2.push(d);
+                    all = [...all, ...(off.map(m => {
+                        return {
+                            member: m
+                        }
+                    }))]
+                }
+                return {
+                    ops: all,
+                    group: all2,
+                }
+            }
+            var groups = getGroup(membersOnline, membersOffline)
+            groups.ops.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
+            groups.group.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
+            var ops = [{
+                items: groups.ops,
+                op: "SYNC",
+                range: [0, 99]
+            }];
+            var id_ = getGuildMemberListId()
+            console.log("force emit GUILD_MEMBER_LIST_UPDATE with", id_);
+            let member_count = Object.values(allGuildsMembers[guild.id]).length;
+            const d__ = {
+                guild_id: guild.id,
+                id: id_,
+                ops,
+                groups: groups.group,
+                member_count,
+                online_count: membersOnline.length,
+                memberCount: member_count,
+                type: 'GUILD_MEMBER_LIST_UPDATE',
+            }
+            window.Wxt.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__)
+        }
+    </script>
+    <script>window.GLOBAL_ENV = {
+            API_ENDPOINT: '//' + window.location.host + '/d/api',
+            API_VERSION: 10,
+            GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
+            WEBAPP_ENDPOINT: "//" + window.location.host,
+            CDN_HOST: 'cdn.discordapp.com',
+            ASSET_ENDPOINT: "//" + window.location.host,
+            MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
+            WIDGET_ENDPOINT: '//canary.discord.com/widget',
+            INVITE_HOST: 'discord.gg',
+            GUILD_TEMPLATE_HOST: 'discord.new',
+            GIFT_CODE_HOST: 'discord.gift',
+            RELEASE_CHANNEL: 'canary',
+            MARKETING_ENDPOINT: '//canary.discord.com',
+            BRAINTREE_KEY: 'production_ktzp8hfp_49pp2rp4phym7387',
+            STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
+            NETWORKING_ENDPOINT: '//router.discordapp.net',
+            RTC_LATENCY_ENDPOINT: '//latency.discord.media/rtc',
+            ACTIVITY_APPLICATION_HOST: 'discordsays.com',
+            PROJECT_ENV: 'production',
+            REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
+            SENTRY_TAGS: { "buildId": "151343e99391cdd5e241ab75394fe17aeab04c05", "buildType": "normal" },
+            MIGRATION_SOURCE_ORIGIN: 'https://canary.discordapp.com',
+            MIGRATION_DESTINATION_ORIGIN: window.location.protocol + "//" + window.location.host,
+            HTML_TIMESTAMP: Date.now(),
+            ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
+            PUBLIC_PATH: '/assets/',
+        };</script>
+    <script>!function () { if (null != window.WebSocket) { if (function (n) { try { var e = localStorage.getItem(n); return null == e ? null : JSON.parse(e) } catch (n) { return null } }("token") && !window.__OVERLAY__) { var n = null != window.DiscordNative || null != window.require ? "etf" : "json", e = window.GLOBAL_ENV.GATEWAY_ENDPOINT + "/?encoding=" + n + "&v=" + window.GLOBAL_ENV.API_VERSION + "&compress=zlib-stream"; console.log("[FAST CONNECT] connecting to: " + e); var o = new WebSocket(e); o.binaryType = "arraybuffer"; var t = Date.now(), i = { open: !1, identify: !1, gateway: e, messages: [] }; o.onopen = function () { console.log("[FAST CONNECT] connected in " + (Date.now() - t) + "ms"), i.open = !0 }, o.onclose = o.onerror = function () { window._ws = null }, o.onmessage = function (n) { i.messages.push(n) }, window._ws = { ws: o, state: i } } } }();</script>
+    <link rel="prefetch" as="script" href="/assets/86c157237af2732f6d83.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/6b1f82a788f6fff225fd.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/2bca5148146ab09a0f77.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/a48ac06ae30799d7d07a.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/c8e491b27fe94f60d363.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/4e5ff9264802ba2e0075.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/c30dc89c64400a4d4e76.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/4d35867b89d391765d7f.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/b62c62429a41fb1f5911.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/f65ee0fe6c582eac249b.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/c38c6ced32bd3fb133c5.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/be75223396c84b3940e6.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/98eed42e5f129598f20f.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/397345fbff8eeae321c9.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/5dfee56fd123acf25afd.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/935aad9446b0037923e6.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/b9642a4dff0a53a57afc.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/9bbc50d2a371d6332504.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/cf3f8cda85b6742d8b87.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/827259c6a113ffdbe995.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/09f9cb5b97489133e27d.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/b8be8c582b6fce9abcc8.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/7e94c5f46a1bde326fd7.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/a25cdb61b381603d52e7.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/65579f9eece7b4b79bfa.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/81fc2706c1eeb32445e0.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/285ee77ec401d6f831f0.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/5e71613c4e582f210e94.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/39d1814fa9dca954f1df.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/4272e678e7df31671bc7.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/19172abaf22b28e5a411.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/c12d1df19d77066efe86.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/a54d3761b27ecc597d18.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/67e64e9b8431bb48e6ca.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/b40679c0d82dac77d8bc.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/bf0e38cb183fa0758794.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/de5a9612a9006d2f0f69.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/a76fc002ee965f4f81df.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/db74ffef42d75bbd8e8c.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/430c96275837cdd49fee.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/7fd4d41be88ad996eb0c.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/16f753cb4a2abd14f35b.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/dd182f5e5dcae94a3659.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/877f2104e91f488ae1b4.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/f5f5e118fb514988c8f0.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/7bdbb892dc47c86385a8.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/24a8b01b37451c31e256.js">
+    </link>
+    <link rel="stylesheet" href="/assets/40532.4d5c24a187bceb2339a9.css">
+    <link rel="icon" href="/assets/ec2c34cadd4b5f4594415127380a85e6.ico" /> <!-- section:title -->
+    <title>Discord</title>
+    <!-- endsection -->
+</head>
+
+<body>
+    <div id="app-mount"></div>
+    <script>window.__OVERLAY__ = /overlay/.test(location.pathname)</script>
+    <script>window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname)</script>
+    <script src="/assets/e545fefd858dcb52b80f.js"></script>
+    <script src="/assets/86c157237af2732f6d83.js"></script>
+    <script src="/assets/8e5aef684a2590597ff4.js"></script>
+    <script src="/assets/05cd3353f9a3e49ee3bc.js"></script>
+</body>
+
+</html>

@@ -2,12 +2,17 @@ const express = require('express');
 const http = require('https');
 const fs = require('fs');
 const fetch = require('node-fetch');
+const { dialog } = require('electron');
 
 const handlerRequest = require('./handlers.js');
 
 async function getData(url) {
-	const html = await fetch(url);
-	return await html.text();
+	try {
+		const html = await fetch(url);
+		return await html.text();
+	} catch {
+		return null;
+	}
 }
 
 const httpsOptions = {
@@ -102,6 +107,13 @@ async function start(port, log_) {
 				);
 			}),
 		);
+	}
+	if (!html || Object.values(scriptTarget).some(v => !v)) {
+		dialog.showErrorBox(
+			'Error',
+			'Failed to load the required files. Please try again.',
+		);
+		process.exit(1);
 	}
 	handlerRequest(app, logger, html, patchList, scriptTarget);
 	return new Promise((resolve, reject) => {

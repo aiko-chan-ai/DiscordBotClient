@@ -154,7 +154,7 @@
             )[0];
             if (buttonLogin) {
                 if (!intentBot) {
-                    callSetIntents();
+                    callSetIntents(true);
                 } else {
                     clearInterval(i);
                 }

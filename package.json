@@ -44,7 +44,8 @@
 				}
 			],
 			"icon": "DiscordBotClient.png"
-		}
+		},
+		"asar": false
 	},
 	"scripts": {
 		"start": "echo \"Error: no start script specified\" && exit 1",

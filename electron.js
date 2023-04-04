@@ -119,7 +119,9 @@ async function createWindow() {
 		return shell.openExternal(url);
 	});
 
-	await session.defaultSession.loadExtension(path.resolve(__dirname, 'Vencord'));
+	const path_ = path.join(__dirname, 'Vencord');
+	win.setTitle(APP_NAME + ' Loading Vencord from ' + path_ + '...');
+	await session.defaultSession.loadExtension(path_);
 	log.info('Vencord-Web Extension loaded, version: ' + VencordVersion);
 
 	win.loadURL(`https://localhost:${port}`);

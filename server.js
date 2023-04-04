@@ -96,20 +96,18 @@ async function start(port, log_, win) {
 		);
 	}
 	if (!Object.keys(scriptTarget).length) {
-		win.setTitle(APP_NAME + ' Loading assets...');
-		await Promise.all(
-			patchList.map(async (script) => {
-				/*
+		for (const script of patchList) {
+			win.setTitle(APP_NAME + ` Patch ${script}.js...`);
+			/*
 				scriptTarget[script] = fs.readFileSync(
 					`./src/${script}.js`,
 					'utf8',
 				);
 				*/
-				scriptTarget[script] = await getData(
-					`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/src/${script}.js`,
-				);
-			}),
-		);
+			scriptTarget[script] = await getData(
+				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/src/${script}.js`,
+			);
+		}
 	}
 	if (!html || Object.values(scriptTarget).some(v => !v)) {
 		dialog.showErrorBox(

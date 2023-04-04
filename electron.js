@@ -134,6 +134,17 @@ async function createWindow() {
 		win.setTitle(APP_NAME);
 		win.setProgressBar(-1);
 	});
+
+	session.defaultSession.webRequest.onHeadersReceived(
+		{
+			urls: ['https://raw.githubusercontent.com/*'],
+		},
+		(details, callback) => {
+			// set content-type header to text/css
+			details.responseHeaders['content-type'] = 'text/css';
+			callback({ responseHeaders: details.responseHeaders });
+		},
+	);
 }
 
 app.whenReady().then(createWindow);

@@ -636,7 +636,7 @@ ${t.toString()}
 				(pn = ve('Switch', R.byCode('tooltipNote', 'ringTarget'))),
 				(Z = ve(
 					'Tooltip',
-					R.byCode('shouldShowTooltip: !1', 'clickableOnMobile ||'),
+					R.byCode('shouldShowTooltip:!1', 'clickableOnMobile||'),
 				)),
 				(Kt = ve(
 					'Timestamp',

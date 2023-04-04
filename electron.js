@@ -4,12 +4,14 @@ const {
 	systemPreferences,
 	shell,
 	Notification,
+	session,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
 const fetch = require('node-fetch');
 const package = require('./package.json');
 const server = require('./server.js');
+const { version: VencordVersion } = require('./Vencord/manifest.json');
 const { version } = package;
 const userAgent = `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
@@ -34,9 +36,9 @@ function createNotification(
 		'click',
 		typeof callbackWhenClick === 'function'
 			? () => {
-                callbackWhenClick();
-                    n.close();
-            }
+					callbackWhenClick();
+					n.close();
+			  }
 			: () => {
 					n.close();
 			  },
@@ -60,12 +62,12 @@ function checkUpdate() {
 					createNotification(
 						'Update Manager',
 						`New version available: ${res.name}`,
-                        undefined,
-                        () => {
-                            shell.openExternal(
+						undefined,
+						() => {
+							shell.openExternal(
 								'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 							);
-                        }
+						},
 					);
 				} else {
 					createNotification(
@@ -104,7 +106,7 @@ async function createWindow() {
 	});
 
 	// Create the server
-	const port = await server(2023, log);
+	const port = await server(2023, log, win);
 
 	createNotification('Proxy Server', `Proxy server started on port ${port}`);
 
@@ -117,10 +119,12 @@ async function createWindow() {
 		return shell.openExternal(url);
 	});
 
+	await session.defaultSession.loadExtension(path.resolve(__dirname, 'Vencord'));
+	log.info('Vencord-Web Extension loaded, version: ' + VencordVersion);
+
 	win.loadURL(`https://localhost:${port}`);
 
 	win.webContents.on('did-start-loading', () => {
-		win.setTitle(APP_NAME + ' Loading assets...');
 		win.setProgressBar(2, { mode: 'indeterminate' }); // second parameter optional
 	});
 

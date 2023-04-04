@@ -1,6 +1,13 @@
 # DiscordBotClient
 
-- Discord Build: Canary 185845 (151343e)
+- Discord Build: Stable 185832 (29333f6)
+
+- Added Vencord (v1.1.4)
+
+## All patches
+- Stable 161052 (c7e0778)
+- Canary 185845 (151343e)
+- Stable 185832 (29333f6) <Current>
 
 ## Main branch (out of date, v1.1.4)
 

@@ -11,22 +11,14 @@
     <meta property="og:title" content="Discord - A New Way to Chat with Friends & Communities" />
     <meta property="og:description"
         content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities." />
-    <meta property="og:image" content="undefined//canary.discord.com/assets/652f40427e1f5186ad54836074898279.png" />
+    <meta property="og:image" content="undefined//discord.com/assets/652f40427e1f5186ad54836074898279.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@discord" />
     <meta name="twitter:creator" content="@discord" />
-    <!-- endsection -->
     <script>
         var client;
         var lasestGuildIdVoiceConnect = 0;
         var currentChannelId = 0;
-        /*
-        var allGuilds = 0;
-        var loadFullGuild = 0;
-        var readyData;
-        var metadataReady = null;
-        var timeoutReady = null;
-        */
         var localStorage_ = window.localStorage;
         var getStatus;
         var intentBot = localStorage_.getItem('intents');
@@ -425,7 +417,7 @@
             setInterval(() => {
                 if (!version || !hash) return;
                 updateGuildSubs();
-                const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'canary 185845 (151343e)');
+                const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 185832 (29333f6)');
                 if (!host || document.querySelector('#dbclient-ver')) return;
                 const el = document.createElement('span');
                 el.id = 'dbclient-ver';
@@ -558,20 +550,21 @@
             window.Wxt.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__)
         }
     </script>
+    <!-- endsection -->
     <script>window.GLOBAL_ENV = {
             API_ENDPOINT: '//' + window.location.host + '/d/api',
-            API_VERSION: 10,
+            API_VERSION: 9,
             GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
             WEBAPP_ENDPOINT: "//" + window.location.host,
             CDN_HOST: 'cdn.discordapp.com',
             ASSET_ENDPOINT: "//" + window.location.host,
             MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
-            WIDGET_ENDPOINT: '//canary.discord.com/widget',
+            WIDGET_ENDPOINT: '//discord.com/widget',
             INVITE_HOST: 'discord.gg',
             GUILD_TEMPLATE_HOST: 'discord.new',
             GIFT_CODE_HOST: 'discord.gift',
-            RELEASE_CHANNEL: 'canary',
-            MARKETING_ENDPOINT: '//canary.discord.com',
+            RELEASE_CHANNEL: 'stable',
+            MARKETING_ENDPOINT: '//discord.com',
             BRAINTREE_KEY: 'production_ktzp8hfp_49pp2rp4phym7387',
             STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
             NETWORKING_ENDPOINT: '//router.discordapp.net',
@@ -579,12 +572,12 @@
             ACTIVITY_APPLICATION_HOST: 'discordsays.com',
             PROJECT_ENV: 'production',
             REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
-            SENTRY_TAGS: { "buildId": "151343e99391cdd5e241ab75394fe17aeab04c05", "buildType": "normal" },
-            MIGRATION_SOURCE_ORIGIN: 'https://canary.discordapp.com',
+            SENTRY_TAGS: { "buildId": "29333f6bd8580a37368e73865fe92b5f03986557", "buildType": "normal" },
+            MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
             MIGRATION_DESTINATION_ORIGIN: window.location.protocol + "//" + window.location.host,
             HTML_TIMESTAMP: Date.now(),
             ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
-            PUBLIC_PATH: '/assets/',
+            PUBLIC_PATH: '/assets/'
         };</script>
     <script>!function () { if (null != window.WebSocket) { if (function (n) { try { var e = localStorage.getItem(n); return null == e ? null : JSON.parse(e) } catch (n) { return null } }("token") && !window.__OVERLAY__) { var n = null != window.DiscordNative || null != window.require ? "etf" : "json", e = window.GLOBAL_ENV.GATEWAY_ENDPOINT + "/?encoding=" + n + "&v=" + window.GLOBAL_ENV.API_VERSION + "&compress=zlib-stream"; console.log("[FAST CONNECT] connecting to: " + e); var o = new WebSocket(e); o.binaryType = "arraybuffer"; var t = Date.now(), i = { open: !1, identify: !1, gateway: e, messages: [] }; o.onopen = function () { console.log("[FAST CONNECT] connected in " + (Date.now() - t) + "ms"), i.open = !0 }, o.onclose = o.onerror = function () { window._ws = null }, o.onmessage = function (n) { i.messages.push(n) }, window._ws = { ws: o, state: i } } } }();</script>
     <link rel="prefetch" as="script" href="/assets/86c157237af2732f6d83.js">
@@ -611,7 +604,7 @@
     </link>
     <link rel="prefetch" as="script" href="/assets/be75223396c84b3940e6.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/98eed42e5f129598f20f.js">
+    <link rel="prefetch" as="script" href="/assets/53867a73fb1b08ca4efb.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/397345fbff8eeae321c9.js">
     </link>
@@ -619,7 +612,7 @@
     </link>
     <link rel="prefetch" as="script" href="/assets/935aad9446b0037923e6.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/b9642a4dff0a53a57afc.js">
+    <link rel="prefetch" as="script" href="/assets/2a88943dbf6438034489.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/9bbc50d2a371d6332504.js">
     </link>
@@ -629,7 +622,7 @@
     </link>
     <link rel="prefetch" as="script" href="/assets/09f9cb5b97489133e27d.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/b8be8c582b6fce9abcc8.js">
+    <link rel="prefetch" as="script" href="/assets/5955c2cb4139da4668dd.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/7e94c5f46a1bde326fd7.js">
     </link>
@@ -643,17 +636,17 @@
     </link>
     <link rel="prefetch" as="script" href="/assets/5e71613c4e582f210e94.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/39d1814fa9dca954f1df.js">
+    <link rel="prefetch" as="script" href="/assets/631eecf44be0bf220198.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/4272e678e7df31671bc7.js">
+    <link rel="prefetch" as="script" href="/assets/2e523b5fe24dc1a0690b.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/19172abaf22b28e5a411.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/c12d1df19d77066efe86.js">
+    <link rel="prefetch" as="script" href="/assets/17aee34185edaec8e07b.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/a54d3761b27ecc597d18.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/67e64e9b8431bb48e6ca.js">
+    <link rel="prefetch" as="script" href="/assets/0a7ac8333fc61ed41ecc.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/b40679c0d82dac77d8bc.js">
     </link>
@@ -671,18 +664,19 @@
     </link>
     <link rel="prefetch" as="script" href="/assets/16f753cb4a2abd14f35b.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/dd182f5e5dcae94a3659.js">
+    <link rel="prefetch" as="script" href="/assets/dee3cef695468442a1da.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/877f2104e91f488ae1b4.js">
+    <link rel="prefetch" as="script" href="/assets/f620146e0b25fefb0f2a.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/f5f5e118fb514988c8f0.js">
+    <link rel="prefetch" as="script" href="/assets/21483f77d962114543ff.js">
     </link>
     <link rel="prefetch" as="script" href="/assets/7bdbb892dc47c86385a8.js">
     </link>
-    <link rel="prefetch" as="script" href="/assets/24a8b01b37451c31e256.js">
+    <link rel="prefetch" as="script" href="/assets/f39e155f756861faa48e.js">
     </link>
     <link rel="stylesheet" href="/assets/40532.4d5c24a187bceb2339a9.css">
-    <link rel="icon" href="/assets/ec2c34cadd4b5f4594415127380a85e6.ico" /> <!-- section:title -->
+    <link rel="icon" href="/assets/ec2c34cadd4b5f4594415127380a85e6.ico" />
+    <!-- section:title -->
     <title>Discord</title>
     <!-- endsection -->
 </head>
@@ -691,10 +685,10 @@
     <div id="app-mount"></div>
     <script>window.__OVERLAY__ = /overlay/.test(location.pathname)</script>
     <script>window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname)</script>
-    <script src="/assets/e545fefd858dcb52b80f.js"></script>
+    <script src="/assets/27774ec4c19fcf0dde9e.js"></script>
     <script src="/assets/86c157237af2732f6d83.js"></script>
-    <script src="/assets/8e5aef684a2590597ff4.js"></script>
-    <script src="/assets/05cd3353f9a3e49ee3bc.js"></script>
+    <script src="/assets/21a21ac75f23ee44b62c.js"></script>
+    <script src="/assets/79d7e15ef9963457f52f.js"></script>
 </body>
 
 </html>

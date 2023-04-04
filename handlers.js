@@ -290,21 +290,21 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 				scriptTarget[trs.replace('/assets/', '').replace('.js', '')],
 			);
 		}
-		// see /assets/05cd3353f9a3e49ee3bc.js
+		// see /assets/79d7e15ef9963457f52f.js
 		/*
-	axios
-		.get('https://discord.com' + trs)
-		.then((r) => {
-			if (r.data.includes('_doIdentify')) {
-				console.log('Found _doIdentify', trs);
-				fs.writeFileSync(
-					`./src/${trs.replace('/assets/', '')}`,
-					r.data,
-				);
-			}
-		})
-		.catch((e) => {});
-	*/
+		axios
+			.get('https://discord.com' + trs)
+			.then((r) => {
+				if (r.data.includes('_doIdentify')) {
+					console.log('Found _doIdentify', trs);
+					fs.writeFileSync(
+						`./src/${trs.replace('/assets/', '')}`,
+						r.data,
+					);
+				}
+			})
+			.catch((e) => {});
+			*/
 		req.pipe(request('https://discord.com' + trs)).pipe(res);
 	});
 	// Some request ...

@@ -5,9 +5,9 @@
 - Added Vencord (v1.1.4)
 
 ## All patches
-- Stable 161052 (c7e0778)
-- Canary 185845 (151343e)
-- Stable 185832 (29333f6) <Current>
+- Stable 161052 (c7e0778) (v1.x.x)
+- Stable 185832 (29333f6) (v2.1.x)
+- Canary 185845 (151343e) (v2.0.x)
 
 ## Main branch (out of date, v1.1.4)
 
@@ -48,5 +48,12 @@
 - **Send Files**
 - **DM's** (DM's will show up, after a user dms the bot)
 
-> **Note**
-> Don't use the message search bar, it may cause the application to crash
+---
+
+## Screenshots
+
+<img src='https://cdn.discordapp.com/attachments/820557032016969751/1093556639845593098/image.png'>
+
+- Discord Build: Stable 185832 (29333f6)
+- Vencord Build: v2.1.4
+- Discord Bot Client Build: v2.1.0

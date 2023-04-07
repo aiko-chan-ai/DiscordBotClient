@@ -422,7 +422,7 @@
                 if (!host || document.querySelector('#dbclient-ver')) return;
                 const el = document.createElement('span');
                 el.id = 'dbclient-ver';
-                el.textContent = `BotClient ${version} (${hash})`;
+                el.innerHTML = `<br>BotClient ${version} (${hash})`;
                 el.onclick = () => window.open('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
                 host.append(document.createTextNode('\n'), el);
             }, 2_000);

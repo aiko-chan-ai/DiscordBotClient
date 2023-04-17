@@ -73,9 +73,9 @@ MXMU3kbLmHTA/2AqctrTPCND+sZRHPZySuxhMmDrGViKfSzvxA6VQTWcziqUWXWX
 
 const app = express();
 let logger;
-let html = '';
-let scriptTarget = {};
-const patchList = ['79d7e15ef9963457f52f'];
+// let html = '';
+// let scriptTarget = {};
+// const patchList = ['79d7e15ef9963457f52f'];
 
 // Catch unhandled promise rejections
 process.on('unhandledRejection', (err) => {
@@ -89,6 +89,7 @@ process.on('uncaughtException', (err) => {
 
 async function start(port, log_, win) {
 	if (!logger) logger = log_;
+	/*
 	if (!html) {
 		//html = fs.readFileSync('./index.html', 'utf8');
 		win.setTitle(APP_NAME + ' Loading Discord.html...');
@@ -104,7 +105,6 @@ async function start(port, log_, win) {
 					`./src/${script}.js`,
 					'utf8',
 				);
-				*/
 			scriptTarget[script] = await getData(
 				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/src/${script}.js`,
 			);
@@ -117,7 +117,8 @@ async function start(port, log_, win) {
 		);
 		process.exit(1);
 	}
-	handlerRequest(app, logger, html, patchList, scriptTarget);
+	*/
+	handlerRequest(app, logger);
 	return new Promise((resolve, reject) => {
 		http.createServer(httpsOptions, app)
 			.listen(port, () => {

@@ -1,0 +1,2 @@
+"use strict";(this.webpackChunkdiscord_app=this.webpackChunkdiscord_app||[]).push([[38634],{37093:(e,i,n)=>{n.r(i);n.d(i,{default:()=>c});var d=n(785893),r=(n(667294),n(908741)),a=n(472009),t=n(688941);function c(e){var i=e.windowKey,n=e.channel;return(0,d.jsx)(a.Z,{withTitleBar:!0,windowKey:i,title:n.name,children:(0,d.jsx)(r.Z.Provider,{value:n.guild_id,children:(0,d.jsx)(t.Z,{channel:n})})})}}}]);
+//# sourceMappingURL=183e09b6f15a41690106.js.map

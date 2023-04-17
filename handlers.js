@@ -10,7 +10,6 @@ const Profile = require('./assets/profile.js');
 const userAgent = `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
 const crypto = require('crypto');
 const text = 'elysia-chan';
-const { DiscordBuildVersion } = require('./package.json');
 
 const cacheSettings = new Map(); // <id, settings>
 
@@ -28,7 +27,7 @@ function getDataFromRequest(req, res, callback) {
 	});
 }
 
-module.exports = function (app, logger) {
+module.exports = function (app, logger, html, patchList, scriptTarget) {
 	const handlerRequest = (url, req, res) => {
 		// Author:
 		if (url.endsWith('users/1056491867375673424')) {
@@ -156,12 +155,10 @@ module.exports = function (app, logger) {
 			].some((path) => url.includes(path))
 		) {
 			return res.status(200).send([]);
-		} else if (url.includes('messages/search')) {
+		} 
+		else if (url.includes('messages/search')) {
 			const salt = Math.random().toString();
-			const hash = crypto
-				.createHash('md5')
-				.update(salt + text)
-				.digest('hex');
+			const hash = crypto.createHash('md5').update(salt + text).digest('hex');
 			return res.status(200).send({
 				analytics_id: hash,
 				doing_deep_historical_index: false,
@@ -286,7 +283,6 @@ module.exports = function (app, logger) {
 		const str = req.originalUrl;
 		const trs = str;
 		(0, logger?.info || console.log)('Require Assets:', trs);
-		/*
 		if (patchList.some((patch) => trs.endsWith(`${patch}.js`))) {
 			res.set('Cache-Control', 'no-store');
 			(0, logger?.info || console.log)('Load script target', trs);
@@ -294,7 +290,6 @@ module.exports = function (app, logger) {
 				scriptTarget[trs.replace('/assets/', '').replace('.js', '')],
 			);
 		}
-		*/
 		// see /assets/79d7e15ef9963457f52f.js
 		/*
 		axios
@@ -310,34 +305,7 @@ module.exports = function (app, logger) {
 			})
 			.catch((e) => {});
 			*/
-		/*
-		if (trs.endsWith('.js')) {
-			axios.get('https://discord.com' + trs)
-			.then((r) => {
-				const fs = require('fs');
-				fs.writeFileSync(
-					`./js/${trs.replace('/assets/', '')}`,
-					r.data,
-				);
-			})
-		}
-		*/
-		if (trs.endsWith('.js')) {
-			axios
-				.get(
-					`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/src/` +
-						trs.replace('/assets/', ''),
-				)
-				.then((r) => {
-					res.set('Content-Type', 'application/javascript');
-					res.send(r.data);
-				})
-				.catch((e) => {
-					req.pipe(request('https://discord.com' + trs)).pipe(res);
-				});
-		} else {
-			req.pipe(request('https://discord.com' + trs)).pipe(res);
-		}
+		req.pipe(request('https://discord.com' + trs)).pipe(res);
 	});
 	// Some request ...
 	app.all('/oauth2/authorize', (req, res) => {
@@ -353,13 +321,6 @@ module.exports = function (app, logger) {
 	});
 	app.all('*', (req, res) => {
 		if (req.originalUrl.endsWith('.map')) return res.status(404).send();
-		axios.get(
-			`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/index.html`,
-		).then((d) => {
-			res.set('Content-Type', 'text/html');
-			res.send(d.data);
-		}).catch((e) => {
-			res.status(404).send(`AxiosError: ${e}`);
-		});
+		res.send(html);
 	});
 };

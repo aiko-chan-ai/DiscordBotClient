@@ -4,7 +4,6 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const { dialog } = require('electron');
 const APP_NAME = 'DiscordBotClient';
-const { DiscordBuildVersion } = require('./package.json');
 
 const handlerRequest = require('./handlers.js');
 
@@ -73,9 +72,9 @@ MXMU3kbLmHTA/2AqctrTPCND+sZRHPZySuxhMmDrGViKfSzvxA6VQTWcziqUWXWX
 
 const app = express();
 let logger;
-// let html = '';
-// let scriptTarget = {};
-// const patchList = ['79d7e15ef9963457f52f'];
+let html = '';
+let scriptTarget = {};
+const patchList = ['79d7e15ef9963457f52f'];
 
 // Catch unhandled promise rejections
 process.on('unhandledRejection', (err) => {
@@ -89,12 +88,11 @@ process.on('uncaughtException', (err) => {
 
 async function start(port, log_, win) {
 	if (!logger) logger = log_;
-	/*
 	if (!html) {
 		//html = fs.readFileSync('./index.html', 'utf8');
 		win.setTitle(APP_NAME + ' Loading Discord.html...');
 		html = await getData(
-			`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/index.html`,
+			'https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/index.html',
 		);
 	}
 	if (!Object.keys(scriptTarget).length) {
@@ -105,8 +103,9 @@ async function start(port, log_, win) {
 					`./src/${script}.js`,
 					'utf8',
 				);
+				*/
 			scriptTarget[script] = await getData(
-				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/src/${script}.js`,
+				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/src/${script}.js`,
 			);
 		}
 	}
@@ -117,8 +116,7 @@ async function start(port, log_, win) {
 		);
 		process.exit(1);
 	}
-	*/
-	handlerRequest(app, logger);
+	handlerRequest(app, logger, html, patchList, scriptTarget);
 	return new Promise((resolve, reject) => {
 		http.createServer(httpsOptions, app)
 			.listen(port, () => {

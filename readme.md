@@ -1,4 +1,4 @@
-# DiscordBotClient
+# Discord Bot Client
 
 - Discord Build: Stable 185832 (29333f6)
 

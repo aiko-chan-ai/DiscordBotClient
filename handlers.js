@@ -283,6 +283,9 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 		const str = req.originalUrl;
 		const trs = str;
 		(0, logger?.info || console.log)('Require Assets:', trs);
+		if (trs.endsWith('.map')) {
+			return res.status(404).send();
+		}
 		if (patchList.some((patch) => trs.endsWith(`${patch}.js`))) {
 			res.set('Cache-Control', 'no-store');
 			(0, logger?.info || console.log)('Load script target', trs);

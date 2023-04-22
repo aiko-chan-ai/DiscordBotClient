@@ -134,7 +134,7 @@
                 el.parentNode.replaceChild(newEl, el);
             }
         }
-        var callSetIntents = (reload = false) => {
+        var callSetIntents = (reload) => {
             const privilegedIntents = [];
             alert("Login with bot requires privileged intent `MESSAGE_CONTENT`\n\nMake sure you have enabled this intent in the bot settings.");
             if (!confirm('[Optional] Do you want to use the `GUILD_PRESENCES` intent?')) {
@@ -145,7 +145,9 @@
             }
             intentBot = getIntents(...privilegedIntents);
             localStorage_.setItem('intents', intentBot);
-            reload ? updateIntentsText() : location.reload();
+            if (reload) {
+                location.reload();
+            }
         }
         function replaceLoginScreen() {
 
@@ -154,7 +156,7 @@
             )[0];
             if (buttonLogin) {
                 if (!intentBot) {
-                    callSetIntents(false);
+                    callSetIntents();
                 } else {
                     clearInterval(i);
                 }
@@ -198,8 +200,10 @@
                     'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
                 )[0];
                 forgot_pw.addEventListener('click', () => {
-                    callSetIntents(true);
+                    callSetIntents();
+                    updateIntentsText();
                 });
+                updateIntentsText()
             }
 
         }

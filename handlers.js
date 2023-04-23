@@ -62,18 +62,21 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 		const blacklist = [
 			'entitlements/gifts',
 			'outbound-promotions/codes',
-			'experiments',
 			'entitlements',
+			'experiments',
 			'science',
 			'affinities',
 			'users/@me/harvest',
 			'auth/',
 			'applications/public',
 			'notes',
+			'roles/member-counts',
+			'member-ids',
+			'connections/configuration',
 		].some((path) => url.includes(path));
 		if (blacklist)
 			return res.status(404).send({
-				message: 'Bot is not authorized to access this endpoint :))',
+				message: 'Bot can\'t use this endpoint (blocked)',
 			});
 		if (
 			url.includes('oauth2/') &&
@@ -81,7 +84,7 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 			!url.includes('rpc')
 		) {
 			return res.status(404).send({
-				message: 'Bot is not authorized to access this endpoint :))',
+				message: "Bot can't use this endpoint (blocked)",
 			});
 		}
 		if (url.includes('api/download')) {
@@ -155,10 +158,36 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 			].some((path) => url.includes(path))
 		) {
 			return res.status(200).send([]);
-		} 
-		else if (url.includes('messages/search')) {
+		} else if (url.includes('onboarding')) {
+			res.status(404).send(
+				'Bot can use this endpoint but it will crash the client :<',
+			);
+		}
+		else if (url.includes('/onboarding-responses')) {
+			if (req.method.toUpperCase() == 'POST') {
+				const callback = (req, res) => {
+					const guild_id = /\d{17,19}/.exec(url)[0];
+					const BotToken = req.headers.authorization;
+					const uid = Buffer.from(
+						BotToken.replace('Bot ', '').split('.')[0],
+						'base64',
+					).toString();
+					let data = {
+						...req.body,
+						guild_id,
+						user_id: uid,
+					};
+					delete data.update_roles_and_channels;
+					res.status(200).send(data);
+				};
+				return getDataFromRequest(req, res, callback);
+			}
+		} else if (url.includes('messages/search')) {
 			const salt = Math.random().toString();
-			const hash = crypto.createHash('md5').update(salt + text).digest('hex');
+			const hash = crypto
+				.createHash('md5')
+				.update(salt + text)
+				.digest('hex');
 			return res.status(200).send({
 				analytics_id: hash,
 				doing_deep_historical_index: false,
@@ -252,8 +281,10 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 		(0, logger?.info || console.log)('URL Request', trs);
 		let headers = {
 			'user-agent': userAgent,
-			authorization: `${req.headers.authorization}`,
 		};
+		if (req.headers.authorization) {
+			headers.authorization = req.headers.authorization;
+		}
 		Object.keys(req.headers).forEach((key) => {
 			if (
 				[

@@ -1,23 +1,11 @@
 # Discord Bot Client
 
 - Discord Build: Stable 185832 (29333f6)
-
 - Added Vencord (v1.1.4)
 
 ## All patches
 - Stable 161052 (c7e0778) (v1.x.x)
 - Stable 185832 (29333f6) (v2.1.x)
-- Canary 185845 (151343e) (v2.0.x)
-
-## Main branch (out of date, v1.1.4)
-
-- Discord Build: Stable 161052 (c7e0778)
-
-## Web (out of date, v1.0.9):
-
-> Using extension https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/main/extension.zip
-
-> Source: https://github.com/aikodbc/aikodbc.github.io
 
 ## Download > [Releases](https://github.com/aiko-chan-ai/DiscordBotClient/releases)
  

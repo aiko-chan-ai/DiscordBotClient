@@ -58,7 +58,7 @@ function checkUpdate() {
 		)
 			.then((res) => res.json())
 			.then((res) => {
-				if (res.tag_name !== package.version) {
+				if (res.tag_name !== `v${package.version}`) {
 					createNotification(
 						'Update Manager',
 						`New version available: ${res.name}`,

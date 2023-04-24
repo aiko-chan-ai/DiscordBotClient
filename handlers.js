@@ -66,13 +66,16 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 			'experiments',
 			'science',
 			'affinities',
-			'users/@me/harvest',
 			'auth/',
 			'applications/public',
 			'notes',
 			'roles/member-counts',
 			'member-ids',
 			'connections/configuration',
+			'users/@me/mfa/totp',
+			'users/@me/disable',
+			'users/@me/delete',
+			'users/@me/harvest',
 		].some((path) => url.includes(path));
 		if (blacklist)
 			return res.status(404).send({
@@ -258,17 +261,48 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 						},
 					});
 				});
-		} else if (url.includes('/ask') || url.includes('/ack')) {
-			return res.status(200).send({ token: null });
-		} else if (url.includes('billing/country-code')) {
-			return res.status(200).send({
-				country_code: 'VN',
-			});
-		} else if (url.includes('logout')) {
-			return res.status(200).send();
-		} else {
-			return req.pipe(request('https://discord.com' + url)).pipe(res);
-		}
+			} else if (
+				url.includes('api/v9/users/@me') &&
+				req.method.toUpperCase() == 'GET'
+			) {
+				axios
+					.get(
+						`https://discord.com/api/v9/users/@me`,
+						{
+							headers: {
+								authorization: req.headers.authorization,
+								'user-agent': userAgent,
+							},
+						},
+					)
+					.then((response) => {
+						let data = response.data;
+						data.premium = true;
+						data.premium_type = 1; // Nitro Classic
+						data.mfa_enabled = 1; // Enable 2FA
+						data.flags = '476111'; // All flags
+						data.public_flags = '476111'; // All flags
+						data.phone = '+1234567890'; // Fake phone
+						data.verified = true; // verify
+						data.nsfw_allowed = true; // Allow nsfw (ios)
+						data.email = 'DiscordBotClient@aiko.com'; // fake email, not a real one
+						data.purchased_flags = 3;
+						res.status(200).send(data);
+					})
+					.catch((err) => {
+						res.status(404).send();
+					});
+			} else if (url.includes('/ask') || url.includes('/ack')) {
+				return res.status(200).send({ token: null });
+			} else if (url.includes('billing/country-code')) {
+				return res.status(200).send({
+					country_code: 'VN',
+				});
+			} else if (url.includes('logout')) {
+				return res.status(200).send();
+			} else {
+				return req.pipe(request('https://discord.com' + url)).pipe(res);
+			}
 	};
 
 	app.get('/ping', function (req, res) {

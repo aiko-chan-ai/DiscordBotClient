@@ -1,14 +1,6 @@
 name: Build/release
 
 on:
-    push:
-        branches:
-            - electron
-        tags:
-            - v*
-    pull_request:
-        branches:
-            - electron
     workflow_dispatch:
 
 jobs:

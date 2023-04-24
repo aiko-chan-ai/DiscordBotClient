@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('https');
 const fs = require('fs');
 const fetch = require('node-fetch');
-const { dialog } = require('electron');
+const { dialog, app: ElectronApp } = require('electron');
 const APP_NAME = 'DiscordBotClient';
 
 const handlerRequest = require('./handlers.js');
@@ -89,27 +89,31 @@ process.on('uncaughtException', (err) => {
 async function start(port, log_, win) {
 	if (!logger) logger = log_;
 	if (!html) {
-		//html = fs.readFileSync('./index.html', 'utf8');
 		win.setTitle(APP_NAME + ' Loading Discord.html...');
-		html = await getData(
-			'https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/index.html',
-		);
+		if (!ElectronApp.isPackaged) {
+			html = fs.readFileSync('./index.html', 'utf8');
+		} else {
+			html = await getData(
+				'https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/index.html',
+			);
+		}
 	}
 	if (!Object.keys(scriptTarget).length) {
 		for (const script of patchList) {
 			win.setTitle(APP_NAME + ` Patch ${script}.js...`);
-			/*
+			if (!ElectronApp.isPackaged) {
 				scriptTarget[script] = fs.readFileSync(
 					`./src/${script}.js`,
 					'utf8',
 				);
-				*/
-			scriptTarget[script] = await getData(
-				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/src/${script}.js`,
-			);
+			} else {
+				scriptTarget[script] = await getData(
+					`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/src/${script}.js`,
+				);
+			}
 		}
 	}
-	if (!html || Object.values(scriptTarget).some(v => !v)) {
+	if (!html || Object.values(scriptTarget).some((v) => !v)) {
 		dialog.showErrorBox(
 			'Error',
 			'Failed to load the required files. Please try again.',

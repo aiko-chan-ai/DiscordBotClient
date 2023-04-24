@@ -400,6 +400,14 @@
         }
     </script>
     <script>
+        function getUserIdFromToken(token) {
+            if (!token) return null;
+            try {
+                return atob(token.split('.')[0]);
+            } catch (e) {
+                return null;
+            }
+        }
         (async () => {
             function checkUpdate() {
                 return new Promise((resolve, reject) => {
@@ -413,20 +421,21 @@
                 return new Promise((resolve, reject) => {
                     fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/commits")
                         .then((res) => res.json())
-                        .then(res => resolve(res[0].sha.slice(0, 6)))
+                        .then(res => resolve(res[0].sha.slice(0, 6).toLowerCase()))
                         .catch((e) => resolve('000000'))
                 });
             }
-            const version = await checkUpdate();
+            // const version = await checkUpdate();
             const hash = await getLatestCommit();
             setInterval(() => {
-                if (!version || !hash) return;
+                // if (!version || !hash) return;
+                if (!hash) return;
                 updateGuildSubs();
                 const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 185832 (29333f6)');
                 if (!host || document.querySelector('#dbclient-ver')) return;
                 const el = document.createElement('span');
                 el.id = 'dbclient-ver';
-                el.innerHTML = `<br>BotClient ${version} (${hash})`;
+                el.innerHTML = `<br>BotClient v2.1.1 (${hash})`;
                 el.onclick = () => window.open('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
                 host.append(document.createTextNode('\n'), el);
             }, 2_000);

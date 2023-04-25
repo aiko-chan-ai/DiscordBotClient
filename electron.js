@@ -105,6 +105,8 @@ async function createWindow() {
 		// titleBarStyle: "hidden",
 	});
 
+	log.info(`Electron UserData: ${app.getPath('userData')}`);
+
 	// Create the server
 	const port = await server(2023, log, win);
 

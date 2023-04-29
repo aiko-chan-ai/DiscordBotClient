@@ -3,6 +3,7 @@ const http = require('https');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const { dialog, app: ElectronApp } = require('electron');
+const { DiscordBuildVersion } = require('./package.json');
 const APP_NAME = 'DiscordBotClient';
 
 const handlerRequest = require('./handlers.js');
@@ -94,7 +95,7 @@ async function start(port, log_, win) {
 			html = fs.readFileSync('./index.html', 'utf8');
 		} else {
 			html = await getData(
-				'https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/index.html',
+				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/index.html`,
 			);
 		}
 	}
@@ -108,7 +109,7 @@ async function start(port, log_, win) {
 				);
 			} else {
 				scriptTarget[script] = await getData(
-					`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/185832/src/${script}.js`,
+					`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/src/${script}.js`,
 				);
 			}
 		}

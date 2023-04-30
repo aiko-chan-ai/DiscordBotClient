@@ -20,9 +20,8 @@
         var client;
         var lasestGuildIdVoiceConnect = 0;
         var currentChannelId = 0;
-        var localStorage_ = window.localStorage;
         var getStatus;
-        var intentBot = localStorage_.getItem('intents');
+        var intentBot = localStorage.getItem('intents');
         const IntentFlags = {
             GUILDS: 1 << 0,
             GUILD_MEMBERS: 1 << 1,
@@ -144,7 +143,7 @@
                 privilegedIntents.push('GUILD_MEMBERS');
             }
             intentBot = getIntents(...privilegedIntents);
-            localStorage_.setItem('intents', intentBot);
+            localStorage.setItem('intents', intentBot);
             if (reload) {
                 location.reload();
             }

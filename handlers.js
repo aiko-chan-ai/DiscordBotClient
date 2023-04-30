@@ -13,6 +13,18 @@ const Store = require('electron-store');
 const text = 'elysia-chan';
 
 const cacheSettings = new Store(); // <id, settings>
+const emailSettings = new Map(); // <id, settings>
+
+const defaultDataEmailSetting = {
+	categories: {
+		social: true,
+		communication: true,
+		recommendations_and_events: false,
+		tips: false,
+		updates_and_announcements: false,
+	},
+	initialized: true,
+};
 
 function getDataFromRequest(req, res, callback) {
 	var data = '';
@@ -238,6 +250,8 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 			return res.send({
 				settings: '',
 			});
+		} else if (url.includes('users/@me/email-settings')) {
+			res.send(defaultDataEmailSetting);
 		} else if (url.includes('/threads/search?archived=true')) {
 			const cid = /\d{17,19}/.exec(url)[0];
 			axios

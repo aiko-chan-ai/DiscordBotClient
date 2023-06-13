@@ -1,15 +1,16 @@
 {
 	"name": "discord-bot-client",
-	"version": "2.1.3",
-	"DiscordBuildVersion": 185832,
+	"version": "2.2.0",
+	"DiscordBuildVersion": 204762,
 	"description": "Discord Bot Client - login into discord with a bot token",
-	"main": "electron.js",
+	"main": "./AppCore/index.js",
 	"dependencies": {
 		"axios": "1.1",
 		"discord-protos": "^1.0.4",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.1.0",
 		"express": "^4.18.1",
+		"morgan": "^1.10.0",
 		"node-fetch": "^2.6.7",
 		"request": "^2.88.2",
 		"ws": "^8.12.1"
@@ -29,13 +30,13 @@
 			"target": [
 				"dmg"
 			],
-			"icon": "DiscordBotClient.png"
+			"icon": "./AppAssets/DiscordBotClient.png"
 		},
 		"linux": {
 			"target": [
 				"AppImage"
 			],
-			"icon": "DiscordBotClient.png"
+			"icon": "./AppAssets/DiscordBotClient.png"
 		},
 		"win": {
 			"target": [
@@ -46,12 +47,12 @@
 					]
 				}
 			],
-			"icon": "DiscordBotClient.png"
+			"icon": "./AppAssets/DiscordBotClient.png"
 		},
 		"asar": false
 	},
 	"scripts": {
-		"start": "echo \"Error: no start script specified\" && exit 1",
+		"start": "electron AppCore\\index.js",
 		"mac": "electron-builder -m",
 		"win": "electron-builder -w",
 		"linux": "electron-builder -l",

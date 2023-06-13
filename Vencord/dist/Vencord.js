@@ -1,15 +1,15 @@
-// Vencord 462f191
+// Vencord 3680c26
 // Standalone: true
 // Platform: Universal
 'use strict';
 var Vencord = (() => {
-	var ty = Object.create;
-	var Jo = Object.defineProperty;
-	var ny = Object.getOwnPropertyDescriptor;
-	var oy = Object.getOwnPropertyNames;
-	var iy = Object.getPrototypeOf,
-		ry = Object.prototype.hasOwnProperty;
-	var Pp = ((e) =>
+	var iT = Object.create;
+	var Gr = Object.defineProperty;
+	var rT = Object.getOwnPropertyDescriptor;
+	var sT = Object.getOwnPropertyNames;
+	var aT = Object.getPrototypeOf,
+		lT = Object.prototype.hasOwnProperty;
+	var cf = ((e) =>
 		typeof require < 'u'
 			? require
 			: typeof Proxy < 'u'
@@ -20,1170 +20,211 @@ var Vencord = (() => {
 		if (typeof require < 'u') return require.apply(this, arguments);
 		throw new Error('Dynamic require of "' + e + '" is not supported');
 	});
-	var d = (e, t) => () => (e && (t = e((e = 0))), t);
-	var oo = (e, t) => () => (
+	var m = (e, t) => () => (e && (t = e((e = 0))), t);
+	var Mi = (e, t) => () => (
 			t || e((t = { exports: {} }).exports, t), t.exports
 		),
-		te = (e, t) => {
-			for (var n in t) Jo(e, n, { get: t[n], enumerable: !0 });
+		me = (e, t) => {
+			for (var n in t) Gr(e, n, { get: t[n], enumerable: !0 });
 		},
-		Ip = (e, t, n, i) => {
+		uf = (e, t, n, i) => {
 			if ((t && typeof t == 'object') || typeof t == 'function')
-				for (let r of oy(t))
-					!ry.call(e, r) &&
+				for (let r of sT(t))
+					!lT.call(e, r) &&
 						r !== n &&
-						Jo(e, r, {
+						Gr(e, r, {
 							get: () => t[r],
-							enumerable: !(i = ny(t, r)) || i.enumerable,
+							enumerable: !(i = rT(t, r)) || i.enumerable,
 						});
 			return e;
 		};
-	var gr = (e, t, n) => (
-			(n = e != null ? ty(iy(e)) : {}),
-			Ip(
+	var Wa = (e, t, n) => (
+			(n = e != null ? iT(aT(e)) : {}),
+			uf(
 				t || !e || !e.__esModule
-					? Jo(n, 'default', { value: e, enumerable: !0 })
+					? Gr(n, 'default', { value: e, enumerable: !0 })
 					: n,
 				e,
 			)
 		),
-		Zo = (e) => Ip(Jo({}, '__esModule', { value: !0 }), e);
-	var p,
+		Mo = (e) => uf(Gr({}, '__esModule', { value: !0 }), e);
+	var d,
 		o,
-		s = d(() => {
+		a = m(() => {
 			'use strict';
-			(p = Symbol.for('react.fragment')),
+			(d = Symbol.for('react.fragment')),
 				(o = (...e) =>
 					(o = Vencord.Webpack.Common.React.createElement)(...e));
 		});
-	var At = {};
-	te(At, {
-		clear: () => py,
-		createStore: () => kp,
-		del: () => ly,
-		delMany: () => cy,
-		entries: () => my,
-		get: () => xe,
-		getMany: () => ay,
-		keys: () => uy,
-		promisifyRequest: () => Le,
-		set: () => be,
-		setMany: () => sy,
-		update: () => yr,
-		values: () => dy,
+	var Mn = {};
+	me(Mn, {
+		clear: () => mT,
+		createStore: () => df,
+		del: () => pT,
+		delMany: () => dT,
+		entries: () => hT,
+		get: () => Qe,
+		getMany: () => uT,
+		keys: () => fT,
+		promisifyRequest: () => gt,
+		set: () => Ve,
+		setMany: () => cT,
+		update: () => qo,
+		values: () => gT,
 	});
-	function Le(e) {
+	function gt(e) {
 		return new Promise((t, n) => {
 			(e.oncomplete = e.onsuccess = () => t(e.result)),
 				(e.onabort = e.onerror = () => n(e.error));
 		});
 	}
-	function kp(e, t) {
+	function df(e, t) {
 		let n = indexedDB.open(e);
 		n.onupgradeneeded = () => n.result.createObjectStore(t);
-		let i = Le(n);
-		return (r, a) => i.then((l) => a(l.transaction(t, r).objectStore(t)));
+		let i = gt(n);
+		return (r, s) => i.then((l) => s(l.transaction(t, r).objectStore(t)));
 	}
-	function nt() {
-		return hr || (hr = kp('VencordData', 'VencordStore')), hr;
+	function nn() {
+		return qa || (qa = df('VencordData', 'VencordStore')), qa;
 	}
-	function xe(e, t = nt()) {
-		return t('readonly', (n) => Le(n.get(e)));
+	function Qe(e, t = nn()) {
+		return t('readonly', (n) => gt(n.get(e)));
 	}
-	function be(e, t, n = nt()) {
-		return n('readwrite', (i) => (i.put(t, e), Le(i.transaction)));
+	function Ve(e, t, n = nn()) {
+		return n('readwrite', (i) => (i.put(t, e), gt(i.transaction)));
 	}
-	function sy(e, t = nt()) {
+	function cT(e, t = nn()) {
 		return t(
 			'readwrite',
-			(n) => (e.forEach((i) => n.put(i[1], i[0])), Le(n.transaction)),
+			(n) => (e.forEach((i) => n.put(i[1], i[0])), gt(n.transaction)),
 		);
 	}
-	function ay(e, t = nt()) {
-		return t('readonly', (n) => Promise.all(e.map((i) => Le(n.get(i)))));
+	function uT(e, t = nn()) {
+		return t('readonly', (n) => Promise.all(e.map((i) => gt(n.get(i)))));
 	}
-	function yr(e, t, n = nt()) {
+	function qo(e, t, n = nn()) {
 		return n(
 			'readwrite',
 			(i) =>
-				new Promise((r, a) => {
+				new Promise((r, s) => {
 					i.get(e).onsuccess = function () {
 						try {
-							i.put(t(this.result), e), r(Le(i.transaction));
+							i.put(t(this.result), e), r(gt(i.transaction));
 						} catch (l) {
-							a(l);
+							s(l);
 						}
 					};
 				}),
 		);
 	}
-	function ly(e, t = nt()) {
-		return t('readwrite', (n) => (n.delete(e), Le(n.transaction)));
+	function pT(e, t = nn()) {
+		return t('readwrite', (n) => (n.delete(e), gt(n.transaction)));
 	}
-	function cy(e, t = nt()) {
+	function dT(e, t = nn()) {
 		return t(
 			'readwrite',
-			(n) => (e.forEach((i) => n.delete(i)), Le(n.transaction)),
+			(n) => (e.forEach((i) => n.delete(i)), gt(n.transaction)),
 		);
 	}
-	function py(e = nt()) {
-		return e('readwrite', (t) => (t.clear(), Le(t.transaction)));
+	function mT(e = nn()) {
+		return e('readwrite', (t) => (t.clear(), gt(t.transaction)));
 	}
-	function br(e, t) {
+	function Ka(e, t) {
 		return (
 			(e.openCursor().onsuccess = function () {
 				!this.result || (t(this.result), this.result.continue());
 			}),
-			Le(e.transaction)
+			gt(e.transaction)
 		);
 	}
-	function uy(e = nt()) {
+	function fT(e = nn()) {
 		return e('readonly', (t) => {
-			if (t.getAllKeys) return Le(t.getAllKeys());
+			if (t.getAllKeys) return gt(t.getAllKeys());
 			let n = [];
-			return br(t, (i) => n.push(i.key)).then(() => n);
+			return Ka(t, (i) => n.push(i.key)).then(() => n);
 		});
 	}
-	function dy(e = nt()) {
+	function gT(e = nn()) {
 		return e('readonly', (t) => {
-			if (t.getAll) return Le(t.getAll());
+			if (t.getAll) return gt(t.getAll());
 			let n = [];
-			return br(t, (i) => n.push(i.value)).then(() => n);
+			return Ka(t, (i) => n.push(i.value)).then(() => n);
 		});
 	}
-	function my(e = nt()) {
+	function hT(e = nn()) {
 		return e('readonly', (t) => {
 			if (t.getAll && t.getAllKeys)
-				return Promise.all([Le(t.getAllKeys()), Le(t.getAll())]).then(
-					([i, r]) => i.map((a, l) => [a, r[l]]),
+				return Promise.all([gt(t.getAllKeys()), gt(t.getAll())]).then(
+					([i, r]) => i.map((s, l) => [s, r[l]]),
 				);
 			let n = [];
 			return e('readonly', (i) =>
-				br(i, (r) => n.push([r.key, r.value])).then(() => n),
+				Ka(i, (r) => n.push([r.key, r.value])).then(() => n),
 			);
 		});
 	}
-	var hr,
-		Lt = d(() => {
+	var qa,
+		Pn = m(() => {
 			'use strict';
-			s();
+			a();
 		});
-	function fy(e) {
-		let t = {};
-		for (let n in e) (t[n] = e[n]), (t[e[n]] = n);
-		return Object.freeze(t);
-	}
-	var $,
-		Ke = d(() => {
+	var Pi,
+		Ya = m(() => {
 			'use strict';
-			s();
-			$ = fy({
-				QUICK_CSS_UPDATE: 'VencordQuickCssUpdate',
-				GET_QUICK_CSS: 'VencordGetQuickCss',
-				SET_QUICK_CSS: 'VencordSetQuickCss',
-				GET_SETTINGS_DIR: 'VencordGetSettingsDir',
-				GET_SETTINGS: 'VencordGetSettings',
-				SET_SETTINGS: 'VencordSetSettings',
-				OPEN_EXTERNAL: 'VencordOpenExternal',
-				OPEN_QUICKCSS: 'VencordOpenQuickCss',
-				GET_UPDATES: 'VencordGetUpdates',
-				GET_REPO: 'VencordGetRepo',
-				GET_HASHES: 'VencordGetHashes',
-				UPDATE: 'VencordUpdate',
-				BUILD: 'VencordBuild',
-				OPEN_MONACO_EDITOR: 'VencordOpenMonacoEditor',
-			});
-		});
-	var F,
-		ge = d(() => {
-			'use strict';
-			s();
-			F = class {
-				constructor(t, n = 'white') {
-					this.name = t;
-					this.color = n;
+			a();
+			Pi = class {
+				set = new Set();
+				get changeCount() {
+					return this.set.size;
 				}
-				static makeTitle(t, n) {
-					return [
-						'%c %c %s ',
-						'',
-						`background: ${t}; color: black; font-weight: bold; border-radius: 5px;`,
-						n,
-					];
+				get hasChanges() {
+					return this.changeCount > 0;
 				}
-				_log(t, n, i, r = '') {
-					console[t](
-						`%c Vencord %c %c ${this.name} ${r}`,
-						`background: ${n}; color: black; font-weight: bold; border-radius: 5px;`,
-						'',
-						`background: ${this.color}; color: black; font-weight: bold; border-radius: 5px;`,
-						...i,
-					);
+				handleChange(t) {
+					this.set.delete(t) || this.set.add(t);
 				}
-				log(...t) {
-					this._log('log', '#a6d189', t);
+				add(t) {
+					return this.set.add(t);
 				}
-				info(...t) {
-					this._log('info', '#a6d189', t);
+				remove(t) {
+					return this.set.delete(t);
 				}
-				error(...t) {
-					this._log('error', '#e78284', t);
+				getChanges() {
+					return this.set.values();
 				}
-				errorCustomFmt(t, ...n) {
-					this._log('error', '#e78284', n, t);
-				}
-				warn(...t) {
-					this._log('warn', '#e5c890', t);
-				}
-				debug(...t) {
-					this._log('debug', '#eebebe', t);
+				map(t) {
+					return [...this.getChanges()].map(t);
 				}
 			};
 		});
-	var Mp,
-		O,
-		Be = d(() => {
+	var on,
+		Ii = m(() => {
+			a();
+			on = '3680c26';
+		});
+	var Hr,
+		mf = m(() => {
+			a();
+			Hr = 'Vendicated/Vencord';
+		});
+	var zt,
+		yT,
+		Za,
+		zr,
+		p,
+		Xa,
+		w = m(() => {
 			'use strict';
-			s();
-			(Mp = ''), (O = {});
-			for (let e of ['top', 'bottom', 'left', 'right'])
-				for (let t of [8, 16, 20]) {
-					let n = `vc-m-${e}-${t}`;
-					(O[`${e}${t}`] = n), (Mp += `.${n}{margin-${e}:${t}px;}`);
-				}
-			document.addEventListener(
-				'DOMContentLoaded',
-				() =>
-					document.head.append(
-						Object.assign(document.createElement('style'), {
-							textContent: Mp,
-							id: 'vencord-margins',
-						}),
-					),
-				{ once: !0 },
-			);
-		});
-	function Ue(e) {
-		let t = Object.assign(function () {}, {
-			[Np]: void 0,
-			[ei]: () => (t[Np] ??= e()),
-		});
-		return new Proxy(t, Vo);
-	}
-	var Rp,
-		Vo,
-		ei,
-		Np,
-		ln = d(() => {
-			'use strict';
-			s();
-			(Rp = ['arguments', 'caller', 'prototype']),
-				(Vo = {}),
-				(ei = Symbol.for('vencord.lazy.get')),
-				(Np = Symbol.for('vencord.lazy.cached'));
-			for (let e of [
-				'apply',
-				'construct',
-				'defineProperty',
-				'deleteProperty',
-				'get',
-				'getOwnPropertyDescriptor',
-				'getPrototypeOf',
-				'has',
-				'isExtensible',
-				'ownKeys',
-				'preventExtensions',
-				'set',
-				'setPrototypeOf',
-			])
-				Vo[e] = (t, ...n) => Reflect[e](t[ei](), ...n);
-			Vo.ownKeys = (e) => {
-				let t = e[ei](),
-					n = Reflect.ownKeys(t);
-				for (let i of Rp) n.includes(i) || n.push(i);
-				return n;
-			};
-			Vo.getOwnPropertyDescriptor = (e, t) => {
-				if (typeof t == 'string' && Rp.includes(t))
-					return Reflect.getOwnPropertyDescriptor(e, t);
-				let n = Reflect.getOwnPropertyDescriptor(e[ei](), t);
-				return n && Object.defineProperty(e, t, n), n;
-			};
-		});
-	var hy,
-		ot,
-		ti = d(() => {
-			'use strict';
-			s();
-			ge();
-			(hy = (e, t, n) => t), (ot = hy);
-		});
-	function Pr(e) {
-		if (Et !== void 0) throw 'no.';
-		(it = e.push([[Symbol('Vencord')], {}, (t) => t])),
-			(Et = it.c),
-			e.pop();
-	}
-	function Se(e, t = !0) {
-		return Ue(() => he(e, t));
-	}
-	function Mn(e, t = !0) {
-		if (typeof e != 'function')
-			throw new Error(
-				'Invalid filter. Expected a function got ' + typeof e,
-			);
-		let n = [];
-		for (let i in Et) {
-			let r = Et[i];
-			if (!!r?.exports) {
-				if (e(r.exports)) n.push(r.exports);
-				else if (typeof r.exports != 'object') continue;
-				if (r.exports.default && e(r.exports.default))
-					n.push(t ? r.exports.default : r.exports);
-				else
-					for (let a in r.exports)
-						if (a.length <= 3) {
-							let l = r.exports[a];
-							l && e(l) && n.push(l);
-						}
-			}
-		}
-		return n;
-	}
-	function ye(e, t) {
-		return Ue(() => oi(e, t));
-	}
-	function cn(...e) {
-		return he(R.byProps(...e));
-	}
-	function C(...e) {
-		return Se(R.byProps(...e));
-	}
-	function we(...e) {
-		return he(R.byCode(...e));
-	}
-	function oe(...e) {
-		return Se(R.byCode(...e));
-	}
-	function by(e) {
-		return he(R.byStoreName(e));
-	}
-	function bt(e) {
-		return Se(R.byStoreName(e));
-	}
-	function Pe(e, t) {
-		if (typeof e == 'string') e = R.byProps(e);
-		else if (Array.isArray(e)) e = R.byProps(...e);
-		else if (typeof e != 'function')
-			throw new Error(
-				'filter must be a string, string[] or function, got ' +
-					typeof e,
-			);
-		let [n, i] = he(e, !0, !0);
-		if (n) return void t(n, i);
-		Ap.set(e, t);
-	}
-	function Ir(e) {
-		wr.add(e);
-	}
-	function ii(e) {
-		wr.delete(e);
-	}
-	function io(...e) {
-		let t = {},
-			n = it.m;
-		e: for (let i in n) {
-			let r = n[i].original ?? n[i],
-				a = r.toString();
-			for (let l of e)
-				if (
-					(typeof l == 'string' && !a.includes(l)) ||
-					(l instanceof RegExp && !l.test(a))
-				)
-					continue e;
-			t[i] = r;
-		}
-		return t;
-	}
-	function kr(e) {
-		let t = it.m[e];
-		if (!t) return null;
-		let n = `
-// [EXTRACTED] WebpackModule${e}
-// WARNING: This module was extracted to be more easily readable.
-//          This module is NOT ACTUALLY USED! This means putting breakpoints will have NO EFFECT!!
-
-${t.toString()}
-//# sourceURL=ExtractedWebpackModule${e}
-`;
-		return (0, eval)(n);
-	}
-	var Tr,
-		ni,
-		xr,
-		it,
-		Et,
-		R,
-		Ap,
-		wr,
-		he,
-		yy,
-		Lp,
-		oi,
-		D = d(() => {
-			'use strict';
-			s();
-			ge();
-			ln();
-			ti();
-			(Tr = new F('Webpack')),
-				(xr = new Promise((e) => (ni = e))),
-				(R = {
-					byProps: (...e) =>
-						e.length === 1
-							? (t) => t[e[0]] !== void 0
-							: (t) => e.every((n) => t[n] !== void 0),
-					byCode:
-						(...e) =>
-						(t) => {
-							if (typeof t != 'function') return !1;
-							let n = Function.prototype.toString.call(t);
-							for (let i of e) if (!n.includes(i)) return !1;
-							return !0;
-						},
-					byStoreName: (e) => (t) => t.constructor?.displayName === e,
-				}),
-				(Ap = new Map()),
-				(wr = new Set());
-			he = ot('find', function (t, n = !0, i = !1) {
-				if (typeof t != 'function')
-					throw new Error(
-						'Invalid filter. Expected a function got ' + typeof t,
-					);
-				for (let r in Et) {
-					let a = Et[r];
-					if (!!a?.exports) {
-						if (t(a.exports))
-							return i ? [a.exports, Number(r)] : a.exports;
-						if (typeof a.exports == 'object') {
-							if (a.exports.default && t(a.exports.default)) {
-								let l = n ? a.exports.default : a.exports;
-								return i ? [l, Number(r)] : l;
-							}
-							for (let l in a.exports)
-								if (l.length <= 3) {
-									let u = a.exports[l];
-									if (u && t(u))
-										return i ? [u, Number(r)] : u;
-								}
-						}
-					}
-				}
-				if (!i) {
-					let r = new Error(
-						"Didn't find module matching this filter",
-					);
-					Tr.warn(r);
-				}
-				return i ? [null, null] : null;
-			});
-			(yy = ot('findBulk', function (...t) {
-				if (!Array.isArray(t))
-					throw new Error(
-						'Invalid filters. Expected function[] got ' + typeof t,
-					);
-				let { length: n } = t;
-				if (n === 0) throw new Error('Expected at least two filters.');
-				if (n === 1) return he(t[0]);
-				let i = t,
-					r = 0,
-					a = Array(n);
-				e: for (let l in Et) {
-					let u = Et[l];
-					if (!!u?.exports)
-						for (let m = 0; m < n; m++) {
-							let y = i[m];
-							if (y !== void 0) {
-								if (y(u.exports)) {
-									if (
-										((a[m] = u.exports),
-										(i[m] = void 0),
-										++r === n)
-									)
-										break e;
-									break;
-								}
-								if (typeof u.exports == 'object') {
-									if (
-										u.exports.default &&
-										y(u.exports.default)
-									) {
-										if (
-											((a[m] = u.exports.default),
-											(i[m] = void 0),
-											++r === n)
-										)
-											break e;
-										break;
-									}
-									for (let h in u.exports)
-										if (h.length <= 3) {
-											let b = u.exports[h];
-											if (b && y(b)) {
-												if (
-													((a[m] = b),
-													(i[m] = void 0),
-													++r === n)
-												)
-													break e;
-												continue e;
-											}
-										}
-								}
-							}
-						}
-				}
-				if (r !== n) {
-					let l = new Error(
-						`Got ${n} filters, but only found ${r} modules!`,
-					);
-					Tr.warn(l);
-				}
-				return a;
-			})),
-				(Lp = ot('findModuleId', function (t) {
-					for (let i in it.m)
-						if (it.m[i].toString().includes(t)) return Number(i);
-					let n = new Error(
-						`Didn't find module with code:
-` + t,
-					);
-					return Tr.warn(n), null;
-				})),
-				(oi = ot('mapMangledModule', function (t, n) {
-					let i = {},
-						r = Lp(t);
-					if (r === null) return i;
-					let a = it(r);
-					e: for (let l in a) {
-						let u = a[l];
-						for (let m in n)
-							if (n[m](u)) {
-								i[m] = u;
-								continue e;
-							}
-					}
-					return i;
-				}));
-		});
-	function ve(e, t) {
-		let n = function () {
-				throw new Error(`Vencord could not find the ${e} Component`);
-			},
-			i = Y(() => n);
-		return (
-			Pe(t, (r) => {
-				(n = r), Object.assign(i, r);
-			}),
-			i
-		);
-	}
-	function Fe(e, t) {
-		Pe(R.byStoreName(e), t);
-	}
-	var Cr = d(() => {
-		'use strict';
-		s();
-		B();
-		D();
-	});
-	var g,
-		Ye,
-		L,
-		pn,
-		Z,
-		Kt,
-		Te,
-		Mr,
-		z,
-		St,
-		vy,
-		Ty,
-		Nn,
-		xy,
-		vt,
-		un,
-		Ep = d(() => {
-			'use strict';
-			s();
-			D();
-			Cr();
-			(g = {
-				FormTitle: ve('FormTitle', R.byCode('errorSeparator')),
-				FormSection: ve(
-					'FormSection',
-					R.byCode('titleClassName', 'sectionTitle'),
-				),
-				FormDivider: ve('FormDivider', (e) => {
-					if (typeof e != 'function') return !1;
-					let t = e.toString();
-					return t.length < 200 && t.includes('.divider');
-				}),
-				FormText: ve('FormText', (e) => e.Types?.INPUT_PLACEHOLDER),
-			}),
-				(Ye = ve('Card', (e) => e.Types?.PRIMARY && e.defaultProps)),
-				(L = ve('Button', ['Hovers', 'Looks', 'Sizes'])),
-				(pn = ve('Switch', R.byCode('tooltipNote', 'ringTarget'))),
-				(Z = ve(
-					'Tooltip',
-					R.byCode('shouldShowTooltip:!1', 'clickableOnMobile||'),
-				)),
-				(Kt = ve(
-					'Timestamp',
-					R.byCode(
-						'.Messages.MESSAGE_EDITED_TIMESTAMP_A11Y_LABEL.format',
-					),
-				)),
-				(Te = ve('TextInput', [
-					'defaultProps',
-					'Sizes',
-					'contextType',
-				])),
-				(Mr = ve('TextArea', R.byCode('handleSetRef', 'textArea'))),
-				(z = ve('Text', (e) => {
-					if (typeof e != 'function') return !1;
-					let t = e.toString();
-					return (
-						t.includes('data-text-variant') &&
-						t.includes('always-white')
-					);
-				})),
-				(St = ve(
-					'Select',
-					R.byCode(
-						'optionClassName',
-						'popoutPosition',
-						'autoFocus',
-						'maxVisibleItems',
-					),
-				)),
-				(vy = R.byCode('autoFocus', '.Messages.SELECT')),
-				(Ty = ve('SearchableSelect', (e) => e.render && vy(e.render))),
-				(Nn = ve(
-					'Slider',
-					R.byCode('closestMarkerIndex', 'stickToMarkers'),
-				)),
-				(xy = ve('Flex', ['Justify', 'Align', 'Wrap'])),
-				(vt = C('buttonWrapper', 'buttonContent')),
-				(un = C('BLANK', 'FILLED', 'INVERTED'));
-		});
-	var le,
-		ri,
-		Dp = d(() => {
-			'use strict';
-			s();
-			ln();
-			D();
-			(le = Ue(() => {
-				let e =
-						Vencord.Settings.plugins.MenuItemDeobfuscatorAPI
-							.enabled,
-					t = [
-						'MenuSeparator',
-						'MenuGroup',
-						'MenuItem',
-						'MenuCheckboxItem',
-						'MenuRadioItem',
-						'MenuControlItem',
-					],
-					n = oi(
-						'\u266B \u2282(\uFF61\u25D5\u203F\u203F\u25D5\uFF61\u2282) \u266A',
-						{
-							ContextMenu: R.byCode('getContainerProps'),
-							...Object.fromEntries(
-								(e ? t : []).map((i) => [
-									i,
-									(r) => r.name === i,
-								]),
-							),
-						},
-					);
-				if (!e)
-					for (let i of t)
-						Object.defineProperty(n, i, {
-							get() {
-								throw new Error(
-									'MenuItemDeobfuscator must be enabled to use this.',
-								);
-							},
-						});
-				return n;
-			})),
-				(ri = ye('type:"CONTEXT_MENU_OPEN"', {
-					open: R.byCode('stopPropagation'),
-					openLazy: (e) => e.toString().length < 50,
-					close: R.byCode('CONTEXT_MENU_CLOSE'),
-				}));
-		});
-	var w,
-		Ie,
-		rt,
-		dn,
-		_p,
-		si,
-		Fp,
-		Nr,
-		Op = d(() => {
-			'use strict';
-			s();
-			D();
-			Nr = C('createPortal', 'render');
-			Pe('useState', (e) => {
-				(w = e),
-					({
-						useEffect: rt,
-						useState: Ie,
-						useMemo: dn,
-						useRef: _p,
-						useReducer: si,
-						useCallback: Fp,
-					} = w);
-			});
-		});
-	var Rr,
-		st,
-		Ar,
-		ke,
-		ai,
-		ro,
-		Yt,
-		de,
-		U,
-		re,
-		Rn,
-		G,
-		Qe,
-		Xe,
-		so,
-		wy,
-		Je,
-		$p = d(() => {
-			'use strict';
-			s();
-			D();
-			Cr();
-			(Rr = C('connectStores')),
-				(Ar = C('openPrivateChannel')),
-				(wy = ye('"MaskedLinkStore"', {
-					openUntrustedLink: R.byCode('.apply(this,arguments)'),
-				})),
-				(Je = oe('useStateFromStores'));
-			Fe('UserStore', (e) => (U = e));
-			Fe('ChannelStore', (e) => (G = e));
-			Fe('SelectedChannelStore', (e) => (re = e));
-			Fe('SelectedGuildStore', (e) => (Rn = e));
-			Fe('GuildStore', (e) => (de = e));
-			Fe('GuildMemberStore', (e) => (Qe = e));
-			Fe('RelationshipStore', (e) => (Xe = e));
-			Fe('PermissionStore', (e) => (ke = e));
-			Fe('PresenceStore', (e) => (Yt = e));
-			Fe('ReadStateStore', (e) => (ro = e));
-			Fe('GuildChannelStore', (e) => (ai = e));
-			Fe('MessageStore', (e) => (st = e));
-			Fe('WindowStore', (e) => (so = e));
-		});
-	var Bp = {};
-	var Up = d(() => {
-		'use strict';
-		s();
-	});
-	var Gp = {};
-	var Hp = d(() => {
-		'use strict';
-		s();
-	});
-	var jp = {};
-	var zp = d(() => {
-		'use strict';
-		s();
-	});
-	var I,
-		ao,
-		Tt,
-		mn,
-		An,
-		Ln,
-		Ce,
-		Dt,
-		Py,
-		Iy,
-		K,
-		Qt,
-		at,
-		lo,
-		En,
-		Wp = d(() => {
-			'use strict';
-			s();
-			D();
-			(ao = C('getAPIBaseURL', 'get')),
-				(Tt = C('parseTwoDigitYear')),
-				(mn = C('highlight')),
-				(An = Se((e) => e.Messages?.['en-US']));
-			Pe(['fromTimestamp', 'extractTimestamp'], (e) => (Ln = e));
-			(Py = { MESSAGE: 0, SUCCESS: 1, FAILURE: 2, CUSTOM: 3 }),
-				(Iy = { TOP: 0, BOTTOM: 1 }),
-				(K = {
-					Type: Py,
-					Position: Iy,
-					genId: () =>
-						(Math.random() || Math.random()).toString(36).slice(2),
-				}),
-				(Qt = { fetchUser: oe('.USER(', 'getUser') }),
-				(at = ye(
-					'document.queryCommandEnabled("copy")||document.queryCommandSupported("copy")',
-					{
-						copy: R.byCode('.default.copy('),
-						SUPPORTS_COPY: (e) => typeof e == 'boolean',
-					},
-				)),
-				(lo = ye('transitionToGuild - ', {
-					transitionTo: R.byCode('transitionTo -'),
-					transitionToGuild: R.byCode('transitionToGuild -'),
-					goBack: R.byCode('goBack()'),
-					goForward: R.byCode('goForward()'),
-				}));
-			Pe(['dispatch', 'subscribe'], (e) => {
-				I = e;
-				let t = () => {
-					e.unsubscribe('CONNECTION_OPEN', t), ni();
-				};
-				e.subscribe('CONNECTION_OPEN', t);
-			});
-			Pe(R.byCode('currentToast?'), (e) => (K.show = e));
-			Pe(R.byCode('currentToast:null'), (e) => (K.pop = e));
-			Pe(['show', 'close'], (e) => (Dt = e));
-			Pe('parseTopic', (e) => (Ce = e));
-			Pe(['open', 'saveAccountChanges'], (e) => (En = e));
-		});
-	var Lr = {};
-	te(Lr, {
-		Alerts: () => Dt,
-		Button: () => L,
-		ButtonLooks: () => un,
-		ButtonWrapperClasses: () => vt,
-		Card: () => Ye,
-		ChannelStore: () => G,
-		Clipboard: () => at,
-		ComponentTypes: () => Bp,
-		ContextMenu: () => ri,
-		Flex: () => xy,
-		Flux: () => Rr,
-		FluxDispatcher: () => I,
-		Forms: () => g,
-		GuildChannelStore: () => ai,
-		GuildMemberStore: () => Qe,
-		GuildStore: () => de,
-		MaskedLinkStore: () => wy,
-		Menu: () => le,
-		MenuTypes: () => Gp,
-		MessageStore: () => st,
-		NavigationRouter: () => lo,
-		Parser: () => Ce,
-		PermissionStore: () => ke,
-		PresenceStore: () => Yt,
-		PrivateChannelsStore: () => Ar,
-		React: () => w,
-		ReactDOM: () => Nr,
-		ReadStateStore: () => ro,
-		RelationshipStore: () => Xe,
-		RestAPI: () => ao,
-		SearchableSelect: () => Ty,
-		Select: () => St,
-		SelectedChannelStore: () => re,
-		SelectedGuildStore: () => Rn,
-		SettingsRouter: () => En,
-		Slider: () => Nn,
-		SnowflakeUtils: () => Ln,
-		Switch: () => pn,
-		Text: () => z,
-		TextArea: () => Mr,
-		TextInput: () => Te,
-		Timestamp: () => Kt,
-		Toasts: () => K,
-		Tooltip: () => Z,
-		UserStore: () => U,
-		UserUtils: () => Qt,
-		UtilTypes: () => jp,
-		WindowStore: () => so,
-		hljs: () => mn,
-		i18n: () => An,
-		moment: () => Tt,
-		useCallback: () => Fp,
-		useEffect: () => rt,
-		useMemo: () => dn,
-		useReducer: () => si,
-		useRef: () => _p,
-		useState: () => Ie,
-		useStateFromStores: () => Je,
-	});
-	var P = d(() => {
-		'use strict';
-		s();
-		Ep();
-		Dp();
-		Op();
-		$p();
-		Up();
-		Hp();
-		zp();
-		Wp();
-	});
-	function xt(e) {
-		let t;
-		return () => t ?? (t = e());
-	}
-	function Me(e, t) {
-		let n = Object.assign(
-				{ fallbackValue: null, deps: [], onError: null },
-				t,
-			),
-			[i, r] = Ie({ value: n.fallbackValue, error: null, pending: !0 });
-		return (
-			rt(() => {
-				let a = !0;
-				return (
-					i.pending || r({ ...i, pending: !0 }),
-					e()
-						.then(
-							(l) =>
-								a && r({ value: l, error: null, pending: !1 }),
-						)
-						.catch(
-							(l) =>
-								a &&
-								(r({ value: null, error: l, pending: !1 }),
-								n.onError?.(l)),
-						),
-					() => void (a = !1)
-				);
-			}, n.deps),
-			[i.value, i.error, i.pending]
-		);
-	}
-	function wt() {
-		let [, e] = Ie(0);
-		return () => e((t) => t + 1);
-	}
-	function Y(e) {
-		let t = xt(e);
-		return (n) => {
-			let i = t();
-			return o(i, { ...n });
-		};
-	}
-	function fn(e, t) {
-		for (let n in t) {
-			let i = t[n];
-			typeof i == 'object' && !Array.isArray(i)
-				? ((e[n] ??= {}), fn(e[n], i))
-				: (e[n] ??= i);
-		}
-		return e;
-	}
-	function ky(e, t = (n) => n) {
-		let { length: n } = e;
-		if (n === 0) return '';
-		if (n === 1) return t(e[0]);
-		let i = '';
-		for (let r = 0; r < n; r++)
-			(i += t(e[r])),
-				n - r > 2 ? (i += ', ') : n - r > 1 && (i += ' and ');
-		return i;
-	}
-	function me(...e) {
-		return e.filter(Boolean).join(' ');
-	}
-	function co(e) {
-		return new Promise((t) => setTimeout(t, e));
-	}
-	function Dn(e, t) {
-		let n = '```';
-		return `${n}${t || ''}
-${e.replaceAll('```', '\\`\\`\\`')}
-${n}`;
-	}
-	function gn(e, t = 'Copied to clipboard!') {
-		at.SUPPORTS_COPY
-			? at.copy(e)
-			: (t = 'Your browser does not support copying to clipboard'),
-			K.show({ message: t, id: K.genId(), type: K.Type.SUCCESS });
-	}
-	function Cy(e) {
-		return typeof e == 'object' && e !== null && !Array.isArray(e);
-	}
-	function Er(e) {
-		try {
-			return new URL(e);
-		} catch {
-			return null;
-		}
-	}
-	function li(e) {
-		return e;
-	}
-	var Dr,
-		B = d(() => {
-			'use strict';
-			s();
-			P();
-			Dr = (e) => {
-				let t = e.getBoundingClientRect(),
-					n = Math.max(
-						document.documentElement.clientHeight,
-						window.innerHeight,
-					);
-				return !(t.bottom < 0 || t.top - n >= 0);
-			};
-		});
-	var qp = d(() => {});
-	function Xt(e) {
-		return o(
-			'div',
-			{ ...e, className: me(e.className, 'vc-error-card') },
-			e.children,
-		);
-	}
-	var po = d(() => {
-		'use strict';
-		s();
-		qp();
-		B();
-	});
-	var My,
-		Kp,
-		Yp,
-		_r,
-		N,
-		J = d(() => {
-			'use strict';
-			s();
-			ge();
-			Be();
-			B();
-			P();
-			po();
-			(My = '#e78284'),
-				(Kp = new F('React ErrorBoundary', My)),
-				(Yp = {}),
-				(_r = Y(
-					() =>
-						class extends w.PureComponent {
-							state = { error: Yp, stack: '', message: '' };
-							static getDerivedStateFromError(t) {
-								let n = t?.stack ?? '',
-									i = t?.message || String(t);
-								if (t instanceof Error && n) {
-									let r = n.indexOf(`
-`);
-									r !== -1 &&
-										((i = n.slice(0, r)),
-										(n = n
-											.slice(r + 1)
-											.replace(
-												/https:\/\/\S+\/assets\//g,
-												'',
-											)));
-								}
-								return { error: t, stack: n, message: i };
-							}
-							componentDidCatch(t, n) {
-								this.props.onError?.({
-									error: t,
-									errorInfo: n,
-									props: this.props.wrappedProps,
-								}),
-									Kp.error(
-										`A component threw an Error
-`,
-										t,
-									),
-									Kp.error(
-										'Component Stack',
-										n.componentStack,
-									);
-							}
-							render() {
-								if (this.state.error === Yp)
-									return this.props.children;
-								if (this.props.noop) return null;
-								if (this.props.fallback)
-									return o(this.props.fallback, {
-										children: this.props.children,
-										...this.state,
-									});
-								let t =
-									this.props.message ||
-									'An error occurred while rendering this Component. More info can be found below and in your console.';
-								return o(
-									Xt,
-									{ style: { overflow: 'hidden' } },
-									o('h1', null, 'Oh no!'),
-									o('p', null, t),
-									o(
-										'code',
-										null,
-										this.state.message,
-										!!this.state.stack &&
-											o(
-												'pre',
-												{ className: O.top8 },
-												this.state.stack,
-											),
-									),
-								);
-							}
-						},
-				));
-			_r.wrap = (e, t) => (n) =>
-				o(_r, { ...t, wrappedProps: n }, o(e, { ...n }));
-			N = _r;
-		});
-	var lt,
-		_n = d(() => {
-			s();
-			lt = '462f191';
-		});
-	var Fr,
-		Qp = d(() => {
-			s();
-			Fr = 'Vendicated/Vencord';
-		});
-	var $r = {};
-	te($r, {
-		Devs: () => c,
-		REACT_GLOBAL: () => Ny,
-		SUPPORT_CHANNEL_ID: () => ci,
-		VENCORD_USER_AGENT: () => Or,
-		WEBPACK_CHUNK: () => _t,
-	});
-	var _t,
-		Ny,
-		Or,
-		ci,
-		c,
-		T = d(() => {
-			'use strict';
-			s();
-			_n();
-			Qp();
-			(_t = 'webpackChunkdiscord_app'),
-				(Ny = 'Vencord.Webpack.Common.React'),
-				(Or = `Vencord/${lt}${
-					Fr ? ` (https://github.com/${Fr})` : ''
+			a();
+			Ii();
+			mf();
+			(zt = 'webpackChunkdiscord_app'),
+				(yT = 'Vencord.Webpack.Common.React'),
+				(Za = `Vencord/${on}${
+					Hr ? ` (https://github.com/${Hr})` : ''
 				}`),
-				(ci = '1026515880080842772'),
-				(c = Object.freeze({
+				(zr = '1026515880080842772'),
+				(p = Object.freeze({
 					Ven: { name: 'Vendicated', id: 343383572805058560n },
 					Arjix: { name: 'ArjixWasTaken', id: 674710789138939916n },
 					Cyn: { name: 'Cynosphere', id: 150745989836308480n },
@@ -1241,7 +282,7 @@ ${n}`;
 					},
 					zt: { name: 'zt', id: 289556910426816513n },
 					captain: { name: 'Captain', id: 347366054806159360n },
-					nick: { name: 'nick', id: 347884694408265729n },
+					nick: { name: 'nick', id: 347884694408265729n, badge: !1 },
 					whqwert: { name: 'whqwert', id: 586239091520176128n },
 					lewisakura: { name: 'lewisakura', id: 96269247411400704n },
 					RuiNtD: { name: 'RuiNtD', id: 157917665162297344n },
@@ -1252,27 +293,1410 @@ ${n}`;
 						name: 'TheKodeToad',
 						id: 706152404072267788n,
 					},
+					LordElias: { name: 'LordElias', id: 319460781567639554n },
+					juby: { name: 'Juby210', id: 324622488644616195n },
+					Alyxia: { name: 'Alyxia Sother', id: 952185386350829688n },
+					Remty: { name: 'Remty', id: 335055032204656642n },
 					skyevg: { name: 'skyevg', id: 1090310844283363348n },
+					Dziurwa: { name: 'Dziurwa', id: 787017887877169173n },
+					AutumnVN: { name: 'AutumnVN', id: 393694671383166998n },
+					pylix: { name: 'pylix', id: 492949202121261067n },
+					Tyler: { name: '\\\\GGTyler\\\\', id: 143117463788191746n },
+					RyanCaoDev: { name: 'RyanCaoDev', id: 952235800110694471n },
+					Strencher: { name: 'Strencher', id: 415849376598982656n },
+					FieryFlames: { name: 'Fiery', id: 890228870559698955n },
+					KannaDev: { name: 'Kanna', id: 317728561106518019n },
+					carince: { name: 'carince', id: 818323528755314698n },
+					PandaNinjas: {
+						name: 'PandaNinjas',
+						id: 455128749071925248n,
+					},
+					CatNoir: { name: 'CatNoir', id: 260371016348336128n },
+					outfoxxed: { name: 'outfoxxed', id: 837425748435796060n },
+					UwUDev: { name: 'UwU', id: 691413039156690994n },
+					amia: { name: 'amia', id: 142007603549962240n },
+					ImLvna: { name: 'Luna <3', id: 174200708818665472n },
+                    // BotClient dev
+					Elysia: { name: 'Elysia', id: 721746046543331449n },
+				})),
+				(Xa = (() =>
+					Object.freeze(
+						Object.fromEntries(
+							Object.entries(p)
+								.filter((e) => e[1].id !== 0n)
+								.map(([e, t]) => [t.id, t]),
+						),
+					))());
+		});
+	function Ct(e, t = 300) {
+		let n;
+		return function (...i) {
+			clearTimeout(n),
+				(n = setTimeout(() => {
+					e(...i);
+				}, t));
+		};
+	}
+	var Ko = m(() => {
+		'use strict';
+		a();
+	});
+	function On(e) {
+		let t;
+		return () => t ?? (t = e());
+	}
+	function ct(e) {
+		let t = Object.assign(function () {}, {
+			[ff]: void 0,
+			[Wr]: () => (t[ff] ??= e()),
+		});
+		return new Proxy(t, jr);
+	}
+	var gf,
+		jr,
+		Wr,
+		ff,
+		rn = m(() => {
+			'use strict';
+			a();
+			(gf = ['arguments', 'caller', 'prototype']),
+				(jr = {}),
+				(Wr = Symbol.for('vencord.lazy.get')),
+				(ff = Symbol.for('vencord.lazy.cached'));
+			for (let e of [
+				'apply',
+				'construct',
+				'defineProperty',
+				'deleteProperty',
+				'get',
+				'getOwnPropertyDescriptor',
+				'getPrototypeOf',
+				'has',
+				'isExtensible',
+				'ownKeys',
+				'preventExtensions',
+				'set',
+				'setPrototypeOf',
+			])
+				jr[e] = (t, ...n) => Reflect[e](t[Wr](), ...n);
+			jr.ownKeys = (e) => {
+				let t = e[Wr](),
+					n = Reflect.ownKeys(t);
+				for (let i of gf) n.includes(i) || n.push(i);
+				return n;
+			};
+			jr.getOwnPropertyDescriptor = (e, t) => {
+				if (typeof t == 'string' && gf.includes(t))
+					return Reflect.getOwnPropertyDescriptor(e, t);
+				let n = Reflect.getOwnPropertyDescriptor(e[Wr](), t);
+				return n && Object.defineProperty(e, t, n), n;
+			};
+		});
+	var Z,
+		Se = m(() => {
+			'use strict';
+			a();
+			Z = class {
+				constructor(t, n = 'white') {
+					this.name = t;
+					this.color = n;
+				}
+				static makeTitle(t, n) {
+					return [
+						'%c %c %s ',
+						'',
+						`background: ${t}; color: black; font-weight: bold; border-radius: 5px;`,
+						n,
+					];
+				}
+				_log(t, n, i, r = '') {
+					console[t](
+						`%c Vencord %c %c ${this.name} ${r}`,
+						`background: ${n}; color: black; font-weight: bold; border-radius: 5px;`,
+						'',
+						`background: ${this.color}; color: black; font-weight: bold; border-radius: 5px;`,
+						...i,
+					);
+				}
+				log(...t) {
+					this._log('log', '#a6d189', t);
+				}
+				info(...t) {
+					this._log('info', '#a6d189', t);
+				}
+				error(...t) {
+					this._log('error', '#e78284', t);
+				}
+				errorCustomFmt(t, ...n) {
+					this._log('error', '#e78284', n, t);
+				}
+				warn(...t) {
+					this._log('warn', '#e5c890', t);
+				}
+				debug(...t) {
+					this._log('debug', '#eebebe', t);
+				}
+			};
+		});
+	var vT,
+		sn,
+		qr = m(() => {
+			'use strict';
+			a();
+			Se();
+			(vT = (e, t, n) => t), (sn = vT);
+		});
+	function Yr(e) {
+		if (_n !== void 0) throw 'no.';
+		(Ft = e.push([[Symbol('Vencord')], {}, (t) => t])),
+			(_n = Ft.c),
+			e.pop();
+	}
+	function Ce(e, t = !0) {
+		return ct(() => ht(e, t));
+	}
+	function Yo(e, t = !0) {
+		if (typeof e != 'function')
+			throw new Error(
+				'Invalid filter. Expected a function got ' + typeof e,
+			);
+		let n = [];
+		for (let i in _n) {
+			let r = _n[i];
+			if (!!r?.exports) {
+				if (e(r.exports)) n.push(r.exports);
+				else if (typeof r.exports != 'object') continue;
+				if (r.exports.default && e(r.exports.default))
+					n.push(t ? r.exports.default : r.exports);
+				else
+					for (let s in r.exports)
+						if (s.length <= 3) {
+							let l = r.exports[s];
+							l && e(l) && n.push(l);
+						}
+			}
+		}
+		return n;
+	}
+	function Ye(e, t) {
+		return ct(() => yf(e, t));
+	}
+	function an(...e) {
+		return ht(Y.byProps(...e));
+	}
+	function P(...e) {
+		return Ce(Y.byProps(...e));
+	}
+	function He(...e) {
+		return ht(Y.byCode(...e));
+	}
+	function ce(...e) {
+		return Ce(Y.byCode(...e));
+	}
+	function ST(e) {
+		return ht(Y.byStoreName(e));
+	}
+	function ue(e) {
+		return Ce(Y.byStoreName(e));
+	}
+	function Ze(e, t) {
+		if (typeof e == 'string') e = Y.byProps(e);
+		else if (Array.isArray(e)) e = Y.byProps(...e);
+		else if (typeof e != 'function')
+			throw new Error(
+				'filter must be a string, string[] or function, got ' +
+					typeof e,
+			);
+		let [n, i] = ht(e, !0, !0);
+		if (n) return void t(n, i);
+		hf.set(e, t);
+	}
+	function bT(e) {
+		Va.add(e);
+	}
+	function TT(e) {
+		Va.delete(e);
+	}
+	function el(...e) {
+		let t = {},
+			n = Ft.m;
+		e: for (let i in n) {
+			let r = n[i].original ?? n[i],
+				s = r.toString();
+			for (let l of e)
+				if (
+					(typeof l == 'string' && !s.includes(l)) ||
+					(l instanceof RegExp && !l.test(s))
+				)
+					continue e;
+			t[i] = r;
+		}
+		return t;
+	}
+	function tl(e) {
+		let t = Ft.m[e];
+		if (!t) return null;
+		let n = `
+// [EXTRACTED] WebpackModule${e}
+// WARNING: This module was extracted to be more easily readable.
+//          This module is NOT ACTUALLY USED! This means putting breakpoints will have NO EFFECT!!
+
+${t.toString()}
+//# sourceURL=ExtractedWebpackModule${e}
+`;
+		return (0, eval)(n);
+	}
+	var Ja,
+		Kr,
+		Qa,
+		Ft,
+		_n,
+		Y,
+		hf,
+		Va,
+		ht,
+		Ri,
+		Zr,
+		yf,
+		_ = m(() => {
+			'use strict';
+			a();
+			rn();
+			Se();
+			qr();
+			(Ja = new Z('Webpack')),
+				(Qa = new Promise((e) => (Kr = e))),
+				(Y = {
+					byProps: (...e) =>
+						e.length === 1
+							? (t) => t[e[0]] !== void 0
+							: (t) => e.every((n) => t[n] !== void 0),
+					byCode:
+						(...e) =>
+						(t) => {
+							if (typeof t != 'function') return !1;
+							let n = Function.prototype.toString.call(t);
+							for (let i of e) if (!n.includes(i)) return !1;
+							return !0;
+						},
+					byStoreName: (e) => (t) => t.constructor?.displayName === e,
+				}),
+				(hf = new Map()),
+				(Va = new Set());
+			ht = sn('find', function (t, n = !0, i = !1) {
+				if (typeof t != 'function')
+					throw new Error(
+						'Invalid filter. Expected a function got ' + typeof t,
+					);
+				for (let r in _n) {
+					let s = _n[r];
+					if (!!s?.exports) {
+						if (t(s.exports))
+							return i ? [s.exports, Number(r)] : s.exports;
+						if (typeof s.exports == 'object') {
+							if (s.exports.default && t(s.exports.default)) {
+								let l = n ? s.exports.default : s.exports;
+								return i ? [l, Number(r)] : l;
+							}
+							for (let l in s.exports)
+								if (l.length <= 3) {
+									let c = s.exports[l];
+									if (c && t(c))
+										return i ? [c, Number(r)] : c;
+								}
+						}
+					}
+				}
+				if (!i) {
+					let r = new Error(
+						"Didn't find module matching this filter",
+					);
+					Ja.warn(r);
+				}
+				return i ? [null, null] : null;
+			});
+			(Ri = sn('findBulk', function (...t) {
+				if (!Array.isArray(t))
+					throw new Error(
+						'Invalid filters. Expected function[] got ' + typeof t,
+					);
+				let { length: n } = t;
+				if (n === 0) throw new Error('Expected at least two filters.');
+				if (n === 1) return ht(t[0]);
+				let i = t,
+					r = 0,
+					s = Array(n);
+				e: for (let l in _n) {
+					let c = _n[l];
+					if (!!c?.exports)
+						for (let u = 0; u < n; u++) {
+							let h = i[u];
+							if (h !== void 0) {
+								if (h(c.exports)) {
+									if (
+										((s[u] = c.exports),
+										(i[u] = void 0),
+										++r === n)
+									)
+										break e;
+									break;
+								}
+								if (typeof c.exports == 'object') {
+									if (
+										c.exports.default &&
+										h(c.exports.default)
+									) {
+										if (
+											((s[u] = c.exports.default),
+											(i[u] = void 0),
+											++r === n)
+										)
+											break e;
+										break;
+									}
+									for (let f in c.exports)
+										if (f.length <= 3) {
+											let v = c.exports[f];
+											if (v && h(v)) {
+												if (
+													((s[u] = v),
+													(i[u] = void 0),
+													++r === n)
+												)
+													break e;
+												continue e;
+											}
+										}
+								}
+							}
+						}
+				}
+				if (r !== n) {
+					let l = new Error(
+						`Got ${n} filters, but only found ${r} modules!`,
+					);
+					Ja.warn(l);
+				}
+				return s;
+			})),
+				(Zr = sn('findModuleId', function (t) {
+					for (let i in Ft.m)
+						if (Ft.m[i].toString().includes(t)) return Number(i);
+					let n = new Error(
+						`Didn't find module with code:
+` + t,
+					);
+					return Ja.warn(n), null;
+				})),
+				(yf = sn('mapMangledModule', function (t, n) {
+					let i = {},
+						r = Zr(t);
+					if (r === null) return i;
+					let s = Ft(r);
+					e: for (let l in s) {
+						let c = s[l];
+						for (let u in n)
+							if (n[u](c)) {
+								i[u] = c;
+								continue e;
+							}
+					}
+					return i;
 				}));
 		});
-	function f(e) {
+	function Po(e, t) {
+		for (let n in t) {
+			let i = t[n];
+			typeof i == 'object' && !Array.isArray(i)
+				? ((e[n] ??= {}), Po(e[n], i))
+				: (e[n] ??= i);
+		}
 		return e;
 	}
-	var v = d(() => {
-		'use strict';
-		s();
-	});
-	var Br,
-		Xp = d(() => {
+	function J(...e) {
+		return e.filter(Boolean).join(' ');
+	}
+	function no(e) {
+		return new Promise((t) => setTimeout(t, e));
+	}
+	function ln(e, t = 'Copied to clipboard!') {
+		jt.SUPPORTS_COPY
+			? jt.copy(e)
+			: (t = 'Your browser does not support copying to clipboard'),
+			Q.show({ message: t, id: Q.genId(), type: Q.Type.SUCCESS });
+	}
+	function wT(e) {
+		return typeof e == 'object' && e !== null && !Array.isArray(e);
+	}
+	function nl(e) {
+		try {
+			return new URL(e);
+		} catch {
+			return null;
+		}
+	}
+	function Xr(e) {
+		return e;
+	}
+	var ol,
+		MT,
+		Ci,
+		de = m(() => {
 			'use strict';
-			s();
+			a();
+			x();
+			w();
+			ol = (e) => {
+				let t = e.getBoundingClientRect(),
+					n = Math.max(
+						document.documentElement.clientHeight,
+						window.innerHeight,
+					);
+				return !(t.bottom < 0 || t.top - n >= 0);
+			};
+			(MT = navigator.userAgent.includes('Mobi')),
+				(Ci = (e) => Object.hasOwn(Xa, e));
+		});
+	function ut(e, t) {
+		let n = Object.assign(
+				{ fallbackValue: null, deps: [], onError: null },
+				t,
+			),
+			[i, r] = V({ value: n.fallbackValue, error: null, pending: !0 });
+		return (
+			tt(() => {
+				let s = !0;
+				return (
+					i.pending || r({ ...i, pending: !0 }),
+					e()
+						.then((l) => {
+							!s ||
+								(r({ value: l, error: null, pending: !1 }),
+								n.onSuccess?.(l));
+						})
+						.catch((l) => {
+							!s ||
+								(r({ value: null, error: l, pending: !1 }),
+								n.onError?.(l));
+						}),
+					() => void (s = !1)
+				);
+			}, n.deps),
+			[i.value, i.error, i.pending]
+		);
+	}
+	function Bt(e) {
+		let t = Zo((n) => n + 1, 0);
+		return e ? t : t[1];
+	}
+	function oe(e) {
+		let t = On(e);
+		return (n) => {
+			let i = t();
+			return o(i, { ...n });
+		};
+	}
+	var vf,
+		ye = m(() => {
+			'use strict';
+			a();
+			x();
+			rn();
+			de();
+			vf = (e = !1) => {
+				let t = I.useRef(null),
+					[n, i] = V(!1);
+				return [
+					(s) => {
+						t.current?.disconnect(),
+							(t.current = null),
+							s &&
+								((ol(s) && (i(!0), e)) ||
+									((t.current = new IntersectionObserver(
+										(l) => {
+											for (let c of l)
+												c.target === s &&
+													(c.isIntersecting && e
+														? (i(!0),
+														  t.current?.disconnect(),
+														  (t.current = null))
+														: i(c.isIntersecting));
+										},
+									)),
+									t.current.observe(s)));
+					},
+					n,
+				];
+			};
+		});
+	function il(e, t) {
+		let n = function () {
+				throw new Error(`Vencord could not find the ${e} Component`);
+			},
+			i = oe(() => n);
+		return (
+			Ze(t, (r) => {
+				(n = r), Object.assign(i, r);
+			}),
+			i
+		);
+	}
+	function yt(e, t) {
+		Ze(Y.byStoreName(e), t);
+	}
+	var rl = m(() => {
+		'use strict';
+		a();
+		ye();
+		_();
+	});
+	var y,
+		At,
+		R,
+		Nt,
+		W,
+		Ne,
+		Jr,
+		q,
+		$t,
+		Qr,
+		Io,
+		Wt,
+		Ai,
+		Sf,
+		bf,
+		Vr,
+		Ni,
+		In,
+		PT,
+		pt,
+		Tf = m(() => {
+			'use strict';
+			a();
+			_();
+			rl();
+			(y = {}),
+				(In = il(
+					'Timestamp',
+					Y.byCode(
+						'.Messages.MESSAGE_EDITED_TIMESTAMP_A11Y_LABEL.format',
+					),
+				)),
+				(PT = il('Flex', ['Justify', 'Align', 'Wrap'])),
+				(pt = P('buttonWrapper', 'buttonContent'));
+			Ze('FormItem', (e) => {
+				({
+					useToken: Ni,
+					Card: At,
+					Button: R,
+					FormSwitch: Nt,
+					Tooltip: W,
+					TextInput: Ne,
+					TextArea: Jr,
+					Text: q,
+					Select: $t,
+					SearchableSelect: Qr,
+					Slider: Io,
+					ButtonLooks: Wt,
+					TabBar: bf,
+					Popout: Ai,
+					Dialog: Sf,
+					Paginator: Vr,
+				} = e),
+					(y = e);
+			});
+		});
+	var F,
+		Fn,
+		xf = m(() => {
+			'use strict';
+			a();
+			_();
+			F = {};
+			Ze('MenuItem', (e) => (F = e));
+			Fn = Ye('type:"CONTEXT_MENU_OPEN"', {
+				open: Y.byCode('stopPropagation'),
+				openLazy: (e) => e.toString().length < 50,
+				close: Y.byCode('CONTEXT_MENU_CLOSE'),
+			});
+		});
+	var I,
+		V,
+		tt,
+		Ut,
+		qt,
+		Zo,
+		wf,
+		Ro,
+		Mf = m(() => {
+			'use strict';
+			a();
+			_();
+			Ro = P('createPortal', 'render');
+			Ze('useState', (e) => {
+				(I = e),
+					({
+						useEffect: tt,
+						useState: V,
+						useMemo: Ut,
+						useRef: qt,
+						useReducer: Zo,
+						useCallback: wf,
+					} = I);
+			});
+		});
+	var sl,
+		cn,
+		al,
+		et,
+		es,
+		ki,
+		oo,
+		IT,
+		le,
+		U,
+		fe,
+		Xo,
+		X,
+		ke,
+		Kt,
+		un,
+		Li,
+		ll,
+		Be,
+		Pf = m(() => {
+			'use strict';
+			a();
+			_();
+			rl();
+			(sl = P('connectStores')),
+				(al = P('openPrivateChannel')),
+				(ll = Ye('"MaskedLinkStore"', {
+					openUntrustedLink: Y.byCode('.apply(this,arguments)'),
+				})),
+				(Be = ce('useStateFromStores'));
+			yt('UserStore', (e) => (U = e));
+			yt('ChannelStore', (e) => (X = e));
+			yt('SelectedChannelStore', (e) => (fe = e));
+			yt('SelectedGuildStore', (e) => (Xo = e));
+			yt('GuildStore', (e) => (le = e));
+			yt('GuildMemberStore', (e) => (ke = e));
+			yt('RelationshipStore', (e) => (Kt = e));
+			yt('PermissionStore', (e) => (et = e));
+			yt('PresenceStore', (e) => (oo = e));
+			yt('ReadStateStore', (e) => (ki = e));
+			yt('GuildChannelStore', (e) => (es = e));
+			yt('MessageStore', (e) => (cn = e));
+			yt('WindowStore', (e) => (Li = e));
+			yt('EmojiStore', (e) => (un = e));
+		});
+	var If = {};
+	var Rf = m(() => {
+		'use strict';
+		a();
+	});
+	var Cf = {};
+	var Af = m(() => {
+		'use strict';
+		a();
+	});
+	var Nf = {};
+	var kf = m(() => {
+		'use strict';
+		a();
+	});
+	var L,
+		cl,
+		Yt,
+		Zt,
+		Co,
+		nt,
+		Jo,
+		Pe,
+		vt,
+		RT,
+		CT,
+		Q,
+		Rn,
+		jt,
+		Ei,
+		ts,
+		io,
+		Lf = m(() => {
+			'use strict';
+			a();
+			_();
+			(cl = Ce((e) => e.emitter?._events?.INSERT_TEXT)),
+				(Yt = P('getAPIBaseURL', 'get')),
+				(Zt = P('parseTwoDigitYear')),
+				(Co = P('highlight')),
+				(nt = Ce((e) => e.Messages?.['en-US']));
+			Ze(['fromTimestamp', 'extractTimestamp'], (e) => (Jo = e));
+			(RT = { MESSAGE: 0, SUCCESS: 1, FAILURE: 2, CUSTOM: 3 }),
+				(CT = { TOP: 0, BOTTOM: 1 }),
+				(Q = {
+					Type: RT,
+					Position: CT,
+					genId: () =>
+						(Math.random() || Math.random()).toString(36).slice(2),
+				}),
+				(Rn = { fetchUser: ce('.USER(', 'getUser') }),
+				(jt = Ye(
+					'document.queryCommandEnabled("copy")||document.queryCommandSupported("copy")',
+					{
+						copy: Y.byCode('.default.copy('),
+						SUPPORTS_COPY: (e) => typeof e == 'boolean',
+					},
+				)),
+				(Ei = Ye('transitionToGuild - ', {
+					transitionTo: Y.byCode('transitionTo -'),
+					transitionToGuild: Y.byCode('transitionToGuild -'),
+					goBack: Y.byCode('goBack()'),
+					goForward: Y.byCode('goForward()'),
+				}));
+			Ze(['dispatch', 'subscribe'], (e) => {
+				L = e;
+				let t = () => {
+					e.unsubscribe('CONNECTION_OPEN', t), Kr();
+				};
+				e.subscribe('CONNECTION_OPEN', t);
+			});
+			Ze('showToast', (e) => {
+				(Q.show = e.showToast), (Q.pop = e.popToast);
+			});
+			Ze(['show', 'close'], (e) => (vt = e));
+			Ze('parseTopic', (e) => (Pe = e));
+			Ze(['open', 'saveAccountChanges'], (e) => (ts = e));
+			io = Ce((e) => typeof e.ADMINISTRATOR == 'bigint');
+		});
+	var ul = {};
+	me(ul, {
+		Alerts: () => vt,
+		Button: () => R,
+		ButtonLooks: () => Wt,
+		ButtonWrapperClasses: () => pt,
+		Card: () => At,
+		ChannelStore: () => X,
+		Clipboard: () => jt,
+		ComponentDispatch: () => cl,
+		ComponentTypes: () => If,
+		ContextMenu: () => Fn,
+		Dialog: () => Sf,
+		EmojiStore: () => un,
+		Flex: () => PT,
+		Flux: () => sl,
+		FluxDispatcher: () => L,
+		Forms: () => y,
+		GuildChannelStore: () => es,
+		GuildMemberStore: () => ke,
+		GuildStore: () => le,
+		MaskedLinkStore: () => ll,
+		Menu: () => F,
+		MenuTypes: () => Cf,
+		MessageStore: () => cn,
+		NavigationRouter: () => Ei,
+		Paginator: () => Vr,
+		Parser: () => Pe,
+		PermissionStore: () => et,
+		PermissionsBits: () => io,
+		PoggerModeSettingsStore: () => IT,
+		Popout: () => Ai,
+		PresenceStore: () => oo,
+		PrivateChannelsStore: () => al,
+		React: () => I,
+		ReactDOM: () => Ro,
+		ReadStateStore: () => ki,
+		RelationshipStore: () => Kt,
+		RestAPI: () => Yt,
+		SearchableSelect: () => Qr,
+		Select: () => $t,
+		SelectedChannelStore: () => fe,
+		SelectedGuildStore: () => Xo,
+		SettingsRouter: () => ts,
+		Slider: () => Io,
+		SnowflakeUtils: () => Jo,
+		Switch: () => Nt,
+		TabBar: () => bf,
+		Text: () => q,
+		TextArea: () => Jr,
+		TextInput: () => Ne,
+		Timestamp: () => In,
+		Toasts: () => Q,
+		Tooltip: () => W,
+		UserStore: () => U,
+		UserUtils: () => Rn,
+		UtilTypes: () => Nf,
+		WindowStore: () => Li,
+		hljs: () => Co,
+		i18n: () => nt,
+		moment: () => Zt,
+		useCallback: () => wf,
+		useEffect: () => tt,
+		useMemo: () => Ut,
+		useReducer: () => Zo,
+		useRef: () => qt,
+		useState: () => V,
+		useStateFromStores: () => Be,
+		useToken: () => Ni,
+	});
+	var x = m(() => {
+		'use strict';
+		a();
+		Tf();
+		xf();
+		Mf();
+		Pf();
+		Rf();
+		Af();
+		kf();
+		Lf();
+	});
+	function ns() {
+		return X.getChannel(fe.getChannelId());
+	}
+	function pl() {
+		return le.getGuild(ns()?.guild_id);
+	}
+	function kT(e) {
+		al.openPrivateChannel(e);
+	}
+	function Di() {
+		return AT.getCurrentValue()?.appearance?.theme;
+	}
+	function Bn(e) {
+		cl.dispatchToLastSubscribed('INSERT_TEXT', {
+			rawText: e,
+			plainText: e,
+		});
+	}
+	function LT(e, t, n, i) {
+		let r = {
+			content: '',
+			invalidEmojis: [],
+			tts: !1,
+			validNonShortcutEmojis: [],
+			...t,
+		};
+		return NT.sendMessage(e, r, n, i);
+	}
+	var AT,
+		NT,
+		os,
+		$n = m(() => {
+			'use strict';
+			a();
+			_();
+			x();
+			(AT = Ce((e) =>
+				e.ProtoClass?.typeName.endsWith('PreloadedUserSettings'),
+			)),
+				(NT = P('editMessage', 'sendMessage'));
+			os = ((n) => (
+				(n[(n.Dark = 1)] = 'Dark'), (n[(n.Light = 2)] = 'Light'), n
+			))(os || {});
+		});
+	function is(e) {
+		return Boolean(e);
+	}
+	function ET(e) {
+		return e != null;
+	}
+	var dl = m(() => {
+		'use strict';
+		a();
+	});
+	var Ao,
+		rs = m(() => {
+			'use strict';
+			a();
+			({ localStorage: Ao } = window);
+		});
+	var Ef,
+		G,
+		Xe = m(() => {
+			'use strict';
+			a();
+			(Ef = ''), (G = {});
+			for (let e of ['top', 'bottom', 'left', 'right'])
+				for (let t of [8, 16, 20]) {
+					let n = `vc-m-${e}-${t}`;
+					(G[`${e}${t}`] = n), (Ef += `.${n}{margin-${e}:${t}px;}`);
+				}
+			document.addEventListener(
+				'DOMContentLoaded',
+				() =>
+					document.head.append(
+						Object.assign(document.createElement('style'), {
+							textContent: Ef,
+							id: 'vencord-margins',
+						}),
+					),
+				{ once: !0 },
+			);
+		});
+	function Oi(e, t) {
+		return ss.openModalLazy(e, t);
+	}
+	function be(e, t, n) {
+		return ss.openModal(e, t, n);
+	}
+	function Gn(e, t) {
+		return ss.closeModal(e, t);
+	}
+	function ml() {
+		return ss.closeAllModals();
+	}
+	var Un,
+		pn,
+		Ie,
+		$e,
+		Le,
+		ot,
+		St,
+		ss,
+		ze = m(() => {
+			'use strict';
+			a();
+			_();
+			ye();
+			(Un = ((r) => (
+				(r.SMALL = 'small'),
+				(r.MEDIUM = 'medium'),
+				(r.LARGE = 'large'),
+				(r.DYNAMIC = 'dynamic'),
+				r
+			))(Un || {})),
+				(pn = Ye('.closeWithCircleBackground', {
+					ModalRoot: Y.byCode('.root'),
+					ModalHeader: Y.byCode('.header'),
+					ModalContent: Y.byCode('.content'),
+					ModalFooter: Y.byCode('.footerSeparator'),
+					ModalCloseButton: Y.byCode('.closeWithCircleBackground'),
+				})),
+				(Ie = oe(() => pn.ModalRoot)),
+				($e = oe(() => pn.ModalHeader)),
+				(Le = oe(() => pn.ModalContent)),
+				(ot = oe(() => pn.ModalFooter)),
+				(St = oe(() => pn.ModalCloseButton)),
+				(ss = Ye('onCloseRequest:null!=', {
+					openModal: Y.byCode('onCloseRequest:null!='),
+					closeModal: Y.byCode('onCloseCallback&&'),
+					openModalLazy: (e) =>
+						e?.length === 1 &&
+						Y.byCode('.apply(this,arguments)')(e),
+					closeAllModals: Y.byCode('.value.key,'),
+				}));
+		});
+	function DT(e, t, n) {
+		let i = t;
+		if (t in e) return void n(e[i]);
+		Object.defineProperty(e, t, {
+			set(r) {
+				delete e[i], (e[i] = r), n(r);
+			},
+			configurable: !0,
+			enumerable: !1,
+		});
+	}
+	var Df = m(() => {
+		'use strict';
+		a();
+	});
+	function fl(e) {
+		let t = !1,
+			n;
+		return function () {
+			return t ? n : ((t = !0), (n = e.apply(this, arguments)));
+		};
+	}
+	var gl = m(() => {
+		'use strict';
+		a();
+	});
+	function No(e) {
+		if (typeof e == 'string') return e;
+		let t = e.source.replaceAll('\\i', '[A-Za-z_$][\\w$]*');
+		return new RegExp(t, e.flags);
+	}
+	function as(e, t) {
+		let n = `Vencord.Plugins.plugins[${JSON.stringify(t)}]`;
+		return typeof e != 'function'
+			? e.replaceAll('$self', n)
+			: (...i) => e(...i).replaceAll('$self', n);
+	}
+	function hl(e, t) {
+		if (e.get) {
+			let n = e.get;
+			e.get = function () {
+				return t(n.call(this));
+			};
+		} else e.value && (e.value = t(e.value));
+		return e;
+	}
+	function _i(e, t) {
+		let n = Object.getOwnPropertyDescriptors(e);
+		(n.match = hl(n.match, No)),
+			(n.replace = hl(n.replace, (i) => as(i, t))),
+			Object.defineProperties(e, n);
+	}
+	var Fi = m(() => {
+		'use strict';
+		a();
+	});
+	var dn,
+		Qo = m(() => {
+			'use strict';
+			a();
+			dn = class {
+				constructor(t = 1 / 0) {
+					this.maxSize = t;
+				}
+				queue = [];
+				promise;
+				next() {
+					let t = this.queue.shift();
+					t
+						? (this.promise = Promise.resolve()
+								.then(t)
+								.finally(() => this.next()))
+						: (this.promise = void 0);
+				}
+				run() {
+					this.promise || this.next();
+				}
+				push(t) {
+					this.size >= this.maxSize && this.queue.shift(),
+						this.queue.push(t),
+						this.run();
+				}
+				unshift(t) {
+					this.size >= this.maxSize && this.queue.pop(),
+						this.queue.unshift(t),
+						this.run();
+				}
+				get size() {
+					return this.queue.length;
+				}
+			};
+		});
+	function Of(e, t, n) {
+		return n === !1 ? (t ? e.slice(0, -1) : e) : e[0];
+	}
+	function Bi(e, t, n = !1) {
+		let i = Zt.duration(e, t),
+			r = zT.map((u) => ({ amount: i[u](), unit: u })),
+			s = 0;
+		e: for (let u = 0; u < r.length; u++)
+			if (!(r[u].amount === 0 || !(u + 1 < r.length))) {
+				for (let h = u + 1; h < r.length; h++)
+					if (r[h].amount !== 0) continue e;
+				s = r.length - (u + 1);
+			}
+		r = s === 0 ? r : r.slice(0, -s);
+		let l = r.findIndex(({ unit: u }) => u === 'days');
+		if (l !== -1) {
+			let u = r[l],
+				h = u.amount % 7;
+			h === 0 ? r.splice(l, 1) : (u.amount = h);
+		}
+		let c = '';
+		for (; r.length; ) {
+			let { amount: u, unit: h } = r.shift();
+			c.length && (c += r.length ? ', ' : ' and '),
+				(u > 0 || c.length) && (c += `${u} ${Of(h, u === 1, n)}`);
+		}
+		return c.length ? c : `0 ${Of(t, !1, n)}`;
+	}
+	function jT(e, t = (n) => n) {
+		let { length: n } = e;
+		if (n === 0) return '';
+		if (n === 1) return t(e[0]);
+		let i = '';
+		for (let r = 0; r < n; r++)
+			(i += t(e[r])),
+				n - r > 2 ? (i += ', ') : n - r > 1 && (i += ' and ');
+		return i;
+	}
+	function $i(e, t) {
+		let n = '```';
+		return `${n}${t || ''}
+${e.replaceAll('```', '\\`\\`\\`')}
+${n}`;
+	}
+	var OT,
+		_T,
+		FT,
+		yl,
+		BT,
+		$T,
+		UT,
+		GT,
+		HT,
+		ko,
+		zT,
+		ro = m(() => {
+			'use strict';
+			a();
+			x();
+			(OT = (e) => e.split(/(?=[A-Z])/).map((t) => t.toLowerCase())),
+				(_T = (e) => e.toLowerCase().split('_')),
+				(FT = (e) => e.toLowerCase().split('-')),
+				(yl = (e) => e.split(/(?=[A-Z])/).map((t) => t.toLowerCase())),
+				(BT = (e) => e.toLowerCase().split(' ')),
+				($T = (e) =>
+					e
+						.map((t, n) =>
+							n ? t[0].toUpperCase() + t.slice(1) : t,
+						)
+						.join('')),
+				(UT = (e) => e.join('_').toUpperCase()),
+				(GT = (e) => e.join('-').toLowerCase()),
+				(HT = (e) =>
+					e.map((t) => t[0].toUpperCase() + t.slice(1)).join('')),
+				(ko = (e) =>
+					e.map((t) => t[0].toUpperCase() + t.slice(1)).join(' ')),
+				(zT = [
+					'years',
+					'months',
+					'weeks',
+					'days',
+					'hours',
+					'minutes',
+					'seconds',
+				]);
+		});
+	var vl = {};
+	me(vl, {
+		ChangeList: () => Pi,
+		Devs: () => p,
+		DevsById: () => Xa,
+		Logger: () => Z,
+		Margins: () => G,
+		ModalCloseButton: () => St,
+		ModalContent: () => Le,
+		ModalFooter: () => ot,
+		ModalHeader: () => $e,
+		ModalRoot: () => Ie,
+		ModalSize: () => Un,
+		Modals: () => pn,
+		Queue: () => dn,
+		REACT_GLOBAL: () => yT,
+		SUPPORT_CHANNEL_ID: () => zr,
+		Theme: () => os,
+		VENCORD_USER_AGENT: () => Za,
+		WEBPACK_CHUNK: () => zt,
+		canonicalizeDescriptor: () => hl,
+		canonicalizeMatch: () => No,
+		canonicalizeReplace: () => as,
+		canonicalizeReplacement: () => _i,
+		checkIntersecting: () => ol,
+		classes: () => J,
+		closeAllModals: () => ml,
+		closeModal: () => Gn,
+		copyWithToast: () => ln,
+		debounce: () => Ct,
+		formatDuration: () => Bi,
+		getCurrentChannel: () => ns,
+		getCurrentGuild: () => pl,
+		getTheme: () => Di,
+		gitHash: () => on,
+		gitRemote: () => Hr,
+		humanFriendlyJoin: () => jT,
+		identity: () => Xr,
+		insertTextIntoChatInputBox: () => Bn,
+		isMobile: () => MT,
+		isNonNullish: () => ET,
+		isObject: () => wT,
+		isPluginDev: () => Ci,
+		isTruthy: () => is,
+		localStorage: () => Ao,
+		makeCodeblock: () => $i,
+		makeLazy: () => On,
+		mergeDefaults: () => Po,
+		onceDefined: () => DT,
+		onlyOnce: () => fl,
+		openModal: () => be,
+		openModalLazy: () => Oi,
+		openPrivateChannel: () => kT,
+		parseUrl: () => nl,
+		proxyLazy: () => ct,
+		sendMessage: () => LT,
+		sleep: () => no,
+		wordsFromCamel: () => OT,
+		wordsFromKebab: () => FT,
+		wordsFromPascal: () => yl,
+		wordsFromSnake: () => _T,
+		wordsFromTitle: () => BT,
+		wordsToCamel: () => $T,
+		wordsToKebab: () => GT,
+		wordsToPascal: () => HT,
+		wordsToSnake: () => UT,
+		wordsToTitle: () => ko,
+	});
+	var Sl = m(() => {
+		'use strict';
+		a();
+		Ya();
+		w();
+		Ko();
+		$n();
+		dl();
+		rn();
+		rs();
+		Se();
+		Xe();
+		de();
+		ze();
+		Df();
+		gl();
+		Fi();
+		Qo();
+		ro();
+	});
+	var Bf = m(() => {});
+	function Hn(e) {
+		return o(
+			'div',
+			{ ...e, className: J(e.className, 'vc-error-card') },
+			e.children,
+		);
+	}
+	var Ui = m(() => {
+		'use strict';
+		a();
+		Bf();
+		de();
+	});
+	var KT,
+		$f,
+		Uf,
+		bl,
+		k,
+		re = m(() => {
+			'use strict';
+			a();
+			Se();
+			Xe();
+			ye();
+			x();
+			Ui();
+			(KT = '#e78284'),
+				($f = new Z('React ErrorBoundary', KT)),
+				(Uf = {}),
+				(bl = oe(
+					() =>
+						class extends I.PureComponent {
+							state = { error: Uf, stack: '', message: '' };
+							static getDerivedStateFromError(t) {
+								let n = t?.stack ?? '',
+									i = t?.message || String(t);
+								if (t instanceof Error && n) {
+									let r = n.indexOf(`
+`);
+									r !== -1 &&
+										((i = n.slice(0, r)),
+										(n = n
+											.slice(r + 1)
+											.replace(
+												/https:\/\/\S+\/assets\//g,
+												'',
+											)));
+								}
+								return { error: t, stack: n, message: i };
+							}
+							componentDidCatch(t, n) {
+								this.props.onError?.({
+									error: t,
+									errorInfo: n,
+									props: this.props.wrappedProps,
+								}),
+									$f.error(
+										`A component threw an Error
+`,
+										t,
+									),
+									$f.error(
+										'Component Stack',
+										n.componentStack,
+									);
+							}
+							render() {
+								if (this.state.error === Uf)
+									return this.props.children;
+								if (this.props.noop) return null;
+								if (this.props.fallback)
+									return o(this.props.fallback, {
+										children: this.props.children,
+										...this.state,
+									});
+								let t =
+									this.props.message ||
+									'An error occurred while rendering this Component. More info can be found below and in your console.';
+								return o(
+									Hn,
+									{ style: { overflow: 'hidden' } },
+									o('h1', null, 'Oh no!'),
+									o('p', null, t),
+									o(
+										'code',
+										null,
+										this.state.message,
+										!!this.state.stack &&
+											o(
+												'pre',
+												{ className: G.top8 },
+												this.state.stack,
+											),
+									),
+								);
+							}
+						},
+				));
+			bl.wrap = (e, t) => (n) =>
+				o(bl, { ...t, wrappedProps: n }, o(e, { ...n }));
+			k = bl;
+		});
+	function g(e) {
+		return e;
+	}
+	var T = m(() => {
+		'use strict';
+		a();
+	});
+	var Tl,
+		Gf = m(() => {
+			'use strict';
+			a();
+			w();
 			T();
-			v();
-			Br = f({
+			Tl = g({
+				name: 'AlwaysAnimate',
+				description:
+					'Animates anything that can be animated, besides status emojis.',
+				authors: [p.FieryFlames],
+				patches: [
+					{
+						find: '.canAnimate',
+						all: !0,
+						replacement: {
+							match: /\.canAnimate\b/g,
+							replace: '.canAnimate || true',
+						},
+					},
+				],
+			});
+		});
+	var xl,
+		Hf = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			xl = g({
 				name: 'AlwaysTrust',
 				description:
 					'Removes the annoying untrusted domain and suspicious file popup',
-				authors: [c.zt],
+				authors: [p.zt],
 				patches: [
 					{
 						find: '.displayName="MaskedLinkStore"',
@@ -1292,17 +1716,1559 @@ ${n}`;
 				],
 			});
 		});
-	function Ur(e, t = e, n = '') {
-		return (Zp[n] ??= new Proxy(e, {
+	var zf = m(() => {});
+	var ls,
+		wl = m(() => {
+			'use strict';
+			a();
+			zf();
+			E();
+			re();
+			de();
+			x();
+			ls = k.wrap(
+				function ({
+					title: t,
+					body: n,
+					richBody: i,
+					color: r,
+					icon: s,
+					onClick: l,
+					onClose: c,
+					image: u,
+					permanent: h,
+					className: f,
+					dismissOnClick: v,
+				}) {
+					let { timeout: S, position: b } = it([
+							'notifications.timeout',
+							'notifications.position',
+						]).notifications,
+						A = Be([Li], () => Li.isFocused()),
+						[C, D] = V(!1),
+						[B, O] = V(0),
+						K = Ut(() => Date.now(), [S, C, A]);
+					tt(() => {
+						if (C || !A || S === 0 || h) return void O(0);
+						let j = setInterval(() => {
+							let z = Date.now() - K;
+							z >= S ? c() : O(z);
+						}, 10);
+						return () => clearInterval(j);
+					}, [S, C, A]);
+					let ee = B / S;
+					return o(
+						'button',
+						{
+							className: J('vc-notification-root', f),
+							style:
+								b === 'bottom-right'
+									? { bottom: '1rem' }
+									: { top: '3rem' },
+							onClick: () => {
+								l?.(), v !== !1 && c();
+							},
+							onContextMenu: (j) => {
+								j.preventDefault(), j.stopPropagation(), c();
+							},
+							onMouseEnter: () => D(!0),
+							onMouseLeave: () => D(!1),
+						},
+						o(
+							'div',
+							{ className: 'vc-notification' },
+							s &&
+								o('img', {
+									className: 'vc-notification-icon',
+									src: s,
+									alt: '',
+								}),
+							o(
+								'div',
+								{ className: 'vc-notification-content' },
+								o(
+									'div',
+									{ className: 'vc-notification-header' },
+									o(
+										'h2',
+										{ className: 'vc-notification-title' },
+										t,
+									),
+									o(
+										'button',
+										{
+											className:
+												'vc-notification-close-btn',
+											onClick: (j) => {
+												j.preventDefault(),
+													j.stopPropagation(),
+													c();
+											},
+										},
+										o(
+											'svg',
+											{
+												width: '24',
+												height: '24',
+												viewBox: '0 0 24 24',
+												role: 'img',
+												'aria-labelledby':
+													'vc-notification-dismiss-title',
+											},
+											o(
+												'title',
+												{
+													id: 'vc-notification-dismiss-title',
+												},
+												'Dismiss Notification',
+											),
+											o('path', {
+												fill: 'currentColor',
+												d: 'M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z',
+											}),
+										),
+									),
+								),
+								o(
+									'div',
+									null,
+									i ??
+										o(
+											'p',
+											{ className: 'vc-notification-p' },
+											n,
+										),
+								),
+							),
+						),
+						u &&
+							o('img', {
+								className: 'vc-notification-img',
+								src: u,
+								alt: '',
+							}),
+						S !== 0 &&
+							!h &&
+							o('div', {
+								className: 'vc-notification-progressbar',
+								style: {
+									width: `${(1 - ee) * 100}%`,
+									backgroundColor:
+										r || 'var(--brand-experiment)',
+								},
+							}),
+					);
+				},
+				{ onError: ({ props: e }) => e.onClose() },
+			);
+		});
+	var Il = {};
+	me(Il, {
+		classNameFactory: () => Ue,
+		classNameToSelector: () => Wf,
+		compileStyle: () => Pl,
+		disableStyle: () => bt,
+		enableStyle: () => Je,
+		isStyleEnabled: () => Ml,
+		requireStyle: () => Gi,
+		setStyleClassNames: () => ZT,
+		styleMap: () => jf,
+		toggleStyle: () => YT,
+	});
+	function Gi(e) {
+		let t = jf.get(e);
+		if (!t) throw new Error(`Style "${e}" does not exist`);
+		return t;
+	}
+	function Je(e) {
+		let t = Gi(e);
+		return t.dom?.isConnected
+			? !1
+			: (t.dom ||
+					((t.dom = document.createElement('style')),
+					(t.dom.dataset.vencordName = t.name)),
+			  Pl(t),
+			  document.head.appendChild(t.dom),
+			  !0);
+	}
+	function bt(e) {
+		let t = Gi(e);
+		return t.dom?.isConnected ? (t.dom.remove(), (t.dom = null), !0) : !1;
+	}
+	var jf,
+		YT,
+		Ml,
+		ZT,
+		Pl,
+		Wf,
+		Ue,
+		je = m(() => {
+			'use strict';
+			a();
+			jf = window.VencordStyles ??= new Map();
+			(YT = (e) => (Ml(e) ? bt(e) : Je(e))),
+				(Ml = (e) => Gi(e).dom?.isConnected ?? !1),
+				(ZT = (e, t, n = !0) => {
+					let i = Gi(e);
+					(i.classNames = t), n && Ml(i.name) && Pl(i);
+				}),
+				(Pl = (e) => {
+					if (!e.dom) throw new Error('Style has no DOM element');
+					e.dom.textContent = e.source.replace(
+						/\[--(\w+)\]/g,
+						(t, n) => {
+							let i = e.classNames[n];
+							return i ? Wf(i) : t;
+						},
+					);
+				}),
+				(Wf = (e, t = '') =>
+					e
+						.split(' ')
+						.map((n) => `.${t}${n}`)
+						.join('')),
+				(Ue =
+					(e = '') =>
+					(...t) => {
+						let n = new Set();
+						for (let i of t)
+							typeof i == 'string'
+								? n.add(i)
+								: Array.isArray(i)
+								? i.forEach((r) => n.add(r))
+								: typeof i == 'object' &&
+								  Object.entries(i).forEach(
+										([r, s]) => s && n.add(r),
+								  );
+						return Array.from(n, (i) => e + i).join(' ');
+					});
+		});
+	var qf,
+		Kf = m(() => {
+			a();
+			qf = (e = 21) =>
+				crypto
+					.getRandomValues(new Uint8Array(e))
+					.reduce(
+						(t, n) => (
+							(n &= 63),
+							n < 36
+								? (t += n.toString(36))
+								: n < 62
+								? (t += (n - 26).toString(36).toUpperCase())
+								: n > 62
+								? (t += '-')
+								: (t += '_'),
+							t
+						),
+						'',
+					);
+		});
+	async function Zf(e) {
+		if (e.noPersist) return;
+		let t = M.notifications.logLimit;
+		t !== 0 &&
+			(await qo(cs, (n) => {
+				let i = n ?? [],
+					{
+						onClick: r,
+						onClose: s,
+						richBody: l,
+						permanent: c,
+						noPersist: u,
+						dismissOnClick: h,
+						...f
+					} = e;
+				return (
+					i.unshift({ ...f, timestamp: Date.now(), id: qf() }),
+					i.length > t && t !== 200 && (i.length = t),
+					i
+				);
+			}),
+			Hi.forEach((n) => n()));
+	}
+	async function XT(e) {
+		let t = await Yf(),
+			n = t.findIndex((i) => i.timestamp === e);
+		n !== -1 && (t.splice(n, 1), await Ve(cs, t), Hi.forEach((i) => i()));
+	}
+	function JT() {
+		let [e, t] = Zo((s) => s + 1, 0);
+		tt(() => (Hi.add(t), () => void Hi.delete(t)), []);
+		let [n, i, r] = ut(Yf, { fallbackValue: [], deps: [e] });
+		return [n, r];
+	}
+	function QT({ data: e }) {
+		let [t, n] = V(!1),
+			i = I.useRef(null);
+		return (
+			tt(() => {
+				let r = i.current,
+					s = () => {
+						if (r.clientHeight === 0)
+							return requestAnimationFrame(s);
+						r.style.height = `${r.clientHeight}px`;
+					};
+				s();
+			}, []),
+			o(
+				'div',
+				{ className: Vo('wrapper', { removing: t }), ref: i },
+				o(ls, {
+					...e,
+					permanent: !0,
+					dismissOnClick: !1,
+					onClose: () => {
+						t || (n(!0), setTimeout(() => XT(e.timestamp), 200));
+					},
+					richBody: o(
+						'div',
+						{ className: Vo('body') },
+						e.body,
+						o(In, {
+							timestamp: Zt(e.timestamp),
+							className: Vo('timestamp'),
+						}),
+					),
+				}),
+			)
+		);
+	}
+	function VT({ log: e, pending: t }) {
+		return !e.length && !t
+			? o(
+					'div',
+					{ className: Vo('container') },
+					o('div', { className: Vo('empty') }),
+					o(
+						y.FormText,
+						{ style: { textAlign: 'center' } },
+						'No notifications yet',
+					),
+			  )
+			: o(
+					'div',
+					{ className: Vo('container') },
+					e.map((n) => o(QT, { data: n, key: n.id })),
+			  );
+	}
+	function ex({ modalProps: e, close: t }) {
+		let [n, i] = JT();
+		return o(
+			Ie,
+			{ ...e, size: 'large' },
+			o(
+				$e,
+				null,
+				o(
+					q,
+					{ variant: 'heading-lg/semibold', style: { flexGrow: 1 } },
+					'Notification Log',
+				),
+				o(St, { onClick: t }),
+			),
+			o(Le, null, o(VT, { log: n, pending: i })),
+			o(
+				ot,
+				null,
+				o(
+					R,
+					{
+						disabled: n.length === 0,
+						onClick: () => {
+							vt.show({
+								title: 'Are you sure?',
+								body: `This will permanently remove ${
+									n.length
+								} notification${
+									n.length === 1 ? '' : 's'
+								}. This action cannot be undone.`,
+								async onConfirm() {
+									await Ve(cs, []), Hi.forEach((r) => r());
+								},
+								confirmText: 'Do it!',
+								confirmColor: 'vc-notification-log-danger-btn',
+								cancelText: 'Nevermind',
+							});
+						},
+					},
+					'Clear Notification Log',
+				),
+			),
+		);
+	}
+	function us() {
+		let e = be((t) => o(ex, { modalProps: t, close: () => Gn(e) }));
+	}
+	var cs,
+		Yf,
+		Vo,
+		Hi,
+		ps = m(() => {
+			'use strict';
+			a();
+			Pn();
+			E();
+			je();
+			ze();
+			ye();
+			x();
+			Kf();
+			wl();
+			(cs = 'notification-log'),
+				(Yf = async () => (await Qe(cs)) ?? []),
+				(Vo = Ue('vc-notification-log-')),
+				(Hi = new Set());
+		});
+	function ox() {
+		if (!Rl) {
+			let e = document.createElement('div');
+			(e.id = 'vc-notification-container'),
+				document.body.append(e),
+				(Rl = Ro.createRoot(e));
+		}
+		return Rl;
+	}
+	function ix(e, t) {
+		let n = ox();
+		return new Promise((i) => {
+			n.render(
+				o(ls, {
+					key: t,
+					...e,
+					onClose: () => {
+						e.onClose?.(), n.render(null), i();
+					},
+				}),
+			);
+		});
+	}
+	function rx() {
+		if (typeof Notification > 'u') return !1;
+		let { useNative: e } = M.notifications;
+		return e === 'always'
+			? !0
+			: e === 'not-focused'
+			? !document.hasFocus()
+			: !1;
+	}
+	async function Xf() {
+		return (
+			Notification.permission === 'granted' ||
+			(Notification.permission !== 'denied' &&
+				(await Notification.requestPermission()) === 'granted')
+		);
+	}
+	async function ge(e) {
+		if ((Zf(e), rx() && (await Xf()))) {
+			let {
+					title: t,
+					body: n,
+					icon: i,
+					image: r,
+					onClick: s = null,
+					onClose: l = null,
+				} = e,
+				c = new Notification(t, { body: n, icon: i, image: r });
+			(c.onclick = s), (c.onclose = l);
+		} else tx.push(() => ix(e, nx++));
+	}
+	var tx,
+		Rl,
+		nx,
+		Jf = m(() => {
+			'use strict';
+			a();
+			E();
+			Qo();
+			x();
+			wl();
+			ps();
+			(tx = new dn()), (nx = 42);
+		});
+	var Cl = {};
+	me(Cl, { requestPermission: () => Xf, showNotification: () => ge });
+	var so = m(() => {
+		'use strict';
+		a();
+		Jf();
+	});
+	function sg(e, t) {
+		return gx(e, t || {}, 0, 0);
+	}
+	function ag(e, t) {
+		return dx(e, t);
+	}
+	var Tt,
+		kt,
+		ds,
+		ms,
+		fs,
+		Ll,
+		tg,
+		ng,
+		og,
+		El,
+		ig,
+		sx,
+		Qf,
+		Dl,
+		zn,
+		pe,
+		Cn,
+		lo,
+		pe,
+		pe,
+		pe,
+		pe,
+		Wi,
+		pe,
+		ax,
+		lx,
+		cx,
+		ux,
+		Al,
+		mn,
+		Nl,
+		Fl,
+		rg,
+		px,
+		ao,
+		dx,
+		jn,
+		zi,
+		kl,
+		Ol,
+		Vf,
+		ji,
+		_l,
+		eg,
+		mx,
+		Bl,
+		fx,
+		gx,
+		hx,
+		yx,
+		lg = m(() => {
+			a();
+			(Tt = Uint8Array),
+				(kt = Uint16Array),
+				(ds = Uint32Array),
+				(ms = new Tt([
+					0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
+					4, 4, 4, 4, 5, 5, 5, 5, 0, 0, 0, 0,
+				])),
+				(fs = new Tt([
+					0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8,
+					9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 0, 0,
+				])),
+				(Ll = new Tt([
+					16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14,
+					1, 15,
+				])),
+				(tg = function (e, t) {
+					for (var n = new kt(31), i = 0; i < 31; ++i)
+						n[i] = t += 1 << e[i - 1];
+					for (var r = new ds(n[30]), i = 1; i < 30; ++i)
+						for (var s = n[i]; s < n[i + 1]; ++s)
+							r[s] = ((s - n[i]) << 5) | i;
+					return [n, r];
+				}),
+				(ng = tg(ms, 2)),
+				(og = ng[0]),
+				(El = ng[1]);
+			(og[28] = 258), (El[258] = 28);
+			(ig = tg(fs, 0)), (sx = ig[0]), (Qf = ig[1]), (Dl = new kt(32768));
+			for (pe = 0; pe < 32768; ++pe)
+				(zn = ((pe & 43690) >>> 1) | ((pe & 21845) << 1)),
+					(zn = ((zn & 52428) >>> 2) | ((zn & 13107) << 2)),
+					(zn = ((zn & 61680) >>> 4) | ((zn & 3855) << 4)),
+					(Dl[pe] = (((zn & 65280) >>> 8) | ((zn & 255) << 8)) >>> 1);
+			(Cn = function (e, t, n) {
+				for (var i = e.length, r = 0, s = new kt(t); r < i; ++r)
+					e[r] && ++s[e[r] - 1];
+				var l = new kt(t);
+				for (r = 0; r < t; ++r) l[r] = (l[r - 1] + s[r - 1]) << 1;
+				var c;
+				if (n) {
+					c = new kt(1 << t);
+					var u = 15 - t;
+					for (r = 0; r < i; ++r)
+						if (e[r])
+							for (
+								var h = (r << 4) | e[r],
+									f = t - e[r],
+									v = l[e[r] - 1]++ << f,
+									S = v | ((1 << f) - 1);
+								v <= S;
+								++v
+							)
+								c[Dl[v] >>> u] = h;
+				} else
+					for (c = new kt(i), r = 0; r < i; ++r)
+						e[r] && (c[r] = Dl[l[e[r] - 1]++] >>> (15 - e[r]));
+				return c;
+			}),
+				(lo = new Tt(288));
+			for (pe = 0; pe < 144; ++pe) lo[pe] = 8;
+			for (pe = 144; pe < 256; ++pe) lo[pe] = 9;
+			for (pe = 256; pe < 280; ++pe) lo[pe] = 7;
+			for (pe = 280; pe < 288; ++pe) lo[pe] = 8;
+			Wi = new Tt(32);
+			for (pe = 0; pe < 32; ++pe) Wi[pe] = 5;
+			(ax = Cn(lo, 9, 0)),
+				(lx = Cn(lo, 9, 1)),
+				(cx = Cn(Wi, 5, 0)),
+				(ux = Cn(Wi, 5, 1)),
+				(Al = function (e) {
+					for (var t = e[0], n = 1; n < e.length; ++n)
+						e[n] > t && (t = e[n]);
+					return t;
+				}),
+				(mn = function (e, t, n) {
+					var i = (t / 8) | 0;
+					return ((e[i] | (e[i + 1] << 8)) >> (t & 7)) & n;
+				}),
+				(Nl = function (e, t) {
+					var n = (t / 8) | 0;
+					return (
+						(e[n] | (e[n + 1] << 8) | (e[n + 2] << 16)) >> (t & 7)
+					);
+				}),
+				(Fl = function (e) {
+					return ((e + 7) / 8) | 0;
+				}),
+				(rg = function (e, t, n) {
+					(t == null || t < 0) && (t = 0),
+						(n == null || n > e.length) && (n = e.length);
+					var i = new (
+						e.BYTES_PER_ELEMENT == 2
+							? kt
+							: e.BYTES_PER_ELEMENT == 4
+							? ds
+							: Tt
+					)(n - t);
+					return i.set(e.subarray(t, n)), i;
+				}),
+				(px = [
+					'unexpected EOF',
+					'invalid block type',
+					'invalid length/literal',
+					'invalid distance',
+					'stream finished',
+					'no stream handler',
+					,
+					'no callback',
+					'invalid UTF-8 data',
+					'extra field too long',
+					'date not in range 1980-2099',
+					'filename too long',
+					'stream finishing',
+					'invalid zip data',
+				]),
+				(ao = function (e, t, n) {
+					var i = new Error(t || px[e]);
+					if (
+						((i.code = e),
+						Error.captureStackTrace &&
+							Error.captureStackTrace(i, ao),
+						!n)
+					)
+						throw i;
+					return i;
+				}),
+				(dx = function (e, t, n) {
+					var i = e.length;
+					if (!i || (n && n.f && !n.l)) return t || new Tt(0);
+					var r = !t || n,
+						s = !n || n.i;
+					n || (n = {}), t || (t = new Tt(i * 3));
+					var l = function (Ur) {
+							var wi = t.length;
+							if (Ur > wi) {
+								var Wo = new Tt(Math.max(wi * 2, Ur));
+								Wo.set(t), (t = Wo);
+							}
+						},
+						c = n.f || 0,
+						u = n.p || 0,
+						h = n.b || 0,
+						f = n.l,
+						v = n.d,
+						S = n.m,
+						b = n.n,
+						A = i * 8;
+					do {
+						if (!f) {
+							c = mn(e, u, 1);
+							var C = mn(e, u + 1, 3);
+							if (((u += 3), C))
+								if (C == 1)
+									(f = lx), (v = ux), (S = 9), (b = 5);
+								else if (C == 2) {
+									var K = mn(e, u, 31) + 257,
+										ee = mn(e, u + 10, 15) + 4,
+										j = K + mn(e, u + 5, 31) + 1;
+									u += 14;
+									for (
+										var z = new Tt(j),
+											te = new Tt(19),
+											$ = 0;
+										$ < ee;
+										++$
+									)
+										te[Ll[$]] = mn(e, u + $ * 3, 7);
+									u += ee * 3;
+									for (
+										var Re = Al(te),
+											ne = (1 << Re) - 1,
+											Fe = Cn(te, Re, 1),
+											$ = 0;
+										$ < j;
+
+									) {
+										var Ee = Fe[mn(e, u, ne)];
+										u += Ee & 15;
+										var D = Ee >>> 4;
+										if (D < 16) z[$++] = D;
+										else {
+											var at = 0,
+												qe = 0;
+											for (
+												D == 16
+													? ((qe = 3 + mn(e, u, 3)),
+													  (u += 2),
+													  (at = z[$ - 1]))
+													: D == 17
+													? ((qe = 3 + mn(e, u, 7)),
+													  (u += 3))
+													: D == 18 &&
+													  ((qe =
+															11 + mn(e, u, 127)),
+													  (u += 7));
+												qe--;
+
+											)
+												z[$++] = at;
+										}
+									}
+									var ft = z.subarray(0, K),
+										Ge = z.subarray(K);
+									(S = Al(ft)),
+										(b = Al(Ge)),
+										(f = Cn(ft, S, 1)),
+										(v = Cn(Ge, b, 1));
+								} else ao(1);
+							else {
+								var D = Fl(u) + 4,
+									B = e[D - 4] | (e[D - 3] << 8),
+									O = D + B;
+								if (O > i) {
+									s && ao(0);
+									break;
+								}
+								r && l(h + B),
+									t.set(e.subarray(D, O), h),
+									(n.b = h += B),
+									(n.p = u = O * 8),
+									(n.f = c);
+								continue;
+							}
+							if (u > A) {
+								s && ao(0);
+								break;
+							}
+						}
+						r && l(h + 131072);
+						for (
+							var Ke = (1 << S) - 1, Ot = (1 << b) - 1, Ht = u;
+							;
+							Ht = u
+						) {
+							var at = f[Nl(e, u) & Ke],
+								xn = at >>> 4;
+							if (((u += at & 15), u > A)) {
+								s && ao(0);
+								break;
+							}
+							if ((at || ao(2), xn < 256)) t[h++] = xn;
+							else if (xn == 256) {
+								(Ht = u), (f = null);
+								break;
+							} else {
+								var _t = xn - 254;
+								if (xn > 264) {
+									var $ = xn - 257,
+										tn = ms[$];
+									(_t = mn(e, u, (1 << tn) - 1) + og[$]),
+										(u += tn);
+								}
+								var wn = v[Nl(e, u) & Ot],
+									Rt = wn >>> 4;
+								wn || ao(3), (u += wn & 15);
+								var Ge = sx[Rt];
+								if (Rt > 3) {
+									var tn = fs[Rt];
+									(Ge += Nl(e, u) & ((1 << tn) - 1)),
+										(u += tn);
+								}
+								if (u > A) {
+									s && ao(0);
+									break;
+								}
+								r && l(h + 131072);
+								for (var lt = h + _t; h < lt; h += 4)
+									(t[h] = t[h - Ge]),
+										(t[h + 1] = t[h + 1 - Ge]),
+										(t[h + 2] = t[h + 2 - Ge]),
+										(t[h + 3] = t[h + 3 - Ge]);
+								h = lt;
+							}
+						}
+						(n.l = f),
+							(n.p = Ht),
+							(n.b = h),
+							(n.f = c),
+							f && ((c = 1), (n.m = S), (n.d = v), (n.n = b));
+					} while (!c);
+					return h == t.length ? t : rg(t, 0, h);
+				}),
+				(jn = function (e, t, n) {
+					n <<= t & 7;
+					var i = (t / 8) | 0;
+					(e[i] |= n), (e[i + 1] |= n >>> 8);
+				}),
+				(zi = function (e, t, n) {
+					n <<= t & 7;
+					var i = (t / 8) | 0;
+					(e[i] |= n), (e[i + 1] |= n >>> 8), (e[i + 2] |= n >>> 16);
+				}),
+				(kl = function (e, t) {
+					for (var n = [], i = 0; i < e.length; ++i)
+						e[i] && n.push({ s: i, f: e[i] });
+					var r = n.length,
+						s = n.slice();
+					if (!r) return [Bl, 0];
+					if (r == 1) {
+						var l = new Tt(n[0].s + 1);
+						return (l[n[0].s] = 1), [l, 1];
+					}
+					n.sort(function (j, z) {
+						return j.f - z.f;
+					}),
+						n.push({ s: -1, f: 25001 });
+					var c = n[0],
+						u = n[1],
+						h = 0,
+						f = 1,
+						v = 2;
+					for (
+						n[0] = { s: -1, f: c.f + u.f, l: c, r: u };
+						f != r - 1;
+
+					)
+						(c = n[n[h].f < n[v].f ? h++ : v++]),
+							(u = n[h != f && n[h].f < n[v].f ? h++ : v++]),
+							(n[f++] = { s: -1, f: c.f + u.f, l: c, r: u });
+					for (var S = s[0].s, i = 1; i < r; ++i)
+						s[i].s > S && (S = s[i].s);
+					var b = new kt(S + 1),
+						A = Ol(n[f - 1], b, 0);
+					if (A > t) {
+						var i = 0,
+							C = 0,
+							D = A - t,
+							B = 1 << D;
+						for (
+							s.sort(function (z, te) {
+								return b[te.s] - b[z.s] || z.f - te.f;
+							});
+							i < r;
+							++i
+						) {
+							var O = s[i].s;
+							if (b[O] > t)
+								(C += B - (1 << (A - b[O]))), (b[O] = t);
+							else break;
+						}
+						for (C >>>= D; C > 0; ) {
+							var K = s[i].s;
+							b[K] < t ? (C -= 1 << (t - b[K]++ - 1)) : ++i;
+						}
+						for (; i >= 0 && C; --i) {
+							var ee = s[i].s;
+							b[ee] == t && (--b[ee], ++C);
+						}
+						A = t;
+					}
+					return [new Tt(b), A];
+				}),
+				(Ol = function (e, t, n) {
+					return e.s == -1
+						? Math.max(Ol(e.l, t, n + 1), Ol(e.r, t, n + 1))
+						: (t[e.s] = n);
+				}),
+				(Vf = function (e) {
+					for (var t = e.length; t && !e[--t]; );
+					for (
+						var n = new kt(++t),
+							i = 0,
+							r = e[0],
+							s = 1,
+							l = function (u) {
+								n[i++] = u;
+							},
+							c = 1;
+						c <= t;
+						++c
+					)
+						if (e[c] == r && c != t) ++s;
+						else {
+							if (!r && s > 2) {
+								for (; s > 138; s -= 138) l(32754);
+								s > 2 &&
+									(l(
+										s > 10
+											? ((s - 11) << 5) | 28690
+											: ((s - 3) << 5) | 12305,
+									),
+									(s = 0));
+							} else if (s > 3) {
+								for (l(r), --s; s > 6; s -= 6) l(8304);
+								s > 2 && (l(((s - 3) << 5) | 8208), (s = 0));
+							}
+							for (; s--; ) l(r);
+							(s = 1), (r = e[c]);
+						}
+					return [n.subarray(0, i), t];
+				}),
+				(ji = function (e, t) {
+					for (var n = 0, i = 0; i < t.length; ++i) n += e[i] * t[i];
+					return n;
+				}),
+				(_l = function (e, t, n) {
+					var i = n.length,
+						r = Fl(t + 2);
+					(e[r] = i & 255),
+						(e[r + 1] = i >>> 8),
+						(e[r + 2] = e[r] ^ 255),
+						(e[r + 3] = e[r + 1] ^ 255);
+					for (var s = 0; s < i; ++s) e[r + s + 4] = n[s];
+					return (r + 4 + i) * 8;
+				}),
+				(eg = function (e, t, n, i, r, s, l, c, u, h, f) {
+					jn(t, f++, n), ++r[256];
+					for (
+						var v = kl(r, 15),
+							S = v[0],
+							b = v[1],
+							A = kl(s, 15),
+							C = A[0],
+							D = A[1],
+							B = Vf(S),
+							O = B[0],
+							K = B[1],
+							ee = Vf(C),
+							j = ee[0],
+							z = ee[1],
+							te = new kt(19),
+							$ = 0;
+						$ < O.length;
+						++$
+					)
+						te[O[$] & 31]++;
+					for (var $ = 0; $ < j.length; ++$) te[j[$] & 31]++;
+					for (
+						var Re = kl(te, 7), ne = Re[0], Fe = Re[1], Ee = 19;
+						Ee > 4 && !ne[Ll[Ee - 1]];
+						--Ee
+					);
+					var at = (h + 5) << 3,
+						qe = ji(r, lo) + ji(s, Wi) + l,
+						ft =
+							ji(r, S) +
+							ji(s, C) +
+							l +
+							14 +
+							3 * Ee +
+							ji(te, ne) +
+							(2 * te[16] + 3 * te[17] + 7 * te[18]);
+					if (at <= qe && at <= ft)
+						return _l(t, f, e.subarray(u, u + h));
+					var Ge, Ke, Ot, Ht;
+					if ((jn(t, f, 1 + (ft < qe)), (f += 2), ft < qe)) {
+						(Ge = Cn(S, b, 0)),
+							(Ke = S),
+							(Ot = Cn(C, D, 0)),
+							(Ht = C);
+						var xn = Cn(ne, Fe, 0);
+						jn(t, f, K - 257),
+							jn(t, f + 5, z - 1),
+							jn(t, f + 10, Ee - 4),
+							(f += 14);
+						for (var $ = 0; $ < Ee; ++$)
+							jn(t, f + 3 * $, ne[Ll[$]]);
+						f += 3 * Ee;
+						for (var _t = [O, j], tn = 0; tn < 2; ++tn)
+							for (var wn = _t[tn], $ = 0; $ < wn.length; ++$) {
+								var Rt = wn[$] & 31;
+								jn(t, f, xn[Rt]),
+									(f += ne[Rt]),
+									Rt > 15 &&
+										(jn(t, f, (wn[$] >>> 5) & 127),
+										(f += wn[$] >>> 12));
+							}
+					} else (Ge = ax), (Ke = lo), (Ot = cx), (Ht = Wi);
+					for (var $ = 0; $ < c; ++$)
+						if (i[$] > 255) {
+							var Rt = (i[$] >>> 18) & 31;
+							zi(t, f, Ge[Rt + 257]),
+								(f += Ke[Rt + 257]),
+								Rt > 7 &&
+									(jn(t, f, (i[$] >>> 23) & 31),
+									(f += ms[Rt]));
+							var lt = i[$] & 31;
+							zi(t, f, Ot[lt]),
+								(f += Ht[lt]),
+								lt > 3 &&
+									(zi(t, f, (i[$] >>> 5) & 8191),
+									(f += fs[lt]));
+						} else zi(t, f, Ge[i[$]]), (f += Ke[i[$]]);
+					return zi(t, f, Ge[256]), f + Ke[256];
+				}),
+				(mx = new ds([
+					65540, 131080, 131088, 131104, 262176, 1048704, 1048832,
+					2114560, 2117632,
+				])),
+				(Bl = new Tt(0)),
+				(fx = function (e, t, n, i, r, s) {
+					var l = e.length,
+						c = new Tt(i + l + 5 * (1 + Math.ceil(l / 7e3)) + r),
+						u = c.subarray(i, c.length - r),
+						h = 0;
+					if (!t || l < 8)
+						for (var f = 0; f <= l; f += 65535) {
+							var v = f + 65535;
+							v >= l && (u[h >> 3] = s),
+								(h = _l(u, h + 1, e.subarray(f, v)));
+						}
+					else {
+						for (
+							var S = mx[t - 1],
+								b = S >>> 13,
+								A = S & 8191,
+								C = (1 << n) - 1,
+								D = new kt(32768),
+								B = new kt(C + 1),
+								O = Math.ceil(n / 3),
+								K = 2 * O,
+								ee = function (ja) {
+									return (
+										(e[ja] ^
+											(e[ja + 1] << O) ^
+											(e[ja + 2] << K)) &
+										C
+									);
+								},
+								j = new ds(25e3),
+								z = new kt(288),
+								te = new kt(32),
+								$ = 0,
+								Re = 0,
+								f = 0,
+								ne = 0,
+								Fe = 0,
+								Ee = 0;
+							f < l;
+							++f
+						) {
+							var at = ee(f),
+								qe = f & 32767,
+								ft = B[at];
+							if (((D[qe] = ft), (B[at] = qe), Fe <= f)) {
+								var Ge = l - f;
+								if (($ > 7e3 || ne > 24576) && Ge > 423) {
+									(h = eg(
+										e,
+										u,
+										0,
+										j,
+										z,
+										te,
+										Re,
+										ne,
+										Ee,
+										f - Ee,
+										h,
+									)),
+										(ne = $ = Re = 0),
+										(Ee = f);
+									for (var Ke = 0; Ke < 286; ++Ke) z[Ke] = 0;
+									for (var Ke = 0; Ke < 30; ++Ke) te[Ke] = 0;
+								}
+								var Ot = 2,
+									Ht = 0,
+									xn = A,
+									_t = (qe - ft) & 32767;
+								if (Ge > 2 && at == ee(f - _t))
+									for (
+										var tn = Math.min(b, Ge) - 1,
+											wn = Math.min(32767, f),
+											Rt = Math.min(258, Ge);
+										_t <= wn && --xn && qe != ft;
+
+									) {
+										if (e[f + Ot] == e[f + Ot - _t]) {
+											for (
+												var lt = 0;
+												lt < Rt &&
+												e[f + lt] == e[f + lt - _t];
+												++lt
+											);
+											if (lt > Ot) {
+												if (
+													((Ot = lt),
+													(Ht = _t),
+													lt > tn)
+												)
+													break;
+												for (
+													var Ur = Math.min(
+															_t,
+															lt - 2,
+														),
+														wi = 0,
+														Ke = 0;
+													Ke < Ur;
+													++Ke
+												) {
+													var Wo =
+															(f -
+																_t +
+																Ke +
+																32768) &
+															32767,
+														oT = D[Wo],
+														sf =
+															(Wo - oT + 32768) &
+															32767;
+													sf > wi &&
+														((wi = sf), (ft = Wo));
+												}
+											}
+										}
+										(qe = ft),
+											(ft = D[qe]),
+											(_t += (qe - ft + 32768) & 32767);
+									}
+								if (Ht) {
+									j[ne++] =
+										268435456 | (El[Ot] << 18) | Qf[Ht];
+									var af = El[Ot] & 31,
+										lf = Qf[Ht] & 31;
+									(Re += ms[af] + fs[lf]),
+										++z[257 + af],
+										++te[lf],
+										(Fe = f + Ot),
+										++$;
+								} else (j[ne++] = e[f]), ++z[e[f]];
+							}
+						}
+						(h = eg(e, u, s, j, z, te, Re, ne, Ee, f - Ee, h)),
+							!s && h & 7 && (h = _l(u, h + 1, Bl));
+					}
+					return rg(c, 0, i + Fl(h) + r);
+				}),
+				(gx = function (e, t, n, i, r) {
+					return fx(
+						e,
+						t.level == null ? 6 : t.level,
+						t.mem == null
+							? Math.ceil(
+									Math.max(
+										8,
+										Math.min(13, Math.log(e.length)),
+									) * 1.5,
+							  )
+							: 12 + t.mem,
+						n,
+						i,
+						!r,
+					);
+				});
+			(hx = typeof TextDecoder < 'u' && new TextDecoder()), (yx = 0);
+			try {
+				hx.decode(Bl, { stream: !0 }), (yx = 1);
+			} catch {}
+		});
+	async function cg() {
+		return ((await Qe('Vencord_cloudSecret')) ?? {})[An().origin];
+	}
+	async function vx(e) {
+		await qo(
+			'Vencord_cloudSecret',
+			(t) => ((t ??= {}), (t[An().origin] = e), t),
+		);
+	}
+	async function $l() {
+		await qo(
+			'Vencord_cloudSecret',
+			(e) => ((e ??= {}), delete e[An().origin], e),
+		);
+	}
+	async function ug() {
+		if ((await cg()) !== void 0) {
+			M.cloud.authenticated = !0;
+			return;
+		}
+		try {
+			let i = await fetch(new URL('/v1/oauth/settings', An()));
+			var { clientId: e, redirectUri: t } = await i.json();
+		} catch {
+			ge({
+				title: 'Cloud Integration',
+				body: "Setup failed (couldn't retrieve OAuth configuration).",
+			}),
+				(M.cloud.authenticated = !1);
+			return;
+		}
+		let { OAuth2AuthorizeModal: n } = an('OAuth2AuthorizeModal');
+		be((i) =>
+			o(n, {
+				...i,
+				scopes: ['identify'],
+				responseType: 'code',
+				redirectUri: t,
+				permissions: 0n,
+				clientId: e,
+				cancelCompletesFlow: !1,
+				callback: async ({ location: r }) => {
+					if (!r) {
+						M.cloud.authenticated = !1;
+						return;
+					}
+					try {
+						let s = await fetch(r, {
+								headers: new Headers({
+									Accept: 'application/json',
+								}),
+							}),
+							{ secret: l } = await s.json();
+						l
+							? (gs.info('Authorized with secret'),
+							  await vx(l),
+							  ge({
+									title: 'Cloud Integration',
+									body: 'Cloud integrations enabled!',
+							  }),
+							  (M.cloud.authenticated = !0))
+							: (ge({
+									title: 'Cloud Integration',
+									body: 'Setup failed (no secret returned?).',
+							  }),
+							  (M.cloud.authenticated = !1));
+					} catch (s) {
+						gs.error('Failed to authorize', s),
+							ge({
+								title: 'Cloud Integration',
+								body: `Setup failed (${s.toString()}).`,
+							}),
+							(M.cloud.authenticated = !1);
+					}
+				},
+			}),
+		);
+	}
+	async function ei() {
+		let e = U.getCurrentUser().id,
+			t = await cg();
+		return window.btoa(`${t}:${e}`);
+	}
+	var gs,
+		An,
+		Ul = m(() => {
+			'use strict';
+			a();
+			Pn();
+			so();
+			E();
+			_();
+			x();
+			Se();
+			ze();
+			(gs = new Z('Cloud', '#39b7e0')), (An = () => new URL(M.cloud.url));
+		});
+	function hs(e) {
+		let t = document.createElement('a');
+		(t.href = URL.createObjectURL(e)),
+			(t.download = e.name),
+			document.body.appendChild(t),
+			t.click(),
+			setImmediate(() => {
+				URL.revokeObjectURL(t.href), document.body.removeChild(t);
+			});
+	}
+	var Gl = m(() => {
+		'use strict';
+		a();
+	});
+	async function pg(e) {
+		try {
+			var t = JSON.parse(e);
+		} catch (n) {
+			throw (
+				(console.log(e),
+				new Error('Failed to parse JSON: ' + String(n)))
+			);
+		}
+		if ('settings' in t && 'quickCss' in t)
+			Object.assign(Nn, t.settings),
+				await VencordNative.settings.set(
+					JSON.stringify(t.settings, null, 4),
+				),
+				await VencordNative.quickCss.set(t.quickCss);
+		else
+			throw new Error(
+				'Invalid Settings. Is this even a Vencord Settings file?',
+			);
+	}
+	async function dg() {
+		let e = JSON.parse(VencordNative.settings.get()),
+			t = await VencordNative.quickCss.get();
+		return JSON.stringify({ settings: e, quickCss: t }, null, 4);
+	}
+	async function mg() {
+		let e = 'vencord-settings-backup.json',
+			t = await dg(),
+			n = new TextEncoder().encode(t);
+		hs(new File([n], e, { type: 'application/json' }));
+	}
+	async function gg(e = !0) {
+		if (!1) {
+			if (t)
+				try {
+				} catch (n) {}
+		} else {
+			let t = document.createElement('input');
+			(t.type = 'file'),
+				(t.style.display = 'none'),
+				(t.accept = 'application/json'),
+				(t.onchange = async () => {
+					let n = t.files?.[0];
+					if (!n) return;
+					let i = new FileReader();
+					(i.onload = async () => {
+						try {
+							await pg(i.result), e && Sx();
+						} catch (r) {
+							new Z('SettingsSync').error(r), e && bx(r);
+						}
+					}),
+						i.readAsText(n);
+				}),
+				document.body.appendChild(t),
+				t.click(),
+				setImmediate(() => document.body.removeChild(t));
+		}
+	}
+	async function ti() {
+		let e = await dg();
+		try {
+			let t = await fetch(new URL('/v1/settings', An()), {
+				method: 'PUT',
+				headers: new Headers({
+					Authorization: await ei(),
+					'Content-Type': 'application/octet-stream',
+				}),
+				body: sg(new TextEncoder().encode(e)),
+			});
+			if (!t.ok) {
+				fn.error(`Failed to sync up, API returned ${t.status}`),
+					ge({
+						title: 'Cloud Settings',
+						body: `Could not synchronize settings to cloud (API returned ${t.status}).`,
+						color: 'var(--red-360)',
+					});
+				return;
+			}
+			let { written: n } = await t.json();
+			(Nn.cloud.settingsSyncVersion = n),
+				VencordNative.settings.set(JSON.stringify(Nn, null, 4)),
+				fn.info('Settings uploaded to cloud successfully'),
+				ge({
+					title: 'Cloud Settings',
+					body: 'Synchronized your settings to the cloud!',
+					color: 'var(--green-360)',
+					noPersist: !0,
+				});
+		} catch (t) {
+			fn.error('Failed to sync up', t),
+				ge({
+					title: 'Cloud Settings',
+					body: `Could not synchronize settings to the cloud (${t.toString()}).`,
+					color: 'var(--red-360)',
+				});
+		}
+	}
+	async function ys(e = !0, t = !1) {
+		try {
+			let n = await fetch(new URL('/v1/settings', An()), {
+				method: 'GET',
+				headers: new Headers({
+					Authorization: await ei(),
+					Accept: 'application/octet-stream',
+					'If-None-Match': M.cloud.settingsSyncVersion.toString(),
+				}),
+			});
+			if (n.status === 404)
+				return (
+					fn.info('No settings on the cloud'),
+					e &&
+						ge({
+							title: 'Cloud Settings',
+							body: 'There are no settings in the cloud.',
+							noPersist: !0,
+						}),
+					!1
+				);
+			if (n.status === 304)
+				return (
+					fn.info('Settings up to date'),
+					e &&
+						ge({
+							title: 'Cloud Settings',
+							body: 'Your settings are up to date.',
+							noPersist: !0,
+						}),
+					!1
+				);
+			if (!n.ok)
+				return (
+					fn.error(`Failed to sync down, API returned ${n.status}`),
+					ge({
+						title: 'Cloud Settings',
+						body: `Could not synchronize settings from the cloud (API returned ${n.status}).`,
+						color: 'var(--red-360)',
+					}),
+					!1
+				);
+			let i = Number(n.headers.get('etag')),
+				r = M.cloud.settingsSyncVersion;
+			if (!t && i < r) {
+				e &&
+					ge({
+						title: 'Cloud Settings',
+						body: 'Your local settings are newer than the cloud ones.',
+						noPersist: !0,
+					});
+				return;
+			}
+			let s = await n.arrayBuffer(),
+				l = new TextDecoder().decode(ag(new Uint8Array(s)));
+			return (
+				await pg(l),
+				(Nn.cloud.settingsSyncVersion = i),
+				VencordNative.settings.set(JSON.stringify(Nn, null, 4)),
+				fn.info('Settings loaded from cloud successfully'),
+				e &&
+					ge({
+						title: 'Cloud Settings',
+						body: 'Your settings have been updated! Click here to restart to fully apply changes!',
+						color: 'var(--green-360)',
+						onClick: () => window.DiscordNative.app.relaunch(),
+						noPersist: !0,
+					}),
+				!0
+			);
+		} catch (n) {
+			return (
+				fn.error('Failed to sync down', n),
+				ge({
+					title: 'Cloud Settings',
+					body: `Could not synchronize settings from the cloud (${n.toString()}).`,
+					color: 'var(--red-360)',
+				}),
+				!1
+			);
+		}
+	}
+	async function hg() {
+		try {
+			let e = await fetch(new URL('/v1/settings', An()), {
+				method: 'DELETE',
+				headers: new Headers({ Authorization: await ei() }),
+			});
+			if (!e.ok) {
+				fn.error(`Failed to delete, API returned ${e.status}`),
+					ge({
+						title: 'Cloud Settings',
+						body: `Could not delete settings (API returned ${e.status}).`,
+						color: 'var(--red-360)',
+					});
+				return;
+			}
+			fn.info('Settings deleted from cloud successfully'),
+				ge({
+					title: 'Cloud Settings',
+					body: 'Settings deleted from cloud!',
+					color: 'var(--green-360)',
+				});
+		} catch (e) {
+			fn.error('Failed to delete', e),
+				ge({
+					title: 'Cloud Settings',
+					body: `Could not delete settings (${e.toString()}).`,
+					color: 'var(--red-360)',
+				});
+		}
+	}
+	var fg,
+		Sx,
+		bx,
+		fn,
+		qi = m(() => {
+			'use strict';
+			a();
+			so();
+			E();
+			x();
+			lg();
+			Ul();
+			Se();
+			Gl();
+			(fg = (e, t) => Q.show({ type: e, message: t, id: Q.genId() })),
+				(Sx = () =>
+					fg(
+						Q.Type.SUCCESS,
+						'Settings successfully imported. Restart to apply changes!',
+					)),
+				(bx = (e) =>
+					fg(
+						Q.Type.FAILURE,
+						`Failed to import settings: ${String(e)}`,
+					));
+			fn = new Z('Cloud:Settings', '#39b7e0');
+		});
+	var zl = {};
+	me(zl, {
+		PlainSettings: () => Nn,
+		Settings: () => M,
+		addSettingsListener: () => Ss,
+		definePluginSettings: () => N,
+		migratePluginSettings: () => xx,
+		useSettings: () => it,
+	});
+	function Hl(e, t = e, n = '') {
+		return (vg[n] ??= new Proxy(e, {
 			get(i, r) {
-				let a = i[r];
+				let s = i[r];
 				if (!(r in i)) {
-					if (n === 'plugins' && r in se)
-						return (i[r] = Ur(
+					if (n === 'plugins' && r in Te)
+						return (i[r] = Hl(
 							{
 								enabled:
-									se[r].required ??
-									se[r].enabledByDefault ??
+									Te[r].required ??
+									Te[r].enabledByDefault ??
 									!1,
 							},
 							t,
@@ -1310,99 +3276,102 @@ ${n}`;
 						));
 					if (n.startsWith('plugins.')) {
 						let l = n.slice(8);
-						if (l in se) {
-							let u = se[l].options?.[r];
-							if (!u) return a;
-							if ('default' in u) return (i[r] = u.default);
-							if (u.type === 4) {
-								let m = u.options.find((y) => y.default);
-								return m && (i[r] = m.value), m?.value;
+						if (l in Te) {
+							let c = Te[l].options?.[r];
+							if (!c) return s;
+							if ('default' in c) return (i[r] = c.default);
+							if (c.type === 4) {
+								let u = c.options.find((h) => h.default);
+								return u && (i[r] = u.value), u?.value;
 							}
 						}
 					}
-					return a;
+					return s;
 				}
-				return typeof a == 'object' && !Array.isArray(a) && a !== null
-					? Ur(a, t, `${n}${n && '.'}${r}`)
-					: a;
+				return typeof s == 'object' && !Array.isArray(s) && s !== null
+					? Hl(s, t, `${n}${n && '.'}${r}`)
+					: s;
 			},
-			set(i, r, a) {
-				if (i[r] === a) return !0;
-				i[r] = a;
+			set(i, r, s) {
+				if (i[r] === s) return !0;
+				i[r] = s;
 				let l = `${n}${n && '.'}${r}`;
-				delete Zp[l];
-				for (let u of pi) (!u._path || u._path === l) && u(a, l);
+				delete vg[l];
+				for (let c of vs) (!c._path || c._path === l) && c(s, l);
 				return (
-					VencordNative.ipc.invoke(
-						$.SET_SETTINGS,
-						JSON.stringify(t, null, 4),
-					),
+					(Nn.cloud.settingsSyncVersion = Date.now()),
+					(Ao.Vencord_settingsDirty = !0),
+					Tx(),
+					VencordNative.settings.set(JSON.stringify(t, null, 4)),
 					!0
 				);
 			},
 		}));
 	}
-	function Ge(e) {
-		let [, t] = w.useReducer(() => ({}), {}),
+	function it(e) {
+		let [, t] = I.useReducer(() => ({}), {}),
 			n = e ? (i, r) => e.includes(r) && t() : t;
-		return w.useEffect(() => (pi.add(n), () => void pi.delete(n)), []), k;
+		return I.useEffect(() => (vs.add(n), () => void vs.delete(n)), []), M;
 	}
-	function Gr(e, t) {
-		(t._path = e), pi.add(t);
+	function Ss(e, t) {
+		(t._path = e), vs.add(t);
 	}
-	function ce(e, ...t) {
-		let { plugins: n } = Jt;
+	function xx(e, ...t) {
+		let { plugins: n } = co;
 		if (!(e in n)) {
 			for (let i of t)
 				if (i in n) {
-					Vp.info(`Migrating settings from old name ${i} to ${e}`),
+					Sg.info(`Migrating settings from old name ${i} to ${e}`),
 						(n[e] = n[i]),
 						delete n[i],
-						VencordNative.ipc.invoke(
-							$.SET_SETTINGS,
-							JSON.stringify(Jt, null, 4),
-						);
+						VencordNative.settings.set(JSON.stringify(co, null, 4));
 					break;
 				}
 		}
 	}
-	function V(e, t) {
+	function N(e, t) {
 		let n = {
 			get store() {
 				if (!n.pluginName)
 					throw new Error(
 						'Cannot access settings before plugin is initialized',
 					);
-				return k.plugins[n.pluginName];
+				return M.plugins[n.pluginName];
 			},
 			use: (i) =>
-				Ge(i?.map((r) => `plugins.${n.pluginName}.${r}`)).plugins[
+				it(i?.map((r) => `plugins.${n.pluginName}.${r}`)).plugins[
 					n.pluginName
 				],
 			def: e,
 			checks: t ?? {},
 			pluginName: '',
+			withPrivateSettings() {
+				return this;
+			},
 		};
 		return n;
 	}
-	var Vp,
-		Jp,
-		Jt,
-		pi,
-		Zp,
-		eu,
-		k,
-		E = d(() => {
+	var Sg,
+		yg,
+		co,
+		Tx,
+		vs,
+		vg,
+		Nn,
+		M,
+		E = m(() => {
 			'use strict';
-			s();
-			Ke();
-			ge();
-			B();
-			v();
-			P();
-			Fn();
-			(Vp = new F('Settings')),
-				(Jp = {
+			a();
+			Ko();
+			rs();
+			Se();
+			de();
+			qi();
+			T();
+			x();
+			ni();
+			(Sg = new Z('Settings')),
+				(yg = {
 					notifyAboutUpdates: !0,
 					autoUpdate: !1,
 					autoUpdateNotification: !0,
@@ -1412,6 +3381,8 @@ ${n}`;
 					frameless: !1,
 					transparent: !1,
 					winCtrlQ: !1,
+					macosTranslucency: !1,
+					disableMinSize: !1,
 					winNativeTitleBar: !1,
 					plugins: {},
 					notifications: {
@@ -1420,31 +3391,42 @@ ${n}`;
 						useNative: 'not-focused',
 						logLimit: 50,
 					},
+					cloud: {
+						authenticated: !1,
+						url: 'https://api.vencord.dev/',
+						settingsSync: !1,
+						settingsSyncVersion: 0,
+					},
 				});
 			try {
-				(Jt = JSON.parse(VencordNative.ipc.sendSync($.GET_SETTINGS))),
-					fn(Jt, Jp);
+				(co = JSON.parse(VencordNative.settings.get())), Po(co, yg);
 			} catch (e) {
-				(Jt = fn({}, Jp)),
-					Vp.error(
+				(co = Po({}, yg)),
+					Sg.error(
 						`An error occurred while loading the settings. Corrupt settings file?
 `,
 						e,
 					);
 			}
-			(pi = new Set()), (Zp = {});
-			(eu = Jt), (k = Ur(Jt));
+			(Tx = Ct(async () => {
+				M.cloud.settingsSync &&
+					M.cloud.authenticated &&
+					(await ti(), delete Ao.Vencord_settingsDirty);
+			}, 6e4)),
+				(vs = new Set()),
+				(vg = {});
+			(Nn = co), (M = Hl(co));
 		});
-	var Hr,
-		tu = d(() => {
+	var jl,
+		bg = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			v();
-			Hr = f({
+			jl = g({
 				name: 'AnonymiseFileNames',
-				authors: [c.obscurity],
+				authors: [p.obscurity],
 				description: 'Anonymise uploaded file names',
 				patches: [
 					{
@@ -1475,34 +3457,34 @@ ${n}`;
 						type: 1,
 						default: 7,
 						disabled: () =>
-							k.plugins.AnonymiseFileNames.method !== 0,
+							M.plugins.AnonymiseFileNames.method !== 0,
 					},
 					consistent: {
 						description: 'Consistent filename',
 						type: 0,
 						default: 'image',
 						disabled: () =>
-							k.plugins.AnonymiseFileNames.method !== 1,
+							M.plugins.AnonymiseFileNames.method !== 1,
 					},
 				},
 				anonymise(e) {
 					let t = 'image',
 						n = e.lastIndexOf('.'),
 						i = n !== -1 ? e.slice(n) : '';
-					switch (k.plugins.AnonymiseFileNames.method) {
+					switch (M.plugins.AnonymiseFileNames.method) {
 						case 0:
 							let r =
 								'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 							t = Array.from(
 								{
-									length: k.plugins.AnonymiseFileNames
+									length: M.plugins.AnonymiseFileNames
 										.randomisedLength,
 								},
 								() => r[Math.floor(Math.random() * r.length)],
 							).join('');
 							break;
 						case 1:
-							t = k.plugins.AnonymiseFileNames.consistent;
+							t = M.plugins.AnonymiseFileNames.consistent;
 							break;
 						case 2:
 							t = `${Math.floor(Date.now() / 1e3)}${Math.floor(
@@ -1514,7 +3496,7 @@ ${n}`;
 				},
 			});
 		});
-	function ui() {
+	function bs() {
 		return o(
 			'svg',
 			{
@@ -1531,35 +3513,33 @@ ${n}`;
 			}),
 		);
 	}
-	var jr = d(() => {
+	var Wl = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	function uo(e) {
+	function Ki(e) {
 		return o(
-			L,
+			R,
 			{
 				...e,
-				look: L.Looks.LINK,
-				color: L.Colors.TRANSPARENT,
+				look: R.Looks.LINK,
+				color: R.Colors.TRANSPARENT,
 				onClick: () =>
-					VencordNative.ipc.invoke(
-						$.OPEN_EXTERNAL,
+					VencordNative.native.openExternal(
 						'https://github.com/sponsors/Vendicated',
 					),
 			},
-			o(ui, null),
+			o(bs, null),
 			'Donate',
 		);
 	}
-	var zr = d(() => {
+	var ql = m(() => {
 		'use strict';
-		s();
-		Ke();
-		P();
-		jr();
+		a();
+		x();
+		Wl();
 	});
-	function pe(e) {
+	function ae(e) {
 		return (
 			(e.style ??= {}),
 			(e.style.display = 'flex'),
@@ -1569,296 +3549,231 @@ ${n}`;
 			o('div', { ...e }, e.children)
 		);
 	}
-	var ct = d(() => {
+	var xt = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	var Kr = {};
-	te(Kr, {
-		ModalCloseButton: () => hn,
-		ModalContent: () => je,
-		ModalFooter: () => ut,
-		ModalHeader: () => He,
-		ModalRoot: () => Ee,
-		ModalSize: () => On,
-		Modals: () => pt,
-		closeAllModals: () => qr,
-		closeModal: () => yn,
-		openModal: () => De,
-		openModalLazy: () => Wr,
-	});
-	function Wr(e, t) {
-		return di.openModalLazy(e, t);
+	async function Tg(e = !1) {
+		Kl = {};
+		let t = {};
+		e && (t.cache = 'no-cache');
+		let i = (
+			await fetch(
+				'https://gist.githubusercontent.com/Vendicated/51a3dd775f6920429ec6e9b735ca7f01/raw/badges.csv',
+				t,
+			).then((r) => r.text())
+		).trim().split(`
+`);
+		if (i.shift() !== 'id,tooltip,image') {
+			new Z('BadgeAPI').error('Invalid badges.csv file!');
+			return;
+		}
+		for (let r of i) {
+			let [s, l, c] = r.split(',');
+			(Kl[s] ??= []).push({ image: c, description: l });
+		}
 	}
-	function De(e, t, n) {
-		return di.openModal(e, t, n);
-	}
-	function yn(e, t) {
-		return di.closeModal(e, t);
-	}
-	function qr() {
-		return di.closeAllModals();
-	}
-	var On,
-		pt,
-		Ee,
-		He,
-		je,
-		ut,
-		hn,
-		di,
-		Ze = d(() => {
+	var wx,
+		Mx,
+		Kl,
+		Yl,
+		xg = m(() => {
 			'use strict';
-			s();
-			D();
-			B();
-			(On = ((r) => (
-				(r.SMALL = 'small'),
-				(r.MEDIUM = 'medium'),
-				(r.LARGE = 'large'),
-				(r.DYNAMIC = 'dynamic'),
-				r
-			))(On || {})),
-				(pt = ye('.closeWithCircleBackground', {
-					ModalRoot: R.byCode('.root'),
-					ModalHeader: R.byCode('.header'),
-					ModalContent: R.byCode('.content'),
-					ModalFooter: R.byCode('.footerSeparator'),
-					ModalCloseButton: R.byCode('.closeWithCircleBackground'),
-				})),
-				(Ee = Y(() => pt.ModalRoot)),
-				(He = Y(() => pt.ModalHeader)),
-				(je = Y(() => pt.ModalContent)),
-				(ut = Y(() => pt.ModalFooter)),
-				(hn = Y(() => pt.ModalCloseButton)),
-				(di = ye('onCloseRequest:null!=', {
-					openModal: R.byCode('onCloseRequest:null!='),
-					closeModal: R.byCode('onCloseCallback&&'),
-					openModalLazy: (e) =>
-						e?.length === 1 &&
-						R.byCode('.apply(this,arguments)')(e),
-					closeAllModals: R.byCode('.value.key,'),
-				}));
-		});
-	var Ry,
-		Ay,
-		Ly,
-		nu,
-		Yr,
-		ou = d(() => {
-			'use strict';
-			s();
-			fi();
-			zr();
-			J();
-			ct();
-			jr();
+			a();
+			xs();
+			ql();
+			re();
+			xt();
+			Wl();
+			w();
+			Se();
+			Xe();
+			de();
+			ze();
 			T();
-			Ke();
-			ge();
-			Be();
-			Ze();
-			v();
-			P();
-			(Ry =
-				'https://media.discordapp.net/stickers/1026517526106087454.webp'),
-				(Ay = Object.values(c).map((e) => e.id.toString())),
-				(Ly = {
-					tooltip: 'Vencord Contributor',
-					image: Ry,
+			x();
+			(wx =
+				'https://cdn.discordapp.com/attachments/1033680203433660458/1092089947126780035/favicon.png'),
+				(Mx = {
+					description: 'Vencord Contributor',
+					image: wx,
 					position: 0,
 					props: {
 						style: { borderRadius: '50%', transform: 'scale(0.9)' },
 					},
-					shouldShow: ({ user: e }) => Ay.includes(e.id),
-					onClick: () =>
-						VencordNative.ipc.invoke(
-							$.OPEN_EXTERNAL,
-							'https://github.com/Vendicated/Vencord',
-						),
+					shouldShow: ({ user: e }) => Ci(e.id),
+					link: 'https://github.com/Vendicated/Vencord',
 				}),
-				(nu = {}),
-				(Yr = f({
-					name: 'BadgeAPI',
-					description: 'API to add badges to users.',
-					authors: [c.Megu],
-					required: !0,
-					patches: [
-						{
-							find: 'PREMIUM_GUILD_SUBSCRIPTION_TOOLTIP.format({date:',
-							replacement: {
-								match: /&&((\w{1,3})\.push\({tooltip:\w{1,3}\.\w{1,3}\.Messages\.PREMIUM_GUILD_SUBSCRIPTION_TOOLTIP\.format.+?;)(?:return\s\w{1,3};?})/,
-								replace: (e, t, n) =>
-									`&&${t} return Vencord.Api.Badges.inject(${n}, arguments[0]);}`,
+				(Kl = {});
+			Yl = g({
+				name: 'BadgeAPI',
+				description: 'API to add badges to users.',
+				authors: [p.Megu, p.Ven, p.TheSun],
+				required: !0,
+				patches: [
+					{
+						find: 'Messages.PROFILE_USER_BADGES,role:',
+						replacement: [
+							{
+								match: /(?<=(\i)\.isTryItOutFlow,)(.{0,300})null==\i\?void 0:(\i)\.getBadges\(\)/,
+								replace: (e, t, n, i) =>
+									`vencordProps=${t},${n}Vencord.Api.Badges._getBadges(vencordProps).concat(${i}?.getBadges()??[])`,
+							},
+							{
+								match: /alt:" ","aria-hidden":!0,src:(?=(\i)\.src)/g,
+								replace: '...$1.props,$& $1.image??',
+							},
+							{
+								match: /children:function(?<=(\i)\.(?:tooltip|description),spacing:\d.+?)/g,
+								replace:
+									'children:$1.component ? () => $self.renderBadgeComponent($1) : function',
+							},
+							{
+								match: /onClick:function(?=.{0,200}href:(\i)\.link)/,
+								replace: 'onClick:$1.onClick??function',
+							},
+						],
+					},
+				],
+				toolboxActions: {
+					async 'Refetch Badges'() {
+						await Tg(!0),
+							Q.show({
+								id: Q.genId(),
+								message: 'Successfully refetched badges!',
+								type: Q.Type.SUCCESS,
+							});
+					},
+				},
+				async start() {
+					Vencord.Api.Badges.addBadge(Mx), await Tg();
+				},
+				renderBadgeComponent: k.wrap(
+					(e) => {
+						let t = e.component;
+						return o(t, { ...e });
+					},
+					{ noop: !0 },
+				),
+				getDonorBadges(e) {
+					return Kl[e]?.map((t) => ({
+						...t,
+						position: 0,
+						props: {
+							style: {
+								borderRadius: '50%',
+								transform: 'scale(0.9)',
 							},
 						},
-						{
-							find: 'Messages.PROFILE_USER_BADGES,role:',
-							replacement: [
-								{
-									match: /src:(\w{1,3})\[(\w{1,3})\.key\],/,
-									replace: (e, t, n) =>
-										`src: ${n}.image ?? ${t}[${n}.key], ...${n}.props,`,
-								},
-								{
-									match: /spacing:(\d{1,2}),children:(.{1,40}(\i)\.jsx.+?(\i)\.onClick.+?\)})},/,
-									replace: (e, t, n, i, r) =>
-										`spacing:${t},children:${r}.component ? () => (0,${i}.jsx)(${r}.component, { ...${r} }) : ${n}},`,
-								},
-							],
-						},
-					],
-					async start() {
-						Vencord.Api.Badges.addBadge(Ly);
-						let t = (
-							await fetch(
-								'https://gist.githubusercontent.com/Vendicated/51a3dd775f6920429ec6e9b735ca7f01/raw/badges.csv',
-							).then((n) => n.text())
-						).trim().split(`
-`);
-						if (t.shift() !== 'id,tooltip,image') {
-							new F('BadgeAPI').error('Invalid badges.csv file!');
-							return;
-						}
-						for (let n of t) {
-							let [i, r, a] = n.split(',');
-							nu[i] = { image: a, tooltip: r };
-						}
-					},
-					addDonorBadge(e, t) {
-						let n = nu[t];
-						n &&
-							e.unshift({
-								...n,
-								position: 0,
-								props: {
-									style: {
-										borderRadius: '50%',
-										transform: 'scale(0.9)',
+						onClick() {
+							let n = be((i) =>
+								o(
+									k,
+									{
+										noop: !0,
+										onError: () => {
+											Gn(n),
+												VencordNative.native.openExternal(
+													'https://github.com/sponsors/Vendicated',
+												);
+										},
 									},
-								},
-								onClick() {
-									let i = De((r) =>
+									o(
+										pn.ModalRoot,
+										{ ...i },
 										o(
-											N,
-											{
-												noop: !0,
-												onError: () => {
-													yn(i),
-														VencordNative.ipc.invoke(
-															$.OPEN_EXTERNAL,
-															'https://github.com/sponsors/Vendicated',
-														);
-												},
-											},
+											pn.ModalHeader,
+											null,
 											o(
-												pt.ModalRoot,
-												{ ...r },
+												ae,
+												{
+													style: {
+														width: '100%',
+														justifyContent:
+															'center',
+													},
+												},
 												o(
-													pt.ModalHeader,
-													null,
-													o(
-														pe,
-														{
-															style: {
-																width: '100%',
-																justifyContent:
-																	'center',
-															},
+													y.FormTitle,
+													{
+														tag: 'h2',
+														style: {
+															width: '100%',
+															textAlign: 'center',
+															margin: 0,
 														},
-														o(
-															g.FormTitle,
-															{
-																tag: 'h2',
-																style: {
-																	width: '100%',
-																	textAlign:
-																		'center',
-																	margin: 0,
-																},
-															},
-															o(ui, null),
-															'Vencord Donor',
-														),
-													),
-												),
-												o(
-													pt.ModalContent,
-													null,
-													o(
-														pe,
-														null,
-														o('img', {
-															role: 'presentation',
-															src: 'https://cdn.discordapp.com/emojis/1026533070955872337.png',
-															alt: '',
-															style: {
-																margin: 'auto',
-															},
-														}),
-														o('img', {
-															role: 'presentation',
-															src: 'https://cdn.discordapp.com/emojis/1026533090627174460.png',
-															alt: '',
-															style: {
-																margin: 'auto',
-															},
-														}),
-													),
-													o(
-														'div',
-														{
-															style: {
-																padding: '1em',
-															},
-														},
-														o(
-															g.FormText,
-															null,
-															'This Badge is a special perk for Vencord Donors',
-														),
-														o(
-															g.FormText,
-															{
-																className:
-																	O.top20,
-															},
-															'Please consider supporting the development of Vencord by becoming a donor. It would mean a lot!!',
-														),
-													),
-												),
-												o(
-													pt.ModalFooter,
-													null,
-													o(
-														pe,
-														{
-															style: {
-																width: '100%',
-																justifyContent:
-																	'center',
-															},
-														},
-														o(uo, null),
-													),
+													},
+													o(bs, null),
+													'Vencord Donor',
 												),
 											),
 										),
-									);
-								},
-							});
-					},
-				}));
+										o(
+											pn.ModalContent,
+											null,
+											o(
+												ae,
+												null,
+												o('img', {
+													role: 'presentation',
+													src: 'https://cdn.discordapp.com/emojis/1026533070955872337.png',
+													alt: '',
+													style: { margin: 'auto' },
+												}),
+												o('img', {
+													role: 'presentation',
+													src: 'https://cdn.discordapp.com/emojis/1026533090627174460.png',
+													alt: '',
+													style: { margin: 'auto' },
+												}),
+											),
+											o(
+												'div',
+												{ style: { padding: '1em' } },
+												o(
+													y.FormText,
+													null,
+													'This Badge is a special perk for Vencord Donors',
+												),
+												o(
+													y.FormText,
+													{ className: G.top20 },
+													'Please consider supporting the development of Vencord by becoming a donor. It would mean a lot!!',
+												),
+											),
+										),
+										o(
+											pn.ModalFooter,
+											null,
+											o(
+												ae,
+												{
+													style: {
+														width: '100%',
+														justifyContent:
+															'center',
+													},
+												},
+												o(Ki, null),
+											),
+										),
+									),
+								),
+							);
+						},
+					}));
+				},
+			});
 		});
-	var Qr,
-		iu = d(() => {
+	var Zl,
+		wg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			Qr = f({
+			Zl = g({
 				name: 'CommandsAPI',
-				authors: [c.Arjix],
+				authors: [p.Arjix],
 				description: 'Api required by anything that uses commands',
 				patches: [
 					{
@@ -1888,65 +3803,18 @@ ${n}`;
 				],
 			});
 		});
-	function Ey(e, t) {
-		return new Proxy(e, {
-			get(n, i) {
-				return i === 'match'
-					? RegExp(`${t},{(?<=${ru}\\.${t},{)`, 'g')
-					: Reflect.get(...arguments);
-			},
-		});
-	}
-	function Xr(e, t) {
-		if (!k.plugins.ContextMenuAPI.enabled) return ii(Xr);
-		if (!(typeof e != 'object' || e === null)) {
-			for (let n in e)
-				if (n.length <= 3) {
-					let i = e[n];
-					if (typeof i != 'function') continue;
-					Function.prototype.toString
-						.call(i)
-						.includes('path:["empty"]') &&
-						(Vencord.Plugins.patches.push({
-							plugin: 'ContextMenuAPI',
-							all: !0,
-							noWarn: !0,
-							find: 'navId:',
-							replacement: [
-								{
-									match: RegExp(`${t}(?<=(\\i)=.+?)`),
-									replace: (a, l) => ((ru = l), a),
-								},
-								Ey(
-									{
-										match: '',
-										replace:
-											'$&contextMenuApiArguments:arguments,',
-									},
-									n,
-								),
-							],
-						}),
-						ii(Xr));
-				}
-		}
-	}
-	var ru,
-		Jr,
-		su = d(() => {
+	var Xl,
+		Mg = m(() => {
 			'use strict';
-			s();
-			E();
+			a();
+			w();
 			T();
-			v();
-			D();
-			ru = '';
-			Ir(Xr);
-			Jr = f({
+			Xl = g({
 				name: 'ContextMenuAPI',
 				description:
 					'API for adding/removing items to/from context menus.',
-				authors: [c.Nuckyz],
+				authors: [p.Nuckyz, p.Ven],
+				required: !0,
 				patches: [
 					{
 						find: '\u266B (\u3064\uFF61\u25D5\u203F\u203F\u25D5\uFF61)\u3064 \u266A',
@@ -1956,20 +3824,29 @@ ${n}`;
 								`Vencord.Api.ContextMenu._patchContextMenu(${t});`,
 						},
 					},
+					{
+						find: '.Menu,{',
+						all: !0,
+						replacement: {
+							match: /Menu,{(?<=\.jsxs?\)\(\i\.Menu,{)/g,
+							replace:
+								"$&contextMenuApiArguments:typeof arguments!=='undefined'?arguments:[],",
+						},
+					},
 				],
 			});
 		});
-	var Zr,
-		au = d(() => {
+	var Jl,
+		Pg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			Zr = f({
+			Jl = g({
 				name: 'MemberListDecoratorsAPI',
 				description:
 					'API to add decorators to member list (both in servers and DMs)',
-				authors: [c.TheSun],
+				authors: [p.TheSun],
 				patches: [
 					{
 						find: 'lostPermissionTooltipText,',
@@ -1990,76 +3867,16 @@ ${n}`;
 				],
 			});
 		});
-	var lu,
-		Vr,
-		cu = d(() => {
+	var Ql,
+		Ig = m(() => {
 			'use strict';
-			s();
-			E();
+			a();
+			w();
 			T();
-			v();
-			lu = {
-				radio: 'MenuRadioItem',
-				separator: 'MenuSeparator',
-				checkbox: 'MenuCheckboxItem',
-				groupstart: 'MenuGroup',
-				control: 'MenuControlItem',
-				compositecontrol: 'MenuControlItem',
-				item: 'MenuItem',
-				customitem: 'MenuItem',
-			};
-			ce('MenuItemDeobfuscatorAPI', 'MenuItemDeobfuscatorApi');
-			Vr = f({
-				name: 'MenuItemDeobfuscatorAPI',
-				description: "Deobfuscates Discord's Menu Item module",
-				authors: [c.Ven],
-				patches: [
-					{
-						find: '"Menu API',
-						replacement: {
-							match: /function.{0,80}type===(\i)\).{0,50}navigable:.+?Menu API/s,
-							replace: (e, t) => {
-								let n = '',
-									i = [],
-									r = /\(.{1,3}\.type===(.{1,5})\)/g,
-									a = /type:"(\w+)"/g,
-									l;
-								for (; (l = r.exec(e)) !== null; ) {
-									let u = l[1];
-									a.lastIndex = r.lastIndex;
-									let m = a.exec(e)?.[1];
-									if (m && m in lu) {
-										let y = lu[m];
-										(n += `Object.defineProperty(${u},"name",{value:"${y}"});`),
-											i.push(`${y}:${u}`);
-									}
-								}
-								return (
-									i.length < 6 &&
-										console.warn(
-											'[ApiMenuItemDeobfuscator] Expected to at least remap 6 items, only remapped',
-											i.length,
-										),
-									`${n}Object.assign(${t},{${i.join(
-										',',
-									)}});${e}`
-								);
-							},
-						},
-					},
-				],
-			});
-		});
-	var es,
-		pu = d(() => {
-			'use strict';
-			s();
-			T();
-			v();
-			es = f({
+			Ql = g({
 				name: 'MessageAccessoriesAPI',
 				description: 'API to add message accessories.',
-				authors: [c.Cyn],
+				authors: [p.Cyn],
 				patches: [
 					{
 						find: '.Messages.REMOVE_ATTACHMENT_BODY',
@@ -2072,16 +3889,16 @@ ${n}`;
 				],
 			});
 		});
-	var ts,
-		uu = d(() => {
+	var Vl,
+		Rg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			ts = f({
+			Vl = g({
 				name: 'MessageDecorationsAPI',
 				description: 'API to add decorations to messages',
-				authors: [c.TheSun],
+				authors: [p.TheSun],
 				patches: [
 					{
 						find: '.withMentionPrefix',
@@ -2094,31 +3911,32 @@ ${n}`;
 				],
 			});
 		});
-	var ns,
-		du = d(() => {
+	var ec,
+		Cg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			ns = f({
+			ec = g({
 				name: 'MessageEventsAPI',
 				description: 'Api required by anything using message events.',
-				authors: [c.Arjix, c.hunt],
+				authors: [p.Arjix, p.hunt, p.Ven],
 				patches: [
 					{
 						find: '"MessageActionCreators"',
-						replacement: [
-							{
-								match: /_sendMessage:(function\([^)]+\)){/,
-								replace:
-									'_sendMessage:async $1{if(await Vencord.Api.MessageEvents._handlePreSend(...arguments))return;',
-							},
-							{
-								match: /\beditMessage:(function\([^)]+\)){/,
-								replace:
-									'editMessage:async $1{await Vencord.Api.MessageEvents._handlePreEdit(...arguments);',
-							},
-						],
+						replacement: {
+							match: /\beditMessage:(function\(.+?\))\{/,
+							replace:
+								'editMessage:async $1{await Vencord.Api.MessageEvents._handlePreEdit(...arguments);',
+						},
+					},
+					{
+						find: '.handleSendMessage=',
+						replacement: {
+							match: /(props\.chatInputType.+?\.then\(\()(function.+?var (\i)=\i\.\i\.parse\((\i),.+?var (\i)=\i\.\i\.getSendMessageOptionsForReply\(\i\);)(?<=\)\(({.+?})\)\.then.+?)/,
+							replace: (e, t, n, i, r, s, l) =>
+								`${t}async ${n}if(await Vencord.Api.MessageEvents._handlePreSend(${r}.id,${i},${l},${s}))return{shoudClear:true,shouldRefocus:true};`,
+						},
 					},
 					{
 						find: '("interactionUsernameProfile',
@@ -2131,16 +3949,16 @@ ${n}`;
 				],
 			});
 		});
-	var os,
-		mu = d(() => {
+	var tc,
+		Ag = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			os = f({
+			tc = g({
 				name: 'MessagePopoverAPI',
 				description: 'API to add buttons to message popovers.',
-				authors: [c.KingFish, c.Ven, c.Nuckyz],
+				authors: [p.KingFish, p.Ven, p.Nuckyz],
 				patches: [
 					{
 						find: 'Messages.MESSAGE_UTILITIES_A11Y_LABEL',
@@ -2159,16 +3977,16 @@ ${n}`;
 				],
 			});
 		});
-	var is,
-		fu = d(() => {
+	var nc,
+		Ng = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			is = f({
+			nc = g({
 				name: 'NoticesAPI',
 				description: 'Fixes notices being automatically dismissed',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				required: !0,
 				patches: [
 					{
@@ -2189,15 +4007,15 @@ ${n}`;
 				],
 			});
 		});
-	var rs,
-		gu = d(() => {
+	var oc,
+		kg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			rs = f({
+			oc = g({
 				name: 'ServerListAPI',
-				authors: [c.kemo],
+				authors: [p.kemo],
 				description:
 					'Api required for plugins that modify the server list',
 				patches: [
@@ -2210,7 +4028,7 @@ ${n}`;
 						},
 					},
 					{
-						find: 'Messages.SERVERS',
+						find: 'Messages.SERVERS,children',
 						replacement: {
 							match: /(Messages\.SERVERS,children:)(.+?default:return null\}\}\)\))/,
 							replace:
@@ -2220,37 +4038,62 @@ ${n}`;
 				],
 			});
 		});
-	var cs = {};
-	te(cs, {
-		currentNotice: () => mo,
-		nextNotice: () => hu,
-		noticesQueue: () => as,
-		popNotice: () => ls,
-		showNotice: () => fo,
-	});
-	function ls() {
-		ss.dismiss();
-	}
-	function hu() {
-		(mo = as.shift()), mo && ss.show(...mo, 'VencordNotice');
-	}
-	function fo(e, t, n) {
-		as.push(['GENERIC', e, t, n]), mo || hu();
-	}
-	var ss,
-		as,
-		mo,
-		gi = d(() => {
+	var ic,
+		Lg = m(() => {
 			'use strict';
-			s();
-			D();
-			Pe(
-				(e) => e.show && e.dismiss && !e.suppressAll,
-				(e) => (ss = e),
-			);
-			(as = []), (mo = null);
+			a();
+			w();
+			T();
+			ic = g({
+				name: 'SettingsStoreAPI',
+				description:
+					"Patches Discord's SettingsStores to expose their group and name",
+				authors: [p.Nuckyz],
+				patches: [
+					{
+						find: '"textAndImages","renderSpoilers"',
+						replacement: [
+							{
+								match: /(?<=INFREQUENT_USER_ACTION.{0,20}),useSetting:function/,
+								replace:
+									',settingsStoreApiGroup:arguments[0],settingsStoreApiName:arguments[1]$&',
+							},
+						],
+					},
+				],
+			});
 		});
-	function Ne(e) {
+	var lc = {};
+	me(lc, {
+		currentNotice: () => Yi,
+		nextNotice: () => Eg,
+		noticesQueue: () => sc,
+		popNotice: () => ac,
+		showNotice: () => Zi,
+	});
+	function ac() {
+		rc.dismiss();
+	}
+	function Eg() {
+		(Yi = sc.shift()), Yi && rc.show(...Yi, 'VencordNotice');
+	}
+	function Zi(e, t, n) {
+		sc.push(['GENERIC', e, t, n]), Yi || Eg();
+	}
+	var rc,
+		sc,
+		Yi,
+		ws = m(() => {
+			'use strict';
+			a();
+			_();
+			Ze(
+				(e) => e.show && e.dismiss && !e.suppressAll,
+				(e) => (rc = e),
+			);
+			(sc = []), (Yi = null);
+		});
+	function We(e) {
 		return (
 			e.disabled &&
 				((e.style ??= {}),
@@ -2259,52 +4102,52 @@ ${n}`;
 			o('a', { role: 'link', target: '_blank', ...e }, e.children)
 		);
 	}
-	var Zt = d(() => {
+	var Wn = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	async function yu(e, t) {
-		return (await Dy.getAsset(e, [t, void 0]))[0];
+	async function Dg(e, t) {
+		return (await Px.getAsset(e, [t, void 0]))[0];
 	}
-	async function Fy(e) {
+	async function Rx(e) {
 		let t = {};
-		return await _y(t, e), t.application;
+		return await Ix(t, e), t.application;
 	}
-	var Dy,
-		_y,
-		bu,
-		$n,
-		ps,
-		Su = d(() => {
+	var Px,
+		Ix,
+		Og,
+		oi,
+		cc,
+		_g = m(() => {
 			'use strict';
-			s();
-			gi();
-			Zt();
+			a();
+			ws();
+			Wn();
+			w();
 			T();
-			v();
-			D();
-			P();
-			(Dy = ye(
+			_();
+			x();
+			(Px = Ye(
 				'getAssetImage: size must === [number, number] for Twitch',
-				{ getAsset: R.byCode('apply(') },
+				{ getAsset: Y.byCode('apply(') },
 			)),
-				(_y = oe('.APPLICATION_RPC('));
-			bu = {};
-			ps = f({
+				(Ix = ce('.APPLICATION_RPC('));
+			Og = {};
+			cc = g({
 				name: 'WebRichPresence (arRPC)',
 				description:
 					'Client plugin for arRPC to enable RPC on Discord Web (experimental)',
-				authors: [c.Ducko],
+				authors: [p.Ducko],
 				settingsAboutComponent: () =>
 					o(
-						p,
+						d,
 						null,
-						o(g.FormTitle, { tag: 'h3' }, 'How to use arRPC'),
+						o(y.FormTitle, { tag: 'h3' }, 'How to use arRPC'),
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							o(
-								Ne,
+								We,
 								{
 									href: 'https://github.com/OpenAsar/arrpc/tree/main#server',
 								},
@@ -2316,73 +4159,73 @@ ${n}`;
 				async start() {
 					if ('armcord' in window) return;
 					if (
-						($n && $n.close(),
-						($n = new WebSocket('ws://127.0.0.1:1337')),
-						($n.onmessage = async (t) => {
+						(oi && oi.close(),
+						(oi = new WebSocket('ws://127.0.0.1:1337')),
+						(oi.onmessage = async (t) => {
 							let n = JSON.parse(t.data);
 							if (
 								(n.activity?.assets?.large_image &&
-									(n.activity.assets.large_image = await yu(
+									(n.activity.assets.large_image = await Dg(
 										n.activity.application_id,
 										n.activity.assets.large_image,
 									)),
 								n.activity?.assets?.small_image &&
-									(n.activity.assets.small_image = await yu(
+									(n.activity.assets.small_image = await Dg(
 										n.activity.application_id,
 										n.activity.assets.small_image,
 									)),
 								n.activity)
 							) {
 								let i = n.activity.application_id;
-								bu[i] ||= await Fy(i);
-								let r = bu[i];
+								Og[i] ||= await Rx(i);
+								let r = Og[i];
 								n.activity.name ||= r.name;
 							}
-							I.dispatch({ type: 'LOCAL_ACTIVITY_UPDATE', ...n });
+							L.dispatch({ type: 'LOCAL_ACTIVITY_UPDATE', ...n });
 						}),
 						!(await new Promise((t) =>
 							setTimeout(
-								() => t($n.readyState === WebSocket.OPEN),
+								() => t(oi.readyState === WebSocket.OPEN),
 								1e3,
 							),
 						)))
 					) {
-						fo(
+						Zi(
 							'Failed to connect to arRPC, is it running?',
 							'Retry',
 							() => {
-								ls(), this.start();
+								ac(), this.start();
 							},
 						);
 						return;
 					}
-					K.show({
+					Q.show({
 						message: 'Connected to arRPC',
-						type: K.Type.SUCCESS,
-						id: K.genId(),
-						options: { duration: 1e3, position: K.Position.BOTTOM },
+						type: Q.Type.SUCCESS,
+						id: Q.genId(),
+						options: { duration: 1e3, position: Q.Position.BOTTOM },
 					});
 				},
 				stop() {
-					I.dispatch({
+					L.dispatch({
 						type: 'LOCAL_ACTIVITY_UPDATE',
 						activity: null,
 					}),
-						$n.close();
+						oi.close();
 				},
 			});
 		});
-	var us,
-		vu = d(() => {
+	var uc,
+		Fg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			us = f({
+			uc = g({
 				name: 'BANger',
 				description:
 					'Replaces the GIF in the ban dialogue with a custom one.',
-				authors: [c.Xinto, c.Glitch],
+				authors: [p.Xinto, p.Glitch],
 				patches: [
 					{
 						find: 'BAN_CONFIRM_TITLE.',
@@ -2404,15 +4247,264 @@ ${n}`;
 				},
 			});
 		});
-	var ds,
-		Tu = d(() => {
+	var Bg = m(() => {});
+	function Ax(e) {
+		let t = Vencord.Plugins.plugins.BetterFolders.Guilds(e),
+			n = t.props.children?.props?.children?.[1]?.props;
+		if (n?.children) {
+			let i = n.children.find(
+				(r) => r?.props?.['aria-label'] === nt.Messages.SERVERS,
+			);
+			i && (n.children = i);
+		}
+		return t;
+	}
+	var Cx,
+		$g,
+		Ug,
+		Gg,
+		Hg,
+		zg,
+		jg = m(() => {
 			'use strict';
-			s();
+			a();
+			E();
+			je();
+			re();
+			_();
+			x();
+			(Cx = Ue('vc-bf-')),
+				($g = P('sidebar', 'guilds')),
+				(Ug = P('a', 'animated', 'useTransition')),
+				(Gg = ue('ChannelRTCStore')),
+				(Hg = ue('ExpandedGuildFolderStore'));
+			zg = k.wrap(
+				() => {
+					let e = Be([Hg], () => Hg.getExpandedFolders()),
+						t = Be([Gg], () => Gg.isFullscreenInContext()),
+						n = document.querySelector(`.${$g.guilds}`),
+						i = !!e.size,
+						r = Cx('folder-sidebar', { fullscreen: t }),
+						s = o(Ax, {
+							className: $g.guilds,
+							bfGuildFolders: Array.from(e),
+						});
+					return !n || !M.plugins.BetterFolders.sidebarAnim
+						? i
+							? o('div', { className: r }, s)
+							: null
+						: o(
+								Ug.Transition,
+								{
+									items: i,
+									from: { width: 0 },
+									enter: {
+										width: n.getBoundingClientRect().width,
+									},
+									leave: { width: 0 },
+									config: { duration: 200 },
+								},
+								(l, c) =>
+									c &&
+									o(
+										Ug.animated.div,
+										{ style: l, className: r },
+										s,
+									),
+						  );
+				},
+				{ noop: !0 },
+			);
+		});
+	var Nx,
+		kx,
+		pc,
+		dc,
+		qn,
+		mc,
+		Wg = m(() => {
+			'use strict';
+			a();
+			Bg();
+			E();
+			w();
 			T();
-			v();
-			ds = f({
+			_();
+			x();
+			jg();
+			(Nx = Ce((e) => e.prototype?.convertToFolder)),
+				(kx = ue('SortedGuildStore')),
+				(pc = ue('ExpandedGuildFolderStore')),
+				(dc = P('move', 'toggleGuildFolderExpand')),
+				(qn = N({
+					sidebar: {
+						type: 3,
+						description:
+							'Display servers from folder on dedicated sidebar',
+						default: !0,
+					},
+					sidebarAnim: {
+						type: 3,
+						description: 'Animate opening the folder sidebar',
+						default: !0,
+					},
+					closeAllFolders: {
+						type: 3,
+						description:
+							'Close all folders when selecting a server not in a folder',
+						default: !1,
+					},
+					closeAllHomeButton: {
+						type: 3,
+						description:
+							'Close all folders when clicking on the home button',
+						default: !1,
+					},
+					closeOthers: {
+						type: 3,
+						description:
+							'Close other folders when opening a folder',
+						default: !1,
+					},
+					forceOpen: {
+						type: 3,
+						description:
+							'Force a folder to open when switching to a server of that folder',
+						default: !1,
+					},
+				})),
+				(mc = g({
+					name: 'BetterFolders',
+					description:
+						'Shows server folders on dedicated sidebar and adds folder related improvements',
+					authors: [p.juby, p.AutumnVN],
+					patches: [
+						{
+							find: '("guildsnav")',
+							predicate: () => qn.store.sidebar,
+							replacement: [
+								{
+									match: /(\i)\(\){return \i\(\(0,\i\.jsx\)\("div",{className:\i\(\)\.guildSeparator}\)\)}/,
+									replace: '$&$self.Separator=$1;',
+								},
+								{
+									match: /\i\(\(function\(\i,\i,\i\){var \i=\i\.key;return.+\(\i\)},\i\)}\)\)/,
+									replace:
+										'arguments[0].bfHideServers?null:$&',
+								},
+								{
+									match: /(\i)\.themeOverride,(.{15,25}\(function\(\){var \i=)(\i\.\i\.getGuildsTree\(\))/,
+									replace:
+										'$1.themeOverride,bfPatch=$1.bfGuildFolders,$2bfPatch?$self.getGuildsTree(bfPatch,$3):$3',
+								},
+								{
+									match: /return(\(0,\i\.jsx\))(\(\i,{)(folderNode:\i,setNodeRef:\i\.setNodeRef,draggable:!0,.+},\i\.id\));case/,
+									replace:
+										"var bfHideServers=typeof bfPatch==='undefined',folder=$1$2bfHideServers,$3;return !bfHideServers&&arguments[1]?[$1($self.Separator,{}),folder]:folder;case",
+								},
+								{
+									match: /\("guildsnav"\);return\(0,\i\.jsx\)\(.{1,6},{navigator:\i,children:\(0,\i\.jsx\)\(/,
+									replace: '$&$self.Guilds=',
+								},
+							],
+						},
+						{
+							find: 'APPLICATION_LIBRARY,render',
+							predicate: () => qn.store.sidebar,
+							replacement: {
+								match: /(\(0,\i\.jsx\))\(\i\..,{className:\i\(\)\.guilds,themeOverride:\i}\)/,
+								replace: '$&,$1($self.FolderSideBar,{})',
+							},
+						},
+						{
+							find: '("guildsnav")',
+							predicate: () => qn.store.closeAllHomeButton,
+							replacement: {
+								match: ',onClick:function(){if(!__OVERLAY__){',
+								replace: '$&$self.closeFolders();',
+							},
+						},
+					],
+					settings: qn,
+					start() {
+						let e = (t) =>
+							kx
+								.getGuildFolders()
+								.find((n) => n.guildIds.includes(t));
+						L.subscribe(
+							'CHANNEL_SELECT',
+							(this.onSwitch = (t) => {
+								if (
+									!(
+										!qn.store.closeAllFolders &&
+										!qn.store.forceOpen
+									) &&
+									this.lastGuildId !== t.guildId
+								) {
+									this.lastGuildId = t.guildId;
+									let n = e(t.guildId);
+									n?.folderId
+										? qn.store.forceOpen &&
+										  !pc.isFolderExpanded(n.folderId) &&
+										  dc.toggleGuildFolderExpand(n.folderId)
+										: qn.store.closeAllFolders &&
+										  this.closeFolders();
+								}
+							}),
+						),
+							L.subscribe(
+								'TOGGLE_GUILD_FOLDER_EXPAND',
+								(this.onToggleFolder = (t) => {
+									qn.store.closeOthers &&
+										!this.dispatching &&
+										L.wait(() => {
+											let n = pc.getExpandedFolders();
+											if (n.size > 1) {
+												this.dispatching = !0;
+												for (let i of n)
+													i !== t.folderId &&
+														dc.toggleGuildFolderExpand(
+															i,
+														);
+												this.dispatching = !1;
+											}
+										});
+								}),
+							);
+					},
+					stop() {
+						L.unsubscribe('CHANNEL_SELECT', this.onSwitch),
+							L.unsubscribe(
+								'TOGGLE_GUILD_FOLDER_EXPAND',
+								this.onToggleFolder,
+							);
+					},
+					FolderSideBar: zg,
+					getGuildsTree(e, t) {
+						let n = new Nx();
+						return (
+							(n.root.children = t.root.children.filter((i) =>
+								e.includes(i.id),
+							)),
+							(n.nodes = e.map((i) => t.nodes[i])),
+							n
+						);
+					},
+					closeFolders() {
+						for (let e of pc.getExpandedFolders())
+							dc.toggleGuildFolderExpand(e);
+					},
+				}));
+		});
+	var fc,
+		qg = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			fc = g({
 				name: 'BetterGifAltText',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				description:
 					"Change GIF alt text from simply being 'GIF' to containing the gif tags / filename",
 				patches: [
@@ -2452,26 +4544,24 @@ ${n}`;
 				},
 			});
 		});
-	var ms,
-		xu = d(() => {
+	var gc,
+		Kg = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			B();
-			v();
-			ms = f({
+			gc = g({
 				name: 'BetterNotesBox',
 				description:
 					'Hide notes or disable spellcheck (Configure in settings!!)',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				patches: [
 					{
 						find: 'hideNote:',
 						all: !0,
-						predicate: xt(
-							() => Vencord.Settings.plugins.BetterNotesBox.hide,
-						),
+						predicate: () =>
+							Vencord.Settings.plugins.BetterNotesBox.hide,
 						replacement: {
 							match: /hideNote:.+?(?=[,}])/g,
 							replace: 'hideNote:true',
@@ -2496,39 +4586,38 @@ ${n}`;
 					noSpellCheck: {
 						type: 3,
 						description: 'Disable spellcheck in notes',
-						disabled: () => k.plugins.BetterNotesBox.hide,
+						disabled: () => M.plugins.BetterNotesBox.hide,
 						default: !1,
 					},
 				},
 			});
 		});
-	var fs,
-		wu = d(() => {
+	var hc,
+		Yg = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			v();
-			P();
-			ce('BetterRoleDot', 'ClickableRoleDot');
-			fs = f({
+			x();
+			hc = g({
 				name: 'BetterRoleDot',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				description:
 					'Copy role colour on RoleDot (accessibility setting) click. Also allows using both RoleDot and coloured names simultaneously',
 				patches: [
 					{
-						find: 'M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z',
+						find: '.dotBorderBase',
 						replacement: {
-							match: /viewBox:"0 0 20 20"/,
+							match: /,viewBox:"0 0 20 20"/,
 							replace:
-								"$&,onClick:()=>$self.copyToClipBoard(e.color),style:{cursor:'pointer'}",
+								"$&,onClick:()=>$self.copyToClipBoard(arguments[0].color),style:{cursor:'pointer'}",
 						},
 					},
 					{
 						find: '"dot"===',
 						all: !0,
-						predicate: () => k.plugins.BetterRoleDot.bothStyles,
+						predicate: () => M.plugins.BetterRoleDot.bothStyles,
 						replacement: {
 							match: /"(?:username|dot)"===\i(?!\.\i)/g,
 							replace: 'true',
@@ -2543,28 +4632,28 @@ ${n}`;
 					},
 				},
 				copyToClipBoard(e) {
-					at.copy(e),
-						K.show({
+					jt.copy(e),
+						Q.show({
 							message: 'Copied to Clipboard!',
-							type: K.Type.SUCCESS,
-							id: K.genId(),
+							type: Q.Type.SUCCESS,
+							id: Q.genId(),
 							options: {
 								duration: 1e3,
-								position: K.Position.BOTTOM,
+								position: Q.Position.BOTTOM,
 							},
 						});
 				},
 			});
 		});
-	var gs,
-		Pu = d(() => {
+	var yc,
+		Zg = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			gs = f({
+			yc = g({
 				name: 'BetterUploadButton',
-				authors: [c.obscurity, c.Ven],
+				authors: [p.obscurity, p.Ven],
 				description:
 					'Upload with a single click, open menu with right click',
 				patches: [
@@ -2582,11 +4671,11 @@ ${n}`;
 				],
 			});
 		});
-	function Iu() {
-		go.textContent = `
+	function Xg() {
+		Xi.textContent = `
         .vc-nsfw-img [class^=imageWrapper] img,
         .vc-nsfw-img [class^=wrapperPaused] video {
-            filter: blur(${k.plugins.BlurNSFW.blurAmount}px);
+            filter: blur(${M.plugins.BlurNSFW.blurAmount}px);
             transition: filter 0.2s;
         }
         .vc-nsfw-img [class^=imageWrapper]:hover img,
@@ -2595,18 +4684,18 @@ ${n}`;
         }
         `;
 	}
-	var go,
-		hs,
-		ku = d(() => {
+	var Xi,
+		vc,
+		Jg = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			v();
-			hs = f({
+			vc = g({
 				name: 'BlurNSFW',
 				description: 'Blur attachments in NSFW channels until hovered',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				patches: [
 					{
 						find: '.embedWrapper,embed',
@@ -2629,51 +4718,51 @@ ${n}`;
 						type: 1,
 						description: 'Blur Amount',
 						default: 10,
-						onChange: Iu,
+						onChange: Xg,
 					},
 				},
 				start() {
-					(go = document.createElement('style')),
-						(go.id = 'VcBlurNsfw'),
-						document.head.appendChild(go),
-						Iu();
+					(Xi = document.createElement('style')),
+						(Xi.id = 'VcBlurNsfw'),
+						document.head.appendChild(Xi),
+						Xg();
 				},
 				stop() {
-					go?.remove();
+					Xi?.remove();
 				},
 			});
 		});
-	function Oy(e) {
-		let t = k.plugins.CallTimer.format === 'human',
-			n = (h) => (t ? h : h.toString().padStart(2, '0')),
-			i = (h) => (t ? h : ''),
+	function Lx(e) {
+		let t = M.plugins.CallTimer.format === 'human',
+			n = (f) => (t ? f : f.toString().padStart(2, '0')),
+			i = (f) => (t ? f : ''),
 			r = t ? ' ' : ':',
-			a = Math.floor(e / 864e5),
+			s = Math.floor(e / 864e5),
 			l = Math.floor((e % 864e5) / 36e5),
-			u = Math.floor(((e % 864e5) % 36e5) / 6e4),
-			m = Math.floor((((e % 864e5) % 36e5) % 6e4) / 1e3),
-			y = '';
+			c = Math.floor(((e % 864e5) % 36e5) / 6e4),
+			u = Math.floor((((e % 864e5) % 36e5) % 6e4) / 1e3),
+			h = '';
 		return (
-			a && (y += `${a}d `),
-			(l || y) && (y += `${n(l)}${i('h')}${r}`),
-			(u || y || !t) && (y += `${n(u)}${i('m')}${r}`),
-			(y += `${n(m)}${i('s')}`),
-			y
+			s && (h += `${s}d `),
+			(l || h) && (h += `${n(l)}${i('h')}${r}`),
+			(c || h || !t) && (h += `${n(c)}${i('m')}${r}`),
+			(h += `${n(u)}${i('s')}`),
+			h
 		);
 	}
-	var ys,
-		Cu = d(() => {
+	var Sc,
+		Qg = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			J();
+			re();
+			w();
 			T();
-			v();
-			P();
-			ys = f({
+			x();
+			Sc = g({
 				name: 'CallTimer',
 				description: 'Adds a timer to vcs',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				startTime: 0,
 				interval: void 0,
 				options: {
@@ -2702,13 +4791,13 @@ ${n}`;
 					},
 				],
 				renderTimer(e) {
-					return o(N, { noop: !0 }, o(this.Timer, { channelId: e }));
+					return o(k, { noop: !0 }, o(this.Timer, { channelId: e }));
 				},
 				Timer({ channelId: e }) {
-					let [t, n] = w.useState(0),
-						i = w.useMemo(() => Date.now(), [e]);
+					let [t, n] = I.useState(0),
+						i = I.useMemo(() => Date.now(), [e]);
 					return (
-						w.useEffect(() => {
+						I.useEffect(() => {
 							let r = setInterval(() => n(Date.now() - i), 1e3);
 							return () => {
 								clearInterval(r), n(0);
@@ -2718,100 +4807,101 @@ ${n}`;
 							'p',
 							{ style: { margin: 0 } },
 							'Connected for ',
-							Oy(t),
+							Lx(t),
 						)
 					);
 				},
 			});
 		});
-	var Ps = {};
-	te(Ps, {
-		_handleClick: () => Uy,
-		_handlePreEdit: () => By,
-		_handlePreSend: () => $y,
-		addClickListener: () => xs,
-		addPreEditListener: () => bn,
-		addPreSendListener: () => ze,
-		removeClickListener: () => ws,
-		removePreEditListener: () => Sn,
-		removePreSendListener: () => We,
+	var Ic = {};
+	me(Ic, {
+		_handleClick: () => Ox,
+		_handlePreEdit: () => Dx,
+		_handlePreSend: () => Ex,
+		addClickListener: () => Mc,
+		addPreEditListener: () => Kn,
+		addPreSendListener: () => rt,
+		removeClickListener: () => Pc,
+		removePreEditListener: () => Yn,
+		removePreSendListener: () => st,
 	});
-	async function $y(e, t, n) {
-		for (let i of Ss)
+	async function Ex(e, t, n, i) {
+		n.replyOptions = i;
+		for (let r of Tc)
 			try {
-				let r = await i(e, t, n);
-				if (r && r.cancel === !0) return !0;
-			} catch (r) {
-				bs.error(
+				let s = await r(e, t, n);
+				if (s && s.cancel === !0) return !0;
+			} catch (s) {
+				bc.error(
 					`MessageSendHandler: Listener encountered an unknown error
 `,
-					r,
+					s,
 				);
 			}
 		return !1;
 	}
-	async function By(e, t, n) {
-		for (let i of vs)
+	async function Dx(e, t, n) {
+		for (let i of xc)
 			try {
 				await i(e, t, n);
 			} catch (r) {
-				bs.error(
+				bc.error(
 					`MessageEditHandler: Listener encountered an unknown error
 `,
 					r,
 				);
 			}
 	}
-	function ze(e) {
-		return Ss.add(e), e;
+	function rt(e) {
+		return Tc.add(e), e;
 	}
-	function bn(e) {
-		return vs.add(e), e;
+	function Kn(e) {
+		return xc.add(e), e;
 	}
-	function We(e) {
-		return Ss.delete(e);
+	function st(e) {
+		return Tc.delete(e);
 	}
-	function Sn(e) {
-		return vs.delete(e);
+	function Yn(e) {
+		return xc.delete(e);
 	}
-	function Uy(e, t, n) {
-		e = st.getMessage(t.id, e.id) ?? e;
-		for (let i of Ts)
+	function Ox(e, t, n) {
+		e = cn.getMessage(t.id, e.id) ?? e;
+		for (let i of wc)
 			try {
 				i(e, t, n);
 			} catch (r) {
-				bs.error(
+				bc.error(
 					`MessageClickHandler: Listener encountered an unknown error
 `,
 					r,
 				);
 			}
 	}
-	function xs(e) {
-		return Ts.add(e), e;
+	function Mc(e) {
+		return wc.add(e), e;
 	}
-	function ws(e) {
-		return Ts.delete(e);
+	function Pc(e) {
+		return wc.delete(e);
 	}
-	var bs,
-		Ss,
-		vs,
-		Ts,
-		Ft = d(() => {
+	var bc,
+		Tc,
+		xc,
+		wc,
+		gn = m(() => {
 			'use strict';
-			s();
-			ge();
-			P();
-			(bs = new F('MessageEvents', '#e5c890')),
-				(Ss = new Set()),
-				(vs = new Set());
-			Ts = new Set();
+			a();
+			Se();
+			x();
+			(bc = new Z('MessageEvents', '#e5c890')),
+				(Tc = new Set()),
+				(xc = new Set());
+			wc = new Set();
 		});
-	var Mu,
-		Nu = d(() => {
+	var Vg,
+		eh = m(() => {
 			'use strict';
-			s();
-			Mu = [
+			a();
+			Vg = [
 				'action_object_map',
 				'action_type_map',
 				'action_ref_map',
@@ -2931,116 +5021,119 @@ ${n}`;
 				'si@open.spotify.com',
 			];
 		});
-	var Ru,
-		Gy,
-		Is,
-		Au = d(() => {
+	var th,
+		_x,
+		Rc,
+		nh = m(() => {
 			'use strict';
-			s();
-			Ft();
-			E();
+			a();
+			gn();
+			w();
 			T();
-			v();
-			Nu();
-			(Ru = /[\\^$.*+?()[\]{}|]/g), (Gy = RegExp(Ru.source));
-			ce('ClearURLs', 'clearURLs');
-			Is = f({
-				name: 'ClearURLs',
-				description: 'Removes tracking garbage from URLs',
-				authors: [c.adryd],
-				dependencies: ['MessageEventsAPI'],
-				escapeRegExp(e) {
-					return e && Gy.test(e) ? e.replace(Ru, '\\$&') : e || '';
-				},
-				createRules() {
-					let e = Mu;
-					(this.universalRules = new Set()),
-						(this.rulesByHost = new Map()),
-						(this.hostRules = new Map());
-					for (let t of e) {
-						let n = t.split('@'),
-							i = new RegExp(
-								'^' +
-									this.escapeRegExp(n[0]).replace(
-										/\\\*/,
-										'.+?',
-									) +
-									'$',
-							);
-						if (!n[1]) {
-							this.universalRules.add(i);
-							continue;
+			eh();
+			(th = /[\\^$.*+?()[\]{}|]/g),
+				(_x = RegExp(th.source)),
+				(Rc = g({
+					name: 'ClearURLs',
+					description: 'Removes tracking garbage from URLs',
+					authors: [p.adryd],
+					dependencies: ['MessageEventsAPI'],
+					escapeRegExp(e) {
+						return e && _x.test(e)
+							? e.replace(th, '\\$&')
+							: e || '';
+					},
+					createRules() {
+						let e = Vg;
+						(this.universalRules = new Set()),
+							(this.rulesByHost = new Map()),
+							(this.hostRules = new Map());
+						for (let t of e) {
+							let n = t.split('@'),
+								i = new RegExp(
+									'^' +
+										this.escapeRegExp(n[0]).replace(
+											/\\\*/,
+											'.+?',
+										) +
+										'$',
+								);
+							if (!n[1]) {
+								this.universalRules.add(i);
+								continue;
+							}
+							let r = new RegExp(
+									'^(www\\.)?' +
+										this.escapeRegExp(n[1])
+											.replace(/\\\./, '\\.')
+											.replace(/^\\\*\\\./, '(.+?\\.)?')
+											.replace(/\\\*/, '.+?') +
+										'$',
+								),
+								s = r.toString();
+							this.hostRules.set(s, r),
+								this.rulesByHost.get(s) == null &&
+									this.rulesByHost.set(s, new Set()),
+								this.rulesByHost.get(s).add(i);
 						}
-						let r = new RegExp(
-								'^(www\\.)?' +
-									this.escapeRegExp(n[1])
-										.replace(/\\\./, '\\.')
-										.replace(/^\\\*\\\./, '(.+?\\.)?')
-										.replace(/\\\*/, '.+?') +
-									'$',
-							),
-							a = r.toString();
-						this.hostRules.set(a, r),
-							this.rulesByHost.get(a) == null &&
-								this.rulesByHost.set(a, new Set()),
-							this.rulesByHost.get(a).add(i);
-					}
-				},
-				removeParam(e, t, n) {
-					(t === e || (e instanceof RegExp && e.test(t))) &&
-						n.delete(t);
-				},
-				replacer(e) {
-					try {
-						var t = new URL(e);
-					} catch {
-						return e;
-					}
-					return t.searchParams.entries().next().done
-						? e
-						: (this.universalRules.forEach((n) => {
-								t.searchParams.forEach((i, r, a) => {
-									this.removeParam(n, r, a);
-								});
-						  }),
-						  this.hostRules.forEach((n, i) => {
-								!n.test(t.hostname) ||
-									this.rulesByHost.get(i).forEach((r) => {
-										t.searchParams.forEach((a, l, u) => {
-											this.removeParam(r, l, u);
-										});
+					},
+					removeParam(e, t, n) {
+						(t === e || (e instanceof RegExp && e.test(t))) &&
+							n.delete(t);
+					},
+					replacer(e) {
+						try {
+							var t = new URL(e);
+						} catch {
+							return e;
+						}
+						return t.searchParams.entries().next().done
+							? e
+							: (this.universalRules.forEach((n) => {
+									t.searchParams.forEach((i, r, s) => {
+										this.removeParam(n, r, s);
 									});
-						  }),
-						  t.toString());
-				},
-				onSend(e) {
-					e.content.match(/http(s)?:\/\//) &&
-						(e.content = e.content.replace(
-							/(https?:\/\/[^\s<]+[^<.,:;"'>)|\]\s])/g,
-							(t) => this.replacer(t),
-						));
-				},
-				start() {
-					this.createRules(),
-						(this.preSend = ze((e, t) => this.onSend(t))),
-						(this.preEdit = bn((e, t, n) => this.onSend(n)));
-				},
-				stop() {
-					We(this.preSend), Sn(this.preEdit);
-				},
-			});
+							  }),
+							  this.hostRules.forEach((n, i) => {
+									!n.test(t.hostname) ||
+										this.rulesByHost.get(i).forEach((r) => {
+											t.searchParams.forEach(
+												(s, l, c) => {
+													this.removeParam(r, l, c);
+												},
+											);
+										});
+							  }),
+							  t.toString());
+					},
+					onSend(e) {
+						e.content.match(/http(s)?:\/\//) &&
+							(e.content = e.content.replace(
+								/(https?:\/\/[^\s<]+[^<.,:;"'>)|\]\s])/g,
+								(t) => this.replacer(t),
+							));
+					},
+					start() {
+						this.createRules(),
+							(this.preSend = rt((e, t) => this.onSend(t))),
+							(this.preEdit = Kn((e, t, n) => this.onSend(n)));
+					},
+					stop() {
+						st(this.preSend), Yn(this.preEdit);
+					},
+				}));
 		});
-	var ks,
-		Lu = d(() => {
+	var Cc,
+		oh = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			ks = f({
+			Cc = g({
 				name: 'ColorSighted',
 				description:
 					'Removes the colorblind-friendly icons from statuses, just like 2015-2017 Discord',
-				authors: [c.lewisakura],
+				authors: [p.lewisakura],
 				patches: [
 					{
 						find: 'Masks.STATUS_ONLINE',
@@ -3059,76 +5152,107 @@ ${n}`;
 				],
 			});
 		});
-	var Hy,
-		Cs,
-		Eu = d(() => {
+	function Ms() {
+		window.VencordDesktopNative.app.relaunch();
+	}
+	var Ji = m(() => {
+		'use strict';
+		a();
+	});
+	var Fx,
+		Ac,
+		ih = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
+			Ji();
+			Fi();
 			T();
-			v();
-			D();
-			D();
-			P();
-			(Hy = (e) => () => {
+			_();
+			_();
+			x();
+			(Fx = (e) => () => {
 				throw new Error(`'${e}' is Discord Desktop only.`);
 			}),
-				(Cs = f({
+				(Ac = g({
 					name: 'ConsoleShortcuts',
 					description:
 						'Adds shorter Aliases for many things on the window. Run `shortcutList` for a list.',
-					authors: [c.Ven],
+					authors: [p.Ven],
 					getShortcuts() {
-						function e(t) {
-							let n = new Map();
-							return function (...i) {
-								let r = String(i);
-								if (n.has(r)) return n.get(r);
-								let a = Mn(t(...i)),
-									l = (() => {
-										switch (a.length) {
+						function e(n) {
+							let i = new Map();
+							return function (...r) {
+								let s = String(r);
+								if (i.has(s)) return i.get(s);
+								let l = Yo(n(...r)),
+									c = (() => {
+										switch (l.length) {
 											case 0:
 												return null;
 											case 1:
-												return a[0];
+												return l[0];
 											default:
-												let u = [...new Set(a)];
+												let u = [...new Set(l)];
 												return (
 													u.length > 1 &&
 														console.warn(
-															`Warning: This filter matches ${a.length} modules. Make it more specific!
+															`Warning: This filter matches ${l.length} modules. Make it more specific!
 `,
 															u,
 														),
-													a[0]
+													l[0]
 												);
 										}
 									})();
-								return l && r && n.set(r, l), l;
+								return c && s && i.set(s, c), c;
 							};
 						}
+						let t;
 						return {
 							wp: Vencord.Webpack,
-							wpc: it.c,
-							wreq: it,
-							wpsearch: io,
-							wpex: kr,
-							wpexs: (t) =>
+							wpc: Ft.c,
+							wreq: Ft,
+							wpsearch: el,
+							wpex: tl,
+							wpexs: (n) =>
 								Vencord.Webpack.extract(
-									Vencord.Webpack.findModuleId(t),
+									Vencord.Webpack.findModuleId(n),
 								),
-							find: e((t) => t),
-							findAll: Mn,
-							findByProps: e(R.byProps),
-							findAllByProps: (...t) => Mn(R.byProps(...t)),
-							findByCode: e(R.byCode),
-							findAllByCode: (t) => Mn(R.byCode(t)),
+							find: e((n) => n),
+							findAll: Yo,
+							findByProps: e(Y.byProps),
+							findAllByProps: (...n) => Yo(Y.byProps(...n)),
+							findByCode: e(Y.byCode),
+							findAllByCode: (n) => Yo(Y.byCode(n)),
+							findStore: e(Y.byStoreName),
 							PluginsApi: Vencord.Plugins,
 							plugins: Vencord.Plugins.plugins,
-							React: w,
+							React: I,
 							Settings: Vencord.Settings,
 							Api: Vencord.Api,
 							reload: () => location.reload(),
-							restart: Hy('restart'),
+							restart: Fx('restart'),
+							canonicalizeMatch: No,
+							canonicalizeReplace: as,
+							canonicalizeReplacement: _i,
+							fakeRender: (n, i) => {
+								let r = t?.deref(),
+									s =
+										r?.closed === !1
+											? r
+											: window.open(
+													'about:blank',
+													'Fake Render',
+													'popup,width=500,height=500',
+											  );
+								(t = new WeakRef(s)),
+									s.focus(),
+									Ro.render(
+										I.createElement(n, i),
+										s.document.body,
+									);
+							},
 						};
 					},
 					start() {
@@ -3142,903 +5266,92 @@ ${n}`;
 					},
 				}));
 		});
-	function Ms() {
-		return `-${Ln.fromTimestamp(Date.now())}`;
-	}
-	function H(e, t) {
-		let n = jy({ channelId: e, content: '', embeds: [] });
-		return zy.receiveMessage(e, fn(t, n)), t;
-	}
-	function ue(e, t, n) {
-		return e.find((i) => i.name === t)?.value || n;
-	}
-	var jy,
-		zy,
-		hi = d(() => {
-			'use strict';
-			s();
-			B();
-			D();
-			P();
-			(jy = oe('username:"Clyde"')), (zy = C('receiveMessage'));
-		});
-	var Pt,
-		Ve,
-		Ns,
-		ho = d(() => {
-			'use strict';
-			s();
-			(Pt = ((b) => (
-				(b[(b.SUB_COMMAND = 1)] = 'SUB_COMMAND'),
-				(b[(b.SUB_COMMAND_GROUP = 2)] = 'SUB_COMMAND_GROUP'),
-				(b[(b.STRING = 3)] = 'STRING'),
-				(b[(b.INTEGER = 4)] = 'INTEGER'),
-				(b[(b.BOOLEAN = 5)] = 'BOOLEAN'),
-				(b[(b.USER = 6)] = 'USER'),
-				(b[(b.CHANNEL = 7)] = 'CHANNEL'),
-				(b[(b.ROLE = 8)] = 'ROLE'),
-				(b[(b.MENTIONABLE = 9)] = 'MENTIONABLE'),
-				(b[(b.NUMBER = 10)] = 'NUMBER'),
-				(b[(b.ATTACHMENT = 11)] = 'ATTACHMENT'),
-				b
-			))(Pt || {})),
-				(Ve = ((a) => (
-					(a[(a.BUILT_IN = 0)] = 'BUILT_IN'),
-					(a[(a.BUILT_IN_TEXT = 1)] = 'BUILT_IN_TEXT'),
-					(a[(a.BUILT_IN_INTEGRATION = 2)] = 'BUILT_IN_INTEGRATION'),
-					(a[(a.BOT = 3)] = 'BOT'),
-					(a[(a.PLACEHOLDER = 4)] = 'PLACEHOLDER'),
-					a
-				))(Ve || {})),
-				(Ns = ((i) => (
-					(i[(i.CHAT_INPUT = 1)] = 'CHAT_INPUT'),
-					(i[(i.USER = 2)] = 'USER'),
-					(i[(i.MESSAGE = 3)] = 'MESSAGE'),
-					i
-				))(Ns || {}));
-		});
-	var Ls = {};
-	te(Ls, {
-		ApplicationCommandInputType: () => Ve,
-		ApplicationCommandOptionType: () => Pt,
-		ApplicationCommandType: () => Ns,
-		BUILT_IN: () => Vt,
-		OptionalMessageOption: () => en,
-		RequiredMessageOption: () => vn,
-		_handleCommand: () => qy,
-		_init: () => Wy,
-		commands: () => Rs,
-		findOption: () => ue,
-		generateId: () => Ms,
-		prepareOption: () => As,
-		registerCommand: () => Bn,
-		sendBotMessage: () => H,
-		unregisterCommand: () => yo,
+	var kc = {};
+	me(kc, {
+		UpdateLogger: () => rh,
+		changes: () => Ps,
+		checkForUpdates: () => ah,
+		getRepo: () => Bx,
+		isNewer: () => Nc,
+		isOutdated: () => uo,
+		maybePromptToUpdate: () => Qi,
+		update: () => lh,
+		updateError: () => sh,
 	});
-	function As(e) {
-		return (
-			(e.displayName ||= e.name),
-			(e.displayDescription ||= e.description),
-			e.options?.forEach((t, n, i) => {
-				t === Du ? (i[n] = en) : t === _u && (i[n] = vn),
-					t.choices?.forEach((r) => (r.displayName ||= r.name)),
-					As(i[n]);
-			}),
-			e
-		);
-	}
-	function Ky(e, t) {
-		e.options?.forEach((n) => {
-			if (n.type !== 1)
-				throw new Error(
-					'When specifying sub-command options, all options must be sub-commands.',
-				);
-			let i = {
-				...e,
-				...n,
-				type: 1,
-				name: `${e.name} ${n.name}`,
-				displayName: `${e.name} ${n.name}`,
-				subCommandPath: [
-					{ name: n.name, type: n.type, displayName: n.name },
-				],
-				rootCommand: e,
-			};
-			Bn(i, t);
-		});
-	}
-	function Bn(e, t) {
-		if (!Vt) {
-			console.warn(
-				'[CommandsAPI]',
-				`Not registering ${e.name} as the CommandsAPI hasn't been initialised.`,
-				'Please restart to use commands',
-			);
-			return;
-		}
-		if (Vt.some((n) => n.name === e.name))
-			throw new Error(`Command '${e.name}' already exists.`);
-		if (
-			((e.isVencordCommand = !0),
-			(e.id ??= `-${Vt.length + 1}`),
-			(e.applicationId ??= '-1'),
-			(e.type ??= 1),
-			(e.inputType ??= 1),
-			(e.plugin ||= t),
-			As(e),
-			e.options?.[0]?.type === 1)
-		) {
-			Ky(e, t);
-			return;
-		}
-		(Rs[e.name] = e), Vt.push(e);
-	}
-	function yo(e) {
-		let t = Vt.findIndex((n) => n.name === e);
-		return t === -1 ? !1 : (Vt.splice(t, 1), delete Rs[e], !0);
-	}
-	var Vt,
-		Rs,
-		Du,
-		_u,
-		en,
-		vn,
-		Wy,
-		qy,
-		Re = d(() => {
-			'use strict';
-			s();
-			B();
-			hi();
-			ho();
-			hi();
-			ho();
-			(Rs = {}),
-				(Du = Symbol('OptionalMessageOption')),
-				(_u = Symbol('RequiredMessageOption')),
-				(en = Du),
-				(vn = _u),
-				(Wy = function (e) {
-					try {
-						(Vt = e),
-							(en = e.find((t) => t.name === 'shrug').options[0]),
-							(vn = e.find((t) => t.name === 'me').options[0]);
-					} catch {
-						console.error('Failed to load CommandsApi');
-					}
-					return e;
-				}),
-				(qy = function (e, t, n) {
-					if (!e.isVencordCommand) return e.execute(t, n);
-					let i = (r) => {
-						let a = `An Error occurred while executing command "${e.name}"`,
-							l =
-								r instanceof Error
-									? r.stack || r.message
-									: String(r);
-						console.error(a, r),
-							H(n.channel.id, {
-								content: `${a}:
-${Dn(l)}`,
-								author: { username: 'Vencord' },
-							});
-					};
-					try {
-						let r = e.execute(t, n);
-						return r instanceof Promise ? r.catch(i) : r;
-					} catch (r) {
-						return i(r);
-					}
-				});
-		});
-	var Fu,
-		Es,
-		Ou = d(() => {
-			'use strict';
-			s();
-			Re();
-			hi();
-			ho();
-			T();
-			v();
-			D();
-			(Fu = 0),
-				(Es = f({
-					name: 'CorruptMp4s',
-					description:
-						'Create corrupt mp4s with extremely high or negative duration',
-					authors: [c.Ven],
-					dependencies: ['CommandsAPI'],
-					commands: [
-						{
-							name: 'corrupt',
-							description:
-								'Create a corrupt mp4 with extremely high or negative duration',
-							inputType: 0,
-							options: [
-								{
-									name: 'mp4',
-									description: 'the video to corrupt',
-									type: 11,
-									required: !0,
-								},
-								{
-									name: 'kind',
-									description: 'the kind of corruption',
-									type: 3,
-									choices: [
-										{
-											name: 'infinite',
-											value: 'infinite',
-											label: 'Very high duration',
-										},
-										{
-											name: 'negative',
-											value: 'negative',
-											label: 'Negative duration',
-										},
-									],
-								},
-							],
-							execute: async (e, t) => {
-								let r = cn('getUploads').getUploads(
-									t.channel.id,
-									Fu,
-								)[0]?.item?.file;
-								if (r?.type !== 'video/mp4')
-									return void H(t.channel.id, {
-										content: 'Please upload a mp4 file',
-									});
-								let a = ue(e, 'kind', 'infinite'),
-									l = new Uint8Array(await r.arrayBuffer()),
-									u = !1;
-								for (let b = 0; b < l.length; b++)
-									if (
-										l[b] === 109 &&
-										l[b + 1] === 118 &&
-										l[b + 2] === 104 &&
-										l[b + 3] === 100
-									) {
-										let x = b + 18;
-										(l[x++] = 0),
-											(l[x++] = 1),
-											(l[x++] =
-												a === 'negative' ? 255 : 127),
-											(l[x++] = 255),
-											(l[x++] = 255),
-											(l[x++] =
-												a === 'negative' ? 240 : 255),
-											(u = !0);
-										break;
-									}
-								if (!u)
-									return void H(t.channel.id, {
-										content:
-											'Could not find signature. Is this even a mp4?',
-									});
-								let m = r.name.replace(
-										/\.mp4$/i,
-										'.corrupt.mp4',
-									),
-									y = we('UPLOAD_FILE_LIMIT_ERROR'),
-									h = new File([l], m, { type: 'video/mp4' });
-								setTimeout(() => y([h], t.channel, Fu), 10);
-							},
-						},
-					],
-				}));
-		});
-	var dt,
-		Un = d(() => {
-			'use strict';
-			s();
-			dt = class {
-				constructor(t = 1 / 0) {
-					this.maxSize = t;
-				}
-				queue = [];
-				promise;
-				next() {
-					let t = this.queue.shift();
-					t
-						? (this.promise = Promise.resolve()
-								.then(t)
-								.finally(() => this.next()))
-						: (this.promise = void 0);
-				}
-				run() {
-					this.promise || this.next();
-				}
-				push(t) {
-					this.size >= this.maxSize && this.queue.shift(),
-						this.queue.push(t),
-						this.run();
-				}
-				unshift(t) {
-					this.size >= this.maxSize && this.queue.pop(),
-						this.queue.unshift(t),
-						this.run();
-				}
-				get size() {
-					return this.queue.length;
-				}
-			};
-		});
-	var $u = d(() => {});
-	var yi,
-		Ds = d(() => {
-			'use strict';
-			s();
-			$u();
-			E();
-			J();
-			B();
-			P();
-			yi = N.wrap(
-				function ({
-					title: t,
-					body: n,
-					richBody: i,
-					color: r,
-					icon: a,
-					onClick: l,
-					onClose: u,
-					image: m,
-					permanent: y,
-					className: h,
-					dismissOnClick: b,
-				}) {
-					let { timeout: x, position: S } = Ge([
-							'notifications.timeout',
-							'notifications.position',
-						]).notifications,
-						A = Je([so], () => so.isFocused()),
-						[M, j] = Ie(!1),
-						[X, _] = Ie(0),
-						Q = dn(() => Date.now(), [x, M, A]);
-					rt(() => {
-						if (M || !A || x === 0 || y) return void _(0);
-						let fe = setInterval(() => {
-							let $e = Date.now() - Q;
-							$e >= x ? u() : _($e);
-						}, 10);
-						return () => clearInterval(fe);
-					}, [x, M, A]);
-					let ae = X / x;
-					return o(
-						'button',
-						{
-							className: me('vc-notification-root', h),
-							style:
-								S === 'bottom-right'
-									? { bottom: '1rem' }
-									: { top: '3rem' },
-							onClick: () => {
-								l?.(), b !== !1 && u();
-							},
-							onContextMenu: (fe) => {
-								fe.preventDefault(), fe.stopPropagation(), u();
-							},
-							onMouseEnter: () => j(!0),
-							onMouseLeave: () => j(!1),
-						},
-						o(
-							'div',
-							{ className: 'vc-notification' },
-							a &&
-								o('img', {
-									className: 'vc-notification-icon',
-									src: a,
-									alt: '',
-								}),
-							o(
-								'div',
-								{ className: 'vc-notification-content' },
-								o(
-									'div',
-									{ className: 'vc-notification-header' },
-									o(
-										'h2',
-										{ className: 'vc-notification-title' },
-										t,
-									),
-									o(
-										'button',
-										{
-											className:
-												'vc-notification-close-btn',
-											onClick: (fe) => {
-												fe.preventDefault(),
-													fe.stopPropagation(),
-													u();
-											},
-										},
-										o(
-											'svg',
-											{
-												width: '24',
-												height: '24',
-												viewBox: '0 0 24 24',
-												role: 'img',
-												'aria-labelledby':
-													'vc-notification-dismiss-title',
-											},
-											o(
-												'title',
-												{
-													id: 'vc-notification-dismiss-title',
-												},
-												'Dismiss Notification',
-											),
-											o('path', {
-												fill: 'currentColor',
-												d: 'M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z',
-											}),
-										),
-									),
-								),
-								o(
-									'div',
-									null,
-									i ??
-										o(
-											'p',
-											{ className: 'vc-notification-p' },
-											n,
-										),
-								),
-							),
-						),
-						m &&
-							o('img', {
-								className: 'vc-notification-img',
-								src: m,
-								alt: '',
-							}),
-						x !== 0 &&
-							!y &&
-							o('div', {
-								className: 'vc-notification-progressbar',
-								style: {
-									width: `${(1 - ae) * 100}%`,
-									backgroundColor:
-										r || 'var(--brand-experiment)',
-								},
-							}),
-					);
-				},
-				{ onError: ({ props: e }) => e.onClose() },
-			);
-		});
-	var Os = {};
-	te(Os, {
-		classNameFactory: () => mt,
-		classNameToSelector: () => Uu,
-		compileStyle: () => Fs,
-		disableStyle: () => Tn,
-		enableStyle: () => Ot,
-		isStyleEnabled: () => _s,
-		requireStyle: () => bo,
-		setStyleClassNames: () => Qy,
-		styleMap: () => Bu,
-		toggleStyle: () => Yy,
-	});
-	function bo(e) {
-		let t = Bu.get(e);
-		if (!t) throw new Error(`Style "${e}" does not exist`);
-		return t;
-	}
-	function Ot(e) {
-		let t = bo(e);
-		return t.dom?.isConnected
-			? !1
-			: (t.dom ||
-					((t.dom = document.createElement('style')),
-					(t.dom.dataset.vencordName = t.name)),
-			  Fs(t),
-			  document.head.appendChild(t.dom),
-			  !0);
-	}
-	function Tn(e) {
-		let t = bo(e);
-		return t.dom?.isConnected ? (t.dom.remove(), (t.dom = null), !0) : !1;
-	}
-	var Bu,
-		Yy,
-		_s,
-		Qy,
-		Fs,
-		Uu,
-		mt,
-		It = d(() => {
-			'use strict';
-			s();
-			Bu = window.VencordStyles ??= new Map();
-			(Yy = (e) => (_s(e) ? Tn(e) : Ot(e))),
-				(_s = (e) => bo(e).dom?.isConnected ?? !1),
-				(Qy = (e, t, n = !0) => {
-					let i = bo(e);
-					(i.classNames = t), n && _s(i.name) && Fs(i);
-				}),
-				(Fs = (e) => {
-					if (!e.dom) throw new Error('Style has no DOM element');
-					e.dom.textContent = e.source.replace(
-						/\[--(\w+)\]/g,
-						(t, n) => {
-							let i = e.classNames[n];
-							return i ? Uu(i) : t;
-						},
-					);
-				}),
-				(Uu = (e, t = '') =>
-					e
-						.split(' ')
-						.map((n) => `.${t}${n}`)
-						.join('')),
-				(mt =
-					(e = '') =>
-					(...t) => {
-						let n = new Set();
-						for (let i of t)
-							typeof i == 'string'
-								? n.add(i)
-								: Array.isArray(i)
-								? i.forEach((r) => n.add(r))
-								: typeof i == 'object' &&
-								  Object.entries(i).forEach(
-										([r, a]) => a && n.add(r),
-								  );
-						return Array.from(n, (i) => e + i).join(' ');
-					});
-		});
-	var Gu,
-		Hu = d(() => {
-			s();
-			Gu = (e = 21) =>
-				crypto
-					.getRandomValues(new Uint8Array(e))
-					.reduce(
-						(t, n) => (
-							(n &= 63),
-							n < 36
-								? (t += n.toString(36))
-								: n < 62
-								? (t += (n - 26).toString(36).toUpperCase())
-								: n > 62
-								? (t += '-')
-								: (t += '_'),
-							t
-						),
-						'',
-					);
-		});
-	async function zu(e) {
-		if (e.noPersist) return;
-		let t = k.notifications.logLimit;
-		t !== 0 &&
-			(await yr(bi, (n) => {
-				let i = n ?? [],
-					{
-						onClick: r,
-						onClose: a,
-						richBody: l,
-						permanent: u,
-						noPersist: m,
-						dismissOnClick: y,
-						...h
-					} = e;
-				return (
-					i.unshift({ ...h, timestamp: Date.now(), id: Gu() }),
-					i.length > t && t !== 200 && (i.length = t),
-					i
-				);
-			}),
-			So.forEach((n) => n()));
-	}
-	async function Xy(e) {
-		let t = await ju(),
-			n = t.findIndex((i) => i.timestamp === e);
-		n !== -1 && (t.splice(n, 1), await be(bi, t), So.forEach((i) => i()));
-	}
-	function Jy() {
-		let [e, t] = si((a) => a + 1, 0);
-		rt(() => (So.add(t), () => void So.delete(t)), []);
-		let [n, i, r] = Me(ju, { fallbackValue: [], deps: [e] });
-		return [n, r];
-	}
-	function Zy({ data: e }) {
-		let [t, n] = Ie(!1),
-			i = w.useRef(null);
-		return (
-			rt(() => {
-				let r = i.current,
-					a = () => {
-						if (r.clientHeight === 0)
-							return requestAnimationFrame(a);
-						r.style.height = `${r.clientHeight}px`;
-					};
-				a();
-			}, []),
-			o(
-				'div',
-				{ className: Gn('wrapper', { removing: t }), ref: i },
-				o(yi, {
-					...e,
-					permanent: !0,
-					dismissOnClick: !1,
-					onClose: () => {
-						t || (n(!0), setTimeout(() => Xy(e.timestamp), 200));
-					},
-					richBody: o(
-						'div',
-						{ className: Gn('body') },
-						e.body,
-						o(Kt, {
-							timestamp: Tt(e.timestamp),
-							className: Gn('timestamp'),
-						}),
-					),
-				}),
-			)
-		);
-	}
-	function Vy({ log: e, pending: t }) {
-		return !e.length && !t
-			? o(
-					'div',
-					{ className: Gn('container') },
-					o('div', { className: Gn('empty') }),
-					o(
-						g.FormText,
-						{ style: { textAlign: 'center' } },
-						'No notifications yet',
-					),
-			  )
-			: o(
-					'div',
-					{ className: Gn('container') },
-					e.map((n) => o(Zy, { data: n, key: n.id })),
-			  );
-	}
-	function eb({ modalProps: e, close: t }) {
-		let [n, i] = Jy();
-		return o(
-			Ee,
-			{ ...e, size: 'large' },
-			o(
-				He,
-				null,
-				o(
-					z,
-					{ variant: 'heading-lg/semibold', style: { flexGrow: 1 } },
-					'Notification Log',
-				),
-				o(hn, { onClick: t }),
-			),
-			o(je, null, o(Vy, { log: n, pending: i })),
-			o(
-				ut,
-				null,
-				o(
-					L,
-					{
-						disabled: n.length === 0,
-						onClick: () => {
-							Dt.show({
-								title: 'Are you sure?',
-								body: `This will permanently remove ${
-									n.length
-								} notification${
-									n.length === 1 ? '' : 's'
-								}. This action cannot be undone.`,
-								async onConfirm() {
-									await be(bi, []), So.forEach((r) => r());
-								},
-								confirmText: 'Do it!',
-								confirmColor: 'vc-notification-log-danger-btn',
-								cancelText: 'Nevermind',
-							});
-						},
-					},
-					'Clear Notification Log',
-				),
-			),
-		);
-	}
-	function Wu() {
-		let e = De((t) => o(eb, { modalProps: t, close: () => yn(e) }));
-	}
-	var bi,
-		ju,
-		Gn,
-		So,
-		$s = d(() => {
-			'use strict';
-			s();
-			Lt();
-			E();
-			It();
-			B();
-			Ze();
-			P();
-			Hu();
-			Ds();
-			(bi = 'notification-log'),
-				(ju = async () => (await xe(bi)) ?? []),
-				(Gn = mt('vc-notification-log-')),
-				(So = new Set());
-		});
-	function ob() {
-		if (!Bs) {
-			let e = document.createElement('div');
-			(e.id = 'vc-notification-container'),
-				document.body.append(e),
-				(Bs = Nr.createRoot(e));
-		}
-		return Bs;
-	}
-	function ib(e, t) {
-		let n = ob();
-		return new Promise((i) => {
-			n.render(
-				o(yi, {
-					key: t,
-					...e,
-					onClose: () => {
-						e.onClose?.(), n.render(null), i();
-					},
-				}),
-			);
-		});
-	}
-	function rb() {
-		let { useNative: e } = k.notifications;
-		return e === 'always'
-			? !0
-			: e === 'not-focused'
-			? !document.hasFocus()
-			: !1;
-	}
-	async function qu() {
-		return (
-			Notification.permission === 'granted' ||
-			(Notification.permission !== 'denied' &&
-				(await Notification.requestPermission()) === 'granted')
-		);
-	}
-	async function Hn(e) {
-		if ((zu(e), rb() && (await qu()))) {
-			let {
-					title: t,
-					body: n,
-					icon: i,
-					image: r,
-					onClick: a = null,
-					onClose: l = null,
-				} = e,
-				u = new Notification(t, { body: n, icon: i, image: r });
-			(u.onclick = a), (u.onclose = l);
-		} else tb.push(() => ib(e, nb++));
-	}
-	var tb,
-		Bs,
-		nb,
-		Ku = d(() => {
-			'use strict';
-			s();
-			E();
-			Un();
-			P();
-			Ds();
-			$s();
-			(tb = new dt()), (nb = 42);
-		});
-	var Us = {};
-	te(Us, { requestPermission: () => qu, showNotification: () => Hn });
-	var vo = d(() => {
-		'use strict';
-		s();
-		Ku();
-	});
-	var qs = {};
-	te(qs, {
-		UpdateLogger: () => Gs,
-		changes: () => To,
-		checkForUpdates: () => js,
-		getRepo: () => Yu,
-		isNewer: () => Si,
-		isOutdated: () => tn,
-		maybePromptToUpdate: () => xo,
-		rebuild: () => Ws,
-		update: () => zs,
-		updateError: () => Hs,
-	});
-	async function jn(e) {
+	async function Is(e) {
 		let t = await e;
 		if (t.ok) return t.value;
-		throw ((Hs = t.error), t.error);
+		throw ((sh = t.error), t.error);
 	}
-	async function js() {
+	async function ah() {
 		return (
-			(To = await jn(VencordNative.ipc.invoke($.GET_UPDATES))),
-			To.some((e) => e.hash === lt)
-				? ((Si = !0), (tn = !1))
-				: (tn = To.length > 0)
+			(Ps = await Is(VencordNative.updater.getUpdates())),
+			Ps.some((e) => e.hash === on)
+				? ((Nc = !0), (uo = !1))
+				: (uo = Ps.length > 0)
 		);
 	}
-	async function zs() {
-		if (!tn) return !0;
-		let e = await jn(VencordNative.ipc.invoke($.UPDATE));
-		return e && (tn = !1), e;
-	}
-	function Yu() {
-		return jn(VencordNative.ipc.invoke($.GET_REPO));
-	}
-	async function Ws() {
-		let e = await jn(VencordNative.ipc.invoke($.GET_HASHES));
-		if (!(await jn(VencordNative.ipc.invoke($.BUILD))))
+	async function lh() {
+		if (!uo) return !0;
+		let e = await Is(VencordNative.updater.update());
+		if (e && ((uo = !1), !(await Is(VencordNative.updater.rebuild()))))
 			throw new Error(
 				'The Build failed. Please try manually building the new update',
 			);
-		let t = await jn(VencordNative.ipc.invoke($.GET_HASHES));
-		return (
-			e['patcher.js'] !== t['patcher.js'] ||
-			e['preload.js'] !== t['preload.js']
-		);
+		return e;
 	}
-	async function xo(e, t = !1) {
+	async function Qi(e, t = !1) {
 		return;
 		try {
-			if (await js()) {
+			if (await ah()) {
 				let i = confirm(e);
-				if (i && Si)
+				if (i && Nc)
 					return alert(
 						'Your local copy has more recent commits. Please stash or reset them.',
 					);
-				i &&
-					(await zs(),
-					(await Ws())
-						? DiscordNative.app.relaunch()
-						: location.reload());
+				i && (await lh(), Ms());
 			}
 		} catch (n) {
-			Gs.error(n),
+			rh.error(n),
 				alert(
 					'That also failed :( Try updating or re-installing with the installer!',
 				);
 		}
 	}
-	var Gs,
-		tn,
-		Si,
-		Hs,
-		To,
-		xn = d(() => {
+	var rh,
+		uo,
+		Nc,
+		sh,
+		Ps,
+		Bx,
+		ii = m(() => {
 			'use strict';
-			s();
-			_n();
-			Ke();
-			ge();
-			(Gs = new F('Updater', 'white')), (tn = !1), (Si = !1);
+			a();
+			Ii();
+			Se();
+			Ji();
+			(rh = new Z('Updater', 'white')), (uo = !1), (Nc = !1);
+			Bx = () => Is(VencordNative.updater.getRepo());
 		});
-	var nn,
-		Ks,
-		Ys,
-		Qs,
-		Xs,
-		Qu = d(() => {
+	var po,
+		Lc,
+		Ec,
+		Rs,
+		Dc,
+		Oc,
+		ch = m(() => {
 			'use strict';
-			s();
-			vo();
+			a();
+			so();
 			E();
+			w();
+			Se();
+			ze();
 			T();
-			ge();
-			Ze();
-			v();
-			xn();
-			P();
-			(nn = new F('CrashHandler')),
-				(Ks = V({
+			ii();
+			x();
+			(po = new Z('CrashHandler')),
+				(Lc = N({
 					attemptToPreventCrashes: {
 						type: 3,
 						description:
@@ -4052,16 +5365,17 @@ ${Dn(l)}`,
 						default: !1,
 					},
 				})),
-				(Ys = 0),
-				(Qs = 0),
-				(Xs = f({
+				(Ec = 0),
+				(Rs = 0),
+				(Dc = !1),
+				(Oc = g({
 					name: 'CrashHandler',
 					description:
 						'Utility plugin for handling and possibly recovering from Crashes without a restart',
-					authors: [c.Nuckyz],
+					authors: [p.Nuckyz],
 					enabledByDefault: !0,
 					popAllModals: void 0,
-					settings: Ks,
+					settings: Lc,
 					patches: [
 						{
 							find: '.Messages.ERRORS_UNEXPECTED_CRASH',
@@ -4080,39 +5394,40 @@ ${Dn(l)}`,
 						},
 					],
 					handleCrash(e) {
-						if (++Ys > 5) {
+						if (Date.now() - Rs <= 1e3 && !Dc) return !0;
+						if (((Dc = !1), ++Ec > 5)) {
 							try {
-								Hn({
+								ge({
 									color: '#eed202',
 									title: 'Discord has crashed!',
 									body: 'Awn :( Discord has crashed more than five times, not attempting to recover.',
 									noPersist: !0,
 								});
 							} catch {}
-							return (Qs = Date.now()), !1;
+							return (Rs = Date.now()), !1;
 						}
-						setTimeout(() => Ys--, 6e4);
+						setTimeout(() => Ec--, 6e4);
 						try {
 							return (
-								Ys === 1 &&
-									xo(
+								Ec === 1 &&
+									Qi(
 										'Uh oh, Discord has just crashed... but good news, there is a Vencord update available that might fix this issue! Would you like to update now?',
 										!0,
 									),
-								Ks.store.attemptToPreventCrashes
+								Lc.store.attemptToPreventCrashes
 									? (this.handlePreventCrash(e), !0)
 									: !1
 							);
 						} catch (t) {
-							return nn.error('Failed to handle crash', t), !1;
+							return po.error('Failed to handle crash', t), !1;
 						} finally {
-							Qs = Date.now();
+							Rs = Date.now();
 						}
 					},
 					handlePreventCrash(e) {
-						if (Date.now() - Qs >= 1e3)
+						if (Date.now() - Rs >= 1e3)
 							try {
-								Hn({
+								ge({
 									color: '#eed202',
 									title: 'Discord has crashed!',
 									body: 'Attempting to recover...',
@@ -4120,40 +5435,40 @@ ${Dn(l)}`,
 								});
 							} catch {}
 						try {
-							I.dispatch({ type: 'CONTEXT_MENU_CLOSE' });
+							L.dispatch({ type: 'CONTEXT_MENU_CLOSE' });
 						} catch (t) {
-							nn.debug('Failed to close open context menu.', t);
+							po.debug('Failed to close open context menu.', t);
 						}
 						try {
 							this.popAllModals?.();
 						} catch (t) {
-							nn.debug('Failed to close old modals.', t);
+							po.debug('Failed to close old modals.', t);
 						}
 						try {
-							qr();
+							ml();
 						} catch (t) {
-							nn.debug('Failed to close all open modals.', t);
+							po.debug('Failed to close all open modals.', t);
 						}
 						try {
-							I.dispatch({ type: 'USER_PROFILE_MODAL_CLOSE' });
+							L.dispatch({ type: 'USER_PROFILE_MODAL_CLOSE' });
 						} catch (t) {
-							nn.debug('Failed to close user popout.', t);
+							po.debug('Failed to close user popout.', t);
 						}
 						try {
-							I.dispatch({ type: 'LAYER_POP_ALL' });
+							L.dispatch({ type: 'LAYER_POP_ALL' });
 						} catch (t) {
-							nn.debug('Failed to pop all layers.', t);
+							po.debug('Failed to pop all layers.', t);
 						}
-						if (Ks.store.attemptToNavigateToHome)
+						if (Lc.store.attemptToNavigateToHome)
 							try {
-								lo.transitionTo('/channels/@me');
+								Ei.transitionTo('/channels/@me');
 							} catch (t) {
-								nn.debug('Failed to navigate to home', t);
+								po.debug('Failed to navigate to home', t);
 							}
 						try {
-							e.forceUpdate();
+							(Dc = !0), e.forceUpdate();
 						} catch (t) {
-							nn.debug(
+							po.debug(
 								'Failed to update crash handler component.',
 								t,
 							);
@@ -4161,36 +5476,29 @@ ${Dn(l)}`,
 					},
 				}));
 		});
-	function Js(e) {
-		return Boolean(e);
+	async function uh(e) {
+		return (await Hx.getAsset(As.store.appID, [e, void 0]))[0];
 	}
-	var Xu = d(() => {
-		'use strict';
-		s();
-	});
-	async function Ju(e) {
-		return (await cb.getAsset(Ti.store.appID, [e, void 0]))[0];
-	}
-	async function Vu() {
+	async function dh() {
 		let {
 			appID: e,
 			appName: t,
 			details: n,
 			state: i,
 			type: r,
-			startTime: a,
+			startTime: s,
 			endTime: l,
-			imageBig: u,
-			imageBigTooltip: m,
-			imageSmall: y,
-			imageSmallTooltip: h,
-			buttonOneText: b,
-			buttonOneURL: x,
-			buttonTwoText: S,
+			imageBig: c,
+			imageBigTooltip: u,
+			imageSmall: h,
+			imageSmallTooltip: f,
+			buttonOneText: v,
+			buttonOneURL: S,
+			buttonTwoText: b,
 			buttonTwoURL: A,
-		} = Ti.store;
+		} = As.store;
 		if (!t) return;
-		let M = {
+		let C = {
 			application_id: e || '0',
 			name: t,
 			state: i,
@@ -4198,118 +5506,118 @@ ${Dn(l)}`,
 			type: r,
 			flags: 1 << 0,
 		};
-		a && ((M.timestamps = { start: a }), l && (M.timestamps.end = l)),
-			b &&
-				((M.buttons = [b, S].filter(Js)),
-				(M.metadata = { button_urls: [x, A].filter(Js) })),
-			u && (M.assets = { large_image: await Ju(u), large_text: m }),
-			y &&
-				(M.assets = {
-					...M.assets,
-					small_image: await Ju(y),
-					small_text: h,
+		s && ((C.timestamps = { start: s }), l && (C.timestamps.end = l)),
+			v &&
+				((C.buttons = [v, b].filter(is)),
+				(C.metadata = { button_urls: [S, A].filter(is) })),
+			c && (C.assets = { large_image: await uh(c), large_text: u }),
+			h &&
+				(C.assets = {
+					...C.assets,
+					small_image: await uh(h),
+					small_text: f,
 				});
-		for (let j in M) {
-			if (j === 'type') continue;
-			let X = M[j];
-			(!X || X.length === 0) && delete M[j];
+		for (let D in C) {
+			if (D === 'type') continue;
+			let B = C[D];
+			(!B || B.length === 0) && delete C[D];
 		}
-		return M;
+		return C;
 	}
-	async function wo(e) {
-		let t = await Vu();
-		I.dispatch({
+	async function Vi(e) {
+		let t = await dh();
+		L.dispatch({
 			type: 'LOCAL_ACTIVITY_UPDATE',
 			activity: e ? null : t,
 			socketId: 'CustomRPC',
 		});
 	}
-	var sb,
-		ab,
-		lb,
-		cb,
-		et,
-		Zu,
-		vi,
-		pb,
-		Ti,
-		Zs,
-		ed = d(() => {
+	var $x,
+		Ux,
+		Gx,
+		Hx,
+		Xt,
+		ph,
+		Cs,
+		zx,
+		As,
+		_c,
+		mh = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			Zt();
+			Wn();
+			w();
+			dl();
+			ye();
 			T();
-			Xu();
-			B();
-			v();
-			D();
-			P();
-			(sb = oe('onOpenGameProfile')),
-				(ab = C('activity', 'buttonColor')),
-				(lb = C('profileColors')),
-				(cb = ye(
+			_();
+			x();
+			($x = ce('onOpenGameProfile')),
+				(Ux = P('activity', 'buttonColor')),
+				(Gx = P('profileColors')),
+				(Hx = Ye(
 					'getAssetImage: size must === [number, number] for Twitch',
-					{ getAsset: R.byCode('apply(') },
+					{ getAsset: Y.byCode('apply(') },
 				));
-			(et = (e) => ({ type: 0, description: e, onChange: wo })),
-				(Zu = (e) => ({ type: 1, description: e, onChange: wo })),
-				(vi = (e, t, n) => ({ label: e, value: t, default: n })),
-				(pb = (e, t) => ({
+			(Xt = (e) => ({ type: 0, description: e, onChange: Vi })),
+				(ph = (e) => ({ type: 1, description: e, onChange: Vi })),
+				(Cs = (e, t, n) => ({ label: e, value: t, default: n })),
+				(zx = (e, t) => ({
 					type: 4,
 					description: e,
-					onChange: wo,
+					onChange: Vi,
 					options: t,
 				})),
-				(Ti = V({
-					appID: et(
+				(As = N({
+					appID: Xt(
 						'The ID of the application for the rich presence.',
 					),
-					appName: et('The name of the presence.'),
-					details: et('Line 1 of rich presence.'),
-					state: et('Line 2 of rich presence.'),
-					type: pb('Type of presence', [
-						vi('Playing', 0, !0),
-						vi('Listening', 2),
-						vi('Watching', 3),
-						vi('Competing', 5),
+					appName: Xt('The name of the presence.'),
+					details: Xt('Line 1 of rich presence.'),
+					state: Xt('Line 2 of rich presence.'),
+					type: zx('Type of presence', [
+						Cs('Playing', 0, !0),
+						Cs('Listening', 2),
+						Cs('Watching', 3),
+						Cs('Competing', 5),
 					]),
-					startTime: Zu('Unix Timestamp for beginning of activity.'),
-					endTime: Zu('Unix Timestamp for end of activity.'),
-					imageBig: et('Sets the big image to the specified image.'),
-					imageBigTooltip: et(
+					startTime: ph('Unix Timestamp for beginning of activity.'),
+					endTime: ph('Unix Timestamp for end of activity.'),
+					imageBig: Xt('Sets the big image to the specified image.'),
+					imageBigTooltip: Xt(
 						'Sets the tooltip text for the big image.',
 					),
-					imageSmall: et(
+					imageSmall: Xt(
 						'Sets the small image to the specified image.',
 					),
-					imageSmallTooltip: et(
+					imageSmallTooltip: Xt(
 						'Sets the tooltip text for the small image.',
 					),
-					buttonOneText: et('The text for the first button'),
-					buttonOneURL: et('The URL for the first button'),
-					buttonTwoText: et('The text for the second button'),
-					buttonTwoURL: et('The URL for the second button'),
+					buttonOneText: Xt('The text for the first button'),
+					buttonOneURL: Xt('The URL for the first button'),
+					buttonTwoText: Xt('The text for the second button'),
+					buttonTwoURL: Xt('The URL for the second button'),
 				}));
-			Zs = f({
+			_c = g({
 				name: 'CustomRPC',
 				description: 'Allows you to set a custom rich presence.',
-				authors: [c.captain],
-				start: wo,
-				stop: () => wo(!0),
-				settings: Ti,
+				authors: [p.captain],
+				start: Vi,
+				stop: () => Vi(!0),
+				settings: As,
 				settingsAboutComponent: () => {
-					let e = Me(Vu);
+					let e = ut(dh);
 					return o(
-						p,
+						d,
 						null,
-						o(g.FormTitle, { tag: 'h2' }, 'NOTE:'),
+						o(y.FormTitle, { tag: 'h2' }, 'NOTE:'),
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							'You will need to ',
 							o(
-								Ne,
+								We,
 								{
 									href: 'https://discord.com/developers/applications',
 								},
@@ -4317,22 +5625,22 @@ ${Dn(l)}`,
 							),
 							' and get its ID to use this plugin.',
 						),
-						o(g.FormDivider, null),
+						o(y.FormDivider, null),
 						o(
 							'div',
 							{
 								style: { width: '284px' },
-								className: lb.profileColors,
+								className: Gx.profileColors,
 							},
 							e[0] &&
-								o(sb, {
+								o($x, {
 									activity: e[0],
-									className: ab.activity,
-									channelId: re.getChannelId(),
-									guild: de.getGuild(
-										Rn.getLastSelectedGuildId(),
+									className: Ux.activity,
+									channelId: fe.getChannelId(),
+									guild: le.getGuild(
+										Xo.getLastSelectedGuildId(),
 									),
-									application: { id: Ti.store.appID },
+									application: { id: As.store.appID },
 									user: U.getCurrentUser(),
 								}),
 						),
@@ -4340,105 +5648,17 @@ ${Dn(l)}`,
 				},
 			});
 		});
-	var Vs,
-		td = d(() => {
+	var Fc,
+		fh = m(() => {
 			'use strict';
-			s();
-			Re();
-			ho();
+			a();
+			w();
 			T();
-			v();
-			Vs = f({
-				name: 'UrbanDictionary',
-				description: 'Searches for a word on Urban Dictionary',
-				authors: [c.jewdev],
-				dependencies: ['CommandsAPI'],
-				commands: [
-					{
-						name: 'urban',
-						description:
-							'Returns the definition of a word from Urban Dictionary',
-						inputType: 0,
-						options: [
-							{
-								type: 3,
-								name: 'word',
-								description:
-									'The word to search for on Urban Dictionary',
-								required: !0,
-							},
-						],
-						execute: async (e, t) => {
-							try {
-								let {
-									list: [n],
-								} = await (
-									await fetch(
-										`https://api.urbandictionary.com/v0/define?term=${e[0].value}`,
-									)
-								).json();
-								if (!n)
-									return void H(t.channel.id, {
-										content: 'No results found.',
-									});
-								let i = (r) =>
-									r.replace(
-										/\[(.+?)\]/g,
-										(a, l) =>
-											`[${l}](https://www.urbandictionary.com/define.php?term=${encodeURIComponent(
-												l,
-											)})`,
-									);
-								return void H(t.channel.id, {
-									embeds: [
-										{
-											type: 'rich',
-											author: {
-												name: `Definition of ${n.word}`,
-												url: n.permalink,
-											},
-											description: i(n.definition),
-											fields: [
-												{
-													name: 'Example',
-													value: i(n.example),
-												},
-											],
-											color: 16750848,
-											footer: {
-												text: `\u{1F44D} ${n.thumbs_up.toString()} | \u{1F44E} ${n.thumbs_down.toString()} | Uploaded by ${
-													n.author
-												}`,
-												icon_url:
-													'https://www.urbandictionary.com/favicon.ico',
-											},
-											timestamp: new Date(
-												n.written_on,
-											).toISOString(),
-										},
-									],
-								});
-							} catch (n) {
-								return void H(t.channel.id, {
-									content: `Something went wrong: \`${n}\``,
-								});
-							}
-						},
-					},
-				],
-			});
-		});
-	var ea,
-		nd = d(() => {
-			'use strict';
-			s();
-			T();
-			v();
-			ea = f({
+			Fc = g({
 				name: 'DisableDMCallIdle',
 				description:
 					'Disables automatically getting kicked from a DM voice call after 5 minutes.',
-				authors: [c.Nuckyz],
+				authors: [p.Nuckyz],
 				patches: [
 					{
 						find: '.Messages.BOT_CALL_IDLE_DISCONNECT',
@@ -4450,155 +5670,205 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var ta = {};
-	te(ta, {
-		_patchContextMenu: () => mb,
-		addContextMenuPatch: () => kt,
-		addGlobalContextMenuPatch: () => ub,
-		findGroupChildrenByChildId: () => $t,
-		globalPatches: () => xi,
-		navPatches: () => Po,
-		removeContextMenuPatch: () => Ct,
-		removeGlobalContextMenuPatch: () => db,
+	var $c = {};
+	me($c, {
+		_patchContextMenu: () => qx,
+		addContextMenuPatch: () => we,
+		addGlobalContextMenuPatch: () => jx,
+		findGroupChildrenByChildId: () => Lt,
+		globalPatches: () => Ns,
+		navPatches: () => er,
+		removeContextMenuPatch: () => Ae,
+		removeGlobalContextMenuPatch: () => Wx,
 	});
-	function kt(e, t) {
+	function we(e, t) {
 		Array.isArray(e) || (e = [e]);
 		for (let n of e) {
-			let i = Po.get(n);
-			i || ((i = new Set()), Po.set(n, i)), i.add(t);
+			let i = er.get(n);
+			i || ((i = new Set()), er.set(n, i)), i.add(t);
 		}
 	}
-	function ub(e) {
-		xi.add(e);
+	function jx(e) {
+		Ns.add(e);
 	}
-	function Ct(e, t) {
+	function Ae(e, t) {
 		let i = (Array.isArray(e) ? e : [e]).map(
-			(r) => Po.get(r)?.delete(t) ?? !1,
+			(r) => er.get(r)?.delete(t) ?? !1,
 		);
 		return Array.isArray(e) ? i : i[0];
 	}
-	function db(e) {
-		return xi.delete(e);
+	function Wx(e) {
+		return Ns.delete(e);
 	}
-	function $t(e, t, n) {
+	function Lt(e, t, n) {
 		for (let i of t) {
 			if (i == null) continue;
-			if (i.props?.id === e) return n ?? null;
+			if (
+				(Array.isArray(e) && e.some((s) => i.props?.id === s)) ||
+				i.props?.id === e
+			)
+				return n ?? null;
 			let r = i.props?.children;
 			if (r) {
 				Array.isArray(r) || ((r = [r]), (i.props.children = r));
-				let a = $t(e, r, r);
-				if (a !== null) return a;
+				let s = Lt(e, r, r);
+				if (s !== null) return s;
 			}
 		}
 		return null;
 	}
-	function mb(e) {
+	function qx(e) {
 		e.contextMenuApiArguments ??= [];
-		let t = Po.get(e.navId);
+		let t = er.get(e.navId);
 		if ((Array.isArray(e.children) || (e.children = [e.children]), t))
 			for (let n of t)
 				try {
-					n(e.children, ...e.contextMenuApiArguments);
+					let i = n(e.children, ...e.contextMenuApiArguments);
+					Bc.has(e) || i?.();
 				} catch (i) {
-					od.error(`Patch for ${e.navId} errored,`, i);
+					gh.error(`Patch for ${e.navId} errored,`, i);
 				}
-		for (let n of xi)
+		for (let n of Ns)
 			try {
-				n(e.navId, e.children, ...e.contextMenuApiArguments);
+				let i = n(e.navId, e.children, ...e.contextMenuApiArguments);
+				Bc.has(e) || i?.();
 			} catch (i) {
-				od.error('Global patch errored,', i);
+				gh.error('Global patch errored,', i);
 			}
+		Bc.add(e);
 	}
-	var od,
-		Po,
-		xi,
-		zn = d(() => {
+	var gh,
+		er,
+		Ns,
+		Bc,
+		Jt = m(() => {
 			'use strict';
-			s();
-			ge();
-			(od = new F('ContextMenu')), (Po = new Map()), (xi = new Set());
+			a();
+			Se();
+			(gh = new Z('ContextMenu')), (er = new Map()), (Ns = new Set());
+			Bc = new WeakSet();
 		});
-	function na({ value: e, onChange: t, validate: n }) {
-		let [i, r] = w.useState(e),
-			[a, l] = w.useState();
-		function u(m) {
-			r(m);
-			let y = n(m);
-			y === !0 ? (l(void 0), t(m)) : l(y);
+	function ks({ value: e, onChange: t, validate: n }) {
+		let [i, r] = I.useState(e),
+			[s, l] = I.useState();
+		function c(u) {
+			r(u);
+			let h = n(u);
+			h === !0 ? (l(void 0), t(u)) : l(h);
 		}
 		return o(
-			p,
+			d,
 			null,
-			o(Te, { type: 'text', value: i, onChange: u, error: a }),
+			o(Ne, { type: 'text', value: i, onChange: c, error: s }),
 		);
 	}
-	var oa = d(() => {
+	var Uc = m(() => {
 		'use strict';
-		s();
-		P();
+		a();
+		x();
 	});
-	function hb(e) {
+	function Gc(e) {
+		return e.t === 'Emoji'
+			? `${location.protocol}//${window.GLOBAL_ENV.CDN_HOST}/emojis/${
+					e.id
+			  }.${e.isAnimated ? 'gif' : 'png'}`
+			: `${location.origin}/stickers/${e.id}.${Zx[e.format_type]}`;
+	}
+	async function Sh(e) {
+		let t = Kx.getStickerById(e);
+		if (t) return t;
+		let { body: n } = await Yt.get({ url: `/stickers/${e}` });
+		return L.dispatch({ type: 'STICKER_FETCH_SUCCESS', sticker: n }), n;
+	}
+	async function Xx(e, t) {
+		let n = new FormData();
+		n.append('name', t.name),
+			n.append('tags', t.tags),
+			n.append('description', t.description),
+			n.append('file', await bh(Gc(t)));
+		let { body: i } = await Yt.post({
+			url: `/guilds/${e}/stickers`,
+			body: n,
+		});
+		L.dispatch({
+			type: 'GUILD_STICKERS_CREATE_SUCCESS',
+			guildId: e,
+			sticker: { ...i, user: U.getCurrentUser() },
+		});
+	}
+	async function Jx(e, t) {
+		let n = await bh(Gc(t)),
+			i = await new Promise((r) => {
+				let s = new FileReader();
+				(s.onload = () => r(s.result)), s.readAsDataURL(n);
+			});
+		return Yx({ guildId: e, name: t.name.split('~')[0], image: i });
+	}
+	function Qx(e) {
 		let t = U.getCurrentUser().id;
-		return Object.values(de.getGuilds())
+		return Object.values(le.getGuilds())
 			.filter((n) => {
 				if (
 					!(
 						n.ownerId === t ||
-						BigInt(ke.getGuildPermissions({ id: n.id }) & id) === id
+						BigInt(et.getGuildPermissions({ id: n.id }) & hh) === hh
 					)
 				)
 					return !1;
-				let r = n.getMaxEmojiSlots(),
-					{ emojis: a } = fb.getGuilds()[n.id],
-					l = 0;
-				for (let u of a) u.animated === e && l++;
-				return l < r;
+				if (e.t === 'Sticker') return !0;
+				let { isAnimated: r } = e,
+					s = n.getMaxEmojiSlots(),
+					{ emojis: l } = un.getGuilds()[n.id],
+					c = 0;
+				for (let u of l) u.animated === r && c++;
+				return c < s;
 			})
 			.sort((n, i) => n.name.localeCompare(i.name));
 	}
-	async function yb(e, t, n, i) {
-		let r = await fetch(
-				`${location.protocol}//${
-					window.GLOBAL_ENV.CDN_HOST
-				}/emojis/${t}.${i ? 'gif' : 'png'}`,
-			).then((l) => l.blob()),
-			a = new FileReader();
-		(a.onload = () => {
-			gb({ guildId: e, name: n.split('~')[0], image: a.result })
-				.then(() => {
-					K.show({
-						message: `Successfully cloned ${n}!`,
-						type: K.Type.SUCCESS,
-						id: K.genId(),
-					});
-				})
-				.catch((l) => {
-					new F('EmoteCloner').error('Failed to upload emoji', l),
-						K.show({
-							message:
-								'Oopsie something went wrong :( Check console!!!',
-							type: K.Type.FAILURE,
-							id: K.genId(),
-						});
-				});
-		}),
-			a.readAsDataURL(r);
+	async function bh(e) {
+		let t = await fetch(e);
+		if (!t.ok) throw new Error(`Failed to fetch ${e} - ${t.status}`);
+		return t.blob();
 	}
-	function vb({ id: e, name: t, isAnimated: n }) {
-		let [i, r] = w.useState(!1),
-			[a, l] = w.useState(t),
-			[u, m] = w.useReducer((h) => h + 1, 0),
-			y = w.useMemo(() => hb(n), [n, u]);
+	async function Vx(e, t) {
+		try {
+			t.t === 'Sticker' ? await Xx(e, t) : await Jx(e, t),
+				Q.show({
+					message: `Successfully cloned ${t.name} to ${
+						le.getGuild(e)?.name ?? 'your server'
+					}!`,
+					type: Q.Type.SUCCESS,
+					id: Q.genId(),
+				});
+		} catch (n) {
+			new Z('EmoteCloner').error('Failed to clone', t.name, 'to', e, n),
+				Q.show({
+					message: 'Oopsie something went wrong :( Check console!!!',
+					type: Q.Type.FAILURE,
+					id: Q.genId(),
+				});
+		}
+	}
+	function nw({ data: e }) {
+		let [t, n] = I.useState(!1),
+			[i, r] = I.useState(e.name),
+			[s, l] = I.useReducer((u) => u + 1, 0),
+			c = I.useMemo(() => Qx(e), [e.id, s]);
 		return o(
-			p,
+			d,
 			null,
-			o(g.FormTitle, { className: O.top20 }, 'Custom Name'),
-			o(na, {
-				value: a,
-				onChange: l,
-				validate: (h) =>
-					(h.length > 1 && h.length < 32 && Sb.test(h)) ||
+			o(y.FormTitle, { className: G.top20 }, 'Custom Name'),
+			o(ks, {
+				value: i,
+				onChange: (u) => {
+					(e.name = u), r(u);
+				},
+				validate: (u) =>
+					(e.t === 'Emoji' &&
+						u.length > 2 &&
+						u.length < 32 &&
+						tw.test(u)) ||
+					(e.t === 'Sticker' && u.length > 2 && u.length < 30) ||
 					'Name must be between 2 and 32 characters and only contain alphanumeric characters',
 			}),
 			o(
@@ -4613,19 +5883,19 @@ ${Dn(l)}`,
 						alignItems: 'center',
 					},
 				},
-				y.map((h) =>
+				c.map((u) =>
 					o(
-						Z,
-						{ text: h.name },
-						({ onMouseLeave: b, onMouseEnter: x }) =>
+						W,
+						{ text: u.name },
+						({ onMouseLeave: h, onMouseEnter: f }) =>
 							o(
 								'div',
 								{
-									onMouseLeave: b,
-									onMouseEnter: x,
+									onMouseLeave: h,
+									onMouseEnter: f,
 									role: 'button',
-									'aria-label': 'Clone to ' + h.name,
-									'aria-disabled': i,
+									'aria-label': 'Clone to ' + u.name,
+									'aria-disabled': t,
 									style: {
 										borderRadius: '50%',
 										backgroundColor:
@@ -4635,21 +5905,19 @@ ${Dn(l)}`,
 										alignItems: 'center',
 										width: '4em',
 										height: '4em',
-										cursor: i ? 'not-allowed' : 'pointer',
-										filter: i ? 'brightness(50%)' : 'none',
+										cursor: t ? 'not-allowed' : 'pointer',
+										filter: t ? 'brightness(50%)' : 'none',
 									},
-									onClick: i
+									onClick: t
 										? void 0
 										: async () => {
-												r(!0),
-													yb(h.id, e, a, n).finally(
-														() => {
-															m(), r(!1);
-														},
-													);
+												n(!0),
+													Vx(u.id, e).finally(() => {
+														l(), n(!1);
+													});
 										  },
 								},
-								h.icon
+								u.icon
 									? o('img', {
 											'aria-hidden': !0,
 											style: {
@@ -4657,24 +5925,24 @@ ${Dn(l)}`,
 												width: '100%',
 												height: '100%',
 											},
-											src: h.getIconURL(512, !0),
-											alt: h.name,
+											src: u.getIconURL(512, !0),
+											alt: u.name,
 									  })
 									: o(
-											g.FormText,
+											y.FormText,
 											{
 												style: {
-													fontSize: bb(h.acronym),
+													fontSize: ew(u.acronym),
 													width: '100%',
 													overflow: 'hidden',
 													whiteSpace: 'nowrap',
 													textAlign: 'center',
-													cursor: i
+													cursor: t
 														? 'not-allowed'
 														: 'pointer',
 												},
 											},
-											h.acronym,
+											u.acronym,
 									  ),
 							),
 					),
@@ -4682,119 +5950,149 @@ ${Dn(l)}`,
 			),
 		);
 	}
-	function ad(e, t, n) {
-		return o(le.MenuItem, {
+	function Ls(e, t) {
+		return o(F.MenuItem, {
 			id: 'emote-cloner',
 			key: 'emote-cloner',
-			label: 'Clone Emote',
+			label: `Clone ${e}`,
 			action: () =>
-				De((i) =>
-					o(
-						Ee,
-						{ ...i },
+				Oi(async () => {
+					let n = await t(),
+						i = { t: e, ...n },
+						r = Gc(i);
+					return (s) =>
 						o(
-							He,
-							null,
-							o('img', {
-								role: 'presentation',
-								'aria-hidden': !0,
-								src: `${location.protocol}//${
-									window.GLOBAL_ENV.CDN_HOST
-								}/emojis/${e}.${n ? 'gif' : 'png'}`,
-								alt: '',
-								height: 24,
-								width: 24,
-								style: { marginRight: '0.5em' },
-							}),
-							o(g.FormText, null, 'Clone ', t),
-						),
-						o(je, null, o(vb, { id: e, name: t, isAnimated: n })),
-					),
-				),
+							Ie,
+							{ ...s },
+							o(
+								$e,
+								null,
+								o('img', {
+									role: 'presentation',
+									'aria-hidden': !0,
+									src: r,
+									alt: '',
+									height: 24,
+									width: 24,
+									style: { marginRight: '0.5em' },
+								}),
+								o(y.FormText, null, 'Clone ', i.name),
+							),
+							o(Le, null, o(nw, { data: i })),
+						);
+				}),
 		});
 	}
-	function ld(e) {
+	function Th(e) {
 		return new URL(e).pathname.endsWith('.gif');
 	}
-	var id,
-		fb,
-		gb,
-		bb,
-		Sb,
-		rd,
-		sd,
-		ia,
-		cd = d(() => {
+	var hh,
+		Kx,
+		Yx,
+		Zx,
+		ew,
+		tw,
+		yh,
+		vh,
+		Hc,
+		xh = m(() => {
 			'use strict';
-			s();
-			zn();
-			oa();
+			a();
+			Jt();
+			Uc();
+			w();
+			Se();
+			Xe();
+			ze();
 			T();
-			ge();
-			Be();
-			Ze();
-			v();
-			D();
-			P();
-			(id = 1n << 30n),
-				(fb = C('getGuilds', 'getGuildEmoji')),
-				(gb = oe('"EMOJI_UPLOAD_START"', 'GUILD_EMOJIS('));
-			(bb = (e) => [20, 20, 18, 18, 16, 14, 12][e.length] ?? 4),
-				(Sb = /^\w+$/i);
-			(rd = (e, t) => {
+			_();
+			x();
+			(hh = 1n << 30n),
+				(Kx = ue('StickersStore')),
+				(Yx = ce('"EMOJI_UPLOAD_START"', 'GUILD_EMOJIS(')),
+				(Zx = [, 'png', 'png', 'json', 'gif']);
+			(ew = (e) => [20, 20, 18, 18, 16, 14, 12][e.length] ?? 4),
+				(tw = /^\w+$/i);
+			(yh = (e, t) => () => {
 				let {
 					favoriteableId: n,
 					itemHref: i,
 					itemSrc: r,
-					favoriteableType: a,
+					favoriteableType: s,
 				} = t ?? {};
-				if (!n || a !== 'emoji') return;
-				let l = t.message.content.match(
-					RegExp(
-						`<a?:(\\w+)(?:~\\d+)?:${n}>|https://cdn\\.discordapp\\.com/emojis/${n}\\.`,
-					),
-				);
-				if (!l) return;
-				let u = l[1] ?? 'FakeNitroEmoji',
-					m = $t('copy-link', e);
-				m &&
-					!m.some((y) => y?.props?.id === 'emote-cloner') &&
-					m.push(ad(n, u, ld(i ?? r)));
+				if (!n) return;
+				let l = (() => {
+					switch (s) {
+						case 'emoji':
+							let c = t.message.content.match(
+								RegExp(
+									`<a?:(\\w+)(?:~\\d+)?:${n}>|https://cdn\\.discordapp\\.com/emojis/${n}\\.`,
+								),
+							);
+							if (!c) return;
+							let u = c[1] ?? 'FakeNitroEmoji';
+							return Ls('Emoji', () => ({
+								id: n,
+								name: u,
+								isAnimated: Th(i ?? r),
+							}));
+						case 'sticker':
+							return t.message.stickerItems.find(
+								(f) => f.id === n,
+							)?.format_type === 3
+								? void 0
+								: Ls('Sticker', () => Sh(n));
+					}
+				})();
+				l && Lt('copy-link', e)?.push(l);
 			}),
-				(sd = (e, t) => {
+				(vh = (e, t) => () => {
 					let { id: n, name: i, type: r } = t?.target?.dataset ?? {};
-					if (!n || !i || r !== 'emoji') return;
-					let a = t.target.firstChild;
-					e.some((l) => l?.props?.id === 'emote-cloner') ||
-						e.push(ad(n, i, a && ld(a.src)));
+					if (!!n)
+						if (r === 'emoji' && i) {
+							let s = t.target.firstChild;
+							e.push(
+								Ls('Emoji', () => ({
+									id: n,
+									name: i,
+									isAnimated: s && Th(s.src),
+								})),
+							);
+						} else
+							r === 'sticker' &&
+								!t.target.className?.includes('lottieCanvas') &&
+								e.push(Ls('Sticker', () => Sh(n)));
 				}),
-				(ia = f({
+				(Hc = g({
 					name: 'EmoteCloner',
 					description:
-						'Adds a Clone context menu item to emotes to clone them your own server',
-					authors: [c.Ven, c.Nuckyz],
-					dependencies: ['MenuItemDeobfuscatorAPI', 'ContextMenuAPI'],
+						'Allows you to clone Emotes & Stickers to your own server (right click them)',
+					tags: ['StickerCloner'],
+					authors: [p.Ven, p.Nuckyz],
 					start() {
-						kt('message', rd), kt('expression-picker', sd);
+						we('message', yh), we('expression-picker', vh);
 					},
 					stop() {
-						Ct('message', rd), Ct('expression-picker', sd);
+						Ae('message', yh), Ae('expression-picker', vh);
 					},
 				}));
 		});
-	var ra,
-		sa,
-		aa,
-		pd = d(() => {
+	var zc,
+		jc,
+		Wc,
+		wh = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			re();
+			Ui();
+			w();
+			Xe();
 			T();
-			v();
-			D();
-			P();
-			(ra = C('key', 'removeBuildOverride')),
-				(sa = V({
+			_();
+			x();
+			(zc = P('key', 'removeBuildOverride')),
+				(jc = N({
 					enableIsStaff: {
 						description: 'Enable isStaff',
 						type: 3,
@@ -4809,11 +6107,11 @@ ${Dn(l)}`,
 						restartNeeded: !0,
 					},
 				})),
-				(aa = f({
+				(Wc = g({
 					name: 'Experiments',
 					description: 'Enable Access to Experiments in Discord!',
-					authors: [c.Megu, c.Ven, c.Nickyux, c.BanTheNons, c.Nuckyz],
-					settings: sa,
+					authors: [p.Megu, p.Ven, p.Nickyux, p.BanTheNons, p.Nuckyz],
+					settings: jc,
 					patches: [
 						{
 							find: 'Object.defineProperties(this,{isDeveloper',
@@ -4831,7 +6129,7 @@ ${Dn(l)}`,
 						},
 						{
 							find: '.isStaff=function(){',
-							predicate: () => sa.store.enableIsStaff,
+							predicate: () => jc.store.enableIsStaff,
 							replacement: [
 								{
 									match: /return\s*?(\i)\.hasFlag\((\i\.\i)\.STAFF\)}/,
@@ -4847,10 +6145,17 @@ ${Dn(l)}`,
 						},
 						{
 							find: '.Messages.DEV_NOTICE_STAGING',
-							predicate: () => sa.store.forceStagingBanner,
+							predicate: () => jc.store.forceStagingBanner,
 							replacement: {
 								match: /"staging"===window\.GLOBAL_ENV\.RELEASE_CHANNEL/,
 								replace: 'true',
+							},
+						},
+						{
+							find: 'H1,title:"Experiments"',
+							replacement: {
+								match: 'title:"Experiments",children:[',
+								replace: '$&$self.WarningCard(),',
 							},
 						},
 					],
@@ -4859,28 +6164,28 @@ ${Dn(l)}`,
 							t = e ? 'cmd' : 'ctrl',
 							n = e ? 'opt' : 'alt';
 						return o(
-							w.Fragment,
+							I.Fragment,
 							null,
-							o(g.FormTitle, { tag: 'h3' }, 'More Information'),
+							o(y.FormTitle, { tag: 'h3' }, 'More Information'),
 							o(
-								g.FormText,
+								y.FormText,
 								{ variant: 'text-md/normal' },
 								'You can enable client DevTools',
 								' ',
-								o('kbd', { className: ra.key }, t),
+								o('kbd', { className: zc.key }, t),
 								' +',
 								' ',
-								o('kbd', { className: ra.key }, n),
+								o('kbd', { className: zc.key }, n),
 								' +',
 								' ',
-								o('kbd', { className: ra.key }, 'O'),
+								o('kbd', { className: zc.key }, 'O'),
 								' ',
 								'after enabling ',
 								o('code', null, 'isStaff'),
 								' below',
 							),
 							o(
-								g.FormText,
+								y.FormText,
 								null,
 								'and then toggling ',
 								o('code', null, 'Enable DevTools'),
@@ -4890,19 +6195,41 @@ ${Dn(l)}`,
 							),
 						);
 					},
+					WarningCard: k.wrap(
+						() =>
+							o(
+								Hn,
+								{
+									id: 'vc-experiments-warning-card',
+									className: G.bottom16,
+								},
+								o(y.FormTitle, { tag: 'h2' }, 'Hold on!!'),
+								o(
+									y.FormText,
+									null,
+									'Experiments are unreleased Discord features. They might not work, or even break your client or get your account disabled.',
+								),
+								o(
+									y.FormText,
+									{ className: G.top8 },
+									"Only use experiments if you know what you're doing. Vencord is not responsible for any damage caused by enabling experiments.",
+								),
+							),
+						{ noop: !0 },
+					),
 				}));
 		});
-	var la,
-		ud = d(() => {
+	var qc,
+		Mh = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			la = f({
+			qc = g({
 				name: 'F8Break',
 				description:
 					'Pause the client when you press F8 with DevTools (+ breakpoints) open.',
-				authors: [c.lewisakura],
+				authors: [p.lewisakura],
 				start() {
 					window.addEventListener('keydown', this.event);
 				},
@@ -4914,20 +6241,20 @@ ${Dn(l)}`,
 				},
 			});
 		});
-	var wi,
-		dd,
-		Tb,
-		md,
-		fd,
-		gd,
-		Io = d(() => {
+	var Es,
+		Ph,
+		ow,
+		Ih,
+		Rh,
+		Ch,
+		tr = m(() => {
 			'use strict';
-			s();
-			B();
-			(wi = xt(() =>
+			a();
+			rn();
+			(Es = On(() =>
 				import('https://unpkg.com/gifenc@1.0.3/dist/gifenc.esm.js'),
 			)),
-				(dd = xt(async () => {
+				(Ph = On(async () => {
 					let e = {},
 						t = new Proxy(window, { set: (n, i, r) => (e[i] = r) });
 					return (
@@ -4940,232 +6267,66 @@ ${Dn(l)}`,
 						e.APNG
 					);
 				})),
-				(Tb = 'https://unpkg.com/@vap/shiki-worker@0.0.8/dist'),
-				(md = `${Tb}/index.min.js`),
-				(fd = 'https://unpkg.com/@vap/shiki@0.10.3/dist/onig.wasm'),
-				(gd = xt(() =>
+				(ow = 'https://unpkg.com/@vap/shiki-worker@0.0.8/dist'),
+				(Ih = `${ow}/index.min.js`),
+				(Rh = 'https://unpkg.com/@vap/shiki@0.10.3/dist/onig.wasm'),
+				(Ch = On(() =>
 					import('https://unpkg.com/stegcloak-dist@1.0.0/index.js'),
 				));
 		});
-	var pa = {};
-	te(pa, {
-		getCurrentChannel: () => Pi,
-		getCurrentGuild: () => ca,
-		openPrivateChannel: () => xb,
-	});
-	function Pi() {
-		return G.getChannel(re.getChannelId());
-	}
-	function ca() {
-		return de.getGuild(Pi()?.guild_id);
-	}
-	function xb(e) {
-		Ar.openPrivateChannel(e);
-	}
-	var Ii = d(() => {
-		'use strict';
-		s();
-		P();
-	});
-	function yd(e, t) {
+	function Nh(e, t) {
 		if (!t) return;
 		let n = t.fields.find((r) => r.localName === e);
 		return n
 			? Object.values(n).find((r) => typeof r == 'function')?.()
 			: void 0;
 	}
-	var wb,
-		Pb,
-		ko,
-		ua,
-		hd,
-		wn,
-		ki,
-		Ib,
-		kb,
-		da,
-		bd = d(() => {
+	var iw,
+		rw,
+		nr,
+		Zc,
+		Ah,
+		Lo,
+		Eo,
+		Ds,
+		sw,
+		aw,
+		Kc,
+		Yc,
+		Os,
+		Me,
+		Xc,
+		kh = m(() => {
 			'use strict';
-			s();
-			Ft();
+			a();
+			gn();
 			E();
+			w();
+			tr();
+			$n();
+			rn();
+			Se();
 			T();
-			Io();
-			Ii();
-			ln();
-			v();
-			D();
-			P();
-			(wb = 0),
-				(Pb = oe('UPLOAD_FILE_LIMIT_ERROR')),
-				(ko = bt('UserSettingsProtoStore')),
-				(ua = Se(
+			_();
+			x();
+			(iw = 0),
+				(rw = ce('UPLOAD_FILE_LIMIT_ERROR')),
+				(nr = ue('UserSettingsProtoStore')),
+				(Zc = Ce(
 					(e) =>
 						e.ProtoClass?.typeName ===
 						'discord_protos.discord_users.v1.PreloadedUserSettings',
 				)),
-				(hd = C('readerFactory'));
-			(wn = Ue(() => yd('appearance', ua.ProtoClass))),
-				(ki = Ue(() => yd('clientThemeSettings', wn))),
-				(Ib = 1n << 18n),
-				(kb = 1n << 37n);
-			ce('FakeNitro', 'NitroBypass');
-			da = f({
-				name: 'FakeNitro',
-				authors: [
-					c.Arjix,
-					c.D3SOX,
-					c.Ven,
-					c.obscurity,
-					c.captain,
-					c.Nuckyz,
-				],
-				description:
-					'Allows you to stream in nitro quality, send fake emojis/stickers and use client themes.',
-				dependencies: ['MessageEventsAPI'],
-				patches: [
-					{
-						find: '.PREMIUM_LOCKED;',
-						predicate: () =>
-							k.plugins.FakeNitro.enableEmojiBypass === !0,
-						replacement: [
-							{
-								match: /(?<=(\i)=\i\.intention)/,
-								replace: (e, t) => `,fakeNitroIntention=${t}`,
-							},
-							{
-								match: /\.(?:canUseEmojisEverywhere|canUseAnimatedEmojis)\(\i(?=\))/g,
-								replace:
-									'$&,typeof fakeNitroIntention!=="undefined"?fakeNitroIntention:void 0',
-							},
-							{
-								match: /(&&!\i&&)!(\i)(?=\)return \i\.\i\.DISALLOW_EXTERNAL;)/,
-								replace: (e, t, n) =>
-									`${t}(!${n}&&(typeof fakeNitroIntention==="undefined"||![${3},${4}].includes(fakeNitroIntention)))`,
-							},
-						],
-					},
-					{
-						find: 'canUseAnimatedEmojis:function',
-						predicate: () =>
-							k.plugins.FakeNitro.enableEmojiBypass === !0,
-						replacement: {
-							match: /((?:canUseEmojisEverywhere|canUseAnimatedEmojis):function\(\i)\){(.+?\))/g,
-							replace: (e, t, n) =>
-								`${t},fakeNitroIntention){${n}||fakeNitroIntention==null||[${3},${4}].includes(fakeNitroIntention)`,
-						},
-					},
-					{
-						find: 'canUseStickersEverywhere:function',
-						predicate: () =>
-							k.plugins.FakeNitro.enableStickerBypass === !0,
-						replacement: {
-							match: /canUseStickersEverywhere:function\(\i\){/,
-							replace: '$&return true;',
-						},
-					},
-					{
-						find: '"SENDABLE"',
-						predicate: () =>
-							k.plugins.FakeNitro.enableStickerBypass === !0,
-						replacement: {
-							match: /(\w+)\.available\?/,
-							replace: 'true?',
-						},
-					},
-					{
-						find: 'canStreamHighQuality:function',
-						predicate: () =>
-							k.plugins.FakeNitro.enableStreamQualityBypass ===
-							!0,
-						replacement: [
-							'canUseHighVideoUploadQuality',
-							'canStreamHighQuality',
-							'canStreamMidQuality',
-						].map((e) => ({
-							match: new RegExp(`${e}:function\\(\\i\\){`),
-							replace: '$&return true;',
-						})),
-					},
-					{
-						find: 'STREAM_FPS_OPTION.format',
-						predicate: () =>
-							k.plugins.FakeNitro.enableStreamQualityBypass ===
-							!0,
-						replacement: {
-							match: /(userPremiumType|guildPremiumTier):.{0,10}TIER_\d,?/g,
-							replace: '',
-						},
-					},
-					{
-						find: 'canUseClientThemes:function',
-						replacement: {
-							match: /canUseClientThemes:function\(\i\){/,
-							replace: '$&return true;',
-						},
-					},
-					{
-						find: '.displayName="UserSettingsProtoStore"',
-						replacement: [
-							{
-								match: /CONNECTION_OPEN:function\((\i)\){/,
-								replace: (e, t) =>
-									`${e}$self.handleProtoChange(${t}.userSettingsProto,${t}.user);`,
-							},
-							{
-								match: /=(\i)\.local;/,
-								replace: (e, t) =>
-									`${e}${t}.local||$self.handleProtoChange(${t}.settings.proto);`,
-							},
-						],
-					},
-					{
-						find: 'updateTheme:function',
-						replacement: {
-							match: /(function \i\(\i\){var (\i)=\i\.backgroundGradientPresetId.+?)(\i\.\i\.updateAsync.+?theme=(.+?);.+?\),\i\))/,
-							replace: (e, t, n, i, r) =>
-								`${t}$self.handleGradientThemeSelect(${n},${r},()=>${i});`,
-						},
-					},
-					{
-						find: 'jumboable?"jumbo":"default"',
-						predicate: () =>
-							k.plugins.FakeNitro.transformEmojis === !0,
-						replacement: {
-							match: /jumboable\?"jumbo":"default",emojiId.+?}}\)},(?<=(\i)=function\(\i\){var \i=\i\.node.+?)/,
-							replace: (e, t) =>
-								`${e}fakeNitroEmojiComponentExport=($self.EmojiComponent=${t},void 0),`,
-						},
-					},
-					{
-						find: '["strong","em","u","text","inlineCode","s","spoiler"]',
-						predicate: () =>
-							k.plugins.FakeNitro.transformEmojis === !0,
-						replacement: [
-							{
-								match: /1!==(\i)\.length\|\|1!==\i\.length/,
-								replace: (e, t) =>
-									`${e}||${t}[0].target?.startsWith("https://cdn.discordapp.com/emojis/")`,
-							},
-							{
-								match: /(?=return{hasSpoilerEmbeds:\i,content:(\i)})/,
-								replace: (e, t) =>
-									`${t}=$self.patchFakeNitroEmojis(${t},arguments[2]?.formatInline);`,
-							},
-						],
-					},
-					{
-						find: 'renderEmbeds=function',
-						predicate: () =>
-							k.plugins.FakeNitro.transformEmojis === !0,
-						replacement: {
-							match: /renderEmbeds=function\(\i\){.+?embeds\.map\(\(function\((\i)\){/,
-							replace: (e, t) =>
-								`${e}if(${t}.url?.startsWith("https://cdn.discordapp.com/emojis/"))return null;`,
-						},
-					},
-				],
-				options: {
+				(Ah = P('readerFactory')),
+				(Lo = ue('StickersStore'));
+			(Eo = ct(() => Nh('appearance', Zc.ProtoClass))),
+				(Ds = ct(() => Nh('clientThemeSettings', Eo))),
+				(sw = 1n << 18n),
+				(aw = 1n << 37n),
+				(Kc = /\/emojis\/(\d+?)\.(png|webp|gif)/),
+				(Yc = /\/stickers\/(\d+?)\./),
+				(Os = /\/attachments\/\d+?\/\d+?\/(\d+?)\.gif/),
+				(Me = N({
 					enableEmojiBypass: {
 						description: 'Allow sending fake emojis',
 						type: 3,
@@ -5197,271 +6358,1057 @@ ${Dn(l)}`,
 						default: 160,
 						markers: [32, 64, 128, 160, 256, 512],
 					},
+					transformStickers: {
+						description:
+							'Whether to transform fake stickers into real ones',
+						type: 3,
+						default: !0,
+						restartNeeded: !0,
+					},
+					transformCompoundSentence: {
+						description:
+							'Whether to transform fake stickers and emojis in compound sentences (sentences with more content than just the fake emoji or sticker link)',
+						type: 3,
+						default: !1,
+					},
 					enableStreamQualityBypass: {
 						description: 'Allow streaming in nitro quality',
 						type: 3,
 						default: !0,
 						restartNeeded: !0,
 					},
-				},
-				get guildId() {
-					return ca()?.id;
-				},
-				get canUseEmotes() {
-					return (U.getCurrentUser().premiumType ?? 0) > 0;
-				},
-				get canUseStickers() {
-					return (U.getCurrentUser().premiumType ?? 0) > 1;
-				},
-				handleProtoChange(e, t) {
-					if ((!e.appearance && !wn) || !ko) return;
-					if (
-						(t?.premium_type ??
-							U?.getCurrentUser()?.premiumType ??
-							0) !== 2 &&
-						((e.appearance ??= wn.create()),
-						ko.settings.appearance?.theme != null &&
-							(e.appearance.theme = ko.settings.appearance.theme),
-						ko.settings.appearance?.clientThemeSettings
-							?.backgroundGradientPresetId?.value != null && ki)
-					) {
-						let i = ki.create({
-							backgroundGradientPresetId: {
-								value: ko.settings.appearance
-									.clientThemeSettings
-									.backgroundGradientPresetId.value,
-							},
-						});
-						(e.appearance.clientThemeSettings ??= i),
-							(e.appearance.clientThemeSettings.backgroundGradientPresetId =
-								i.backgroundGradientPresetId);
-					}
-				},
-				handleGradientThemeSelect(e, t, n) {
-					if (
-						(U?.getCurrentUser()?.premiumType ?? 0) === 2 ||
-						e == null
-					)
-						return n();
-					if (!wn || !ki || !hd) return;
-					let r = ua.getCurrentValue().appearance,
-						a =
-							r != null
-								? wn.fromBinary(wn.toBinary(r), hd)
-								: wn.create();
-					a.theme = t;
-					let l = ki.create({
-						backgroundGradientPresetId: { value: e },
-					});
-					(a.clientThemeSettings ??= l),
-						(a.clientThemeSettings.backgroundGradientPresetId =
-							l.backgroundGradientPresetId);
-					let u = ua.ProtoClass.create();
-					(u.appearance = a),
-						I.dispatch({
-							type: 'USER_SETTINGS_PROTO_UPDATE',
-							local: !0,
-							partial: !0,
-							settings: { type: 1, proto: u },
-						});
-				},
-				EmojiComponent: null,
-				patchFakeNitroEmojis(e, t) {
-					if (!this.EmojiComponent) return e;
-					let n = [];
-					for (let i of e) {
-						if (i.props?.trusted == null) {
-							n.push(i);
-							continue;
-						}
-						let r = i.props.href.match(
-							/https:\/\/cdn\.discordapp\.com\/emojis\/(\d+?)\.(png|webp|gif).+?(?=\s|$)/,
-						);
-						if (!r) {
-							n.push(i);
-							continue;
-						}
-						n.push(
-							o(this.EmojiComponent, {
-								node: {
-									type: 'customEmoji',
-									jumboable: !t && e.length === 1,
-									animated: r[2] === 'gif',
-									name: ':FakeNitroEmoji:',
-									emojiId: r[1],
+				})),
+				(Xc = g({
+					name: 'FakeNitro',
+					authors: [
+						p.Arjix,
+						p.D3SOX,
+						p.Ven,
+						p.obscurity,
+						p.captain,
+						p.Nuckyz,
+						p.AutumnVN,
+					],
+					description:
+						'Allows you to stream in nitro quality, send fake emojis/stickers and use client themes.',
+					dependencies: ['MessageEventsAPI'],
+					settings: Me,
+					patches: [
+						{
+							find: '.PREMIUM_LOCKED;',
+							predicate: () => Me.store.enableEmojiBypass,
+							replacement: [
+								{
+									match: /(?<=(\i)=\i\.intention)/,
+									replace: (e, t) =>
+										`,fakeNitroIntention=${t}`,
 								},
-							}),
-						);
-					}
-					return n;
-				},
-				hasPermissionToUseExternalEmojis(e) {
-					let t = G.getChannel(e);
-					return !t || t.isDM() || t.isGroupDM() || t.isMultiUserDM()
-						? !0
-						: ke.can(Ib, t);
-				},
-				hasPermissionToUseExternalStickers(e) {
-					let t = G.getChannel(e);
-					return !t || t.isDM() || t.isGroupDM() || t.isMultiUserDM()
-						? !0
-						: ke.can(kb, t);
-				},
-				getStickerLink(e) {
-					return `https://media.discordapp.net/stickers/${e}.png?size=${k.plugins.FakeNitro.stickerSize}`;
-				},
-				async sendAnimatedSticker(e, t, n) {
-					let [
-							{ parseURL: i },
-							{ GIFEncoder: r, quantize: a, applyPalette: l },
-						] = await Promise.all([dd(), wi()]),
-						{ frames: u, width: m, height: y } = await i(e),
-						h = new r(),
-						b = k.plugins.FakeNitro.stickerSize,
-						x = document.createElement('canvas');
-					(x.width = b), (x.height = b);
-					let S = x.getContext('2d', { willReadFrequently: !0 }),
-						A = b / Math.max(m, y);
-					S.scale(A, A);
-					let M = null;
-					for (let {
-						left: X,
-						top: _,
-						width: Q,
-						height: ae,
-						disposeOp: fe,
-						img: $e,
-						delay: yt,
-					} of u) {
-						S.drawImage($e, X, _, Q, ae);
-						let { data: Rt } = S.getImageData(0, 0, b, b),
-							an = a(Rt, 256),
-							wp = l(Rt, an);
-						h.writeFrame(wp, b, b, {
-							transparent: !0,
-							palette: an,
-							delay: yt,
-						}),
-							fe === 1
-								? S.clearRect(X, _, Q, ae)
-								: fe === 2 && M && S.drawImage(M, X, _, Q, ae),
-							(M = $e);
-					}
-					h.finish();
-					let j = new File([h.bytesView()], `${t}.gif`, {
-						type: 'image/gif',
-					});
-					Pb([j], G.getChannel(n), wb);
-				},
-				start() {
-					let e = k.plugins.FakeNitro;
-					if (!e.enableEmojiBypass && !e.enableStickerBypass) return;
-					let t = C('getCustomEmojiById'),
-						n = C('getAllGuildStickers');
-					function i(r, a) {
-						return !r[a] || /\s/.test(r[a]) ? '' : ' ';
-					}
-					(this.preSend = ze((r, a, l) => {
-						let { guildId: u } = this;
-						e: {
-							if (!e.enableStickerBypass) break e;
-							let m = n.getStickerById(l?.stickerIds?.[0]);
-							if (
-								!m ||
-								(m.available !== !1 &&
-									((this.canUseStickers &&
-										this.hasPermissionToUseExternalStickers(
-											r,
-										)) ||
-										m?.guild_id === u))
-							)
-								break e;
-							let y = this.getStickerLink(m.id);
-							if (m.format_type === 2)
-								return (
-									this.sendAnimatedSticker(
-										this.getStickerLink(m.id),
-										m.id,
-										r,
-									),
-									{ cancel: !0 }
-								);
-							'pack_id' in m &&
-								(y = `https://distok.top/stickers/${
-									m.pack_id === '847199849233514549'
-										? '749043879713701898'
-										: m.pack_id
-								}/${m.id}.gif`),
-								delete l.stickerIds,
-								(a.content += ' ' + y);
-						}
+								{
+									match: /\.(?:canUseEmojisEverywhere|canUseAnimatedEmojis)\(\i(?=\))/g,
+									replace:
+										'$&,typeof fakeNitroIntention!=="undefined"?fakeNitroIntention:void 0',
+								},
+								{
+									match: /(&&!\i&&)!(\i)(?=\)return \i\.\i\.DISALLOW_EXTERNAL;)/,
+									replace: (e, t, n) =>
+										`${t}(!${n}&&(typeof fakeNitroIntention==="undefined"||![${3},${4}].includes(fakeNitroIntention)))`,
+								},
+								{
+									match: /if\(!\i\.available/,
+									replace: (e) =>
+										`${e}&&(typeof fakeNitroIntention==="undefined"||![${3},${4}].includes(fakeNitroIntention))`,
+								},
+							],
+						},
+						{
+							find: 'canUseAnimatedEmojis:function',
+							predicate: () => Me.store.enableEmojiBypass,
+							replacement: {
+								match: /((?:canUseEmojisEverywhere|canUseAnimatedEmojis):function\(\i)\){(.+?\))/g,
+								replace: (e, t, n) =>
+									`${t},fakeNitroIntention){${n}||fakeNitroIntention==null||[${3},${4}].includes(fakeNitroIntention)`,
+							},
+						},
+						{
+							find: 'canUseStickersEverywhere:function',
+							predicate: () => Me.store.enableStickerBypass,
+							replacement: {
+								match: /canUseStickersEverywhere:function\(\i\){/,
+								replace: '$&return true;',
+							},
+						},
+						{
+							find: '"SENDABLE"',
+							predicate: () => Me.store.enableStickerBypass,
+							replacement: {
+								match: /(\w+)\.available\?/,
+								replace: 'true?',
+							},
+						},
+						{
+							find: 'canStreamHighQuality:function',
+							predicate: () => Me.store.enableStreamQualityBypass,
+							replacement: [
+								'canUseHighVideoUploadQuality',
+								'canStreamHighQuality',
+								'canStreamMidQuality',
+							].map((e) => ({
+								match: new RegExp(`${e}:function\\(\\i\\){`),
+								replace: '$&return true;',
+							})),
+						},
+						{
+							find: 'STREAM_FPS_OPTION.format',
+							predicate: () => Me.store.enableStreamQualityBypass,
+							replacement: {
+								match: /(userPremiumType|guildPremiumTier):.{0,10}TIER_\d,?/g,
+								replace: '',
+							},
+						},
+						{
+							find: 'canUseClientThemes:function',
+							replacement: {
+								match: /canUseClientThemes:function\(\i\){/,
+								replace: '$&return true;',
+							},
+						},
+						{
+							find: '.displayName="UserSettingsProtoStore"',
+							replacement: [
+								{
+									match: /CONNECTION_OPEN:function\((\i)\){/,
+									replace: (e, t) =>
+										`${e}$self.handleProtoChange(${t}.userSettingsProto,${t}.user);`,
+								},
+								{
+									match: /=(\i)\.local;/,
+									replace: (e, t) =>
+										`${e}${t}.local||$self.handleProtoChange(${t}.settings.proto);`,
+								},
+							],
+						},
+						{
+							find: 'updateTheme:function',
+							replacement: {
+								match: /(function \i\(\i\){var (\i)=\i\.backgroundGradientPresetId.+?)(\i\.\i\.updateAsync.+?theme=(.+?);.+?\),\i\))/,
+								replace: (e, t, n, i, r) =>
+									`${t}$self.handleGradientThemeSelect(${n},${r},()=>${i});`,
+							},
+						},
+						{
+							find: '["strong","em","u","text","inlineCode","s","spoiler"]',
+							replacement: [
+								{
+									predicate: () => Me.store.transformEmojis,
+									match: /1!==(\i)\.length\|\|1!==\i\.length/,
+									replace: (e, t) =>
+										`${e}||$self.shouldKeepEmojiLink(${t}[0])`,
+								},
+								{
+									predicate: () =>
+										Me.store.transformEmojis ||
+										Me.store.transformStickers,
+									match: /(?=return{hasSpoilerEmbeds:\i,content:(\i)})/,
+									replace: (e, t) =>
+										`${t}=$self.patchFakeNitroEmojisOrRemoveStickersLinks(${t},arguments[2]?.formatInline);`,
+								},
+							],
+						},
+						{
+							find: 'renderEmbeds=function',
+							replacement: [
+								{
+									predicate: () =>
+										Me.store.transformEmojis ||
+										Me.store.transformStickers,
+									match: /(renderEmbeds=function\((\i)\){)(.+?embeds\.map\(\(function\((\i)\){)/,
+									replace: (e, t, n, i, r) =>
+										`${t}const fakeNitroMessage=${n};${i}if($self.shouldIgnoreEmbed(${r},fakeNitroMessage))return null;`,
+								},
+								{
+									predicate: () => Me.store.transformStickers,
+									match: /renderStickersAccessories=function\((\i)\){var (\i)=\(0,\i\.\i\)\(\i\),/,
+									replace: (e, t, n) =>
+										`${e}${n}=$self.patchFakeNitroStickers(${n},${t}),`,
+								},
+								{
+									predicate: () => Me.store.transformStickers,
+									match: /renderAttachments=function\(\i\){var (\i)=\i.attachments.+?;/,
+									replace: (e, t) =>
+										`${e}${t}=$self.filterAttachments(${t});`,
+								},
+							],
+						},
+						{
+							find: '.STICKER_IN_MESSAGE_HOVER,',
+							predicate: () => Me.store.transformStickers,
+							replacement: [
+								{
+									match: /var (\i)=\i\.renderableSticker,.{0,50}closePopout.+?channel:\i,closePopout:\i,/,
+									replace: (e, t) =>
+										`${e}renderableSticker:${t},`,
+								},
+								{
+									match: /(emojiSection.{0,50}description:)(\i)(?<=(\i)\.sticker,.+?)(?=,)/,
+									replace: (e, t, n, i) =>
+										`${t}$self.addFakeNotice("STICKER",${n},!!${i}.renderableSticker?.fake)`,
+								},
+							],
+						},
+						{
+							find: '.Messages.EMOJI_POPOUT_PREMIUM_JOINED_GUILD_DESCRIPTION',
+							predicate: () => Me.store.transformEmojis,
+							replacement: {
+								match: /((\i)=\i\.node,\i=\i\.emojiSourceDiscoverableGuild)(.+?return )(.{0,450}Messages\.EMOJI_POPOUT_PREMIUM_JOINED_GUILD_DESCRIPTION.+?}\))/,
+								replace: (e, t, n, i, r) =>
+									`${t},fakeNitroNode=${n}${i}$self.addFakeNotice("EMOJI",${r},fakeNitroNode.fake)`,
+							},
+						},
+					],
+					get guildId() {
+						return pl()?.id;
+					},
+					get canUseEmotes() {
+						return (U.getCurrentUser().premiumType ?? 0) > 0;
+					},
+					get canUseStickers() {
+						return (U.getCurrentUser().premiumType ?? 0) > 1;
+					},
+					handleProtoChange(e, t) {
 						if (
-							(!this.canUseEmotes ||
-								!this.hasPermissionToUseExternalEmojis(r)) &&
-							e.enableEmojiBypass
+							e == null ||
+							typeof e == 'string' ||
+							!nr ||
+							(!e.appearance && !Eo)
 						)
-							for (let m of a.validNonShortcutEmojis) {
-								if (
-									!m.require_colons ||
-									(m.guildId === u && !m.animated)
-								)
-									continue;
-								let y = `<${m.animated ? 'a' : ''}:${
-										m.originalName || m.name
-									}:${m.id}>`,
-									h = m.url.replace(
-										/\?size=\d+/,
-										`?size=${k.plugins.FakeNitro.emojiSize}`,
-									);
-								a.content = a.content.replace(
-									y,
-									(b, x, S) =>
-										`${i(S, x - 1)}${h}${i(
-											S,
-											x + b.length,
-										)}`,
+							return;
+						if (
+							(t?.premium_type ??
+								U?.getCurrentUser()?.premiumType ??
+								0) !== 2 &&
+							((e.appearance ??= Eo.create()),
+							nr.settings.appearance?.theme != null &&
+								(e.appearance.theme =
+									nr.settings.appearance.theme),
+							nr.settings.appearance?.clientThemeSettings
+								?.backgroundGradientPresetId?.value != null &&
+								Ds)
+						) {
+							let i = Ds.create({
+								backgroundGradientPresetId: {
+									value: nr.settings.appearance
+										.clientThemeSettings
+										.backgroundGradientPresetId.value,
+								},
+							});
+							(e.appearance.clientThemeSettings ??= i),
+								(e.appearance.clientThemeSettings.backgroundGradientPresetId =
+									i.backgroundGradientPresetId);
+						}
+					},
+					handleGradientThemeSelect(e, t, n) {
+						if (
+							(U?.getCurrentUser()?.premiumType ?? 0) === 2 ||
+							e == null
+						)
+							return n();
+						if (!Eo || !Ds || !Ah) return;
+						let r = Zc.getCurrentValue().appearance,
+							s =
+								r != null
+									? Eo.fromBinary(Eo.toBinary(r), Ah)
+									: Eo.create();
+						s.theme = t;
+						let l = Ds.create({
+							backgroundGradientPresetId: { value: e },
+						});
+						(s.clientThemeSettings ??= l),
+							(s.clientThemeSettings.backgroundGradientPresetId =
+								l.backgroundGradientPresetId);
+						let c = Zc.ProtoClass.create();
+						(c.appearance = s),
+							L.dispatch({
+								type: 'USER_SETTINGS_PROTO_UPDATE',
+								local: !0,
+								partial: !0,
+								settings: { type: 1, proto: c },
+							});
+					},
+					trimContent(e) {
+						let t = e[0];
+						typeof t == 'string' && (e[0] = t.trimStart()),
+							e[0] === '' && e.shift();
+						let n = e.length - 1,
+							i = e[n];
+						typeof i == 'string' && (e[n] = i.trimEnd()),
+							e[n] === '' && e.pop();
+					},
+					clearEmptyArrayItems(e) {
+						return e.filter((t) => t != null);
+					},
+					ensureChildrenIsArray(e) {
+						Array.isArray(e.props.children) ||
+							(e.props.children = [e.props.children]);
+					},
+					patchFakeNitroEmojisOrRemoveStickersLinks(e, t) {
+						if (
+							(e.length > 1 || typeof e[0]?.type == 'string') &&
+							!Me.store.transformCompoundSentence
+						)
+							return e;
+						let n = e.length,
+							i = (c) => {
+								if (Me.store.transformEmojis) {
+									let u = c.props.href.match(Kc);
+									if (u) {
+										let h = null;
+										try {
+											h = new URL(c.props.href);
+										} catch {}
+										let f =
+											un.getCustomEmojiById(u[1])?.name ??
+											h?.searchParams.get('name') ??
+											'FakeNitroEmoji';
+										return Pe.defaultRules.customEmoji.react(
+											{
+												jumboable:
+													!t &&
+													e.length === 1 &&
+													typeof e[0].type !=
+														'string',
+												animated: u[2] === 'gif',
+												emojiId: u[1],
+												name: f,
+												fake: !0,
+											},
+											void 0,
+											{ key: String(n++) },
+										);
+									}
+								}
+								if (Me.store.transformStickers) {
+									if (Yc.test(c.props.href)) return null;
+									let u = c.props.href.match(Os);
+									if (u && Lo.getStickerById(u[1]))
+										return null;
+								}
+								return c;
+							},
+							r = (c) =>
+								c?.props?.trusted != null
+									? i(c)
+									: c?.props?.children != null
+									? Array.isArray(c.props.children)
+										? ((c.props.children = l(
+												c.props.children,
+										  )),
+										  c.props.children.length === 0
+												? null
+												: c)
+										: ((c.props.children = s(
+												c.props.children,
+										  )),
+										  c)
+									: c,
+							s = (c) => {
+								let u = r(c);
+								if (u?.type === 'ul' || u?.type === 'ol') {
+									if (
+										(this.ensureChildrenIsArray(u),
+										u.props.children.length === 0)
+									)
+										return null;
+									let h = !1;
+									for (let [
+										f,
+										v,
+									] of u.props.children.entries()) {
+										if (v == null) {
+											delete u.props.children[f];
+											continue;
+										}
+										this.ensureChildrenIsArray(v),
+											v.props.children.length > 0
+												? (h = !0)
+												: delete u.props.children[f];
+									}
+									if (!h) return null;
+									u.props.children =
+										this.clearEmptyArrayItems(
+											u.props.children,
+										);
+								}
+								return u;
+							},
+							l = (c) => {
+								for (let [u, h] of c.entries()) c[u] = s(h);
+								return (
+									(c = this.clearEmptyArrayItems(c)),
+									this.trimContent(c),
+									c
 								);
-							}
-						return { cancel: !1 };
-					})),
-						(this.preEdit = bn((r, a, l) => {
+							};
+						try {
+							return l(window._.cloneDeep(e));
+						} catch (c) {
+							return new Z('FakeNitro').error(c), e;
+						}
+					},
+					patchFakeNitroStickers(e, t) {
+						let n = [],
+							i = t.content.split(/\s/);
+						Me.store.transformCompoundSentence
+							? n.push(...i)
+							: i.length === 1 && n.push(i[0]),
+							n.push(
+								...t.attachments
+									.filter(
+										(r) => r.content_type === 'image/gif',
+									)
+									.map((r) => r.url),
+							);
+						for (let r of n) {
 							if (
-								this.canUseEmotes &&
-								this.hasPermissionToUseExternalEmojis(r)
+								!Me.store.transformCompoundSentence &&
+								!r.startsWith('http')
 							)
-								return;
-							let { guildId: u } = this;
-							for (let [m, y, h] of l.content.matchAll(
-								/(?<!\\)<a?:(\w+):(\d+)>/gi,
-							)) {
-								let b = t.getCustomEmojiById(h);
-								if (
-									b == null ||
-									(b.guildId === u && !b.animated) ||
-									!b.require_colons
-								)
-									continue;
-								let x = b.url.replace(
-									/\?size=\d+/,
-									`?size=${k.plugins.FakeNitro.emojiSize}`,
-								);
-								l.content = l.content.replace(
-									m,
-									(S, A, M) =>
-										`${i(M, A - 1)}${x}${i(
-											M,
-											A + S.length,
-										)}`,
-								);
+								continue;
+							let s = r.match(Yc);
+							if (s) {
+								let c = null;
+								try {
+									c = new URL(r);
+								} catch {}
+								let u =
+									Lo.getStickerById(s[1])?.name ??
+									c?.searchParams.get('name') ??
+									'FakeNitroSticker';
+								e.push({
+									format_type: 1,
+									id: s[1],
+									name: u,
+									fake: !0,
+								});
+								continue;
 							}
-						}));
-				},
-				stop() {
-					We(this.preSend), Sn(this.preEdit);
-				},
-			});
+							let l = r.match(Os);
+							if (l) {
+								if (!Lo.getStickerById(l[1])) continue;
+								let c =
+									Lo.getStickerById(l[1])?.name ??
+									'FakeNitroSticker';
+								e.push({
+									format_type: 2,
+									id: l[1],
+									name: c,
+									fake: !0,
+								});
+							}
+						}
+						return e;
+					},
+					shouldIgnoreEmbed(e, t) {
+						let n = t.content.split(/\s/);
+						if (n.length > 1 && !Me.store.transformCompoundSentence)
+							return !1;
+						switch (e.type) {
+							case 'image': {
+								if (
+									!Me.store.transformCompoundSentence &&
+									!n.includes(e.url) &&
+									!n.includes(e.image.proxyURL)
+								)
+									return !1;
+								if (Me.store.transformEmojis && Kc.test(e.url))
+									return !0;
+								if (Me.store.transformStickers) {
+									if (Yc.test(e.url)) return !0;
+									let i = e.url.match(Os);
+									if (i && Lo.getStickerById(i[1])) return !0;
+								}
+								break;
+							}
+						}
+						return !1;
+					},
+					filterAttachments(e) {
+						return e.filter((t) => {
+							if (t.content_type !== 'image/gif') return !0;
+							let n = t.url.match(Os);
+							return !(n && Lo.getStickerById(n[1]));
+						});
+					},
+					shouldKeepEmojiLink(e) {
+						return e.target && Kc.test(e.target);
+					},
+					addFakeNotice(e, t, n) {
+						if (!n) return t;
+						switch (((t = Array.isArray(t) ? t : [t]), e)) {
+							case 'STICKER':
+								return (
+									t.push(
+										' This is a FakeNitro sticker and renders like a real sticker only for you. Appears as a link to non-plugin users.',
+									),
+									t
+								);
+							case 'EMOJI':
+								return (
+									t.push(
+										' This is a FakeNitro emoji and renders like a real emoji only for you. Appears as a link to non-plugin users.',
+									),
+									t
+								);
+						}
+					},
+					hasPermissionToUseExternalEmojis(e) {
+						let t = X.getChannel(e);
+						return !t ||
+							t.isDM() ||
+							t.isGroupDM() ||
+							t.isMultiUserDM()
+							? !0
+							: et.can(sw, t);
+					},
+					hasPermissionToUseExternalStickers(e) {
+						let t = X.getChannel(e);
+						return !t ||
+							t.isDM() ||
+							t.isGroupDM() ||
+							t.isMultiUserDM()
+							? !0
+							: et.can(aw, t);
+					},
+					getStickerLink(e) {
+						return `https://media.discordapp.net/stickers/${e}.png?size=${M.plugins.FakeNitro.stickerSize}`;
+					},
+					async sendAnimatedSticker(e, t, n) {
+						let [
+								{ parseURL: i },
+								{ GIFEncoder: r, quantize: s, applyPalette: l },
+							] = await Promise.all([Ph(), Es()]),
+							{ frames: c, width: u, height: h } = await i(e),
+							f = new r(),
+							v = M.plugins.FakeNitro.stickerSize,
+							S = document.createElement('canvas');
+						(S.width = v), (S.height = v);
+						let b = S.getContext('2d', { willReadFrequently: !0 }),
+							A = v / Math.max(u, h);
+						b.scale(A, A);
+						let C;
+						for (let B of c) {
+							let {
+								left: O,
+								top: K,
+								width: ee,
+								height: j,
+								img: z,
+								delay: te,
+								blendOp: $,
+								disposeOp: Re,
+							} = B;
+							(C = b.getImageData(O, K, ee, j)),
+								$ === 0 && b.clearRect(O, K, ee, j),
+								b.drawImage(z, O, K, ee, j);
+							let { data: ne } = b.getImageData(0, 0, v, v),
+								Fe = s(ne, 256),
+								Ee = l(ne, Fe);
+							f.writeFrame(Ee, v, v, {
+								transparent: !0,
+								palette: Fe,
+								delay: te,
+							}),
+								Re === 1
+									? b.clearRect(O, K, ee, j)
+									: Re === 2 && b.putImageData(C, O, K);
+						}
+						f.finish();
+						let D = new File([f.bytesView()], `${t}.gif`, {
+							type: 'image/gif',
+						});
+						rw([D], X.getChannel(n), iw);
+					},
+					start() {
+						let e = Me.store;
+						if (!e.enableEmojiBypass && !e.enableStickerBypass)
+							return;
+						function t(n, i) {
+							return !n[i] || /\s/.test(n[i]) ? '' : ' ';
+						}
+						(this.preSend = rt((n, i, r) => {
+							let { guildId: s } = this;
+							e: {
+								if (!e.enableStickerBypass) break e;
+								let l = Lo.getStickerById(r.stickers?.[0]);
+								if (!l || 'pack_id' in l) break e;
+								let c =
+									this.canUseStickers &&
+									this.hasPermissionToUseExternalStickers(n);
+								if (
+									l.available !== !1 &&
+									(c || l.guild_id === s)
+								)
+									break e;
+								let u = this.getStickerLink(l.id);
+								if (l.format_type === 2)
+									return (
+										this.sendAnimatedSticker(u, l.id, n),
+										{ cancel: !0 }
+									);
+								(r.stickers.length = 0),
+									(i.content += ` ${u}&name=${encodeURIComponent(
+										l.name,
+									)}`);
+							}
+							if (e.enableEmojiBypass) {
+								let l =
+									this.canUseEmotes &&
+									this.hasPermissionToUseExternalEmojis(n);
+								for (let c of i.validNonShortcutEmojis) {
+									if (
+										!c.require_colons ||
+										(c.available !== !1 && l) ||
+										(c.guildId === s && !c.animated)
+									)
+										continue;
+									let u = `<${c.animated ? 'a' : ''}:${
+											c.originalName || c.name
+										}:${c.id}>`,
+										h = c.url.replace(
+											/\?size=\d+/,
+											'?' +
+												new URLSearchParams({
+													size: M.plugins.FakeNitro
+														.emojiSize,
+													name: encodeURIComponent(
+														c.name,
+													),
+												}),
+										);
+									i.content = i.content.replace(
+										u,
+										(f, v, S) =>
+											`${t(S, v - 1)}${h}${t(
+												S,
+												v + f.length,
+											)}`,
+									);
+								}
+							}
+							return { cancel: !1 };
+						})),
+							(this.preEdit = Kn((n, i, r) => {
+								if (!e.enableEmojiBypass) return;
+								let s =
+										this.canUseEmotes &&
+										this.hasPermissionToUseExternalEmojis(
+											n,
+										),
+									{ guildId: l } = this;
+								r.content = r.content.replace(
+									/(?<!\\)<a?:(?:\w+):(\d+)>/gi,
+									(c, u, h, f) => {
+										let v = un.getCustomEmojiById(u);
+										if (
+											v == null ||
+											!v.require_colons ||
+											(v.available !== !1 && s) ||
+											(v.guildId === l && !v.animated)
+										)
+											return c;
+										let S = v.url.replace(
+											/\?size=\d+/,
+											'?' +
+												new URLSearchParams({
+													size: M.plugins.FakeNitro
+														.emojiSize,
+													name: encodeURIComponent(
+														v.name,
+													),
+												}),
+										);
+										return `${t(f, h - 1)}${S}${t(
+											f,
+											h + c.length,
+										)}`;
+									},
+								);
+							}));
+					},
+					stop() {
+						st(this.preSend), Yn(this.preEdit);
+					},
+				}));
 		});
-	function Sd({ text: e, color: t }) {
+	function Lh(...e) {
+		let t = {};
+		function n(r) {
+			for (let s = e.length - 1; s >= 0; s--) if (r in e[s]) return e[s];
+			return t;
+		}
+		let i = {
+			ownKeys() {
+				return e.reduce(
+					(r, s) => (r.push(...Reflect.ownKeys(s)), r),
+					Reflect.ownKeys(t),
+				);
+			},
+		};
+		for (let r of [
+			'defineProperty',
+			'deleteProperty',
+			'get',
+			'getOwnPropertyDescriptor',
+			'has',
+			'set',
+		])
+			i[r] = function (s, ...l) {
+				return Reflect[r](n(l[0]), ...l);
+			};
+		return new Proxy(t, i);
+	}
+	var Eh,
+		Dh = m(() => {
+			'use strict';
+			a();
+			Eh = Lh;
+			typeof module < 'u' && (module.exports = Lh);
+		});
+	function lw(e, t) {
+		let n = `[#${e.toString(16).padStart(6, '0')},#${t
+				.toString(16)
+				.padStart(6, '0')}]`,
+			i = '',
+			r = Array.from(n)
+				.map((s) => s.codePointAt(0))
+				.filter((s) => s >= 32 && s <= 127)
+				.map((s) => String.fromCodePoint(s + 917504))
+				.join('');
+		return (i || '') + ' ' + r;
+	}
+	function cw(e) {
+		if (e == null) return null;
+		let t = e.match(
+			/\u{e005b}\u{e0023}([\u{e0061}-\u{e0066}\u{e0041}-\u{e0046}\u{e0030}-\u{e0039}]+?)\u{e002c}\u{e0023}([\u{e0061}-\u{e0066}\u{e0041}-\u{e0046}\u{e0030}-\u{e0039}]+?)\u{e005d}/u,
+		);
+		if (t != null) {
+			let n = [...t[0]]
+				.map((r) => String.fromCodePoint(r.codePointAt(0) - 917504))
+				.join('');
+			return n
+				.substring(1, n.length - 1)
+				.split(',')
+				.map((r) => parseInt(r.replace('#', '0x'), 16));
+		} else return null;
+	}
+	var Oh,
+		Jc,
+		_h = m(() => {
+			'use strict';
+			a();
+			E();
+			re();
+			w();
+			Xe();
+			de();
+			T();
+			x();
+			Dh();
+			(Oh = N({
+				nitroFirst: {
+					description: 'Default color source if both are present',
+					type: 4,
+					options: [
+						{ label: 'Nitro colors', value: !0, default: !0 },
+						{ label: 'Fake colors', value: !1 },
+					],
+				},
+			})),
+				(Jc = g({
+					name: 'FakeProfileThemes',
+					description:
+						'Allows profile theming by hiding the colors in your bio thanks to invisible 3y3 encoding',
+					authors: [p.Alyxia, p.Remty],
+					patches: [
+						{
+							find: 'getUserProfile=',
+							replacement: {
+								match: /(?<=getUserProfile=function\(\i\){return )(\i\[\i\])/,
+								replace: '$self.colorDecodeHook($1)',
+							},
+						},
+						{
+							find: '.USER_SETTINGS_PROFILE_THEME_ACCENT',
+							replacement: {
+								match: /RESET_PROFILE_THEME}\)(?<=},color:(\i).+?},color:(\i).+?)/,
+								replace:
+									'$&,$self.addCopy3y3Button({primary:$1,accent:$2})',
+							},
+						},
+					],
+					settingsAboutComponent: () =>
+						o(
+							y.FormSection,
+							null,
+							o(y.FormTitle, { tag: 'h3' }, 'Usage'),
+							o(
+								y.FormText,
+								null,
+								'After enabling this plugin, you will see custom colors in the profiles of other people using compatible plugins. ',
+								o('br', null),
+								'To set your own colors:',
+								o(
+									'ul',
+									null,
+									o(
+										'li',
+										null,
+										'\u2022 go to your profile settings',
+									),
+									o(
+										'li',
+										null,
+										'\u2022 choose your own colors in the Nitro preview',
+									),
+									o(
+										'li',
+										null,
+										'\u2022 click the "Copy 3y3" button',
+									),
+									o(
+										'li',
+										null,
+										'\u2022 paste the invisible text anywhere in your bio',
+									),
+								),
+								o('br', null),
+								o('b', null, 'Please note:'),
+								' if you are using a theme which hides nitro ads, you should disable it temporarily to set colors.',
+							),
+						),
+					settings: Oh,
+					colorDecodeHook(e) {
+						if (e) {
+							if (Oh.store.nitroFirst && e.themeColors) return e;
+							let t = cw(e.bio);
+							if (t)
+								return Eh(e, {
+									premiumType: 2,
+									themeColors: t,
+								});
+						}
+						return e;
+					},
+					addCopy3y3Button: k.wrap(
+						function ({ primary: e, accent: t }) {
+							return o(
+								R,
+								{
+									onClick: () => {
+										let n = lw(e, t);
+										ln(n);
+									},
+									color: R.Colors.PRIMARY,
+									size: R.Sizes.XLARGE,
+									className: G.left16,
+								},
+								'Copy 3y3',
+							);
+						},
+						{ noop: !0 },
+					),
+				}));
+		});
+	function Qc() {
+		return `-${Jo.fromTimestamp(Date.now())}`;
+	}
+	function ie(e, t) {
+		let n = uw({ channelId: e, content: '', embeds: [] });
+		return pw.receiveMessage(e, Po(t, n)), t;
+	}
+	function De(e, t, n) {
+		return e.find((i) => i.name === t)?.value || n;
+	}
+	var uw,
+		pw,
+		Vc = m(() => {
+			'use strict';
+			a();
+			de();
+			_();
+			x();
+			(uw = ce('username:"Clyde"')), (pw = P('receiveMessage'));
+		});
+	var Zn,
+		hn,
+		eu,
+		_s = m(() => {
+			'use strict';
+			a();
+			(Zn = ((v) => (
+				(v[(v.SUB_COMMAND = 1)] = 'SUB_COMMAND'),
+				(v[(v.SUB_COMMAND_GROUP = 2)] = 'SUB_COMMAND_GROUP'),
+				(v[(v.STRING = 3)] = 'STRING'),
+				(v[(v.INTEGER = 4)] = 'INTEGER'),
+				(v[(v.BOOLEAN = 5)] = 'BOOLEAN'),
+				(v[(v.USER = 6)] = 'USER'),
+				(v[(v.CHANNEL = 7)] = 'CHANNEL'),
+				(v[(v.ROLE = 8)] = 'ROLE'),
+				(v[(v.MENTIONABLE = 9)] = 'MENTIONABLE'),
+				(v[(v.NUMBER = 10)] = 'NUMBER'),
+				(v[(v.ATTACHMENT = 11)] = 'ATTACHMENT'),
+				v
+			))(Zn || {})),
+				(hn = ((s) => (
+					(s[(s.BUILT_IN = 0)] = 'BUILT_IN'),
+					(s[(s.BUILT_IN_TEXT = 1)] = 'BUILT_IN_TEXT'),
+					(s[(s.BUILT_IN_INTEGRATION = 2)] = 'BUILT_IN_INTEGRATION'),
+					(s[(s.BOT = 3)] = 'BOT'),
+					(s[(s.PLACEHOLDER = 4)] = 'PLACEHOLDER'),
+					s
+				))(hn || {})),
+				(eu = ((i) => (
+					(i[(i.CHAT_INPUT = 1)] = 'CHAT_INPUT'),
+					(i[(i.USER = 2)] = 'USER'),
+					(i[(i.MESSAGE = 3)] = 'MESSAGE'),
+					i
+				))(eu || {}));
+		});
+	var ou = {};
+	me(ou, {
+		ApplicationCommandInputType: () => hn,
+		ApplicationCommandOptionType: () => Zn,
+		ApplicationCommandType: () => eu,
+		BUILT_IN: () => mo,
+		OptionalMessageOption: () => fo,
+		RequiredMessageOption: () => Do,
+		_handleCommand: () => mw,
+		_init: () => dw,
+		commands: () => tu,
+		findOption: () => De,
+		generateId: () => Qc,
+		prepareOption: () => nu,
+		registerCommand: () => ri,
+		sendBotMessage: () => ie,
+		unregisterCommand: () => or,
+	});
+	function nu(e) {
+		return (
+			(e.displayName ||= e.name),
+			(e.displayDescription ||= e.description),
+			e.options?.forEach((t, n, i) => {
+				t === Fh ? (i[n] = fo) : t === Bh && (i[n] = Do),
+					t.choices?.forEach((r) => (r.displayName ||= r.name)),
+					nu(i[n]);
+			}),
+			e
+		);
+	}
+	function fw(e, t) {
+		e.options?.forEach((n) => {
+			if (n.type !== 1)
+				throw new Error(
+					'When specifying sub-command options, all options must be sub-commands.',
+				);
+			let i = {
+				...e,
+				...n,
+				type: 1,
+				name: `${e.name} ${n.name}`,
+				id: `${n.name}-${e.id}`,
+				displayName: `${e.name} ${n.name}`,
+				subCommandPath: [
+					{ name: n.name, type: n.type, displayName: n.name },
+				],
+				rootCommand: e,
+			};
+			ri(i, t);
+		});
+	}
+	function ri(e, t) {
+		if (!mo) {
+			console.warn(
+				'[CommandsAPI]',
+				`Not registering ${e.name} as the CommandsAPI hasn't been initialised.`,
+				'Please restart to use commands',
+			);
+			return;
+		}
+		if (mo.some((n) => n.name === e.name))
+			throw new Error(`Command '${e.name}' already exists.`);
+		if (
+			((e.isVencordCommand = !0),
+			(e.id ??= `-${mo.length + 1}`),
+			(e.applicationId ??= '-1'),
+			(e.type ??= 1),
+			(e.inputType ??= 1),
+			(e.plugin ||= t),
+			nu(e),
+			e.options?.[0]?.type === 1)
+		) {
+			fw(e, t);
+			return;
+		}
+		(tu[e.name] = e), mo.push(e);
+	}
+	function or(e) {
+		let t = mo.findIndex((n) => n.name === e);
+		return t === -1 ? !1 : (mo.splice(t, 1), delete tu[e], !0);
+	}
+	var mo,
+		tu,
+		Fh,
+		Bh,
+		fo,
+		Do,
+		dw,
+		mw,
+		wt = m(() => {
+			'use strict';
+			a();
+			ro();
+			Vc();
+			_s();
+			Vc();
+			_s();
+			(tu = {}),
+				(Fh = Symbol('OptionalMessageOption')),
+				(Bh = Symbol('RequiredMessageOption')),
+				(fo = Fh),
+				(Do = Bh),
+				(dw = function (e) {
+					try {
+						(mo = e),
+							(fo = e.find((t) => t.name === 'shrug').options[0]),
+							(Do = e.find((t) => t.name === 'me').options[0]);
+					} catch {
+						console.error('Failed to load CommandsApi');
+					}
+					return e;
+				}),
+				(mw = function (e, t, n) {
+					if (!e.isVencordCommand) return e.execute(t, n);
+					let i = (r) => {
+						let s = `An Error occurred while executing command "${e.name}"`,
+							l =
+								r instanceof Error
+									? r.stack || r.message
+									: String(r);
+						console.error(s, r),
+							ie(n.channel.id, {
+								content: `${s}:
+${$i(l)}`,
+								author: { username: 'Vencord' },
+							});
+					};
+					try {
+						let r = e.execute(t, n);
+						return r instanceof Promise ? r.catch(i) : r;
+					} catch (r) {
+						return i(r);
+					}
+				});
+		});
+	function $h({ text: e, color: t }) {
 		return o(
 			'div',
 			{
@@ -5475,25 +7422,25 @@ ${Dn(l)}`,
 			e,
 		);
 	}
-	var vd = d(() => {
+	var Uh = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	function Td({
+	function Gh({
 		option: e,
 		pluginSettings: t,
 		definedSettings: n,
 		id: i,
 		onChange: r,
-		onError: a,
+		onError: s,
 	}) {
 		let l = t[i] ?? e.default,
-			[u, m] = w.useState(l ?? !1),
-			[y, h] = w.useState(null);
-		w.useEffect(() => {
-			a(y !== null);
-		}, [y]);
-		let b = [
+			[c, u] = I.useState(l ?? !1),
+			[h, f] = I.useState(null);
+		I.useEffect(() => {
+			s(h !== null);
+		}, [h]);
+		let v = [
 			{ label: 'Enabled', value: !0, default: l === !0 },
 			{
 				label: 'Disabled',
@@ -5501,249 +7448,249 @@ ${Dn(l)}`,
 				default: typeof l > 'u' || l === !1,
 			},
 		];
-		function x(S) {
-			let A = e.isValid?.call(n, S) ?? !0;
+		function S(b) {
+			let A = e.isValid?.call(n, b) ?? !0;
 			typeof A == 'string'
-				? h(A)
+				? f(A)
 				: A
-				? (h(null), m(S), r(S))
-				: h('Invalid input provided.');
+				? (f(null), u(b), r(b))
+				: f('Invalid input provided.');
 		}
 		return o(
-			g.FormSection,
+			y.FormSection,
 			null,
-			o(g.FormTitle, null, e.description),
-			o(St, {
+			o(y.FormTitle, null, e.description),
+			o($t, {
 				isDisabled: e.disabled?.call(n) ?? !1,
-				options: b,
+				options: v,
 				placeholder: e.placeholder ?? 'Select an option',
 				maxVisibleItems: 5,
 				closeOnSelect: !0,
-				select: x,
-				isSelected: (S) => S === u,
-				serialize: (S) => String(S),
+				select: S,
+				isSelected: (b) => b === c,
+				serialize: (b) => String(b),
 				...e.componentProps,
 			}),
-			y && o(g.FormText, { style: { color: 'var(--text-danger)' } }, y),
+			h && o(y.FormText, { style: { color: 'var(--text-danger)' } }, h),
 		);
 	}
-	var xd = d(() => {
+	var Hh = m(() => {
 		'use strict';
-		s();
-		P();
+		a();
+		x();
 	});
-	function wd({ option: e, onChange: t, onError: n }) {
+	function zh({ option: e, onChange: t, onError: n }) {
 		return e.component({ setValue: t, setError: n, option: e });
 	}
-	var Pd = d(() => {
+	var jh = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	function ma({
+	function iu({
 		option: e,
 		pluginSettings: t,
 		definedSettings: n,
 		id: i,
 		onChange: r,
-		onError: a,
+		onError: s,
 	}) {
-		function l(x) {
-			return e.type === 2 ? BigInt(x) : Number(x);
+		function l(S) {
+			return e.type === 2 ? BigInt(S) : Number(S);
 		}
-		let [u, m] = w.useState(`${t[i] ?? e.default ?? 0}`),
-			[y, h] = w.useState(null);
-		w.useEffect(() => {
-			a(y !== null);
-		}, [y]);
-		function b(x) {
-			let S = e.isValid?.call(n, x) ?? !0;
-			h(null),
-				typeof S == 'string' ? h(S) : S || h('Invalid input provided.'),
-				e.type === 1 && BigInt(x) >= Cb
-					? (m(`${Number.MAX_SAFE_INTEGER}`), r(l(x)))
-					: (m(x), r(l(x)));
+		let [c, u] = I.useState(`${t[i] ?? e.default ?? 0}`),
+			[h, f] = I.useState(null);
+		I.useEffect(() => {
+			s(h !== null);
+		}, [h]);
+		function v(S) {
+			let b = e.isValid?.call(n, S) ?? !0;
+			f(null),
+				typeof b == 'string' ? f(b) : b || f('Invalid input provided.'),
+				e.type === 1 && BigInt(S) >= gw
+					? (u(`${Number.MAX_SAFE_INTEGER}`), r(l(S)))
+					: (u(S), r(l(S)));
 		}
 		return o(
-			g.FormSection,
+			y.FormSection,
 			null,
-			o(g.FormTitle, null, e.description),
-			o(Te, {
+			o(y.FormTitle, null, e.description),
+			o(Ne, {
 				type: 'number',
 				pattern: '-?[0-9]+',
-				value: u,
-				onChange: b,
+				value: c,
+				onChange: v,
 				placeholder: e.placeholder ?? 'Enter a number',
 				disabled: e.disabled?.call(n) ?? !1,
 				...e.componentProps,
 			}),
-			y && o(g.FormText, { style: { color: 'var(--text-danger)' } }, y),
+			h && o(y.FormText, { style: { color: 'var(--text-danger)' } }, h),
 		);
 	}
-	var Cb,
-		Id = d(() => {
+	var gw,
+		Wh = m(() => {
 			'use strict';
-			s();
-			v();
-			P();
-			Cb = BigInt(Number.MAX_SAFE_INTEGER);
+			a();
+			T();
+			x();
+			gw = BigInt(Number.MAX_SAFE_INTEGER);
 		});
-	function kd({
+	function qh({
 		option: e,
 		pluginSettings: t,
 		definedSettings: n,
 		onChange: i,
 		onError: r,
-		id: a,
+		id: s,
 	}) {
-		let l = t[a] ?? e.options?.find((x) => x.default)?.value,
-			[u, m] = w.useState(l ?? null),
-			[y, h] = w.useState(null);
-		w.useEffect(() => {
-			r(y !== null);
-		}, [y]);
-		function b(x) {
-			let S = e.isValid?.call(n, x) ?? !0;
-			typeof S == 'string'
-				? h(S)
-				: S
-				? (h(null), m(x), i(x))
-				: h('Invalid input provided.');
+		let l = t[s] ?? e.options?.find((S) => S.default)?.value,
+			[c, u] = I.useState(l ?? null),
+			[h, f] = I.useState(null);
+		I.useEffect(() => {
+			r(h !== null);
+		}, [h]);
+		function v(S) {
+			let b = e.isValid?.call(n, S) ?? !0;
+			typeof b == 'string'
+				? f(b)
+				: b
+				? (f(null), u(S), i(S))
+				: f('Invalid input provided.');
 		}
 		return o(
-			g.FormSection,
+			y.FormSection,
 			null,
-			o(g.FormTitle, null, e.description),
-			o(St, {
+			o(y.FormTitle, null, e.description),
+			o($t, {
 				isDisabled: e.disabled?.call(n) ?? !1,
 				options: e.options,
 				placeholder: e.placeholder ?? 'Select an option',
 				maxVisibleItems: 5,
 				closeOnSelect: !0,
-				select: b,
-				isSelected: (x) => x === u,
-				serialize: (x) => String(x),
+				select: v,
+				isSelected: (S) => S === c,
+				serialize: (S) => String(S),
 				...e.componentProps,
 			}),
-			y && o(g.FormText, { style: { color: 'var(--text-danger)' } }, y),
+			h && o(y.FormText, { style: { color: 'var(--text-danger)' } }, h),
 		);
 	}
-	var Cd = d(() => {
+	var Kh = m(() => {
 		'use strict';
-		s();
-		P();
+		a();
+		x();
 	});
-	function Ci(e, t, n = 1) {
+	function go(e, t, n = 1) {
 		let i = [];
 		for (let r = e; r <= t; r += n) i.push(Math.round(r * 100) / 100);
 		return i;
 	}
-	function Md({
+	function Yh({
 		option: e,
 		pluginSettings: t,
 		definedSettings: n,
 		id: i,
 		onChange: r,
-		onError: a,
+		onError: s,
 	}) {
 		let l = t[i] ?? e.default,
-			[u, m] = w.useState(null);
-		w.useEffect(() => {
-			a(u !== null);
-		}, [u]);
-		function y(h) {
-			let b = e.isValid?.call(n, h) ?? !0;
-			typeof b == 'string'
-				? m(b)
-				: b
-				? (m(null), r(h))
-				: m('Invalid input provided.');
+			[c, u] = I.useState(null);
+		I.useEffect(() => {
+			s(c !== null);
+		}, [c]);
+		function h(f) {
+			let v = e.isValid?.call(n, f) ?? !0;
+			typeof v == 'string'
+				? u(v)
+				: v
+				? (u(null), r(f))
+				: u('Invalid input provided.');
 		}
 		return o(
-			g.FormSection,
+			y.FormSection,
 			null,
-			o(g.FormTitle, null, e.description),
-			o(Nn, {
+			o(y.FormTitle, null, e.description),
+			o(Io, {
 				disabled: e.disabled?.call(n) ?? !1,
 				markers: e.markers,
 				minValue: e.markers[0],
 				maxValue: e.markers[e.markers.length - 1],
 				initialValue: l,
-				onValueChange: y,
-				onValueRender: (h) => String(h.toFixed(2)),
+				onValueChange: h,
+				onValueRender: (f) => String(f.toFixed(2)),
 				stickToMarkers: e.stickToMarkers ?? !0,
 				...e.componentProps,
 			}),
 		);
 	}
-	var fa = d(() => {
+	var ru = m(() => {
 		'use strict';
-		s();
-		P();
+		a();
+		x();
 	});
-	function Nd({
+	function Zh({
 		option: e,
 		pluginSettings: t,
 		definedSettings: n,
 		id: i,
 		onChange: r,
-		onError: a,
+		onError: s,
 	}) {
-		let [l, u] = w.useState(t[i] ?? e.default ?? null),
-			[m, y] = w.useState(null);
-		w.useEffect(() => {
-			a(m !== null);
-		}, [m]);
-		function h(b) {
-			let x = e.isValid?.call(n, b) ?? !0;
-			typeof x == 'string'
-				? y(x)
-				: x
-				? (y(null), u(b), r(b))
-				: y('Invalid input provided.');
+		let [l, c] = I.useState(t[i] ?? e.default ?? null),
+			[u, h] = I.useState(null);
+		I.useEffect(() => {
+			s(u !== null);
+		}, [u]);
+		function f(v) {
+			let S = e.isValid?.call(n, v) ?? !0;
+			typeof S == 'string'
+				? h(S)
+				: S
+				? (h(null), c(v), r(v))
+				: h('Invalid input provided.');
 		}
 		return o(
-			g.FormSection,
+			y.FormSection,
 			null,
-			o(g.FormTitle, null, e.description),
-			o(Te, {
+			o(y.FormTitle, null, e.description),
+			o(Ne, {
 				type: 'text',
 				value: l,
-				onChange: h,
+				onChange: f,
 				placeholder: e.placeholder ?? 'Enter a value',
 				disabled: e.disabled?.call(n) ?? !1,
 				...e.componentProps,
 			}),
-			m && o(g.FormText, { style: { color: 'var(--text-danger)' } }, m),
+			u && o(y.FormText, { style: { color: 'var(--text-danger)' } }, u),
 		);
 	}
-	var Rd = d(() => {
+	var Xh = m(() => {
 		'use strict';
-		s();
-		P();
+		a();
+		x();
 	});
-	var Mi = d(() => {
+	var ir = m(() => {
 		'use strict';
-		s();
-		vd();
-		xd();
-		Pd();
-		Id();
-		Cd();
-		fa();
-		Rd();
+		a();
+		Uh();
+		Hh();
+		jh();
+		Wh();
+		Kh();
+		ru();
+		Xh();
 	});
-	var ga,
-		Ad = d(() => {
+	var su,
+		Jh = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
 			E();
-			Mi();
+			ir();
+			w();
 			T();
-			v();
-			ga = f({
+			su = g({
 				name: 'Fart2',
-				authors: [c.Animal],
+				authors: [p.Animal],
 				description:
 					'Enable farting v2, a slash command that allows you to perform or request that someone perform a little toot.',
 				dependencies: ['CommandsAPI'],
@@ -5766,7 +7713,7 @@ ${Dn(l)}`,
 								'https://raw.githubusercontent.com/ItzOnlyAnimal/AliuPlugins/main/fart.mp3',
 							);
 							return (
-								(t.volume = k.plugins.Fart2.volume),
+								(t.volume = M.plugins.Fart2.volume),
 								t.play(),
 								{
 									content: e[0]
@@ -5781,25 +7728,71 @@ ${Dn(l)}`,
 					volume: {
 						description: 'how loud you wanna fart (aka volume)',
 						type: 5,
-						markers: Ci(0, 1, 0.1),
+						markers: go(0, 1, 0.1),
 						default: 0.5,
 						stickToMarkers: !1,
 					},
 				},
 			});
 		});
-	var ha,
-		Ld = d(() => {
+	var au,
+		Qh = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			P();
-			ha = f({
+			x();
+			au = g({
+				name: 'FavoriteEmojiFirst',
+				authors: [p.Aria, p.Ven],
+				description:
+					'Puts your favorite emoji first in the emoji autocomplete.',
+				patches: [
+					{
+						find: '.activeCommandOption',
+						replacement: [
+							{
+								match: /=\i\(\i\.selectedIndex\);(?=.+?state:(\i),isInPopoutExperiment:\i)/,
+								replace: '$&$self.sortEmojis($1);',
+							},
+							{
+								match: /,maxCount:(\i)(.+?)=(\i)\.slice\(0,(\1-\i\.length)\)/,
+								replace:
+									',maxCount:Infinity$2=($3.sliceTo=$4,$3)',
+							},
+						],
+					},
+				],
+				sortEmojis({ query: e }) {
+					if (
+						e?.type !== 'EMOJIS_AND_STICKERS' ||
+						e.typeInfo?.sentinel !== ':' ||
+						!e.results?.emojis?.length
+					)
+						return;
+					let t = un.getDisambiguatedEmojiContext();
+					e.results.emojis = e.results.emojis
+						.sort((n, i) => {
+							let r = t.isFavoriteEmojiWithoutFetchingLatest(n),
+								s = t.isFavoriteEmojiWithoutFetchingLatest(i);
+							return r && !s ? -1 : !r && s ? 1 : 0;
+						})
+						.slice(0, e.results.emojis.sliceTo ?? 10);
+				},
+			});
+		});
+	var lu,
+		Vh = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			x();
+			lu = g({
 				name: 'FixInbox',
 				description:
 					"Fixes the Unreads Inbox from crashing Discord when you're in lots of guilds.",
-				authors: [c.Megu],
+				authors: [p.Megu],
 				patches: [
 					{
 						find: 'INBOX_OPEN:function',
@@ -5811,17 +7804,17 @@ ${Dn(l)}`,
 				],
 				settingsAboutComponent() {
 					return o(
-						g.FormSection,
+						y.FormSection,
 						null,
-						o(g.FormTitle, { tag: 'h3' }, "What's the problem?"),
+						o(y.FormTitle, { tag: 'h3' }, "What's the problem?"),
 						o(
-							g.FormText,
+							y.FormText,
 							{ style: { marginBottom: 8 } },
 							"By default, Discord emits a GUILD_SUBSCRIPTIONS event for every guild you're in. When you're in a lot of guilds, this can cause the gateway to ratelimit you. This causes the client to crash and get stuck in an infinite ratelimit loop as it tries to reconnect.",
 						),
-						o(g.FormTitle, { tag: 'h3' }, 'How does it work?'),
+						o(y.FormTitle, { tag: 'h3' }, 'How does it work?'),
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							"This plugin works by stopping the client from sending GUILD_SUBSCRIPTIONS events to the gateway when you open the unreads inbox. This means that not all unreads will be shown, instead only already-subscribed guilds' unreads will be shown, but your client won't crash anymore.",
 						),
@@ -5829,18 +7822,18 @@ ${Dn(l)}`,
 				},
 			});
 		});
-	var ya,
-		Ed = d(() => {
+	var cu,
+		ey = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			P();
-			ya = f({
+			x();
+			cu = g({
 				name: 'ForceOwnerCrown',
 				description:
 					'Force the owner crown next to usernames even if the server is large.',
-				authors: [c.D3SOX, c.Nickyux],
+				authors: [p.D3SOX, p.Nickyux],
 				patches: [
 					{
 						find: '.renderOwner=',
@@ -5856,7 +7849,7 @@ ${Dn(l)}`,
 					let t = e?.guildId ?? e?.channel?.guild_id,
 						n = e?.user?.id;
 					if (t && n) {
-						let i = de.getGuild(t);
+						let i = le.getGuild(t);
 						if (i) return i.ownerId === n;
 						console.error('[ForceOwnerCrown] failed to get guild', {
 							guildId: t,
@@ -5872,132 +7865,249 @@ ${Dn(l)}`,
 				},
 			});
 		});
-	var ba,
-		Dd = d(() => {
+	var uu,
+		hw,
+		pu,
+		ty = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
+			w();
 			T();
-			v();
-			D();
-			ba = f({
-				name: 'FriendInvites',
-				description:
-					'Create and manage friend invite links via slash commands (/create friend invite, /view friend invites, /revoke friend invites).',
-				authors: [c.afn],
-				dependencies: ['CommandsAPI'],
-				commands: [
-					{
-						name: 'create friend invite',
-						description: 'Generates a friend invite link.',
-						inputType: 3,
-						execute: async (e, t) => {
-							let i = await cn(
-								'createFriendInvite',
-							).createFriendInvite();
-							return void H(t.channel.id, {
-								content: `
+			_();
+			x();
+			(uu = P('createFriendInvite')),
+				(hw = P('v4', 'v1')),
+				(pu = g({
+					name: 'FriendInvites',
+					description:
+						'Create and manage friend invite links via slash commands (/create friend invite, /view friend invites, /revoke friend invites).',
+					authors: [p.afn, p.Dziurwa],
+					dependencies: ['CommandsAPI'],
+					commands: [
+						{
+							name: 'create friend invite',
+							description: 'Generates a friend invite link.',
+							inputType: 3,
+							execute: async (e, t) => {
+								if (!U.getCurrentUser().phone)
+									return ie(t.channel.id, {
+										content:
+											'You need to have a phone number connected to your account to create a friend invite!',
+									});
+								let n = hw.v4(),
+									i = await Yt.post({
+										url: '/friend-finder/find-friends',
+										body: {
+											modified_contacts: {
+												[n]: [1, '', ''],
+											},
+											phone_contact_methods_count: 1,
+										},
+									}).then((r) =>
+										uu.createFriendInvite({
+											code: r.body
+												.invite_suggestions[0][3],
+											recipient_phone_number_or_email: n,
+											contact_visibility: 1,
+											filter_visibilities: [],
+											filtered_invite_suggestions_index: 1,
+										}),
+									);
+								ie(t.channel.id, {
+									content: `
                         discord.gg/${i.code} \xB7
                         Expires: <t:${
 							new Date(i.expires_at).getTime() / 1e3
 						}:R> \xB7
                         Max uses: \`${i.max_uses}\`
                     `
-									.trim()
-									.replace(/\s+/g, ' '),
-							});
+										.trim()
+										.replace(/\s+/g, ' '),
+								});
+							},
 						},
-					},
-					{
-						name: 'view friend invites',
-						description:
-							'View a list of all generated friend invites.',
-						inputType: 3,
-						execute: async (e, t) => {
-							let r = (
-								await cn(
-									'createFriendInvite',
-								).getAllFriendInvites()
-							).map((a) =>
-								`_discord.gg/${a.code}_ \xB7
+						{
+							name: 'view friend invites',
+							description:
+								'View a list of all generated friend invites.',
+							inputType: 3,
+							execute: async (e, t) => {
+								let i = (await uu.getAllFriendInvites()).map(
+									(r) =>
+										`
+                    _discord.gg/${r.code}_ \xB7
                     Expires: <t:${
-						new Date(a.expires_at).getTime() / 1e3
+						new Date(r.expires_at).getTime() / 1e3
 					}:R> \xB7
-                    Times used: \`${a.uses}/${a.max_uses}\``
-									.trim()
-									.replace(/\s+/g, ' '),
-							);
-							return void H(t.channel.id, {
-								content:
-									r.join(`
+                    Times used: \`${r.uses}/${r.max_uses}\`
+                    `
+											.trim()
+											.replace(/\s+/g, ' '),
+								);
+								ie(t.channel.id, {
+									content:
+										i.join(`
 `) || 'You have no active friend invites!',
-							});
+								});
+							},
 						},
-					},
-					{
-						name: 'revoke friend invites',
-						description: 'Revokes all generated friend invites.',
-						inputType: 3,
-						execute: async (e, t) => (
-							await cn(
-								'createFriendInvite',
-							).revokeFriendInvites(),
-							void H(t.channel.id, {
-								content:
-									'All friend invites have been revoked.',
-							})
-						),
-					},
-				],
-			});
-		});
-	var Mb,
-		Sa,
-		_d = d(() => {
-			'use strict';
-			s();
-			Ft();
-			T();
-			v();
-			(Mb = /https?:\/\/twitter\.com(?=\/\w+?\/status\/)/g),
-				(Sa = f({
-					name: 'FxTwitter',
-					description:
-						'Uses FxTwitter to improve embeds from twitter on send',
-					authors: [c.Samu],
-					dependencies: ['MessageEventsAPI'],
-					addPrefix(e) {
-						e.content = e.content.replace(
-							Mb,
-							'https://fxtwitter.com',
-						);
-					},
-					start() {
-						this.preSend = ze((e, t) => this.addPrefix(t));
-					},
-					stop() {
-						We(this.preSend);
-					},
+						{
+							name: 'revoke friend invites',
+							description:
+								'Revokes all generated friend invites.',
+							inputType: 3,
+							execute: async (e, t) => (
+								await uu.revokeFriendInvites(),
+								void ie(t.channel.id, {
+									content:
+										'All friend invites have been revoked.',
+								})
+							),
+						},
+					],
 				}));
 		});
-	var Nb,
-		Rb,
-		va,
-		Fd = d(() => {
+	var mu = {};
+	me(mu, { getSettingStore: () => ny, getSettingStoreLazy: () => du });
+	function ny(e, t) {
+		if (!M.plugins.SettingsStoreAPI.enabled)
+			throw new Error(
+				'Cannot use SettingsStoreAPI without setting as dependency.',
+			);
+		return yw?.find(
+			(n) =>
+				n?.settingsStoreApiGroup === e && n?.settingsStoreApiName === t,
+		);
+	}
+	function du(e, t) {
+		return ct(() => ny(e, t));
+	}
+	var yw,
+		fu = m(() => {
 			'use strict';
-			s();
+			a();
+			rn();
+			Se();
+			_();
+			E();
+			yw = ct(() => {
+				let e = Zr('"textAndImages","renderSpoilers"');
+				if (e == null)
+					return new Z('SettingsStoreAPI').error(
+						"Didn't find stores module.",
+					);
+				let t = Ft(e);
+				if (t != null)
+					return Object.values(t).filter(
+						(n) => n?.settingsStoreApiGroup,
+					);
+			});
+		});
+	var gu,
+		oy = m(() => {
+			a();
+			(window.VencordStyles ??= new Map()).set(
+				'src/plugins/gameActivityToggle/style.css',
+				{
+					name: 'src/plugins/gameActivityToggle/style.css',
+					source: `[class*="withTagAsButton"] {
+    min-width: 88px;
+}
+`,
+					classNames: {},
+					dom: null,
+				},
+			);
+			gu = 'src/plugins/gameActivityToggle/style.css';
+		});
+	function Sw(e) {
+		return function () {
+			return o(
+				'svg',
+				{ width: '24', height: '24', viewBox: '0 96 960 960' },
+				o('path', {
+					fill: 'currentColor',
+					d: 'M182 856q-51 0-79-35.5T82 734l42-300q9-60 53.5-99T282 296h396q60 0 104.5 39t53.5 99l42 300q7 51-21 86.5T778 856q-21 0-39-7.5T706 826l-90-90H344l-90 90q-15 15-33 22.5t-39 7.5Zm498-240q17 0 28.5-11.5T720 576q0-17-11.5-28.5T680 536q-17 0-28.5 11.5T640 576q0 17 11.5 28.5T680 616Zm-80-120q17 0 28.5-11.5T640 456q0-17-11.5-28.5T600 416q-17 0-28.5 11.5T560 456q0 17 11.5 28.5T600 496ZM310 616h60v-70h70v-60h-70v-70h-60v70h-70v60h70v70Z',
+				}),
+				!e &&
+					o('line', {
+						x1: '920',
+						y1: '280',
+						x2: '40',
+						y2: '880',
+						stroke: 'var(--status-danger)',
+						'stroke-width': '80',
+					}),
+			);
+		};
+	}
+	function bw() {
+		let e = iy?.useSetting();
+		return o(vw, {
+			tooltipText: e ? 'Disable Game Activity' : 'Enable Game Activity',
+			icon: Sw(e),
+			role: 'switch',
+			'aria-checked': !e,
+			onClick: () => iy?.updateSetting((t) => !t),
+		});
+	}
+	var iy,
+		vw,
+		hu,
+		ry = m(() => {
+			'use strict';
+			a();
+			fu();
+			je();
+			re();
+			w();
 			T();
-			v();
-			D();
-			(Nb = ye('name:"expression-picker-last-active-view"', {
-				close: R.byCode('activeView:null', 'setState'),
+			_();
+			oy();
+			(iy = du('status', 'showCurrentGame')),
+				(vw = ce('Button.Sizes.NONE,disabled:'));
+			hu = g({
+				name: 'GameActivityToggle',
+				description:
+					'Adds a button next to the mic and deafen button to toggle game activity.',
+				authors: [p.Nuckyz],
+				dependencies: ['SettingsStoreAPI'],
+				patches: [
+					{
+						find: '.Messages.ACCOUNT_SPEAKING_WHILE_MUTED',
+						replacement: {
+							match: /this\.renderNameZone\(\).+?children:\[/,
+							replace: '$&$self.GameActivityToggleButton(),',
+						},
+					},
+				],
+				GameActivityToggleButton: k.wrap(bw, { noop: !0 }),
+				start() {
+					Je(gu);
+				},
+				stop() {
+					bt(gu);
+				},
+			});
+		});
+	var Tw,
+		yu,
+		sy = m(() => {
+			'use strict';
+			a();
+			w();
+			$n();
+			T();
+			_();
+			(Tw = Ye('name:"expression-picker-last-active-view"', {
+				close: Y.byCode('activeView:null', 'setState'),
 			})),
-				(Rb = Se((e) => e.emitter?._events?.INSERT_TEXT)),
-				(va = f({
+				(yu = g({
 					name: 'GifPaste',
 					description:
 						'Makes picking a gif in the gif picker insert a link into the chatbox instead of instantly sending it',
-					authors: [c.Ven],
+					authors: [p.Ven],
 					patches: [
 						{
 							find: '.handleSelectGIF=',
@@ -6009,64 +8119,60 @@ ${Dn(l)}`,
 						},
 					],
 					handleSelect(e) {
-						e &&
-							(Rb.dispatchToLastSubscribed('INSERT_TEXT', {
-								rawText: e.url + ' ',
-							}),
-							Nb.close());
+						e && (Bn(e.url + ' '), Tw.close());
 					},
 				}));
 		});
-	var Ta = {};
-	te(Ta, {
-		_buildPopoverElements: () => Lb,
-		addButton: () => Bt,
-		buttons: () => Ni,
-		removeButton: () => Ut,
+	var vu = {};
+	me(vu, {
+		_buildPopoverElements: () => ww,
+		addButton: () => yn,
+		buttons: () => Fs,
+		removeButton: () => vn,
 	});
-	function Bt(e, t) {
-		Ni.set(e, t);
+	function yn(e, t) {
+		Fs.set(e, t);
 	}
-	function Ut(e) {
-		Ni.delete(e);
+	function vn(e) {
+		Fs.delete(e);
 	}
-	function Lb(e, t) {
+	function ww(e, t) {
 		let n = [];
-		for (let [i, r] of Ni.entries())
+		for (let [i, r] of Fs.entries())
 			try {
-				let a = r(e);
-				a && ((a.key ??= i), n.push(t(a)));
-			} catch (a) {
-				Ab.error(`[${i}]`, a);
+				let s = r(e);
+				s && ((s.key ??= i), n.push(t(s)));
+			} catch (s) {
+				xw.error(`[${i}]`, s);
 			}
 		return n;
 	}
-	var Ab,
-		Ni,
-		Wn = d(() => {
+	var xw,
+		Fs,
+		Oo = m(() => {
 			'use strict';
-			s();
-			ge();
-			(Ab = new F('MessagePopover')), (Ni = new Map());
+			a();
+			Se();
+			(xw = new Z('MessagePopover')), (Fs = new Map());
 		});
-	var Co,
-		$d,
-		Eb,
-		Db,
-		Mo,
-		Od,
-		_b,
-		xa,
-		Bd = d(() => {
+	var rr,
+		ly,
+		Mw,
+		Pw,
+		sr,
+		ay,
+		Iw,
+		Su,
+		cy = m(() => {
 			'use strict';
-			s();
-			Lt();
-			Wn();
+			a();
+			Pn();
+			Oo();
+			w();
 			T();
-			v();
-			P();
-			($d = 'HideAttachments_HiddenIds'),
-				(Eb = () =>
+			x();
+			(ly = 'HideAttachments_HiddenIds'),
+				(Mw = () =>
 					o(
 						'svg',
 						{
@@ -6078,7 +8184,7 @@ ${Dn(l)}`,
 							d: 'M5 21q-.825 0-1.413-.587Q3 19.825 3 19V5q0-.825.587-1.413Q4.175 3 5 3h14q.825 0 1.413.587Q21 4.175 21 5v14q0 .825-.587 1.413Q19.825 21 19 21Zm0-2h14V5H5v14Zm1-2h12l-3.75-5-3 4L9 13Zm-1 2V5v14Z',
 						}),
 					)),
-				(Db = () =>
+				(Pw = () =>
 					o(
 						'svg',
 						{
@@ -6090,44 +8196,44 @@ ${Dn(l)}`,
 							d: 'm21 18.15-2-2V5H7.85l-2-2H19q.825 0 1.413.587Q21 4.175 21 5Zm-1.2 4.45L18.2 21H5q-.825 0-1.413-.587Q3 19.825 3 19V5.8L1.4 4.2l1.4-1.4 18.4 18.4ZM6 17l3-4 2.25 3 .825-1.1L5 7.825V19h11.175l-2-2Zm7.425-6.425ZM10.6 13.4Z',
 						}),
 					)),
-				(Mo = new Set()),
-				(Od = () => xe($d).then((e) => ((Mo = e ?? new Set()), Mo))),
-				(_b = (e) => be($d, e)),
-				(xa = f({
+				(sr = new Set()),
+				(ay = () => Qe(ly).then((e) => ((sr = e ?? new Set()), sr))),
+				(Iw = (e) => Ve(ly, e)),
+				(Su = g({
 					name: 'HideAttachments',
 					description:
 						'Hide attachments and Embeds for individual messages via hover button',
-					authors: [c.Ven],
+					authors: [p.Ven],
 					dependencies: ['MessagePopoverAPI'],
 					async start() {
-						(Co = document.createElement('style')),
-							(Co.id = 'VencordHideAttachments'),
-							document.head.appendChild(Co),
-							await Od(),
+						(rr = document.createElement('style')),
+							(rr.id = 'VencordHideAttachments'),
+							document.head.appendChild(rr),
+							await ay(),
 							await this.buildCss(),
-							Bt('HideAttachments', (e) => {
+							yn('HideAttachments', (e) => {
 								if (!e.attachments.length && !e.embeds.length)
 									return null;
-								let t = Mo.has(e.id);
+								let t = sr.has(e.id);
 								return {
 									label: t
 										? 'Show Attachments'
 										: 'Hide Attachments',
-									icon: t ? Eb : Db,
+									icon: t ? Mw : Pw,
 									message: e,
-									channel: G.getChannel(e.channel_id),
+									channel: X.getChannel(e.channel_id),
 									onClick: () => this.toggleHide(e.id),
 								};
 							});
 					},
 					stop() {
-						Co.remove(), Mo.clear(), Ut('HideAttachments');
+						rr.remove(), sr.clear(), vn('HideAttachments');
 					},
 					async buildCss() {
-						let e = [...Mo]
+						let e = [...sr]
 							.map((t) => `#message-accessories-${t}`)
 							.join(',');
-						Co.textContent = `
+						rr.textContent = `
         :is(${e}) [class*="embedWrapper"] {
             /* important is not necessary, but add it to make sure bad themes won't break it */
             display: none !important;
@@ -6140,27 +8246,23 @@ ${Dn(l)}`,
         `;
 					},
 					async toggleHide(e) {
-						let t = await Od();
+						let t = await ay();
 						t.delete(e) || t.add(e),
-							await _b(t),
-							await this.buildCss(),
-							I.dispatch({
-								type: 'MESSAGE_UPDATE',
-								message: { id: e },
-							});
+							await Iw(t),
+							await this.buildCss();
 					},
 				}));
 		});
-	var wa,
-		Ud = d(() => {
+	var bu,
+		uy = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			wa = f({
+			bu = g({
 				name: 'iLoveSpam',
 				description: "Do not hide messages from 'likely spammers'",
-				authors: [c.botato, c.Animal],
+				authors: [p.botato, p.Animal],
 				patches: [
 					{
 						find: '),{hasFlag:',
@@ -6172,11 +8274,11 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	function $b() {
+	function Aw() {
 		return o(
 			'svg',
 			{
-				className: qn.overlayToggleIconOff,
+				className: si.overlayToggleIconOff,
 				height: '24',
 				width: '24',
 				viewBox: '0 0 32 26',
@@ -6187,12 +8289,12 @@ ${Dn(l)}`,
 				'g',
 				{ fill: 'none', fillRule: 'evenodd' },
 				o('path', {
-					className: qn.fill,
+					className: si.fill,
 					fill: 'currentColor',
 					d: 'M 16 8 C 7.664063 8 1.25 15.34375 1.25 15.34375 L 0.65625 16 L 1.25 16.65625 C 1.25 16.65625 7.097656 23.324219 14.875 23.9375 C 15.246094 23.984375 15.617188 24 16 24 C 16.382813 24 16.753906 23.984375 17.125 23.9375 C 24.902344 23.324219 30.75 16.65625 30.75 16.65625 L 31.34375 16 L 30.75 15.34375 C 30.75 15.34375 24.335938 8 16 8 Z M 16 10 C 18.203125 10 20.234375 10.601563 22 11.40625 C 22.636719 12.460938 23 13.675781 23 15 C 23 18.613281 20.289063 21.582031 16.78125 21.96875 C 16.761719 21.972656 16.738281 21.964844 16.71875 21.96875 C 16.480469 21.980469 16.242188 22 16 22 C 15.734375 22 15.476563 21.984375 15.21875 21.96875 C 11.710938 21.582031 9 18.613281 9 15 C 9 13.695313 9.351563 12.480469 9.96875 11.4375 L 9.9375 11.4375 C 11.71875 10.617188 13.773438 10 16 10 Z M 16 12 C 14.34375 12 13 13.34375 13 15 C 13 16.65625 14.34375 18 16 18 C 17.65625 18 19 16.65625 19 15 C 19 13.34375 17.65625 12 16 12 Z M 7.25 12.9375 C 7.09375 13.609375 7 14.285156 7 15 C 7 16.753906 7.5 18.394531 8.375 19.78125 C 5.855469 18.324219 4.105469 16.585938 3.53125 16 C 4.011719 15.507813 5.351563 14.203125 7.25 12.9375 Z M 24.75 12.9375 C 26.648438 14.203125 27.988281 15.507813 28.46875 16 C 27.894531 16.585938 26.144531 18.324219 23.625 19.78125 C 24.5 18.394531 25 16.753906 25 15 C 25 14.285156 24.90625 13.601563 24.75 12.9375 Z',
 				}),
 				o('rect', {
-					className: qn.fill,
+					className: si.fill,
 					x: '3',
 					y: '26',
 					width: '26',
@@ -6202,90 +8304,91 @@ ${Dn(l)}`,
 			),
 		);
 	}
-	function Bb({ forceWhite: e }) {
+	function Nw({ forceWhite: e }) {
 		return o(
 			'svg',
 			{
-				className: qn.overlayToggleIconOn,
+				className: si.overlayToggleIconOn,
 				height: '24',
 				width: '24',
 				viewBox: '0 0 32 26',
 			},
 			o('path', {
-				className: e ? '' : qn.fill,
+				className: e ? '' : si.fill,
 				fill: e ? 'var(--white-500)' : '',
 				d: 'M 16 8 C 7.664063 8 1.25 15.34375 1.25 15.34375 L 0.65625 16 L 1.25 16.65625 C 1.25 16.65625 7.097656 23.324219 14.875 23.9375 C 15.246094 23.984375 15.617188 24 16 24 C 16.382813 24 16.753906 23.984375 17.125 23.9375 C 24.902344 23.324219 30.75 16.65625 30.75 16.65625 L 31.34375 16 L 30.75 15.34375 C 30.75 15.34375 24.335938 8 16 8 Z M 16 10 C 18.203125 10 20.234375 10.601563 22 11.40625 C 22.636719 12.460938 23 13.675781 23 15 C 23 18.613281 20.289063 21.582031 16.78125 21.96875 C 16.761719 21.972656 16.738281 21.964844 16.71875 21.96875 C 16.480469 21.980469 16.242188 22 16 22 C 15.734375 22 15.476563 21.984375 15.21875 21.96875 C 11.710938 21.582031 9 18.613281 9 15 C 9 13.695313 9.351563 12.480469 9.96875 11.4375 L 9.9375 11.4375 C 11.71875 10.617188 13.773438 10 16 10 Z M 16 12 C 14.34375 12 13 13.34375 13 15 C 13 16.65625 14.34375 18 16 18 C 17.65625 18 19 16.65625 19 15 C 19 13.34375 17.65625 12 16 12 Z M 7.25 12.9375 C 7.09375 13.609375 7 14.285156 7 15 C 7 16.753906 7.5 18.394531 8.375 19.78125 C 5.855469 18.324219 4.105469 16.585938 3.53125 16 C 4.011719 15.507813 5.351563 14.203125 7.25 12.9375 Z M 24.75 12.9375 C 26.648438 14.203125 27.988281 15.507813 28.46875 16 C 27.894531 16.585938 26.144531 18.324219 23.625 19.78125 C 24.5 18.394531 25 16.753906 25 15 C 25 14.285156 24.90625 13.601563 24.75 12.9375 Z',
 			}),
 		);
 	}
-	function Hd({ activity: e, forceWhite: t }) {
-		let n = wt();
+	function dy({ activity: e, forceWhite: t, forceLeftMargin: n }) {
+		let i = Bt();
 		return o(
-			Z,
+			W,
 			{ text: 'Toggle activity' },
-			({ onMouseLeave: i, onMouseEnter: r }) =>
+			({ onMouseLeave: r, onMouseEnter: s }) =>
 				o(
 					'div',
 					{
-						onMouseLeave: i,
-						onMouseEnter: r,
-						className: qn.overlayToggleIcon,
+						onMouseLeave: r,
+						onMouseEnter: s,
+						className: si.overlayToggleIcon,
 						role: 'button',
 						'aria-label': 'Toggle activity',
 						tabIndex: 0,
-						onClick: (a) => Gb(a, e, n),
+						style: n ? { marginLeft: '2px' } : void 0,
+						onClick: (l) => Lw(l, e, i),
 					},
-					tt.has(e.id) ? o($b, null) : o(Bb, { forceWhite: t }),
+					Qt.has(e.id) ? o(Aw, null) : o(Nw, { forceWhite: t }),
 				),
 		);
 	}
-	function Ub({ activity: e }) {
+	function kw({ activity: e }) {
 		return o(
 			'div',
 			{
-				className: `${Fb.tryItOutBadge} ${Ob.baseShapeRound}`,
+				className: `${Rw.tryItOutBadge} ${Cw.baseShapeRound}`,
 				style: { padding: '0px 2px' },
 			},
-			o(Hd, { activity: e, forceWhite: !0 }),
+			o(dy, { activity: e, forceWhite: !0 }),
 		);
 	}
-	function Gb(e, t, n) {
+	function Lw(e, t, n) {
 		e.stopPropagation(),
-			tt.has(t.id) ? tt.delete(t.id) : tt.set(t.id, t),
+			Qt.has(t.id) ? Qt.delete(t.id) : Qt.set(t.id, t),
 			n(),
-			Pa();
+			Tu();
 	}
-	async function Pa() {
-		await be('IgnoreActivities_ignoredActivities', tt);
+	async function Tu() {
+		await Ve('IgnoreActivities_ignoredActivities', Qt);
 	}
-	var qn,
-		Fb,
-		Ob,
-		Gd,
-		tt,
-		Ia,
-		jd = d(() => {
+	var si,
+		Rw,
+		Cw,
+		py,
+		Qt,
+		xu,
+		my = m(() => {
 			'use strict';
-			s();
-			Lt();
-			J();
+			a();
+			Pn();
+			re();
+			w();
+			ye();
 			T();
-			B();
-			v();
-			D();
-			P();
-			(qn = C('overlayToggleIconOff', 'overlayToggleIconOn')),
-				(Fb = C('tryItOutBadge', 'tryItOutBadgeIcon')),
-				(Ob = C(
+			_();
+			x();
+			(si = P('overlayToggleIconOff', 'overlayToggleIconOn')),
+				(Rw = P('tryItOutBadge', 'tryItOutBadgeIcon')),
+				(Cw = P(
 					'baseShapeRound',
 					'baseShapeRoundLeft',
 					'baseShapeRoundRight',
 				)),
-				(Gd = bt('RunningGameStore'));
-			(tt = new Map()),
-				(Ia = f({
+				(py = ue('RunningGameStore'));
+			(Qt = new Map()),
+				(xu = g({
 					name: 'IgnoreActivities',
-					authors: [c.Nuckyz],
+					authors: [p.Nuckyz],
 					description:
 						'Ignore certain activities (like games and actual activities) from showing up on your status. You can configure which ones are ignored from the Registered Games and Activities tabs.',
 					patches: [
@@ -6316,83 +8419,543 @@ ${Dn(l)}`,
 					],
 					async start() {
 						let e =
-							(await xe('IgnoreActivities_ignoredActivities')) ??
+							(await Qe('IgnoreActivities_ignoredActivities')) ??
 							new Map();
 						if (Array.isArray(e)) {
-							for (let t of e) tt.set(t, { id: t, type: 0 });
-							await Pa();
-						} else tt = e;
-						if (tt.size !== 0) {
-							let t = Gd.getGamesSeen();
-							for (let n of tt.values())
+							for (let t of e) Qt.set(t, { id: t, type: 0 });
+							await Tu();
+						} else Qt = e;
+						if (Qt.size !== 0) {
+							let t = py.getGamesSeen();
+							for (let n of Qt.values())
 								n.type === 0 &&
 									(t.some(
 										(i) =>
 											i.id === n.id || i.exePath === n.id,
 									) ||
-										tt.delete(n.id));
-							await Pa();
+										Qt.delete(n.id));
+							await Tu();
 						}
 					},
 					renderToggleGameActivityButton(e) {
 						return o(
-							N,
+							k,
 							{ noop: !0 },
-							o(Hd, {
+							o(dy, {
 								activity: { id: e.id ?? e.exePath, type: 0 },
+								forceLeftMargin: !0,
 							}),
 						);
 					},
 					renderToggleActivityButton(e) {
 						return o(
-							N,
+							k,
 							{ noop: !0 },
-							o(Ub, { activity: { id: e.id, type: 1 } }),
+							o(kw, { activity: { id: e.id, type: 1 } }),
 						);
 					},
 					isActivityNotIgnored(e) {
 						if (e.type === 0) {
 							if (e.application_id !== void 0)
-								return !tt.has(e.application_id);
+								return !Qt.has(e.application_id);
 							{
-								let t = Gd.getRunningGames().find(
-									(n) => n.name === e.name,
-								)?.exePath;
-								if (t) return !tt.has(t);
+								let t = py
+									.getRunningGames()
+									.find((n) => n.name === e.name)?.exePath;
+								if (t) return !Qt.has(t);
 							}
 						}
 						return !0;
 					},
 				}));
 		});
-	function Hb(e) {
+	var ar,
+		wu = m(() => {
+			'use strict';
+			a();
+			ar = 'vc-imgzoom-magnify-modal';
+		});
+	function Mu(e, t) {
+		e() ? t() : requestAnimationFrame(() => Mu(e, t));
+	}
+	var fy = m(() => {
+		'use strict';
+		a();
+	});
+	var Pu,
+		gy = m(() => {
+			'use strict';
+			a();
+			x();
+			wu();
+			Iu();
+			fy();
+			Pu = ({ instance: e, size: t, zoom: n }) => {
+				let [i, r] = V(!1),
+					[s, l] = V({ x: 0, y: 0 }),
+					[c, u] = V({ x: 0, y: 0 }),
+					[h, f] = V(0),
+					v = qt(!1),
+					S = qt(n),
+					b = qt(t),
+					A = qt(null),
+					C = qt(null),
+					D = qt(null),
+					B = qt(null);
+				if (
+					(I.useLayoutEffect(() => {
+						let K = (ne) => {
+								ne.key === 'Shift' && (v.current = !0);
+							},
+							ee = (ne) => {
+								ne.key === 'Shift' && (v.current = !1);
+							},
+							j = () => {
+								C.current.currentTime = D.current.currentTime;
+							},
+							z = (ne) => {
+								if (e.state.mouseOver && e.state.mouseDown) {
+									let Fe = b.current / 2,
+										Ee = { x: ne.pageX, y: ne.pageY },
+										at = -(
+											(Ee.x -
+												A.current.getBoundingClientRect()
+													.left) *
+												S.current -
+											Fe
+										),
+										qe = -(
+											(Ee.y -
+												A.current.getBoundingClientRect()
+													.top) *
+												S.current -
+											Fe
+										);
+									l({ x: ne.x - Fe, y: ne.y - Fe }),
+										u({ x: at, y: qe }),
+										f(1);
+								} else f(0);
+							},
+							te = (ne) => {
+								e.state.mouseOver &&
+									ne.button === 0 &&
+									((S.current = Oe.store.zoom),
+									(b.current = Oe.store.size),
+									document.getElementById('image-context') &&
+										L.dispatch({
+											type: 'CONTEXT_MENU_CLOSE',
+										}),
+									z(ne),
+									f(1));
+							},
+							$ = () => {
+								f(0),
+									Oe.store.saveZoomValues &&
+										((Oe.store.zoom = S.current),
+										(Oe.store.size = b.current));
+							},
+							Re = async (ne) => {
+								if (
+									e.state.mouseOver &&
+									e.state.mouseDown &&
+									!v.current
+								) {
+									let Fe =
+										S.current +
+										(ne.deltaY / 100) *
+											(Oe.store.invertScroll ? -1 : 1) *
+											Oe.store.zoomSpeed;
+									(S.current = Fe <= 1 ? 1 : Fe), z(ne);
+								}
+								if (
+									e.state.mouseOver &&
+									e.state.mouseDown &&
+									v.current
+								) {
+									let Fe =
+										b.current +
+										ne.deltaY *
+											(Oe.store.invertScroll ? -1 : 1) *
+											Oe.store.zoomSpeed;
+									(b.current = Fe <= 50 ? 50 : Fe), z(ne);
+								}
+							};
+						return (
+							Mu(
+								() => e.state.readyState === 'READY',
+								() => {
+									let ne = document.getElementById(ar);
+									(A.current = ne),
+										ne.firstElementChild.setAttribute(
+											'draggable',
+											'false',
+										),
+										e.props.animated &&
+											((D.current =
+												ne.querySelector('video')),
+											D.current.addEventListener(
+												'timeupdate',
+												j,
+											)),
+										r(!0);
+								},
+							),
+							document.addEventListener('keydown', K),
+							document.addEventListener('keyup', ee),
+							document.addEventListener('mousemove', z),
+							document.addEventListener('mousedown', te),
+							document.addEventListener('mouseup', $),
+							document.addEventListener('wheel', Re),
+							() => {
+								document.removeEventListener('keydown', K),
+									document.removeEventListener('keyup', ee),
+									document.removeEventListener(
+										'mousemove',
+										z,
+									),
+									document.removeEventListener(
+										'mousedown',
+										te,
+									),
+									document.removeEventListener('mouseup', $),
+									document.removeEventListener('wheel', Re),
+									Oe.store.saveZoomValues &&
+										((Oe.store.zoom = S.current),
+										(Oe.store.size = b.current));
+							}
+						);
+					}, []),
+					!i)
+				)
+					return null;
+				let O = A.current.getBoundingClientRect();
+				return o(
+					'div',
+					{
+						className: 'vc-imgzoom-lens',
+						style: {
+							opacity: h,
+							width: b.current + 'px',
+							height: b.current + 'px',
+							transform: `translate(${s.x}px, ${s.y}px)`,
+						},
+					},
+					e.props.animated
+						? o('video', {
+								ref: C,
+								style: {
+									position: 'absolute',
+									left: `${c.x}px`,
+									top: `${c.y}px`,
+								},
+								width: `${O.width * S.current}px`,
+								height: `${O.height * S.current}px`,
+								poster: e.props.src,
+								src: D.current?.src ?? e.props.src,
+								autoPlay: !0,
+								loop: !0,
+						  })
+						: o('img', {
+								ref: B,
+								style: {
+									position: 'absolute',
+									transform: `translate(${c.x}px, ${c.y}px)`,
+								},
+								width: `${O.width * S.current}px`,
+								height: `${O.height * S.current}px`,
+								src: e.props.src,
+								alt: '',
+						  }),
+				);
+			};
+		});
+	var Ru,
+		hy = m(() => {
+			a();
+			(window.VencordStyles ??= new Map()).set(
+				'src/plugins/imageZoom/styles.css',
+				{
+					name: 'src/plugins/imageZoom/styles.css',
+					source: `.vc-imgzoom-lens {
+    position: absolute;
+    inset: 0;
+    z-index: 9999;
+    border: 2px solid grey;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: none;
+    box-shadow: inset 0 0 10px 2px grey;
+    filter: drop-shadow(0 0 2px grey);
+    pointer-events: none;
+}
+
+/* make the carousel take up less space so we can click the backdrop and exit out of it */
+[class|="carouselModal"] {
+    height: fit-content;
+    box-shadow: none;
+}
+
+[class*="modalCarouselWrapper"] {
+    height: fit-content;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+[class|="wrapper"]:has(> #vc-imgzoom-magnify-modal) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+`,
+					classNames: {},
+					dom: null,
+				},
+			);
+			Ru = 'src/plugins/imageZoom/styles.css';
+		});
+	var Oe,
+		yy,
+		Cu,
+		Iu = m(() => {
+			'use strict';
+			a();
+			Jt();
+			E();
+			je();
+			ir();
+			w();
+			Ko();
+			T();
+			x();
+			gy();
+			wu();
+			hy();
+			(Oe = N({
+				saveZoomValues: {
+					type: 3,
+					description: 'Whether to save zoom and lens size values',
+					default: !0,
+				},
+				preventCarouselFromClosingOnClick: {
+					type: 3,
+					description:
+						'Allow the image modal in the image slideshow thing / carousel to remain open when clicking on the image',
+					default: !0,
+				},
+				invertScroll: {
+					type: 3,
+					description: 'Invert scroll',
+					default: !0,
+				},
+				zoom: {
+					description: 'Zoom of the lens',
+					type: 5,
+					markers: go(1, 50, 4),
+					default: 2,
+					stickToMarkers: !1,
+				},
+				size: {
+					description: 'Radius / Size of the lens',
+					type: 5,
+					markers: go(50, 1e3, 50),
+					default: 100,
+					stickToMarkers: !1,
+				},
+				zoomSpeed: {
+					description: 'How fast the zoom / lens size changes',
+					type: 5,
+					markers: go(0.1, 5, 0.2),
+					default: 0.5,
+					stickToMarkers: !1,
+				},
+			})),
+				(yy = (e) => () => {
+					e.push(
+						o(
+							F.MenuGroup,
+							{ id: 'image-zoom' },
+							o(F.MenuControlItem, {
+								id: 'zoom',
+								label: 'Zoom',
+								control: (t, n) =>
+									o(F.MenuSliderControl, {
+										ref: n,
+										...t,
+										minValue: 1,
+										maxValue: 50,
+										value: Oe.store.zoom,
+										onChange: Ct(
+											(i) => (Oe.store.zoom = i),
+											100,
+										),
+									}),
+							}),
+							o(F.MenuControlItem, {
+								id: 'size',
+								label: 'Lens Size',
+								control: (t, n) =>
+									o(F.MenuSliderControl, {
+										ref: n,
+										...t,
+										minValue: 50,
+										maxValue: 1e3,
+										value: Oe.store.size,
+										onChange: Ct(
+											(i) => (Oe.store.size = i),
+											100,
+										),
+									}),
+							}),
+							o(F.MenuControlItem, {
+								id: 'zoom-speed',
+								label: 'Zoom Speed',
+								control: (t, n) =>
+									o(F.MenuSliderControl, {
+										ref: n,
+										...t,
+										minValue: 0.1,
+										maxValue: 5,
+										value: Oe.store.zoomSpeed,
+										onChange: Ct(
+											(i) => (Oe.store.zoomSpeed = i),
+											100,
+										),
+										renderValue: (i) => `${i.toFixed(3)}x`,
+									}),
+							}),
+						),
+					);
+				}),
+				(Cu = g({
+					name: 'ImageZoom',
+					description:
+						'Lets you zoom in to images and gifs. Use scroll wheel to zoom in and shift + scroll wheel to increase lens radius / size',
+					authors: [p.Aria],
+					tags: ['ImageUtilities'],
+					patches: [
+						{
+							find: '"renderLinkComponent","maxWidth"',
+							replacement: {
+								match: /(return\(.{1,100}\(\)\.wrapper.{1,100})(src)/,
+								replace: `$1id: '${ar}',$2`,
+							},
+						},
+						{
+							find: 'handleImageLoad=',
+							replacement: [
+								{
+									match: /(render=function\(\){.{1,500}limitResponsiveWidth.{1,600})onMouseEnter:/,
+									replace:
+										'$1...$self.makeProps(this),onMouseEnter:',
+								},
+								{
+									match: /componentDidMount=function\(\){/,
+									replace: '$&$self.renderMagnifier(this);',
+								},
+								{
+									match: /componentWillUnmount=function\(\){/,
+									replace: '$&$self.unMountMagnifier();',
+								},
+							],
+						},
+						{
+							find: '.carouselModal,',
+							replacement: {
+								match: /onClick:(\i),/,
+								replace:
+									'onClick:$self.settings.store.preventCarouselFromClosingOnClick ? () => {} : $1,',
+							},
+						},
+					],
+					settings: Oe,
+					currentMagnifierElement: null,
+					element: null,
+					Magnifier: Pu,
+					root: null,
+					makeProps(e) {
+						return {
+							onMouseOver: () => this.onMouseOver(e),
+							onMouseOut: () => this.onMouseOut(e),
+							onMouseDown: (t) => this.onMouseDown(t, e),
+							onMouseUp: () => this.onMouseUp(e),
+							id: e.props.id,
+						};
+					},
+					renderMagnifier(e) {
+						e.props.id === ar &&
+							(this.currentMagnifierElement ||
+								((this.currentMagnifierElement = o(Pu, {
+									size: Oe.store.size,
+									zoom: Oe.store.zoom,
+									instance: e,
+								})),
+								(this.root = Ro.createRoot(this.element)),
+								this.root.render(
+									this.currentMagnifierElement,
+								)));
+					},
+					unMountMagnifier() {
+						this.root?.unmount(),
+							(this.currentMagnifierElement = null),
+							(this.root = null);
+					},
+					onMouseOver(e) {
+						e.setState((t) => ({ ...t, mouseOver: !0 }));
+					},
+					onMouseOut(e) {
+						e.setState((t) => ({ ...t, mouseOver: !1 }));
+					},
+					onMouseDown(e, t) {
+						e.button === 0 &&
+							t.setState((n) => ({ ...n, mouseDown: !0 }));
+					},
+					onMouseUp(e) {
+						e.setState((t) => ({ ...t, mouseDown: !1 }));
+					},
+					start() {
+						Je(Ru),
+							we('image-context', yy),
+							(this.element = document.createElement('div')),
+							this.element.classList.add('MagnifierContainer'),
+							document.body.appendChild(this.element);
+					},
+					stop() {
+						bt(Ru),
+							this.root && this.root.unmount(),
+							this.element?.remove(),
+							Ae('image-context', yy);
+					},
+				}));
+		});
+	function Ew(e) {
 		let t = e?.message?.content,
-			[n, i] = w.useState('password');
+			[n, i] = I.useState('password');
 		return o(
-			Ee,
+			Ie,
 			{ ...e },
-			o(He, null, o(g.FormTitle, { tag: 'h4' }, 'Decrypt Message')),
+			o($e, null, o(y.FormTitle, { tag: 'h4' }, 'Decrypt Message')),
 			o(
-				je,
+				Le,
 				null,
 				o(
-					g.FormTitle,
+					y.FormTitle,
 					{ tag: 'h5', style: { marginTop: '10px' } },
 					'Secret',
 				),
-				o(Te, { defaultValue: t, disabled: !0 }),
-				o(g.FormTitle, { tag: 'h5' }, 'Password'),
-				o(Te, { style: { marginBottom: '20px' }, onChange: i }),
+				o(Ne, { defaultValue: t, disabled: !0 }),
+				o(y.FormTitle, { tag: 'h5' }, 'Password'),
+				o(Ne, { style: { marginBottom: '20px' }, onChange: i }),
 			),
 			o(
-				ut,
+				ot,
 				null,
 				o(
-					L,
+					R,
 					{
-						color: L.Colors.GREEN,
+						color: R.Colors.GREEN,
 						onClick: () => {
-							let r = ka(t, n, !0);
+							let r = Au(t, n, !0);
 							!r ||
 								!e?.message ||
 								(Vencord.Plugins.plugins.InvisibleChat.buildEmbed(
@@ -6405,10 +8968,10 @@ ${Dn(l)}`,
 					'Decrypt',
 				),
 				o(
-					L,
+					R,
 					{
-						color: L.Colors.TRANSPARENT,
-						look: L.Looks.LINK,
+						color: R.Colors.TRANSPARENT,
+						look: R.Looks.LINK,
 						style: { left: 15, position: 'absolute' },
 						onClick: e.onClose,
 					},
@@ -6417,99 +8980,95 @@ ${Dn(l)}`,
 			),
 		);
 	}
-	function zd(e) {
-		De((t) => o(Hb, { ...t, ...e }));
+	function vy(e) {
+		be((t) => o(Ew, { ...t, ...e }));
 	}
-	var Wd = d(() => {
+	var Sy = m(() => {
 		'use strict';
-		s();
-		Ze();
-		P();
-		Ri();
+		a();
+		ze();
+		x();
+		Bs();
 	});
-	function zb(e) {
-		let [t, n] = w.useState(''),
-			[i, r] = w.useState(''),
-			[a, l] = w.useState('password'),
-			[u, m] = w.useState(!1),
-			y = t && (u || (i && /\w \w/.test(i)));
+	function Dw(e) {
+		let [t, n] = I.useState(''),
+			[i, r] = I.useState(''),
+			[s, l] = I.useState('password'),
+			[c, u] = I.useState(!1),
+			h = t && (c || (i && /\w \w/.test(i)));
 		return o(
-			Ee,
+			Ie,
 			{ ...e },
-			o(He, null, o(g.FormTitle, { tag: 'h4' }, 'Encrypt Message')),
+			o($e, null, o(y.FormTitle, { tag: 'h4' }, 'Encrypt Message')),
 			o(
-				je,
+				Le,
 				null,
 				o(
-					g.FormTitle,
+					y.FormTitle,
 					{ tag: 'h5', style: { marginTop: '10px' } },
 					'Secret',
 				),
-				o(Te, {
-					onChange: (h) => {
-						n(h);
+				o(Ne, {
+					onChange: (f) => {
+						n(f);
 					},
 				}),
 				o(
-					g.FormTitle,
+					y.FormTitle,
 					{ tag: 'h5', style: { marginTop: '10px' } },
 					'Cover (2 or more Words!!)',
 				),
-				o(Te, {
-					disabled: u,
-					onChange: (h) => {
-						r(h);
+				o(Ne, {
+					disabled: c,
+					onChange: (f) => {
+						r(f);
 					},
 				}),
 				o(
-					g.FormTitle,
+					y.FormTitle,
 					{ tag: 'h5', style: { marginTop: '10px' } },
 					'Password',
 				),
-				o(Te, {
+				o(Ne, {
 					style: { marginBottom: '20px' },
 					defaultValue: 'password',
-					onChange: (h) => {
-						l(h);
+					onChange: (f) => {
+						l(f);
 					},
 				}),
 				o(
-					pn,
+					Nt,
 					{
-						value: u,
-						onChange: (h) => {
-							m(h);
+						value: c,
+						onChange: (f) => {
+							u(f);
 						},
 					},
 					"Don't use a Cover",
 				),
 			),
 			o(
-				ut,
+				ot,
 				null,
 				o(
-					L,
+					R,
 					{
-						color: L.Colors.GREEN,
-						disabled: !y,
+						color: R.Colors.GREEN,
+						disabled: !h,
 						onClick: () => {
-							if (!y) return;
-							let h = Yd(t, a, u ? 'd d' : i),
-								b = u ? h.replaceAll('d', '') : h;
-							!b ||
-								(jb.dispatchToLastSubscribed('INSERT_TEXT', {
-									rawText: `${b}`,
-								}),
-								e.onClose());
+							if (!h) return;
+							let f = xy(t, s, c ? 'd d' : i),
+								v = c ? f.replaceAll('d', '') : f;
+							!v || (Bn(v), e.onClose());
 						},
 					},
 					'Send',
 				),
 				o(
-					L,
+					R,
 					{
-						color: L.Colors.TRANSPARENT,
-						look: L.Looks.LINK,
+						color: R.Colors.TRANSPARENT,
+						look: R.Looks.LINK,
 						style: { left: 15, position: 'absolute' },
 						onClick: () => {
 							e.onClose();
@@ -6520,20 +9079,18 @@ ${Dn(l)}`,
 			),
 		);
 	}
-	function qd() {
-		De((e) => o(zb, { ...e }));
+	function by() {
+		be((e) => o(Dw, { ...e }));
 	}
-	var jb,
-		Kd = d(() => {
-			'use strict';
-			s();
-			Ze();
-			D();
-			P();
-			Ri();
-			jb = Se((e) => e.emitter?._events?.INSERT_TEXT);
-		});
-	function Wb() {
+	var Ty = m(() => {
+		'use strict';
+		a();
+		$n();
+		ze();
+		x();
+		Bs();
+	});
+	function Ow() {
 		return o(
 			'svg',
 			{
@@ -6547,9 +9104,9 @@ ${Dn(l)}`,
 			}),
 		);
 	}
-	function qb() {
+	function _w() {
 		return o(
-			Z,
+			W,
 			{ text: 'This message has a hidden message! (InvisibleChat)' },
 			({ onMouseEnter: e, onMouseLeave: t }) =>
 				o('img', {
@@ -6563,98 +9120,101 @@ ${Dn(l)}`,
 				}),
 		);
 	}
-	function Kb() {
-		return o(
-			Z,
-			{ text: 'Encrypt Message' },
-			({ onMouseEnter: e, onMouseLeave: t }) =>
-				o(
-					'div',
-					{ style: { display: 'flex' } },
-					o(
-						L,
-						{
-							'aria-haspopup': 'dialog',
-							'aria-label': 'Encrypt Message',
-							size: '',
-							look: un.BLANK,
-							onMouseEnter: e,
-							onMouseLeave: t,
-							innerClassName: vt.button,
-							onClick: () => qd(),
-							style: { marginRight: '2px' },
-						},
+	function Fw(e) {
+		return e.type.analyticsName !== 'normal'
+			? null
+			: o(
+					W,
+					{ text: 'Encrypt Message' },
+					({ onMouseEnter: t, onMouseLeave: n }) =>
 						o(
 							'div',
-							{ className: vt.buttonWrapper },
+							{ style: { display: 'flex' } },
 							o(
-								'svg',
+								R,
 								{
-									'aria-hidden': !0,
-									role: 'img',
-									width: '32',
-									height: '32',
-									viewBox: '0 0 64 64',
-									style: { scale: '1.1' },
+									'aria-haspopup': 'dialog',
+									'aria-label': 'Encrypt Message',
+									size: '',
+									look: Wt.BLANK,
+									onMouseEnter: t,
+									onMouseLeave: n,
+									innerClassName: pt.button,
+									onClick: () => by(),
+									style: { padding: '0 2px', scale: '0.9' },
 								},
-								o('path', {
-									fill: 'currentColor',
-									d: 'M 32 9 C 24.832 9 19 14.832 19 22 L 19 27.347656 C 16.670659 28.171862 15 30.388126 15 33 L 15 49 C 15 52.314 17.686 55 21 55 L 43 55 C 46.314 55 49 52.314 49 49 L 49 33 C 49 30.388126 47.329341 28.171862 45 27.347656 L 45 22 C 45 14.832 39.168 9 32 9 z M 32 13 C 36.963 13 41 17.038 41 22 L 41 27 L 23 27 L 23 22 C 23 17.038 27.037 13 32 13 z',
-								}),
+								o(
+									'div',
+									{ className: pt.buttonWrapper },
+									o(
+										'svg',
+										{
+											'aria-hidden': !0,
+											role: 'img',
+											width: '32',
+											height: '32',
+											viewBox: '0 0 64 64',
+											style: { scale: '1.1' },
+										},
+										o('path', {
+											fill: 'currentColor',
+											d: 'M 32 9 C 24.832 9 19 14.832 19 22 L 19 27.347656 C 16.670659 28.171862 15 30.388126 15 33 L 15 49 C 15 52.314 17.686 55 21 55 L 43 55 C 46.314 55 49 52.314 49 49 L 49 33 C 49 30.388126 47.329341 28.171862 45 27.347656 L 45 22 C 45 14.832 39.168 9 32 9 z M 32 13 C 36.963 13 41 17.038 41 22 L 41 27 L 23 27 L 23 22 C 23 17.038 27.037 13 32 13 z',
+										}),
+									),
+								),
 							),
 						),
-					),
-				),
-		);
+			  );
 	}
-	function Yd(e, t, n) {
-		return Ca.hide(e + '\u200B', t, n);
+	function xy(e, t, n) {
+		return Nu.hide(e + '\u200B', t, n);
 	}
-	function ka(e, t, n) {
-		let i = Ca.reveal(e, t);
+	function Au(e, t, n) {
+		let i = Nu.reveal(e, t);
 		return n ? i.replace('\u200B', '') : i;
 	}
-	function Yb(e) {
+	function Bw(e) {
 		return e.endsWith('\u200B');
 	}
-	async function Qb(e) {
-		let t = Qd.store.savedPasswords.split(',').map((i) => i.trim());
+	async function $w(e) {
+		let t = wy.store.savedPasswords.split(',').map((i) => i.trim());
 		if (!e?.content || !t?.length) return !1;
 		let { content: n } = e;
 		/^\W/.test(e.content) && (n = `d ${e.content}d`);
 		for (let i = 0; i < t.length; i++) {
-			let r = ka(n, t[i], !1);
-			if (Yb(r)) return r;
+			let r = Au(n, t[i], !1);
+			if (Bw(r)) return r;
 		}
 		return !1;
 	}
-	var Ca,
-		Qd,
-		Ma,
-		Ri = d(() => {
+	var Nu,
+		wy,
+		ku,
+		Bs = m(() => {
 			'use strict';
-			s();
-			Wn();
+			a();
+			Oo();
 			E();
-			J();
+			re();
+			w();
+			tr();
 			T();
-			Io();
-			v();
-			P();
-			Wd();
-			Kd();
-			(Qd = V({
+			x();
+			Sy();
+			Ty();
+			(wy = N({
 				savedPasswords: {
 					type: 0,
 					default: 'password, Password',
 					description: 'Saved Passwords (Seperated with a , )',
 				},
 			})),
-				(Ma = f({
+				(ku = g({
 					name: 'InvisibleChat',
 					description:
-						'Encrypt your Messages in a non-suspicious way! This plugin makes requests to >>https://embed.sammcheese.net<< to provide embeds to decrypted links!',
-					authors: [c.SammCheese],
+						'Encrypt your Messages in a non-suspicious way!',
+					authors: [p.SammCheese],
+					dependencies: ['MessagePopoverAPI'],
 					patches: [
 						{
 							find: '.Messages.MESSAGE_EDITED,',
@@ -6669,7 +9229,7 @@ ${Dn(l)}`,
 							replacement: {
 								match: /(.)\.push.{1,30}disabled:(\i),.{1,20}\},"gift"\)\)/,
 								replace:
-									'$&;try{$2||$1.push($self.chatBarIcon())}catch{}',
+									'$&;try{$2||$1.push($self.chatBarIcon(arguments[0]))}catch{}',
 							},
 						},
 					],
@@ -6680,25 +9240,25 @@ ${Dn(l)}`,
 					URL_REGEX: new RegExp(
 						/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
 					),
-					settings: Qd,
+					settings: wy,
 					async start() {
-						let { default: e } = await gd();
-						(Ca = new e(!0, !1)),
-							Bt('invDecrypt', (t) =>
+						let { default: e } = await Ch();
+						(Nu = new e(!0, !1)),
+							yn('invDecrypt', (t) =>
 								this.INV_REGEX.test(t?.content)
 									? {
 											label: 'Decrypt Message',
 											icon: this.popOverIcon,
 											message: t,
-											channel: G.getChannel(t.channel_id),
+											channel: X.getChannel(t.channel_id),
 											onClick: async () => {
-												await Qb(t).then((n) =>
+												await $w(t).then((n) =>
 													n
 														? void this.buildEmbed(
 																t,
 																n,
 														  )
-														: void zd({
+														: void vy({
 																message: t,
 														  }),
 												);
@@ -6708,19 +9268,14 @@ ${Dn(l)}`,
 							);
 					},
 					stop() {
-						Ut('invDecrypt');
+						vn('invDecrypt');
 					},
 					async getEmbed(e) {
-						let t = new AbortController(),
-							n = setTimeout(() => t.abort(), 5e3),
-							i = {
-								signal: t.signal,
-								method: 'POST',
-								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify({ url: e }),
-							},
-							r = await fetch(this.EMBED_API_URL, i);
-						return clearTimeout(n), await r.json();
+						let { body: t } = await Yt.post({
+							url: '/unfurler/embed-urls',
+							body: { urls: [e] },
+						});
+						return await t.embeds[0];
 					},
 					async buildEmbed(e, t) {
 						let n = t.match(this.URL_REGEX);
@@ -6740,122 +9295,95 @@ ${Dn(l)}`,
 							this.updateMessage(e);
 					},
 					updateMessage: (e) => {
-						I.dispatch({ type: 'MESSAGE_UPDATE', message: e });
+						L.dispatch({ type: 'MESSAGE_UPDATE', message: e });
 					},
-					chatBarIcon: N.wrap(Kb, { noop: !0 }),
-					popOverIcon: () => o(Wb, null),
-					indicator: N.wrap(qb, { noop: !0 }),
+					chatBarIcon: k.wrap(Fw, { noop: !0 }),
+					popOverIcon: () => o(Ow, null),
+					indicator: k.wrap(_w, { noop: !0 }),
 				}));
 		});
-	var Na,
-		Xd = d(() => {
+	function My(e, t) {
+		!X.hasChannel(t) || Ei.transitionTo(`/channels/${e ?? '@me'}/${t}`);
+	}
+	var $s,
+		Vt,
+		Lu,
+		Py = m(() => {
 			'use strict';
-			s();
-			Lt();
+			a();
+			Pn();
+			w();
 			T();
-			v();
-			P();
-			Na = f({
+			x();
+			$s = !1;
+			Lu = g({
 				name: 'KeepCurrentChannel',
 				description:
 					'Attempt to navigate to the channel you were in before switching accounts or loading Discord.',
-				authors: [c.Nuckyz],
-				isSwitchingAccount: !1,
-				previousCache: {},
-				attemptToNavigateToChannel(e, t) {
-					!G.hasChannel(t) ||
-						lo.transitionTo(`/channels/${e ?? '@me'}/${t}`);
-				},
-				onLogout(e) {
-					this.isSwitchingAccount = e.isSwitchingAccount;
-				},
-				onConnectionOpen() {
-					!this.isSwitchingAccount ||
-						((this.isSwitchingAccount = !1),
-						this.previousCache.channelId &&
-							this.attemptToNavigateToChannel(
-								this.previousCache.guildId,
-								this.previousCache.channelId,
-							));
-				},
-				async onChannelSelect({ guildId: e, channelId: t }) {
-					this.isSwitchingAccount ||
-						((this.previousCache = { guildId: e, channelId: t }),
-						await be(
-							'KeepCurrentChannel_previousData',
-							this.previousCache,
-						));
+				authors: [p.Nuckyz],
+				flux: {
+					LOGOUT(e) {
+						({ isSwitchingAccount: $s } = e);
+					},
+					CONNECTION_OPEN() {
+						!$s ||
+							(($s = !1),
+							Vt?.channelId && My(Vt.guildId, Vt.channelId));
+					},
+					async CHANNEL_SELECT({ guildId: e, channelId: t }) {
+						$s ||
+							((Vt = { guildId: e, channelId: t }),
+							await Ve('KeepCurrentChannel_previousData', Vt));
+					},
 				},
 				async start() {
-					let e = await xe('KeepCurrentChannel_previousData');
-					e
-						? ((this.previousCache = e),
-						  this.previousCache.channelId &&
-								this.attemptToNavigateToChannel(
-									this.previousCache.guildId,
-									this.previousCache.channelId,
-								))
-						: ((this.previousCache = {
-								guildId: Rn.getGuildId(),
-								channelId: re.getChannelId() ?? null,
-						  }),
-						  await be(
-								'KeepCurrentChannel_previousData',
-								this.previousCache,
-						  )),
-						I.subscribe('LOGOUT', this.onLogout.bind(this)),
-						I.subscribe(
-							'CONNECTION_OPEN',
-							this.onConnectionOpen.bind(this),
-						),
-						I.subscribe(
-							'CHANNEL_SELECT',
-							this.onChannelSelect.bind(this),
-						);
-				},
-				stop() {
-					I.unsubscribe('LOGOUT', this.onLogout),
-						I.unsubscribe('CONNECTION_OPEN', this.onConnectionOpen),
-						I.unsubscribe('CHANNEL_SELECT', this.onChannelSelect);
+					(Vt = await Qe('KeepCurrentChannel_previousData')),
+						Vt
+							? Vt.channelId && My(Vt.guildId, Vt.channelId)
+							: ((Vt = {
+									guildId: Xo.getGuildId(),
+									channelId: fe.getChannelId() ?? null,
+							  }),
+							  await Ve('KeepCurrentChannel_previousData', Vt));
 				},
 			});
 		});
-	async function Ra(e) {
-		return (await Zb.getAsset(Aa, [e, void 0]))[0];
+	async function Eu(e) {
+		return (await Hw.getAsset(Du, [e, void 0]))[0];
 	}
-	function Vb(e) {
-		I.dispatch({
+	function zw(e) {
+		L.dispatch({
 			type: 'LOCAL_ACTIVITY_UPDATE',
 			activity: e,
 			socketId: 'LastFM',
 		});
 	}
-	var Aa,
-		Xb,
-		Jd,
-		Jb,
-		Zb,
-		ft,
-		La,
-		Zd = d(() => {
+	var Du,
+		Uw,
+		Iy,
+		Gw,
+		Hw,
+		Sn,
+		Ou,
+		Ry = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			Zt();
+			Wn();
+			w();
+			Se();
 			T();
-			ge();
-			v();
-			D();
-			P();
-			(Aa = '1043533871037284423'),
-				(Xb = '2a96cbd8b46e442fc41c2b86b821562f'),
-				(Jd = new F('LastFMRichPresence')),
-				(Jb = C('getLocalPresence')),
-				(Zb = ye(
+			_();
+			x();
+			(Du = '1108588077900898414'),
+				(Uw = '2a96cbd8b46e442fc41c2b86b821562f'),
+				(Iy = new Z('LastFMRichPresence')),
+				(Gw = P('getLocalPresence')),
+				(Hw = Ye(
 					'getAssetImage: size must === [number, number] for Twitch',
-					{ getAsset: R.byCode('apply(') },
+					{ getAsset: Y.byCode('apply(') },
 				));
-			(ft = V({
+			(Sn = N({
 				username: { description: 'last.fm username', type: 0 },
 				apiKey: { description: 'last.fm api key', type: 0 },
 				shareUsername: {
@@ -6895,25 +9423,25 @@ ${Dn(l)}`,
 					],
 				},
 			})),
-				(La = f({
+				(Ou = g({
 					name: 'LastFMRichPresence',
 					description: 'Little plugin for Last.fm rich presence',
-					authors: [c.dzshn, c.RuiNtD],
+					authors: [p.dzshn, p.RuiNtD],
 					settingsAboutComponent: () =>
 						o(
-							p,
+							d,
 							null,
 							o(
-								g.FormTitle,
+								y.FormTitle,
 								{ tag: 'h3' },
 								'How to get an API key',
 							),
 							o(
-								g.FormText,
+								y.FormText,
 								null,
 								'An API key is required to fetch your current track. To get one, you can visit ',
 								o(
-									Ne,
+									We,
 									{
 										href: 'https://www.last.fm/api/account/create',
 									},
@@ -6932,22 +9460,23 @@ ${Dn(l)}`,
 								'And copy the API key (not the shared secret!)',
 							),
 						),
-					settings: ft,
+					settings: Sn,
 					start() {
-						this.updateInterval = setInterval(() => {
-							this.updatePresence();
-						}, 16e3);
+						this.updatePresence(),
+							(this.updateInterval = setInterval(() => {
+								this.updatePresence();
+							}, 16e3));
 					},
 					stop() {
 						clearInterval(this.updateInterval);
 					},
 					async fetchTrackData() {
-						if (!ft.store.username || !ft.store.apiKey) return null;
+						if (!Sn.store.username || !Sn.store.apiKey) return null;
 						try {
 							let e = new URLSearchParams({
 									method: 'user.getrecenttracks',
-									api_key: ft.store.apiKey,
-									user: ft.store.username,
+									api_key: Sn.store.apiKey,
+									user: Sn.store.username,
 									limit: '1',
 									format: 'json',
 								}),
@@ -6958,16 +9487,15 @@ ${Dn(l)}`,
 							let n = await t.json();
 							if (n.error)
 								return (
-									Jd.error(
+									Iy.error(
 										'Error from Last.fm API',
 										`${n.error}: ${n.message}`,
 									),
 									null
 								);
 							let i = n.recenttracks?.track[0];
-							return !i || !i['@attr']?.nowplaying
-								? null
-								: {
+							return i?.['@attr']?.nowplaying
+								? {
 										name: i.name || 'Unknown',
 										album: i.album['#text'],
 										artist: i.artist['#text'] || 'Unknown',
@@ -6975,26 +9503,27 @@ ${Dn(l)}`,
 										imageUrl: i.image?.find(
 											(r) => r.size === 'large',
 										)?.['#text'],
-								  };
+								  }
+								: null;
 						} catch (e) {
 							return (
-								Jd.error('Failed to query Last.fm API', e), null
+								Iy.error('Failed to query Last.fm API', e), null
 							);
 						}
 					},
 					async updatePresence() {
-						Vb(await this.getActivity());
+						zw(await this.getActivity());
 					},
 					getLargeImage(e) {
-						if (e.imageUrl && !e.imageUrl.includes(Xb))
+						if (e.imageUrl && !e.imageUrl.includes(Uw))
 							return e.imageUrl;
-						if (ft.store.missingArt === 'placeholder')
+						if (Sn.store.missingArt === 'placeholder')
 							return 'placeholder';
 					},
 					async getActivity() {
-						if (ft.store.hideWithSpotify) {
-							for (let r of Jb.getActivities())
-								if (r.type === 2 && r.application_id !== Aa)
+						if (Sn.store.hideWithSpotify) {
+							for (let r of Gw.getActivities())
+								if (r.type === 2 && r.application_id !== Du)
 									return null;
 						}
 						let e = await this.fetchTrackData();
@@ -7002,45 +9531,45 @@ ${Dn(l)}`,
 						let t = this.getLargeImage(e),
 							n = t
 								? {
-										large_image: await Ra(t),
+										large_image: await Eu(t),
 										large_text: e.album || void 0,
-										small_image: await Ra('lastfm-small'),
+										small_image: await Eu('lastfm-small'),
 										small_text: 'Last.fm',
 								  }
 								: {
-										large_image: await Ra('lastfm-large'),
+										large_image: await Eu('lastfm-large'),
 										large_text: e.album || void 0,
 								  },
 							i = [{ label: 'View Song', url: e.url }];
 						return (
-							ft.store.shareUsername &&
+							Sn.store.shareUsername &&
 								i.push({
 									label: 'Last.fm Profile',
-									url: `https://www.last.fm/user/${ft.store.username}`,
+									url: `https://www.last.fm/user/${Sn.store.username}`,
 								}),
 							{
-								application_id: Aa,
-								name: ft.store.statusName,
+								application_id: Du,
+								name: Sn.store.statusName,
 								details: e.name,
 								state: e.artist,
 								assets: n,
 								buttons: i.map((r) => r.label),
 								metadata: { button_urls: i.map((r) => r.url) },
-								type: ft.store.useListeningStatus ? 2 : 0,
+								type: Sn.store.useListeningStatus ? 2 : 0,
 								flags: 1,
 							}
 						);
 					},
 				}));
 		});
-	var Vd,
-		Ea,
-		em = d(() => {
+	var Cy,
+		_u,
+		Ay = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			(Vd = [
+			(Cy = [
 				'Eyrokac',
 				"Rdcg$l`'k|~n",
 				'H`tf$d&iajo+d`{"',
@@ -7077,10 +9606,10 @@ ${Dn(l)}`,
 				`Thof$lu'ofdn,!qsefc'az*bnrcma+&Om{o+iu"\`khct$)bnrd"bcdoi&`,
 				"snofplkb{)c\x7F'r\"lod\x7F'|f*aurv#cpno`abchijklmno",
 			]),
-				(Ea = f({
+				(_u = g({
 					name: 'LoadingQuotes',
 					description: 'Replace Discords loading quotes',
-					authors: [c.Ven, c.KraXen72],
+					authors: [p.Ven, p.KraXen72],
 					patches: [
 						{
 							find: '.LOADING_DID_YOU_KNOW',
@@ -7100,20 +9629,22 @@ ${Dn(l)}`,
 					},
 					get quote() {
 						return this.xor(
-							Vd[Math.floor(Math.random() * Vd.length)],
+							Cy[Math.floor(Math.random() * Cy.length)],
 						);
 					},
 				}));
 		});
-	function eS() {
-		let e = Pi().guild_id,
-			t = Da[e];
-		if (((tm = wt()), !t)) return null;
-		let n = t[0].toLocaleString();
-		n === '0' && t[1] > 0 && (n = 'Loading...');
-		let i = t[1].toLocaleString();
+	function jw() {
+		let { id: e, guild_id: t } = Be([fe], () => ns()),
+			{ groups: n } = Be([ky], () => ky.getProps(t, e)),
+			i = Be([Ny], () => Ny.getMemberCount(t));
+		if (i == null) return null;
+		let r =
+			n.length === 1 && n[0].id === 'unknown'
+				? 0
+				: n.reduce((s, l) => s + (l.id === 'offline' ? 0 : l.count), 0);
 		return o(
-			pe,
+			ae,
 			{
 				id: 'vc-membercount',
 				style: {
@@ -7125,124 +9656,105 @@ ${Dn(l)}`,
 					gap: 0,
 				},
 			},
-			o(Z, { text: `${i} Online`, position: 'bottom' }, (r) =>
-				o(
-					'div',
-					{ ...r },
-					o('span', {
-						style: {
-							backgroundColor: 'var(--green-360)',
-							width: '12px',
-							height: '12px',
-							borderRadius: '50%',
-							display: 'inline-block',
-							marginRight: '0.5em',
-						},
-					}),
-					o('span', { style: { color: 'var(--green-360)' } }, i),
-				),
+			o(
+				W,
+				{ text: `${r} Online in this Channel`, position: 'bottom' },
+				(s) =>
+					o(
+						'div',
+						{ ...s },
+						o('span', {
+							style: {
+								backgroundColor: 'var(--green-360)',
+								width: '12px',
+								height: '12px',
+								borderRadius: '50%',
+								display: 'inline-block',
+								marginRight: '0.5em',
+							},
+						}),
+						o('span', { style: { color: 'var(--green-360)' } }, r),
+					),
 			),
-			o(Z, { text: `${n} Total Members`, position: 'bottom' }, (r) =>
-				o(
-					'div',
-					{ ...r },
-					o('span', {
-						style: {
-							width: '6px',
-							height: '6px',
-							borderRadius: '50%',
-							border: '3px solid var(--primary-400)',
-							display: 'inline-block',
-							marginRight: '0.5em',
-							marginLeft: '1em',
-						},
-					}),
-					o('span', { style: { color: 'var(--primary-400)' } }, n),
-				),
+			o(
+				W,
+				{ text: `${i} Total Server Members`, position: 'bottom' },
+				(s) =>
+					o(
+						'div',
+						{ ...s },
+						o('span', {
+							style: {
+								width: '6px',
+								height: '6px',
+								borderRadius: '50%',
+								border: '3px solid var(--primary-400)',
+								display: 'inline-block',
+								marginRight: '0.5em',
+								marginLeft: '1em',
+							},
+						}),
+						o(
+							'span',
+							{ style: { color: 'var(--primary-400)' } },
+							i,
+						),
+					),
 			),
 		);
 	}
-	var Da,
-		tm,
-		_a,
-		nm = d(() => {
+	var Ny,
+		ky,
+		Fu,
+		Ly = m(() => {
 			'use strict';
-			s();
-			J();
-			ct();
+			a();
+			re();
+			xt();
+			w();
+			$n();
 			T();
-			Ii();
-			B();
-			v();
-			P();
-			Da = {};
-			_a = f({
+			_();
+			x();
+			(Ny = ue('GuildMemberCountStore')), (ky = ue('ChannelMemberStore'));
+			Fu = g({
 				name: 'MemberCount',
 				description:
 					'Shows the amount of online & total members in the server member list',
-				authors: [c.Ven, c.Commandtechno],
+				authors: [p.Ven, p.Commandtechno],
 				patches: [
 					{
 						find: '.isSidebarVisible,',
 						replacement: {
-							match: /(var (.)=.\.className.+?children):\[(.\.useMemo[^}]+"aria-multiselectable")/,
+							match: /(var (\i)=\i\.className.+?children):\[(\i\.useMemo[^}]+"aria-multiselectable")/,
 							replace:
 								"$1:[$2.startsWith('members')?$self.render():null,$3",
 						},
 					},
 				],
-				onGuildMemberListUpdate({
-					guildId: e,
-					groups: t,
-					memberCount: n,
-					id: i,
-				}) {
-					if (i !== 'everyone' && Da[e]) return;
-					let r = 0;
-					for (let a of t) a.id !== 'offline' && (r += a.count);
-					(Da[e] = [n, r]), tm?.();
-				},
-				start() {
-					I.subscribe(
-						'GUILD_MEMBER_LIST_UPDATE',
-						this.onGuildMemberListUpdate,
-					);
-				},
-				stop() {
-					I.unsubscribe(
-						'GUILD_MEMBER_LIST_UPDATE',
-						this.onGuildMemberListUpdate,
-					);
-				},
-				render: () => o(N, { noop: !0 }, o(eS, null)),
+				render: k.wrap(jw, { noop: !0 }),
 			});
 		});
-	var Fa,
-		om,
-		im,
-		tS,
-		Oa,
-		rm = d(() => {
+	var Bu,
+		Ey,
+		Dy,
+		Ww,
+		lr,
+		$u,
+		Oy = m(() => {
 			'use strict';
-			s();
-			Ft();
+			a();
+			gn();
 			E();
+			w();
 			T();
-			v();
-			D();
-			P();
-			(Fa = !1),
-				(om = (e) => e.key === 'Backspace' && (Fa = !0)),
-				(im = (e) => e.key === 'Backspace' && (Fa = !1)),
-				(tS = 1n << 4n);
-			ce('MessageClickActions', 'MessageQuickActions');
-			Oa = f({
-				name: 'MessageClickActions',
-				description:
-					'Hold Backspace and click to delete, double click to edit',
-				authors: [c.Ven],
-				dependencies: ['MessageEventsAPI'],
-				options: {
+			_();
+			x();
+			(Bu = !1),
+				(Ey = (e) => e.key === 'Backspace' && (Bu = !0)),
+				(Dy = (e) => e.key === 'Backspace' && (Bu = !1)),
+				(Ww = 1n << 4n),
+				(lr = N({
 					enableDeleteOnClick: {
 						type: 3,
 						description: 'Enable delete on click',
@@ -7253,51 +9765,103 @@ ${Dn(l)}`,
 						description: 'Enable double click to edit',
 						default: !0,
 					},
-				},
-				start() {
-					let e = C('deleteMessage', 'startEditMessage'),
-						t = C('isEditing', 'isEditingAny');
-					document.addEventListener('keydown', om),
-						document.addEventListener('keyup', im),
-						(this.onClick = xs((n, i, r) => {
-							let a = n.author.id === U.getCurrentUser().id;
-							Fa
-								? Vencord.Settings.plugins.MessageClickActions
-										.enableDeleteOnClick &&
-								  (a || ke.can(tS, i)) &&
-								  (e.deleteMessage(i.id, n.id),
-								  r.preventDefault())
-								: Vencord.Settings.plugins.MessageClickActions
-										.enableDoubleClickToEdit &&
-								  a &&
-								  r.detail >= 2 &&
-								  !t.isEditing(i.id, n.id) &&
-								  (e.startEditMessage(i.id, n.id, n.content),
-								  r.preventDefault());
-						}));
-				},
-				stop() {
-					ws(this.onClick),
-						document.removeEventListener('keydown', om),
-						document.removeEventListener('keyup', im);
-				},
-			});
+					enableDoubleClickToReply: {
+						type: 3,
+						description: 'Enable double click to reply',
+						default: !0,
+					},
+					requireModifier: {
+						type: 3,
+						description:
+							'Only do double click actions when shift/ctrl is held',
+						default: !1,
+					},
+				})),
+				($u = g({
+					name: 'MessageClickActions',
+					description:
+						'Hold Backspace and click to delete, double click to edit/reply',
+					authors: [p.Ven],
+					dependencies: ['MessageEventsAPI'],
+					settings: lr,
+					start() {
+						let e = P('deleteMessage', 'startEditMessage'),
+							t = P('isEditing', 'isEditingAny');
+						document.addEventListener('keydown', Ey),
+							document.addEventListener('keyup', Dy),
+							(this.onClick = Mc((n, i, r) => {
+								let s = n.author.id === U.getCurrentUser().id;
+								if (Bu)
+									lr.store.enableDeleteOnClick &&
+										(s || et.can(Ww, i)) &&
+										(n.deleted
+											? L.dispatch({
+													type: 'MESSAGE_DELETE',
+													channelId: i.id,
+													id: n.id,
+													mlDeleted: !0,
+											  })
+											: e.deleteMessage(i.id, n.id),
+										r.preventDefault());
+								else {
+									if (
+										r.detail < 2 ||
+										(lr.store.requireModifier &&
+											!r.ctrlKey &&
+											!r.shiftKey)
+									)
+										return;
+									if (s) {
+										if (
+											!lr.store.enableDoubleClickToEdit ||
+											t.isEditing(i.id, n.id)
+										)
+											return;
+										e.startEditMessage(
+											i.id,
+											n.id,
+											n.content,
+										),
+											r.preventDefault();
+									} else {
+										if (!lr.store.enableDoubleClickToReply)
+											return;
+										L.dispatch({
+											type: 'CREATE_PENDING_REPLY',
+											channel: i,
+											message: n,
+											shouldMention:
+												!M.plugins.NoReplyMention
+													.enabled,
+											showMentionToggle:
+												i.guild_id !== null,
+										});
+									}
+								}
+							}));
+					},
+					stop() {
+						Pc(this.onClick),
+							document.removeEventListener('keydown', Ey),
+							document.removeEventListener('keyup', Dy);
+					},
+				}));
 		});
-	var Ba = {};
-	te(Ba, {
-		_modifyAccessories: () => oS,
-		accessories: () => Ai,
-		addAccessory: () => $a,
-		removeAccessory: () => nS,
+	var Gu = {};
+	me(Gu, {
+		_modifyAccessories: () => qw,
+		accessories: () => Us,
+		addAccessory: () => cr,
+		removeAccessory: () => Uu,
 	});
-	function $a(e, t, n) {
-		Ai.set(e, { callback: t, position: n });
+	function cr(e, t, n) {
+		Us.set(e, { callback: t, position: n });
 	}
-	function nS(e) {
-		Ai.delete(e);
+	function Uu(e) {
+		Us.delete(e);
 	}
-	function oS(e, t) {
-		for (let n of Ai.values()) {
+	function qw(e, t) {
+		for (let n of Us.values()) {
 			let i = n.callback(t);
 			if (i != null) {
 				if (!Array.isArray(i)) i = [i];
@@ -7315,50 +9879,48 @@ ${Dn(l)}`,
 		}
 		return e;
 	}
-	var Ai,
-		Ua = d(() => {
+	var Us,
+		Gs = m(() => {
 			'use strict';
-			s();
-			Ai = new Map();
+			a();
+			Us = new Map();
 		});
-	async function aS(e, t) {
-		let n = Kn.get(t);
+	async function Xw(e, t) {
+		let n = ai.get(t);
 		if (n) return n.message;
-		Kn.set(t, { fetched: !1 });
+		ai.set(t, { fetched: !1 });
 		let r = (
-			await ao
-				.get({
-					url: `/channels/${e}/messages`,
-					query: { limit: 1, around: t },
-					retries: 2,
-				})
-				.catch(() => null)
+			await Yt.get({
+				url: `/channels/${e}/messages`,
+				query: { limit: 1, around: t },
+				retries: 2,
+			}).catch(() => null)
 		)?.body?.[0];
 		if (!r) return;
-		let a = st.getMessages(r.channel_id).receiveMessage(r).get(r.id);
-		return Kn.set(a.id, { message: a, fetched: !0 }), a;
+		let s = cn.getMessages(r.channel_id).receiveMessage(r).get(r.id);
+		return ai.set(s.id, { message: s, fetched: !0 }), s;
 	}
-	function lS(e) {
+	function Jw(e) {
 		let t = [];
 		for (let {
 			content_type: n,
 			height: i,
 			width: r,
-			url: a,
+			url: s,
 			proxy_url: l,
 		} of e.attachments ?? [])
 			n?.startsWith('image/') &&
-				t.push({ height: i, width: r, url: a, proxyURL: l });
-		for (let { type: n, image: i, thumbnail: r, url: a } of e.embeds ?? [])
+				t.push({ height: i, width: r, url: s, proxyURL: l });
+		for (let { type: n, image: i, thumbnail: r, url: s } of e.embeds ?? [])
 			n === 'image'
 				? t.push({ ...(i ?? r) })
-				: a &&
+				: s &&
 				  n === 'gifv' &&
-				  !lm.test(a) &&
-				  t.push({ height: r.height, width: r.width, url: a });
+				  !By.test(s) &&
+				  t.push({ height: r.height, width: r.width, url: s });
 		return t;
 	}
-	function cS(e, t) {
+	function Qw(e, t) {
 		return !e && !t
 			? ''
 			: e
@@ -7369,25 +9931,25 @@ ${Dn(l)}`,
 				: `[no content, ${e} attachment${e !== 1 ? 's' : ''}]`
 			: `[no content, ${t} embed${t !== 1 ? 's' : ''}]`;
 	}
-	function pS(e) {
+	function Vw(e) {
 		return !!(
 			e.components.length ||
 			e.attachments.some((t) => !t.content_type?.startsWith('image/')) ||
 			e.embeds.some(
 				(t) =>
-					t.type !== 'image' && (t.type !== 'gifv' || lm.test(t.url)),
+					t.type !== 'image' && (t.type !== 'gifv' || By.test(t.url)),
 			)
 		);
 	}
-	function uS(e, t) {
+	function e2(e, t) {
 		if (e > t) {
-			let a = Math.min(e, 400);
-			return { width: a, height: Math.round(t / (e / a)) };
+			let s = Math.min(e, 400);
+			return { width: s, height: Math.round(t / (e / s)) };
 		}
 		let r = Math.min(t, 300);
 		return { width: Math.round(e / (t / r)), height: r };
 	}
-	function dS(e, t) {
+	function t2(e, t) {
 		return new Proxy(e, {
 			get(n, i) {
 				return i === 'vencordEmbeddedBy'
@@ -7396,66 +9958,67 @@ ${Dn(l)}`,
 			},
 		});
 	}
-	function mS({ message: e }) {
+	function n2({ message: e }) {
 		let t = e.vencordEmbeddedBy ?? [],
 			n = [],
 			i = null;
-		for (; (i = Ga.exec(e.content)) !== null; ) {
-			let [r, a, l, u] = i;
-			if (t.includes(u)) continue;
-			let m = G.getChannel(l);
-			if (!m || (a !== '@me' && !ke.can(1024n, m))) continue;
-			let y = Kn.get(u)?.message;
-			if (!y)
-				if (((y ??= st.getMessage(l, u)), y))
-					Kn.set(u, { message: y, fetched: !0 });
+		for (; (i = Hu.exec(e.content)) !== null; ) {
+			let [r, s, l, c] = i;
+			if (t.includes(c)) continue;
+			let u = X.getChannel(l);
+			if (!u || (s !== '@me' && !et.can(1024n, u))) continue;
+			let h = ai.get(c)?.message;
+			if (!h)
+				if (((h ??= cn.getMessage(l, c)), h))
+					ai.set(c, { message: h, fetched: !0 });
 				else {
-					let x = { ...e };
-					delete x.embeds,
-						sS.push(() =>
-							aS(l, u).then(
-								(S) =>
-									S &&
-									I.dispatch({
+					let S = { ...e };
+					delete S.embeds,
+						delete S.interaction,
+						Zw.push(() =>
+							Xw(l, c).then(
+								(b) =>
+									b &&
+									L.dispatch({
 										type: 'MESSAGE_UPDATE',
-										message: x,
+										message: S,
 									}),
 							),
 						);
 					continue;
 				}
-			let h = { message: dS(y, [...t, e.id]), channel: m, guildID: a },
-				b = Ha.store.automodEmbeds;
+			let f = { message: t2(h, [...t, e.id]), channel: u, guildID: s },
+				v = zu.store.automodEmbeds;
 			n.push(
-				b === 'always' || (b === 'prefer' && !pS(y))
-					? o(gS, { ...h })
-					: o(fS, { ...h }),
+				v === 'always' || (v === 'prefer' && !Vw(h))
+					? o(i2, { ...f })
+					: o(o2, { ...f }),
 			);
 		}
-		return n.length ? o(p, null, n) : null;
+		return n.length ? o(d, null, n) : null;
 	}
-	function fS({ message: e, channel: t, guildID: n }) {
+	function o2({ message: e, channel: t, guildID: n }) {
 		let i = n === '@me',
-			r = !i && de.getGuild(t.guild_id),
-			a = U.getUser(G.getChannel(t.id).recipients?.[0]);
-		return o(iS, {
+			r = !i && le.getGuild(t.guild_id),
+			s = U.getUser(X.getChannel(t.id).recipients?.[0]);
+		return o(Kw, {
 			embed: {
 				rawDescription: '',
 				color: 'var(--background-secondary)',
 				author: {
 					name: o(
-						z,
+						q,
 						{ variant: 'text-xs/medium', tag: 'span' },
 						o(
 							'span',
 							null,
 							i ? 'Direct Message - ' : r.name + ' - ',
 						),
-						i ? Ce.parse(`<@${a.id}>`) : Ce.parse(`<#${t.id}>`),
+						i ? Pe.parse(`<@${s.id}>`) : Pe.parse(`<#${t.id}>`),
 					),
 					iconProxyURL: r
 						? `https://${window.GLOBAL_ENV.CDN_HOST}/icons/${r.id}/${r.icon}.png`
-						: `https://${window.GLOBAL_ENV.CDN_HOST}/avatars/${a.id}/${a.avatar}`,
+						: `https://${window.GLOBAL_ENV.CDN_HOST}/avatars/${s.id}/${s.avatar}`,
 				},
 			},
 			renderDescription: () =>
@@ -7463,12 +10026,12 @@ ${Dn(l)}`,
 					'div',
 					{
 						key: e.id,
-						className: me(
-							sm.message,
-							Ha.store.messageBackgroundColor && sm.searchResult,
+						className: J(
+							_y.message,
+							zu.store.messageBackgroundColor && _y.searchResult,
 						),
 					},
-					o(rS, {
+					o(Yw, {
 						id: `message-link-embeds-${e.id}`,
 						message: e,
 						channel: t,
@@ -7477,38 +10040,38 @@ ${Dn(l)}`,
 				),
 		});
 	}
-	function gS(e) {
+	function i2(e) {
 		let { message: t, channel: n, guildID: i } = e,
 			r = i === '@me',
-			a = lS(t),
-			{ parse: l } = Ce;
-		return o(am, {
+			s = Jw(t),
+			{ parse: l } = Pe;
+		return o(Fy, {
 			channel: n,
 			childrenAccessories: o(
-				z,
+				q,
 				{ color: 'text-muted', variant: 'text-xs/medium', tag: 'span' },
-				l(r ? `<@${G.getChannel(n.id).recipients[0]}>` : `<#${n.id}>`),
+				l(r ? `<@${X.getChannel(n.id).recipients[0]}>` : `<#${n.id}>`),
 				o(
 					'span',
 					null,
 					r
 						? ' - Direct Message'
-						: ' - ' + de.getGuild(n.guild_id)?.name,
+						: ' - ' + le.getGuild(n.guild_id)?.name,
 				),
 			),
 			compact: !1,
 			content: o(
-				p,
+				d,
 				null,
-				t.content || t.attachments.length <= a.length
+				t.content || t.attachments.length <= s.length
 					? l(t.content)
-					: [cS(t.attachments.length, t.embeds.length)],
-				a.map((u) => {
-					let { width: m, height: y } = uS(u.width, u.height);
+					: [Qw(t.attachments.length, t.embeds.length)],
+				s.map((c) => {
+					let { width: u, height: h } = e2(c.width, c.height);
 					return o(
 						'div',
 						null,
-						o('img', { src: u.url, width: m, height: y }),
+						o('img', { src: c.url, width: u, height: h }),
 					);
 				}),
 			),
@@ -7517,44 +10080,45 @@ ${Dn(l)}`,
 			_messageEmbed: 'automod',
 		});
 	}
-	var Kn,
-		iS,
-		rS,
-		sm,
-		am,
-		Ga,
-		lm,
-		sS,
-		Ha,
-		ja,
-		cm = d(() => {
+	var ai,
+		Kw,
+		Yw,
+		_y,
+		Fy,
+		Hu,
+		By,
+		Zw,
+		zu,
+		ju,
+		$y = m(() => {
 			'use strict';
-			s();
-			Ua();
+			a();
+			Gs();
 			E();
-			J();
+			re();
+			w();
+			de();
+			Qo();
+			ye();
 			T();
-			B();
-			Un();
-			v();
-			D();
-			P();
-			(Kn = new Map()),
-				(iS = Y(() => we('.inlineMediaEmbed'))),
-				(rS = Y(() =>
-					he((e) =>
+			_();
+			x();
+			(ai = new Map()),
+				(Kw = oe(() => He('.inlineMediaEmbed'))),
+				(Yw = oe(() =>
+					ht((e) =>
 						e.type
 							?.toString()
 							?.includes('["message","compact","className",'),
 					),
 				)),
-				(sm = C('message', 'searchResult')),
-				(am = () => null),
-				(Ga =
+				(_y = P('message', 'searchResult')),
+				(Fy = () => null),
+				(Hu =
 					/(?<!<)https?:\/\/(?:\w+\.)?discord(?:app)?\.com\/channels\/(\d{17,20}|@me)\/(\d{17,20})\/(\d{17,20})/g),
-				(lm = /https:\/\/(?:www.)?tenor\.com/),
-				(sS = new dt()),
-				(Ha = V({
+				(By = /^https:\/\/(?:www\.)?tenor\.com\//),
+				(Zw = new dn()),
+				(zu = N({
 					messageBackgroundColor: {
 						description:
 							'Background color for messages in rich embeds',
@@ -7585,17 +10149,17 @@ ${Dn(l)}`,
 						description: 'Clear the linked message cache',
 						component: () =>
 							o(
-								L,
-								{ onClick: () => Kn.clear() },
+								R,
+								{ onClick: () => ai.clear() },
 								'Clear the linked message cache',
 							),
 					},
 				}));
-			ja = f({
+			ju = g({
 				name: 'MessageLinkEmbeds',
 				description:
 					'Adds a preview to messages that link another message',
-				authors: [c.TheSun, c.Ven],
+				authors: [p.TheSun, p.Ven],
 				dependencies: ['MessageAccessoriesAPI'],
 				patches: [
 					{
@@ -7609,53 +10173,59 @@ ${Dn(l)}`,
 					},
 				],
 				set AutoModEmbed(e) {
-					am = e;
+					Fy = e;
 				},
-				settings: Ha,
+				settings: zu,
 				start() {
-					$a(
+					cr(
 						'messageLinkEmbed',
 						(e) =>
-							Ga.test(e.message.content)
-								? ((Ga.lastIndex = 0),
-								  o(N, null, o(mS, { message: e.message })))
+							Hu.test(e.message.content)
+								? ((Hu.lastIndex = 0),
+								  o(k, null, o(n2, { message: e.message })))
 								: null,
 						4,
 					);
 				},
 			});
 		});
-	var pm = d(() => {});
-	var za,
-		um = d(() => {
-			s();
+	var Uy = m(() => {});
+	var Wu,
+		Gy = m(() => {
+			a();
 			(window.VencordStyles ??= new Map()).set(
 				'src/plugins/messageLogger/deleteStyleOverlay.css',
 				{
 					name: 'src/plugins/messageLogger/deleteStyleOverlay.css',
 					source: `.messagelogger-deleted {
-    background-color: rgba(240 71 71 / 15%);
+    background-color: rgba(240 71 71 / 15%) !important;
 }
 `,
 					classNames: {},
 					dom: null,
 				},
 			);
-			za = 'src/plugins/messageLogger/deleteStyleOverlay.css';
+			Wu = 'src/plugins/messageLogger/deleteStyleOverlay.css';
 		});
-	var Wa,
-		dm = d(() => {
-			s();
+	var qu,
+		Hy = m(() => {
+			a();
 			(window.VencordStyles ??= new Map()).set(
 				'src/plugins/messageLogger/deleteStyleText.css',
 				{
 					name: 'src/plugins/messageLogger/deleteStyleText.css',
-					source: `.messagelogger-deleted div {
-    color: #f04747;
+					source: `/* Message content highlighting */
+.messagelogger-deleted [class*="contents-"] > :is(div, h1, h2, h3, p) {
+    color: #f04747 !important;
+}
+
+/* Embed highlighting */
+.messagelogger-deleted article :is(div, span, h1, h2, h3, p) {
+    color: #f04747 !important;
 }
 
 .messagelogger-deleted a {
-    color: #be3535;
+    color: #be3535 !important;
     text-decoration: underline;
 }
 `,
@@ -7663,84 +10233,101 @@ ${Dn(l)}`,
 					dom: null,
 				},
 			);
-			Wa = 'src/plugins/messageLogger/deleteStyleText.css';
+			qu = 'src/plugins/messageLogger/deleteStyleText.css';
 		});
-	function mm() {
-		k.plugins.MessageLogger.deleteStyle === 'text'
-			? (Ot(Wa), Tn(za))
-			: (Tn(Wa), Ot(za));
+	function zy() {
+		M.plugins.MessageLogger.deleteStyle === 'text'
+			? (Je(qu), bt(Wu))
+			: (bt(qu), Je(Wu));
 	}
-	var hS,
-		qa,
-		fm,
-		Ka,
-		gm = d(() => {
+	var r2,
+		jy,
+		Wy,
+		qy,
+		Ku,
+		Ky = m(() => {
 			'use strict';
-			s();
-			pm();
-			zn();
+			a();
+			Uy();
+			Jt();
 			E();
-			It();
-			J();
+			je();
+			re();
+			w();
+			Se();
 			T();
-			ge();
-			v();
-			D();
-			P();
-			um();
-			dm();
-			hS = C('edited', 'communicationDisabled', 'isSystemMessage');
-			(qa = 'message-logger-remove-history'),
-				(fm = (e, t) => {
+			_();
+			x();
+			Gy();
+			Hy();
+			r2 = P('edited', 'communicationDisabled', 'isSystemMessage');
+			(jy = 'ml-remove-history'),
+				(Wy = 'ml-toggle-style'),
+				(qy = (e, t) => () => {
 					let { message: n } = t,
 						{
 							deleted: i,
 							editHistory: r,
-							id: a,
+							id: s,
 							channel_id: l,
 						} = n;
-					(!i && !r?.length) ||
-						e.some((u) => u?.props?.id === qa) ||
+					if (!i && !r?.length) return;
+					e: {
+						if (!i) break e;
+						let c = document.getElementById(
+							`chat-messages-${l}-${s}`,
+						);
+						if (!c) break e;
 						e.push(
-							o(le.MenuItem, {
-								id: qa,
-								key: qa,
-								label: 'Remove Message History',
-								action: () => {
-									n.deleted
-										? I.dispatch({
-												type: 'MESSAGE_DELETE',
-												channelId: l,
-												id: a,
-												mlDeleted: !0,
-										  })
-										: (n.editHistory = []);
-								},
+							o(F.MenuItem, {
+								id: Wy,
+								key: Wy,
+								label: 'Toggle Deleted Highlight',
+								action: () =>
+									c.classList.toggle('messagelogger-deleted'),
 							}),
 						);
+					}
+					e.push(
+						o(F.MenuItem, {
+							id: jy,
+							key: jy,
+							label: 'Remove Message History',
+							color: 'danger',
+							action: () => {
+								i
+									? L.dispatch({
+											type: 'MESSAGE_DELETE',
+											channelId: l,
+											id: s,
+											mlDeleted: !0,
+									  })
+									: (n.editHistory = []);
+							},
+						}),
+					);
 				}),
-				(Ka = f({
+				(Ku = g({
 					name: 'MessageLogger',
 					description:
 						'Temporarily logs deleted and edited messages.',
-					authors: [c.rushii, c.Ven],
-					dependencies: ['ContextMenuAPI', 'MenuItemDeobfuscatorAPI'],
+					authors: [p.rushii, p.Ven],
 					start() {
-						mm(), kt('message', fm);
+						zy(), we('message', qy);
 					},
 					stop() {
-						Ct('message', fm);
+						Ae('message', qy);
 					},
 					renderEdit(e) {
 						return o(
-							N,
+							k,
 							{ noop: !0 },
 							o(
 								'div',
 								{ className: 'messagelogger-edited' },
-								Ce.parse(e.content),
+								Pe.parse(e.content),
 								o(
-									Kt,
+									In,
 									{
 										timestamp: e.timestamp,
 										isEdited: !0,
@@ -7748,10 +10335,10 @@ ${Dn(l)}`,
 									},
 									o(
 										'span',
-										{ className: hS.edited },
+										{ className: r2.edited },
 										' ',
 										'(',
-										An.Messages.MESSAGE_EDITED,
+										nt.Messages.MESSAGE_EDITED,
 										')',
 									),
 								),
@@ -7760,7 +10347,7 @@ ${Dn(l)}`,
 					},
 					makeEdit(e, t) {
 						return {
-							timestamp: Tt?.call(e.edited_timestamp),
+							timestamp: Zt?.call(e.edited_timestamp),
 							content: t.content,
 						};
 					},
@@ -7777,7 +10364,7 @@ ${Dn(l)}`,
 								},
 								{ label: 'Red overlay', value: 'overlay' },
 							],
-							onChange: () => mm(),
+							onChange: () => zy(),
 						},
 						ignoreBots: {
 							type: 3,
@@ -7793,34 +10380,34 @@ ${Dn(l)}`,
 					},
 					handleDelete(e, t, n) {
 						try {
-							let u = function (m) {
-								let y = e.get(m);
-								if (!y) return;
-								let h = 64;
+							let c = function (u) {
+								let h = e.get(u);
+								if (!h) return;
+								let f = 64;
 								t.mlDeleted ||
-								(y.flags & h) === h ||
-								(r && y.author?.bot) ||
-								(a && y.author?.id === l)
-									? (e = e.remove(m))
-									: (e = e.update(m, (x) =>
-											x.set('deleted', !0).set(
+								(h.flags & f) === f ||
+								(r && h.author?.bot) ||
+								(s && h.author?.id === l)
+									? (e = e.remove(u))
+									: (e = e.update(u, (S) =>
+											S.set('deleted', !0).set(
 												'attachments',
-												x.attachments.map(
-													(S) => (
-														(S.deleted = !0), S
+												S.attachments.map(
+													(b) => (
+														(b.deleted = !0), b
 													),
 												),
 											),
 									  ));
 							};
-							var i = u;
+							var i = c;
 							if (e == null || (!n && !e.has(t.id))) return e;
-							let { ignoreBots: r, ignoreSelf: a } =
-									k.plugins.MessageLogger,
+							let { ignoreBots: r, ignoreSelf: s } =
+									M.plugins.MessageLogger,
 								l = U.getCurrentUser().id;
-							n ? t.ids.forEach(u) : u(t.id);
+							n ? t.ids.forEach(c) : c(t.id);
 						} catch (r) {
-							new F('MessageLogger').error(
+							new Z('MessageLogger').error(
 								'Error during handleDelete',
 								r,
 							);
@@ -7845,6 +10432,10 @@ ${Dn(l)}`,
 									match: /(MESSAGE_UPDATE:function\((\w)\).+?)\.update\((\w)/,
 									replace:
 										"$1.update($3,m =>   (($2.message.flags & 64) === 64 || (Vencord.Settings.plugins.MessageLogger.ignoreBots && $2.message.author?.bot) || (Vencord.Settings.plugins.MessageLogger.ignoreSelf && $2.message.author?.id === Vencord.Webpack.Common.UserStore.getCurrentUser().id)) ? m :   $2.message.content !== m.editHistory?.[0]?.content && $2.message.content !== m.content ?       m.set('editHistory',[...(m.editHistory || []), $self.makeEdit($2.message, m)]) :       m).update($3",
+								},
+								{
+									match: /(?<=getLastEditableMessage=.{0,200}\.find\(\(function\((\i)\)\{)return/,
+									replace: 'return !$1.deleted &&',
 								},
 							],
 						},
@@ -7940,18 +10531,18 @@ ${Dn(l)}`,
 					],
 				}));
 		});
-	function hm(e) {
-		Bn(
+	function Yy(e) {
+		ri(
 			{
 				name: e.name,
 				description: e.name,
 				inputType: 1,
 				execute: async (t, n) =>
-					(await Li(e.name))
-						? (k.plugins.MessageTags.clyde &&
-								H(n.channel.id, {
-									author: Mt,
-									content: `${on} The tag **${e.name}** has been sent!`,
+					(await Hs(e.name))
+						? (M.plugins.MessageTags.clyde &&
+								ie(n.channel.id, {
+									author: kn,
+									content: `${ho} The tag **${e.name}** has been sent!`,
 								}),
 						  {
 								content: e.message.replaceAll(
@@ -7960,57 +10551,57 @@ ${Dn(l)}`,
 `,
 								),
 						  })
-						: (H(n.channel.id, {
-								author: Mt,
-								content: `${on} The tag **${e.name}** does not exist anymore! Please reload ur Discord to fix :)`,
+						: (ie(n.channel.id, {
+								author: kn,
+								content: `${ho} The tag **${e.name}** does not exist anymore! Please reload ur Discord to fix :)`,
 						  }),
 						  { content: `/${e.name}` }),
-				[yS]: !0,
+				[s2]: !0,
 			},
 			'CustomTags',
 		);
 	}
-	var on,
-		Di,
-		yS,
-		Mt,
-		Ei,
-		Li,
-		bS,
-		SS,
-		Ya,
-		ym = d(() => {
+	var ho,
+		js,
+		s2,
+		kn,
+		zs,
+		Hs,
+		a2,
+		l2,
+		Yu,
+		Zy = m(() => {
 			'use strict';
-			s();
-			Re();
-			Lt();
+			a();
+			wt();
+			Pn();
 			E();
+			w();
 			T();
-			v();
-			(on = '<:luna:1035316192220553236>'),
-				(Di = 'MessageTags_TAGS'),
-				(yS = Symbol('MessageTags')),
-				(Mt = { id: '821472922140803112', bot: !1 }),
-				(Ei = () => xe(Di).then((e) => e ?? [])),
-				(Li = (e) =>
-					xe(Di).then(
+			(ho = '<:luna:1035316192220553236>'),
+				(js = 'MessageTags_TAGS'),
+				(s2 = Symbol('MessageTags')),
+				(kn = { id: '821472922140803112', bot: !1 }),
+				(zs = () => Qe(js).then((e) => e ?? [])),
+				(Hs = (e) =>
+					Qe(js).then(
 						(t) => (t ?? []).find((n) => n.name === e) ?? null,
 					)),
-				(bS = async (e) => {
-					let t = await Ei();
-					return t.push(e), be(Di, t), t;
+				(a2 = async (e) => {
+					let t = await zs();
+					return t.push(e), Ve(js, t), t;
 				}),
-				(SS = async (e) => {
-					let t = await Ei();
+				(l2 = async (e) => {
+					let t = await zs();
 					return (
-						(t = await t.filter((n) => n.name !== e)), be(Di, t), t
+						(t = await t.filter((n) => n.name !== e)), Ve(js, t), t
 					);
 				});
-			Ya = f({
+			Yu = g({
 				name: 'MessageTags',
 				description:
 					'Allows you to save messages and to use them with a simple command.',
-				authors: [c.Luna],
+				authors: [p.Luna],
 				options: {
 					clyde: {
 						name: 'Clyde message on send',
@@ -8022,7 +10613,7 @@ ${Dn(l)}`,
 				},
 				dependencies: ['CommandsAPI'],
 				async start() {
-					for (let e of await Ei()) hm(e);
+					for (let e of await zs()) Yy(e);
 				},
 				commands: [
 					{
@@ -8090,49 +10681,49 @@ ${Dn(l)}`,
 						async execute(e, t) {
 							switch (e[0].name) {
 								case 'create': {
-									let n = ue(e[0].options, 'tag-name', ''),
-										i = ue(e[0].options, 'message', '');
-									if (await Li(n))
-										return H(t.channel.id, {
-											author: Mt,
-											content: `${on} A Tag with the name **${n}** already exists!`,
+									let n = De(e[0].options, 'tag-name', ''),
+										i = De(e[0].options, 'message', '');
+									if (await Hs(n))
+										return ie(t.channel.id, {
+											author: kn,
+											content: `${ho} A Tag with the name **${n}** already exists!`,
 										});
 									let r = {
 										name: n,
 										enabled: !0,
 										message: i,
 									};
-									hm(r),
-										await bS(r),
-										H(t.channel.id, {
-											author: Mt,
-											content: `${on} Successfully created the tag **${n}**!`,
+									Yy(r),
+										await a2(r),
+										ie(t.channel.id, {
+											author: kn,
+											content: `${ho} Successfully created the tag **${n}**!`,
 										});
 									break;
 								}
 								case 'delete': {
-									let n = ue(e[0].options, 'tag-name', '');
-									if (!(await Li(n)))
-										return H(t.channel.id, {
-											author: Mt,
-											content: `${on} A Tag with the name **${n}** does not exist!`,
+									let n = De(e[0].options, 'tag-name', '');
+									if (!(await Hs(n)))
+										return ie(t.channel.id, {
+											author: kn,
+											content: `${ho} A Tag with the name **${n}** does not exist!`,
 										});
-									yo(n),
-										await SS(n),
-										H(t.channel.id, {
-											author: Mt,
-											content: `${on} Successfully deleted the tag **${n}**!`,
+									or(n),
+										await l2(n),
+										ie(t.channel.id, {
+											author: kn,
+											content: `${ho} Successfully deleted the tag **${n}**!`,
 										});
 									break;
 								}
 								case 'list': {
-									H(t.channel.id, {
-										author: Mt,
+									ie(t.channel.id, {
+										author: kn,
 										embeds: [
 											{
 												title: 'All Tags:',
 												description:
-													(await Ei()).map(
+													(await zs()).map(
 														(n) =>
 															`\`${
 																n.name
@@ -8148,7 +10739,7 @@ ${Dn(l)}`,
 																	: ''
 															}`,
 													).join(`
-`) || `${on} Woops! There are no tags yet, use \`/tags create\` to create one!`,
+`) || `${ho} Woops! There are no tags yet, use \`/tags create\` to create one!`,
 												color: 14122879,
 												type: 'rich',
 											},
@@ -8157,15 +10748,15 @@ ${Dn(l)}`,
 									break;
 								}
 								case 'preview': {
-									let n = ue(e[0].options, 'tag-name', ''),
-										i = await Li(n);
+									let n = De(e[0].options, 'tag-name', ''),
+										i = await Hs(n);
 									if (!i)
-										return H(t.channel.id, {
-											author: Mt,
-											content: `${on} A Tag with the name **${n}** does not exist!`,
+										return ie(t.channel.id, {
+											author: kn,
+											content: `${ho} A Tag with the name **${n}** does not exist!`,
 										});
-									H(t.channel.id, {
-										author: Mt,
+									ie(t.channel.id, {
+										author: kn,
 										content: i.message.replaceAll(
 											'\\n',
 											`
@@ -8174,78 +10765,79 @@ ${Dn(l)}`,
 									});
 									break;
 								}
+								default: {
+									ie(t.channel.id, {
+										author: kn,
+										content: 'Invalid sub-command',
+									});
+									break;
+								}
 							}
-							return H(t.channel.id, {
-								author: Mt,
-								content: 'Invalid sub-command',
-							});
 						},
 					},
 				],
 			});
 		});
-	function vS(e) {
+	function c2(e) {
 		let t = '';
 		for (let n = 0; n < e.length; n++)
 			t += n % 2 ? e[n].toUpperCase() : e[n].toLowerCase();
 		return t;
 	}
-	var Qa,
-		bm = d(() => {
+	var Zu,
+		Xy = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
+			w();
 			T();
-			v();
-			Qa = f({
+			Zu = g({
 				name: 'MoreCommands',
 				description: 'echo, lenny, mock',
-				authors: [c.Arjix, c.echo, c.Samu],
+				authors: [p.Arjix, p.echo, p.Samu],
 				dependencies: ['CommandsAPI'],
 				commands: [
 					{
 						name: 'echo',
 						description: 'Sends a message as Clyde (locally)',
-						options: [en],
+						options: [fo],
 						inputType: 3,
 						execute: (e, t) => {
-							let n = ue(e, 'message', '');
-							H(t.channel.id, { content: n });
+							let n = De(e, 'message', '');
+							ie(t.channel.id, { content: n });
 						},
 					},
 					{
 						name: 'lenny',
 						description: 'Sends a lenny face',
-						options: [en],
+						options: [fo],
 						execute: (e) => ({
 							content:
-								ue(e, 'message', '') +
+								De(e, 'message', '') +
 								' ( \u0361\xB0 \u035C\u0296 \u0361\xB0)',
 						}),
 					},
 					{
 						name: 'mock',
 						description: 'mOcK PeOpLe',
-						options: [vn],
-						execute: (e) => ({ content: vS(ue(e, 'message', '')) }),
+						options: [Do],
+						execute: (e) => ({ content: c2(De(e, 'message', '')) }),
 					},
 				],
 			});
 		});
-	var Xa,
-		Sm = d(() => {
+	var Xu,
+		Jy = m(() => {
 			'use strict';
-			s();
-			Re();
-			E();
+			a();
+			wt();
+			w();
 			T();
-			v();
-			ce('MoreKaomoji', 'moarKaomojis');
-			Xa = f({
+			Xu = g({
 				name: 'MoreKaomoji',
 				description:
 					'Adds more Kaomoji to discord. \u30FD(\xB4\u25BD`)/',
-				authors: [c.JacobTm],
+				authors: [p.JacobTm],
 				dependencies: ['CommandsAPI'],
 				commands: [
 					{
@@ -8277,57 +10869,416 @@ ${Dn(l)}`,
 					{ name: 'laughing', description: 'o(\u2267\u25BD\u2266)o' },
 				].map((e) => ({
 					...e,
-					options: [en],
+					options: [fo],
 					execute: (t) => ({
-						content: ue(t, 'message', '') + e.description,
+						content: De(t, 'message', '') + e.description,
 					}),
 				})),
 			});
 		});
-	function xS(e, t) {
+	function m2(e) {
+		yo.store.tagSettings ??= Ju;
+		let [t, n] = V(yo.store.tagSettings),
+			i = (r) => {
+				n(r), e.setValue(r);
+			};
+		return o(
+			ae,
+			{ flexDirection: 'column' },
+			li.map((r) =>
+				o(
+					At,
+					{ style: { padding: '1em 1em 0' } },
+					o(
+						y.FormTitle,
+						{ style: { width: 'fit-content' } },
+						o(
+							W,
+							{ text: r.description },
+							({ onMouseEnter: s, onMouseLeave: l }) =>
+								o(
+									'div',
+									{ onMouseEnter: s, onMouseLeave: l },
+									r.displayName,
+									' Tag ',
+									o(Xn, { type: Xn.Types[r.name] }),
+								),
+						),
+					),
+					o(Ne, {
+						type: 'text',
+						value: t[r.name]?.text ?? r.displayName,
+						placeholder: `Text on tag (default: ${r.displayName})`,
+						onChange: (s) => {
+							(t[r.name].text = s), i(t);
+						},
+						className: G.bottom16,
+					}),
+					o(
+						Nt,
+						{
+							value: t[r.name]?.showInChat ?? !0,
+							onChange: (s) => {
+								(t[r.name].showInChat = s), i(t);
+							},
+							hideBorder: !0,
+						},
+						'Show in messages',
+					),
+					o(
+						Nt,
+						{
+							value: t[r.name]?.showInNotChat ?? !0,
+							onChange: (s) => {
+								(t[r.name].showInNotChat = s), i(t);
+							},
+							hideBorder: !0,
+						},
+						'Show in member list and profiles',
+					),
+				),
+			),
+		);
+	}
+	var u2,
+		p2,
+		d2,
+		Xn,
+		Qy,
+		li,
+		Ju,
+		yo,
+		Qu,
+		Vy = m(() => {
+			'use strict';
+			a();
+			E();
+			xt();
+			w();
+			Xe();
+			T();
+			_();
+			x();
+			(u2 = '1081004946872352958'),
+				(p2 = P('computePermissions', 'canEveryoneRole')),
+				(d2 = P(
+					'SEND_MESSAGES',
+					'VIEW_CREATOR_MONETIZATION_ANALYTICS',
+				)),
+				(Xn = Ce((e) => e.Types?.[0] === 'BOT')),
+				(Qy = (e, t) => !!e?.webhookId && t.isNonUserBot()),
+				(li = [
+					{
+						name: 'WEBHOOK',
+						displayName: 'Webhook',
+						description: 'Messages sent by webhooks',
+						condition: Qy,
+					},
+					{
+						name: 'OWNER',
+						displayName: 'Owner',
+						description: 'Owns the server',
+						condition: (e, t, n) =>
+							le.getGuild(n?.guild_id)?.ownerId === t.id,
+					},
+					{
+						name: 'ADMINISTRATOR',
+						displayName: 'Admin',
+						description: 'Has the administrator permission',
+						permissions: ['ADMINISTRATOR'],
+					},
+					{
+						name: 'MODERATOR_STAFF',
+						displayName: 'Staff',
+						description: 'Can manage the server, channels or roles',
+						permissions: [
+							'MANAGE_GUILD',
+							'MANAGE_CHANNELS',
+							'MANAGE_ROLES',
+						],
+					},
+					{
+						name: 'MODERATOR',
+						displayName: 'Mod',
+						description: 'Can manage messages or kick/ban people',
+						permissions: [
+							'MANAGE_MESSAGES',
+							'KICK_MEMBERS',
+							'BAN_MEMBERS',
+						],
+					},
+					{
+						name: 'VOICE_MODERATOR',
+						displayName: 'VC Mod',
+						description: 'Can manage voice chats',
+						permissions: [
+							'MOVE_MEMBERS',
+							'MUTE_MEMBERS',
+							'DEAFEN_MEMBERS',
+						],
+					},
+				]),
+				(Ju = Object.fromEntries(
+					li.map(({ name: e, displayName: t }) => [
+						e,
+						{ text: t, showInChat: !0, showInNotChat: !0 },
+					]),
+				));
+			(yo = N({
+				dontShowForBots: {
+					description:
+						"Don't show extra tags for bots (excluding webhooks)",
+					type: 3,
+				},
+				dontShowBotTag: {
+					description:
+						'Only show extra tags for bots / Hide [BOT] text',
+					type: 3,
+				},
+				tagSettings: { type: 6, component: m2, description: 'fill me' },
+			})),
+				(Qu = g({
+					name: 'MoreUserTags',
+					description:
+						'Adds tags for webhooks and moderative roles (owner, admin, etc.)',
+					authors: [p.Cyn, p.TheSun, p.RyanCaoDev, p.LordElias],
+					settings: yo,
+					patches: [
+						{
+							find: '.BOT=0]="BOT"',
+							replacement: [
+								{
+									match: /(\i)\[.\.BOT=0\]="BOT";/,
+									replace: '$&$1=$self.addTagVariants($1);',
+								},
+							],
+						},
+						{
+							find: '.DISCORD_SYSTEM_MESSAGE_BOT_TAG_TOOLTIP;',
+							replacement: [
+								{
+									match: /(switch\((\i)\){.+?)case (\i(?:\.\i)?)\.BOT:default:(\i)=(\i\.\i\.Messages)\.BOT_TAG_BOT/,
+									replace: (e, t, n, i, r, s) =>
+										`${t}default:{${r} = $self.getTagText(${i}[${n}], ${s})}`,
+								},
+								{
+									match: /(\i)=(\i)===\i(?:\.\i)?\.ORIGINAL_POSTER/,
+									replace: '$1=$self.isOPTag($2)',
+								},
+								{
+									match: /children:\[(?=\i,\(0,\i\.jsx\)\("span",{className:\i\(\)\.botText,children:(\i)}\)\])/,
+									replace:
+										"'data-tag':$1.toLowerCase(),children:[",
+								},
+							],
+						},
+						{
+							find: '.Types.ORIGINAL_POSTER',
+							replacement: {
+								match: /return null==(\i)\?null:\(0,/,
+								replace:
+									"$1=$self.getTag({...arguments[0],origType:$1,location:'chat'});$&",
+							},
+						},
+						{
+							find: '.renderBot=function(){',
+							replacement: {
+								match: /this.props.user;return null!=(\i)&&.{0,10}\?(.{0,50})\.botTag/,
+								replace:
+									"this.props.user;var type=$self.getTag({...this.props,origType:$1.bot?0:null,location:'not-chat'});return type!==null?$2.botTag,type",
+							},
+						},
+						{
+							find: '.hasAvatarForGuild(null==',
+							replacement: {
+								match: /(?=usernameIcon:)/,
+								replace:
+									'moreTags_channelId:arguments[0].channelId,',
+							},
+						},
+						{
+							find: 'copyMetaData:"User Tag"',
+							replacement: {
+								match: /(?=,botClass:)/,
+								replace:
+									',moreTags_channelId:arguments[0].moreTags_channelId',
+							},
+						},
+						{
+							find: ',botType:',
+							replacement: {
+								match: /,botType:(\i\((\i)\)),/g,
+								replace:
+									",botType:$self.getTag({user:$2,channelId:arguments[0].moreTags_channelId,origType:$1,location:'not-chat'}),",
+							},
+						},
+					],
+					start() {
+						if (!yo.store.tagSettings)
+							if (!yo.store.visibility_WEBHOOK)
+								yo.store.tagSettings = Ju;
+							else {
+								let e = { ...Ju };
+								Object.entries(
+									Vencord.PlainSettings.plugins.MoreUserTags,
+								).forEach(([t, n]) => {
+									let [i, r] = t.split('_');
+									if (i === 'visibility')
+										switch (n) {
+											case 'always':
+												break;
+											case 'chat':
+												e[r].showInNotChat = !1;
+												break;
+											case 'not-chat':
+												e[r].showInChat = !1;
+												break;
+											case 'never':
+												(e[r].showInChat = !1),
+													(e[r].showInNotChat = !1);
+												break;
+										}
+									(yo.store.tagSettings = e),
+										delete Vencord.Settings.plugins
+											.MoreUserTags[t];
+								});
+							}
+					},
+					getPermissions(e, t) {
+						let n = le.getGuild(t?.guild_id);
+						if (!n) return [];
+						let i = p2.computePermissions({
+							user: e,
+							context: n,
+							overwrites: t.permissionOverwrites,
+						});
+						return Object.entries(d2)
+							.map(([r, s]) => (i & s ? r : ''))
+							.filter(Boolean);
+					},
+					addTagVariants(e) {
+						let t = 100;
+						return (
+							li.forEach(({ name: n }) => {
+								(e[n] = ++t),
+									(e[t] = n),
+									(e[`${n}-BOT`] = ++t),
+									(e[t] = `${n}-BOT`),
+									(e[`${n}-OP`] = ++t),
+									(e[t] = `${n}-OP`);
+							}),
+							e
+						);
+					},
+					isOPTag: (e) =>
+						e === Xn.Types.ORIGINAL_POSTER ||
+						li.some((t) => e === Xn.Types[`${t.name}-OP`]),
+					getTagText(e, t) {
+						if (!e) return t.BOT_TAG_BOT;
+						let [n, i] = e.split('-'),
+							r = li.find(({ name: l }) => n === l);
+						if (
+							!r ||
+							(i === 'BOT' &&
+								n !== 'WEBHOOK' &&
+								this.settings.store.dontShowForBots)
+						)
+							return t.BOT_TAG_BOT;
+						let s =
+							yo.store.tagSettings?.[r.name]?.text ||
+							r.displayName;
+						switch (i) {
+							case 'OP':
+								return `${t.BOT_TAG_FORUM_ORIGINAL_POSTER} \u2022 ${s}`;
+							case 'BOT':
+								return `${t.BOT_TAG_BOT} \u2022 ${s}`;
+							default:
+								return s;
+						}
+					},
+					getTag({
+						message: e,
+						user: t,
+						channelId: n,
+						origType: i,
+						location: r,
+						channel: s,
+					}) {
+						if (r === 'chat' && t.id === '1')
+							return Xn.Types.OFFICIAL;
+						if (t.id === u2) return Xn.Types.AI;
+						let l = typeof i == 'number' ? i : null;
+						if (((s ??= X.getChannel(n)), !s)) return l;
+						let c = this.settings.store,
+							u = this.getPermissions(t, s);
+						for (let h of li)
+							if (
+								!(
+									r === 'chat' &&
+									!c.tagSettings[h.name].showInChat
+								) &&
+								!(
+									r === 'not-chat' &&
+									!c.tagSettings[h.name].showInNotChat
+								) &&
+								(h.permissions?.some((f) => u.includes(f)) ||
+									h.condition?.(e, t, s))
+							) {
+								s.isForumPost() && s.ownerId === t.id
+									? (l = Xn.Types[`${h.name}-OP`])
+									: t.bot && !Qy(e, t) && !c.dontShowBotTag
+									? (l = Xn.Types[`${h.name}-BOT`])
+									: (l = Xn.Types[h.name]);
+								break;
+							}
+						return l;
+					},
+				}));
+		});
+	function g2(e, t) {
 		let n = 0,
 			i = 0;
 		for (; (i = e.indexOf(t, i) + 1) !== 0; ) n++;
 		return n;
 	}
-	function wS(e, t) {
+	function h2(e, t) {
 		if (!t.global) throw new Error('pattern must be global');
 		let n = 0;
 		for (; t.test(e); ) n++;
 		return n;
 	}
-	function IS(e) {
-		let t = xS(e, Za) + wS(e, PS);
+	function v2(e) {
+		let t = g2(e, ep) + h2(e, y2);
 		return Math.min(t, 10);
 	}
-	function Ja() {
-		if (!No.store.triggerWhenUnfocused && !document.hasFocus()) return;
+	function Vu() {
+		if (!ur.store.triggerWhenUnfocused && !document.hasFocus()) return;
 		let e = document.createElement('audio');
-		(e.src = TS), (e.volume = No.store.volume), e.play();
+		(e.src = f2), (e.volume = ur.store.volume), e.play();
 	}
-	var Za,
-		TS,
-		No,
-		Va,
-		PS,
-		vm = d(() => {
+	var ep,
+		f2,
+		ur,
+		tp,
+		y2,
+		ev = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			fa();
+			ru();
+			w();
+			de();
 			T();
-			B();
-			v();
-			P();
-			(Za = '\u{1F5FF}'),
-				(TS =
+			x();
+			(ep = '\u{1F5FF}'),
+				(f2 =
 					'https://raw.githubusercontent.com/MeguminSama/VencordPlugins/main/plugins/moyai/moyai.mp3'),
-				(No = V({
+				(ur = N({
 					volume: {
 						description:
 							'Volume of the \u{1F5FF}\u{1F5FF}\u{1F5FF}',
 						type: 5,
-						markers: Ci(0, 1, 0.1),
+						markers: go(0, 1, 0.1),
 						default: 0.5,
 						stickToMarkers: !1,
 					},
@@ -8343,109 +11294,212 @@ ${Dn(l)}`,
 						default: !0,
 					},
 				})),
-				(Va = f({
+				(tp = g({
 					name: 'Moyai',
-					authors: [c.Megu, c.Nuckyz],
+					authors: [p.Megu, p.Nuckyz],
 					description:
 						'\u{1F5FF}\u{1F5FF}\u{1F5FF}\u{1F5FF}\u{1F5FF}\u{1F5FF}\u{1F5FF}\u{1F5FF}',
-					settings: No,
-					async onMessage(e) {
-						if (
-							e.optimistic ||
-							e.type !== 'MESSAGE_CREATE' ||
-							e.message.state === 'SENDING' ||
-							(No.store.ignoreBots && e.message.author?.bot) ||
-							!e.message.content ||
-							e.channelId !== re.getChannelId()
-						)
-							return;
-						let t = IS(e.message.content);
-						for (let n = 0; n < t; n++) Ja(), await co(300);
-					},
-					onReaction(e) {
-						if (
-							e.optimistic ||
-							e.type !== 'MESSAGE_REACTION_ADD' ||
-							(No.store.ignoreBots && U.getUser(e.userId)?.bot) ||
-							e.channelId !== re.getChannelId()
-						)
-							return;
-						let t = e.emoji.name.toLowerCase();
-						(t !== Za &&
-							!t.includes('moyai') &&
-							!t.includes('moai')) ||
-							Ja();
-					},
-					onVoiceChannelEffect(e) {
-						if (!e.emoji?.name) return;
-						let t = e.emoji.name.toLowerCase();
-						(t !== Za &&
-							!t.includes('moyai') &&
-							!t.includes('moai')) ||
-							Ja();
-					},
-					start() {
-						I.subscribe('MESSAGE_CREATE', this.onMessage),
-							I.subscribe(
-								'MESSAGE_REACTION_ADD',
-								this.onReaction,
-							),
-							I.subscribe(
-								'VOICE_CHANNEL_EFFECT_SEND',
-								this.onVoiceChannelEffect,
-							);
-					},
-					stop() {
-						I.unsubscribe('MESSAGE_CREATE', this.onMessage),
-							I.unsubscribe(
-								'MESSAGE_REACTION_ADD',
-								this.onReaction,
-							),
-							I.unsubscribe(
-								'VOICE_CHANNEL_EFFECT_SEND',
-								this.onVoiceChannelEffect,
-							);
-					},
-				}));
-			PS = /<a?:\w*moy?ai\w*:\d{17,20}>/gi;
-		});
-	var el,
-		Tm = d(() => {
-			'use strict';
-			s();
-			T();
-			v();
-			el = f({
-				name: 'MuteNewGuild',
-				description: 'Mutes newly joined guilds',
-				authors: [c.Glitch],
-				patches: [
-					{
-						find: ',acceptInvite:function',
-						replacement: {
-							match: /(\w=null!==[^;]+)/,
-							replace:
-								"$1;Vencord.Webpack.findByProps('updateGuildNotificationSettings').updateGuildNotificationSettings($1,{'muted':true,'suppress_everyone':true,'suppress_roles':true})",
+					settings: ur,
+					flux: {
+						async MESSAGE_CREATE({
+							optimistic: e,
+							type: t,
+							message: n,
+							channelId: i,
+						}) {
+							if (
+								e ||
+								t !== 'MESSAGE_CREATE' ||
+								n.state === 'SENDING' ||
+								(ur.store.ignoreBots && n.author?.bot) ||
+								!n.content ||
+								i !== fe.getChannelId()
+							)
+								return;
+							let r = v2(n.content);
+							for (let s = 0; s < r; s++) Vu(), await no(300);
+						},
+						MESSAGE_REACTION_ADD({
+							optimistic: e,
+							type: t,
+							channelId: n,
+							userId: i,
+							emoji: r,
+						}) {
+							if (
+								e ||
+								t !== 'MESSAGE_REACTION_ADD' ||
+								(ur.store.ignoreBots && U.getUser(i)?.bot) ||
+								n !== fe.getChannelId()
+							)
+								return;
+							let s = r.name.toLowerCase();
+							(s !== ep &&
+								!s.includes('moyai') &&
+								!s.includes('moai')) ||
+								Vu();
+						},
+						VOICE_CHANNEL_EFFECT_SEND({ emoji: e }) {
+							if (!e?.name) return;
+							let t = e.name.toLowerCase();
+							(t !== ep &&
+								!t.includes('moyai') &&
+								!t.includes('moai')) ||
+								Vu();
 						},
 					},
-				],
-			});
+				}));
+			y2 = /<a?:\w*moy?ai\w*:\d{17,20}>/gi;
 		});
-	var kS,
-		tl,
-		xm = d(() => {
+	function S2({ modalProps: e }) {
+		return o(
+			Ie,
+			{ ...e, size: 'medium' },
+			o(
+				Le,
+				null,
+				o(
+					'div',
+					{
+						style: {
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center',
+							textAlign: 'center',
+							height: '100%',
+							padding: '8px 0',
+							gap: '16px',
+						},
+					},
+					o(
+						q,
+						{ variant: 'text-lg/semibold' },
+						'You seem to have been affected by a bug that caused DM notifications to be muted and break if you used the MuteNewGuild plugin.',
+					),
+					o(
+						q,
+						{ variant: 'text-lg/semibold' },
+						"If you haven't received any notifications for private messages, this is why. This issue is now fixed, so they should work again. Please verify, and in case they are still broken, ask for help in the Vencord support channel!",
+					),
+					o(
+						q,
+						{ variant: 'text-lg/semibold' },
+						"We're very sorry for any inconvenience caused by this issue :(",
+					),
+				),
+			),
+			o(
+				ot,
+				null,
+				o(
+					'div',
+					{
+						style: {
+							display: 'flex',
+							justifyContent: 'center',
+							width: '100%',
+						},
+					},
+					o(
+						R,
+						{
+							onClick: e.onClose,
+							size: R.Sizes.MEDIUM,
+							color: R.Colors.BRAND,
+						},
+						'Understood!',
+					),
+				),
+			),
+		);
+	}
+	var np,
+		Ws,
+		op,
+		tv = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
+			ze();
 			T();
-			v();
-			D();
-			(kS = C('getRelationships', 'isBlocked')),
-				(tl = f({
+			_();
+			x();
+			np = ue('UserGuildSettingsStore');
+			(Ws = N({
+				guild: { description: 'Mute Guild', type: 3, default: !0 },
+				everyone: {
+					description: 'Suppress @everyone and @here',
+					type: 3,
+					default: !0,
+				},
+				role: {
+					description: 'Suppress All Role @mentions',
+					type: 3,
+					default: !0,
+				},
+			})),
+				(op = g({
+					name: 'MuteNewGuild',
+					description: 'Mutes newly joined guilds',
+					authors: [p.Glitch, p.Nuckyz, p.carince],
+					patches: [
+						{
+							find: ',acceptInvite:function',
+							replacement: {
+								match: /INVITE_ACCEPT_SUCCESS.+?;(\i)=null.+?;/,
+								replace: (e, t) =>
+									`${e}$self.handleMute(${t});`,
+							},
+						},
+					],
+					settings: Ws,
+					handleMute(e) {
+						e === '@me' ||
+							e === 'null' ||
+							e == null ||
+							an(
+								'updateGuildNotificationSettings',
+							).updateGuildNotificationSettings(e, {
+								muted: Ws.store.guild,
+								suppress_everyone: Ws.store.everyone,
+								suppress_roles: Ws.store.role,
+							});
+					},
+					start() {
+						let [e, t, n] = [
+							np.isMuted(null),
+							np.isSuppressEveryoneEnabled(null),
+							np.isSuppressRolesEnabled(null),
+						];
+						(e || t || n) &&
+							(an(
+								'updateGuildNotificationSettings',
+							).updateGuildNotificationSettings(null, {
+								muted: !1,
+								suppress_everyone: !1,
+								suppress_roles: !1,
+							}),
+							be((i) => o(S2, { modalProps: i })));
+					},
+				}));
+		});
+	var b2,
+		ip,
+		nv = m(() => {
+			'use strict';
+			a();
+			E();
+			w();
+			T();
+			_();
+			(b2 = P('getRelationships', 'isBlocked')),
+				(ip = g({
 					name: 'NoBlockedMessages',
 					description:
 						'Hides all blocked messages from chat completely.',
-					authors: [c.rushii, c.Samu],
+					authors: [p.rushii, p.Samu],
 					patches: [
 						{
 							find: 'safety_prompt:"DMSpamExperiment",response:"show_redacted_messages"',
@@ -8463,7 +11517,7 @@ ${Dn(l)}`,
 						].map((e) => ({
 							find: e,
 							predicate: () =>
-								k.plugins.NoBlockedMessages
+								M.plugins.NoBlockedMessages
 									.ignoreBlockedMessages === !0,
 							replacement: [
 								{
@@ -8483,71 +11537,20 @@ ${Dn(l)}`,
 							restartNeeded: !0,
 						},
 					},
-					isBlocked: (e) => kS.isBlocked(e.author.id),
+					isBlocked: (e) => b2.isBlocked(e.author.id),
 				}));
 		});
-	var nl,
-		wm = d(() => {
+	var rp,
+		ov = m(() => {
 			'use strict';
-			s();
-			Ft();
-			E();
+			a();
+			w();
 			T();
-			v();
-			nl = f({
-				name: 'NoCanaryMessageLinks',
-				description:
-					'Allows you to change/remove the subdomain of discord message and channel links',
-				authors: [c.Samu, c.nea],
-				options: {
-					linkPrefix: {
-						description:
-							'The subdomain for your discord message links',
-						type: 0,
-						default: '',
-						restartNeeded: !1,
-					},
-					alwaysUseDiscordHost: {
-						description:
-							'Always use discord.com host (replace discordapp.com)',
-						type: 3,
-						default: !1,
-						restartNeeded: !1,
-					},
-				},
-				dependencies: ['MessageEventsAPI'],
-				removeBetas(e) {
-					let t = k.plugins.NoCanaryMessageLinks;
-					e.content = e.content.replace(
-						/https:\/\/(?:canary\.|ptb\.)?(discord(?:app)?\.com)(\/channels\/(?:\d{17,20}|@me)\/\d{17,20}(?:\/\d{17,20})?)/g,
-						(n, i, r) =>
-							'https://' +
-							(t.linkPrefix ? t.linkPrefix + '.' : '') +
-							(t.alwaysUseDiscordHost ? 'discord.com' : i) +
-							r,
-					);
-				},
-				start() {
-					this.preSend = ze((e, t) => this.removeBetas(t));
-				},
-				stop() {
-					We(this.preSend);
-				},
-			});
-		});
-	var ol,
-		Pm = d(() => {
-			'use strict';
-			s();
-			E();
-			T();
-			v();
-			ce('NoDevtoolsWarning', 'STFU');
-			ol = f({
+			rp = g({
 				name: 'NoDevtoolsWarning',
 				description:
 					"Disables the 'HOLD UP' banner in the console. As a side effect, also prevents Discord from hiding your token, which prevents random logouts.",
-				authors: [c.Ven],
+				authors: [p.Ven],
 				patches: [
 					{
 						find: 'setDevtoolsCallbacks',
@@ -8559,18 +11562,16 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var il,
-		Im = d(() => {
+	var sp,
+		iv = m(() => {
 			'use strict';
-			s();
-			E();
+			a();
+			w();
 			T();
-			v();
-			ce('NoF1', 'No F1');
-			il = f({
+			sp = g({
 				name: 'NoF1',
 				description: 'Disables F1 help bind.',
-				authors: [c.Cyn],
+				authors: [p.Cyn],
 				patches: [
 					{
 						find: ',"f1"],comboKeysBindGlobal:',
@@ -8582,52 +11583,183 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var rl,
-		km = d(() => {
+	var T2,
+		pr,
+		ap,
+		rv = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			v();
-			rl = f({
-				name: 'NoReplyMention',
-				description: 'Disables reply pings by default',
-				authors: [c.DustyAngel47, c.axyie],
-				options: {
-					exemptList: {
-						description:
-							'List of users to exempt from this plugin (separated by commas)',
-						type: 0,
-						default: '1234567890123445,1234567890123445',
+			_();
+			(T2 = P('getMessageRequestsCount')),
+				(pr = N({
+					hideFriendRequestsCount: {
+						type: 3,
+						description: 'Hide incoming friend requests count',
+						default: !0,
+						restartNeeded: !0,
 					},
-				},
-				shouldMention(e) {
-					return k.plugins.NoReplyMention.exemptList.includes(
-						e.message.author.id,
-					);
-				},
+					hideMessageRequestsCount: {
+						type: 3,
+						description: 'Hide message requests count',
+						default: !0,
+						restartNeeded: !0,
+					},
+					hidePremiumOffersCount: {
+						type: 3,
+						description: 'Hide nitro offers count',
+						default: !0,
+						restartNeeded: !0,
+					},
+				})),
+				(ap = g({
+					name: 'NoPendingCount',
+					description:
+						'Removes the ping count of incoming friend requests, message requests, and nitro offers.',
+					authors: [p.amia],
+					settings: pr,
+					patches: [
+						{
+							find: '.getPendingCount=',
+							predicate: () => pr.store.hideFriendRequestsCount,
+							replacement: {
+								match: /(?<=\.getPendingCount=function\(\)\{)/,
+								replace: 'return 0;',
+							},
+						},
+						{
+							find: '.getMessageRequestsCount=',
+							predicate: () => pr.store.hideMessageRequestsCount,
+							replacement: {
+								match: /(?<=\.getMessageRequestsCount=function\(\)\{)/,
+								replace: 'return 0;',
+							},
+						},
+						{
+							find: '.getSpamChannelsCount(),',
+							predicate: () => pr.store.hideMessageRequestsCount,
+							replacement: {
+								match: /(?<=getSpamChannelsCount\(\),\i=)\i\.getMessageRequestsCount\(\)/,
+								replace: '$self.getRealMessageRequestCount()',
+							},
+						},
+						{
+							find: 'showProgressBadge:',
+							predicate: () => pr.store.hidePremiumOffersCount,
+							replacement: {
+								match: /\(function\(\){return \i\.\i\.getUnacknowledgedOffers\(\i\)\.length}\)/,
+								replace: '(function(){return 0})',
+							},
+						},
+					],
+					getRealMessageRequestCount() {
+						return T2.getMessageRequestChannelIds().size;
+					},
+				}));
+		});
+	var lp,
+		sv = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			lp = g({
+				name: 'NoProfileThemes',
+				description: 'Completely removes Nitro profile themes',
+				authors: [p.TheKodeToad],
 				patches: [
 					{
-						find: 'CREATE_PENDING_REPLY:function',
+						find: '.NITRO_BANNER,',
 						replacement: {
-							match: /CREATE_PENDING_REPLY:function\((.{1,2})\){/,
-							replace:
-								'CREATE_PENDING_REPLY:function($1){$1.shouldMention=$self.shouldMention($1);',
+							match: /=(?=\i\.\i\.isPremiumAtLeast\(null==(\i))/,
+							replace: '=$1?.banner&&',
+						},
+					},
+					{
+						find: '().avatarPositionPremiumNoBanner,default:',
+						replacement: {
+							match: /\.avatarPositionPremiumNoBanner(?=,default:\i\(\)\.(\i))/,
+							replace: '.$1',
+						},
+					},
+					{
+						find: '.hasThemeColors=function(){',
+						replacement: {
+							match: /(?<=key:"canUsePremiumProfileCustomization",get:function\(\){return)/,
+							replace: ' false;',
 						},
 					},
 				],
 			});
 		});
-	var sl,
-		Cm = d(() => {
+	var qs,
+		cp,
+		av = m(() => {
 			'use strict';
-			s();
+			a();
+			E();
+			w();
 			T();
-			v();
-			sl = f({
+			(qs = N({
+				userList: {
+					description:
+						'List of users to allow or exempt pings for (separated by commas or spaces)',
+					type: 0,
+					default: '1234567890123445,1234567890123445',
+				},
+				shouldPingListed: {
+					description: 'Behaviour',
+					type: 4,
+					options: [
+						{ label: 'Do not ping the listed users', value: !1 },
+						{
+							label: 'Only ping the listed users',
+							value: !0,
+							default: !0,
+						},
+					],
+				},
+				inverseShiftReply: {
+					description:
+						"Invert Discord's shift replying behaviour (enable to make shift reply mention user)",
+					type: 3,
+					default: !1,
+				},
+			})),
+				(cp = g({
+					name: 'NoReplyMention',
+					description: 'Disables reply pings by default',
+					authors: [p.DustyAngel47, p.axyie, p.pylix, p.outfoxxed],
+					settings: qs,
+					shouldMention(e, t) {
+						let n = qs.store.userList.includes(e.author.id),
+							i = qs.store.shouldPingListed ? n : !n;
+						return qs.store.inverseShiftReply ? t !== i : !t && i;
+					},
+					patches: [
+						{
+							find: ',"Message")}function',
+							replacement: {
+								match: /:(\i),shouldMention:!(\i)\.shiftKey/,
+								replace:
+									':$1,shouldMention:$self.shouldMention($1,$2.shiftKey)',
+							},
+						},
+					],
+				}));
+		});
+	var up,
+		lv = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			up = g({
 				name: 'NoScreensharePreview',
 				description: 'Disables screenshare previews from being sent.',
-				authors: [c.Nuckyz],
+				authors: [p.Nuckyz],
 				patches: [
 					{
 						find: '("ApplicationStreamPreviewUploadManager")',
@@ -8645,17 +11777,17 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var al,
-		Mm = d(() => {
+	var pp,
+		cv = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			al = f({
+			pp = g({
 				name: 'NoTrack',
 				description:
 					"Disable Discord's tracking ('science'), metrics and Sentry crash reporting",
-				authors: [c.Cyn, c.Ven, c.Nuckyz],
+				authors: [p.Cyn, p.Ven, p.Nuckyz],
 				required: !0,
 				patches: [
 					{
@@ -8682,17 +11814,17 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var ll,
-		Nm = d(() => {
+	var dp,
+		uv = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			ll = f({
+			dp = g({
 				name: 'NoUnblockToJump',
 				description:
 					'Allows you to jump to messages of blocked users without unblocking them',
-				authors: [c.dzshn],
+				authors: [p.dzshn],
 				patches: [
 					{
 						find: '.id,"Search Results"',
@@ -8718,17 +11850,17 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var cl,
-		Rm = d(() => {
+	var mp,
+		pv = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			cl = f({
+			mp = g({
 				name: 'NSFWGateBypass',
 				description:
 					'Allows you to access NSFW channels without setting/verifying your age',
-				authors: [c.Commandtechno],
+				authors: [p.Commandtechno],
 				patches: [
 					{
 						find: '.nsfwAllowed=null',
@@ -8740,16 +11872,16 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var pl,
-		Am = d(() => {
+	var fp,
+		dv = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			pl = f({
+			fp = g({
 				name: 'oneko',
 				description: 'cat follow mouse (real)',
-				authors: [c.Ven, c.adryd],
+				authors: [p.Ven, p.adryd],
 				start() {
 					fetch(
 						'https://raw.githubusercontent.com/adryd325/oneko.js/5977144dce83e4d71af1de005d16e38eebeb7b72/oneko.js',
@@ -8770,24 +11902,961 @@ ${Dn(l)}`,
 				},
 			});
 		});
-	function Em(e) {
+	function fv(e) {
+		Object.assign(gv.__getLocalVars().state, {
+			enabled: e,
+			settingsVisible: e,
+		});
+	}
+	function hv(e) {
+		let t = {
+			screenshakeEnabledLocations: { 0: !0, 1: !0, 2: !0 },
+			shakeIntensity: 1,
+			confettiSize: 16,
+			confettiCount: 5,
+			combosRequiredCount: 1,
+		};
+		switch (e) {
+			case 0: {
+				Object.assign(t, {
+					screenshakeEnabledLocations: { 0: !0, 1: !1, 2: !1 },
+					combosRequiredCount: 5,
+				});
+				break;
+			}
+			case 1: {
+				Object.assign(t, { confettiSize: 12, confettiCount: 8 });
+				break;
+			}
+			case 2: {
+				Object.assign(t, {
+					shakeIntensity: 20,
+					confettiSize: 25,
+					confettiCount: 15,
+				});
+				break;
+			}
+		}
+		Object.assign(gv.__getLocalVars().state, t);
+	}
+	var gv,
+		mv,
+		gp,
+		yv = m(() => {
+			'use strict';
+			a();
+			E();
+			w();
+			T();
+			_();
+			(gv = ue('PoggermodeSettingsStore')),
+				(mv = N({
+					superIntensePartyMode: {
+						description: 'Party intensity',
+						type: 4,
+						options: [
+							{ label: 'Normal', value: 0, default: !0 },
+							{ label: 'Better', value: 1 },
+							{ label: 'Project X', value: 2 },
+						],
+						restartNeeded: !1,
+						onChange: hv,
+					},
+				})),
+				(gp = g({
+					name: 'Party mode \u{1F389}',
+					description:
+						'Allows you to use party mode cause the party never ends \u2728',
+					authors: [p.UwUDev],
+					settings: mv,
+					start() {
+						fv(!0), hv(mv.store.superIntensePartyMode);
+					},
+					stop() {
+						fv(!1);
+					},
+				}));
+		});
+	var vv = m(() => {});
+	var Sv = m(() => {});
+	function ci({
+		height: e = 24,
+		width: t = 24,
+		className: n,
+		children: i,
+		viewBox: r,
+		...s
+	}) {
+		return o(
+			'svg',
+			{
+				className: J(n, 'vc-icon'),
+				role: 'img',
+				width: t,
+				height: e,
+				viewBox: r,
+				...s,
+			},
+			i,
+		);
+	}
+	function Ks({ height: e = 24, width: t = 24, className: n }) {
+		return o(
+			ci,
+			{
+				height: e,
+				width: t,
+				className: J(n, 'vc-link-icon'),
+				viewBox: '0 0 24 24',
+			},
+			o(
+				'g',
+				{ fill: 'none', 'fill-rule': 'evenodd' },
+				o('path', {
+					fill: 'currentColor',
+					d: 'M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.982 2.982 0 0 0 0-4.24 2.982 2.982 0 0 0-4.24 0l-3.53 3.53a2.982 2.982 0 0 0 0 4.24zm2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.982 2.982 0 0 0 0 4.24 2.982 2.982 0 0 0 4.24 0l3.53-3.53a2.982 2.982 0 0 0 0-4.24.973.973 0 0 1 0-1.42z',
+				}),
+				o('rect', { width: t, height: e }),
+			),
+		);
+	}
+	function bv(e) {
+		return o(
+			ci,
+			{
+				...e,
+				className: J(e.className, 'vc-copy-icon'),
+				viewBox: '0 0 24 24',
+			},
+			o(
+				'g',
+				{ fill: 'currentColor' },
+				o('path', { d: 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1z' }),
+				o('path', {
+					d: 'M15 5H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z',
+				}),
+			),
+		);
+	}
+	function _o(e) {
+		return o(
+			ci,
+			{
+				...e,
+				className: J(e.className, 'vc-open-external-icon'),
+				viewBox: '0 0 24 24',
+			},
+			o('polygon', {
+				fill: 'currentColor',
+				'fill-rule': 'nonzero',
+				points: '13 20 11 20 11 8 5.5 13.5 4.08 12.08 12 4.16 19.92 12.08 18.5 13.5 13 8',
+			}),
+		);
+	}
+	function Fo(e) {
+		return o(
+			ci,
+			{
+				...e,
+				className: J(e.className, 'vc-image-icon'),
+				viewBox: '0 0 24 24',
+			},
+			o('path', {
+				fill: 'currentColor',
+				d: 'M21,19V5c0,-1.1 -0.9,-2 -2,-2H5c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2zM8.5,13.5l2.5,3.01L14.5,12l4.5,6H5l3.5,-4.5z',
+			}),
+		);
+	}
+	function Tv(e) {
+		return o(
+			ci,
+			{
+				...e,
+				className: J(e.className, 'vc-info-icon'),
+				viewBox: '0 0 12 12',
+			},
+			o('path', {
+				fill: 'currentColor',
+				d: 'M6 1C3.243 1 1 3.244 1 6c0 2.758 2.243 5 5 5s5-2.242 5-5c0-2.756-2.243-5-5-5zm0 2.376a.625.625 0 110 1.25.625.625 0 010-1.25zM7.5 8.5h-3v-1h1V6H5V5h1a.5.5 0 01.5.5v2h1v1z',
+			}),
+		);
+	}
+	function xv(e) {
+		return o(
+			ci,
+			{
+				'aria-label': nt.Messages.GUILD_OWNER,
+				...e,
+				className: J(e.className, 'vc-owner-crown-icon'),
+				role: 'img',
+				viewBox: '0 0 16 16',
+			},
+			o('path', {
+				fill: 'currentColor',
+				'fill-rule': 'evenodd',
+				'clip-rule': 'evenodd',
+				d: 'M13.6572 5.42868C13.8879 5.29002 14.1806 5.30402 14.3973 5.46468C14.6133 5.62602 14.7119 5.90068 14.6473 6.16202L13.3139 11.4954C13.2393 11.7927 12.9726 12.0007 12.6666 12.0007H3.33325C3.02725 12.0007 2.76058 11.792 2.68592 11.4954L1.35258 6.16202C1.28792 5.90068 1.38658 5.62602 1.60258 5.46468C1.81992 5.30468 2.11192 5.29068 2.34325 5.42868L5.13192 7.10202L7.44592 3.63068C7.46173 3.60697 7.48377 3.5913 7.50588 3.57559C7.5192 3.56612 7.53255 3.55663 7.54458 3.54535L6.90258 2.90268C6.77325 2.77335 6.77325 2.56068 6.90258 2.43135L7.76458 1.56935C7.89392 1.44002 8.10658 1.44002 8.23592 1.56935L9.09792 2.43135C9.22725 2.56068 9.22725 2.77335 9.09792 2.90268L8.45592 3.54535C8.46794 3.55686 8.48154 3.56651 8.49516 3.57618C8.51703 3.5917 8.53897 3.60727 8.55458 3.63068L10.8686 7.10202L13.6572 5.42868ZM2.66667 12.6673H13.3333V14.0007H2.66667V12.6673Z',
+			}),
+		);
+	}
+	var Bo = m(() => {
+		'use strict';
+		a();
+		Sv();
+		de();
+		x();
+	});
+	function x2(e) {
+		return ko(e.toLowerCase().split('_'));
+	}
+	function Ys(e) {
+		return (e = wv[e] || e), nt.Messages[e] || x2(e);
+	}
+	function Mv(e) {
+		e === 'USE_APPLICATION_COMMANDS'
+			? (e = 'USE_APPLICATION_COMMANDS_GUILD')
+			: e === 'SEND_VOICE_MESSAGES'
+			? (e = 'SEND_VOICE_MESSAGE_GUILD')
+			: e !== 'STREAM' && (e = wv[e] || e);
+		let t = nt.Messages[`ROLE_PERMISSIONS_${e}_DESCRIPTION`];
+		return t?.hasMarkdown
+			? Pe.parse(t.message)
+			: typeof t == 'string'
+			? t
+			: '';
+	}
+	function Zs({ roles: e, id: t }, n) {
+		return [...n.roles, t]
+			.map((i) => e[i])
+			.sort((i, r) => r.position - i.position);
+	}
+	function Pv(e) {
+		switch (ui.store.permissionsSortOrder) {
+			case 0:
+				return e.sort((t, n) => n.position - t.position);
+			case 1:
+				return e.sort((t, n) => t.position - n.position);
+			default:
+				return e;
+		}
+	}
+	function Xs(e, t) {
+		let n = le.getGuild(t);
+		return e.sort((i, r) => {
+			if (i.type !== 0 || r.type !== 0) return 0;
+			let s = n.roles[i.id];
+			return n.roles[r.id].position - s.position;
+		});
+	}
+	var Mt,
+		wv,
+		dr = m(() => {
+			'use strict';
+			a();
+			je();
+			ro();
+			x();
+			Js();
+			mr();
+			Mt = Ue('vc-permviewer-');
+			wv = {
+				MANAGE_GUILD: 'MANAGE_SERVER',
+				MANAGE_GUILD_EXPRESSIONS: 'MANAGE_EXPRESSIONS',
+				CREATE_GUILD_EXPRESSIONS: 'CREATE_EXPRESSIONS',
+				MODERATE_MEMBERS: 'MODERATE_MEMBER',
+				STREAM: 'VIDEO',
+				SEND_VOICE_MESSAGES: 'ROLE_PERMISSIONS_SEND_VOICE_MESSAGE',
+			};
+		});
+	function hp() {
+		return o(
+			'svg',
+			{ height: '24', width: '24', viewBox: '0 0 24 24' },
+			o('title', null, 'Denied'),
+			o('path', {
+				fill: 'var(--status-danger)',
+				d: 'M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z',
+			}),
+		);
+	}
+	function yp() {
+		return o(
+			'svg',
+			{ height: '24', width: '24', viewBox: '0 0 24 24' },
+			o('title', null, 'Allowed'),
+			o('path', {
+				fill: 'var(--text-positive)',
+				d: 'M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7.00003L19.5899 5.59003L8.99991 16.17ZZ',
+			}),
+		);
+	}
+	function Rv() {
+		return o(
+			'svg',
+			{ height: '24', width: '24', viewBox: '0 0 16 16' },
+			o(
+				'g',
+				null,
+				o('title', null, 'Not overwritten'),
+				o('polygon', {
+					fill: 'var(--text-normal)',
+					points: '12 2.32 10.513 2 4 13.68 5.487 14',
+				}),
+			),
+		);
+	}
+	var Cv = m(() => {
+		'use strict';
+		a();
+	});
+	function M2(e, t, n) {
+		return be((i) =>
+			o(R2, { modalProps: i, permissions: e, guild: t, header: n }),
+		);
+	}
+	function P2({ permissions: e, guild: t, modalProps: n, header: i }) {
+		e.sort((c, u) => c.type - u.type),
+			Be(
+				[ke],
+				() => ke.getMemberIds(t.id),
+				null,
+				(c, u) => c.length === u.length,
+			),
+			tt(() => {
+				let c = e
+					.filter((u) => u.type === 1 && !ke.isMember(t.id, u.id))
+					.map(({ id: u }) => u);
+				L.dispatch({
+					type: 'GUILD_MEMBERS_REQUEST',
+					guildIds: [t.id],
+					userIds: c,
+				});
+			}, []);
+		let [r, s] = V(0),
+			l = e[r];
+		return o(
+			Ie,
+			{ ...n, size: 'large' },
+			o(
+				$e,
+				null,
+				o(
+					q,
+					{
+						className: Mt('perms-title'),
+						variant: 'heading-lg/semibold',
+					},
+					i,
+					' permissions:',
+				),
+				o(St, { onClick: n.onClose }),
+			),
+			o(
+				Le,
+				null,
+				!l &&
+					o(
+						'div',
+						{ className: Mt('perms-no-perms') },
+						o(
+							q,
+							{ variant: 'heading-lg/normal' },
+							'No permissions to display!',
+						),
+					),
+				l &&
+					o(
+						'div',
+						{ className: Mt('perms-container') },
+						o(
+							'div',
+							{ className: Mt('perms-list') },
+							e.map((c, u) => {
+								let h = U.getUser(c.id ?? ''),
+									f = t.roles[c.id ?? ''];
+								return o(
+									'button',
+									{
+										className: Mt('perms-list-item-btn'),
+										onClick: () => s(u),
+									},
+									o(
+										'div',
+										{
+											className: Mt('perms-list-item', {
+												'perms-list-item-active':
+													r === u,
+											}),
+											onContextMenu: (v) => {
+												c.type === 0 &&
+													Fn.open(v, () =>
+														o(I2, {
+															guild: t,
+															roleId: c.id,
+															onClose: n.onClose,
+														}),
+													);
+											},
+										},
+										(c.type === 0 || c.type === 2) &&
+											o('span', {
+												className:
+													Mt('perms-role-circle'),
+												style: {
+													backgroundColor:
+														f?.colorString ??
+														'var(--primary-300)',
+												},
+											}),
+										c.type === 1 &&
+											h !== void 0 &&
+											o('img', {
+												className: Mt('perms-user-img'),
+												src: h.getAvatarURL(
+													void 0,
+													void 0,
+													!1,
+												),
+											}),
+										o(
+											q,
+											{ variant: 'text-md/normal' },
+											c.type === 0
+												? f?.name || 'Unknown Role'
+												: c.type === 1
+												? h?.tag || 'Unknown User'
+												: o(
+														ae,
+														{
+															style: {
+																gap: '0.2em',
+																justifyItems:
+																	'center',
+															},
+														},
+														'@owner',
+														o(xv, {
+															height: 18,
+															width: 18,
+															'aria-hidden':
+																'true',
+														}),
+												  ),
+										),
+									),
+								);
+							}),
+						),
+						o(
+							'div',
+							{ className: Mt('perms-perms') },
+							Object.entries(io).map(([c, u]) =>
+								o(
+									'div',
+									{ className: Mt('perms-perms-item') },
+									o(
+										'div',
+										{
+											className: Mt(
+												'perms-perms-item-icon',
+											),
+										},
+										(() => {
+											let {
+												permissions: h,
+												overwriteAllow: f,
+												overwriteDeny: v,
+											} = l;
+											return h
+												? (h & u) === u
+													? yp()
+													: hp()
+												: f && (f & u) === u
+												? yp()
+												: v && (v & u) === u
+												? hp()
+												: Rv();
+										})(),
+									),
+									o(q, { variant: 'text-md/normal' }, Ys(c)),
+									o(
+										W,
+										{ text: Mv(c) || 'No Description' },
+										(h) => o(Tv, { ...h }),
+									),
+								),
+							),
+						),
+					),
+			),
+		);
+	}
+	function I2({ guild: e, roleId: t, onClose: n }) {
+		return o(
+			F.Menu,
+			{
+				navId: Mt('role-context-menu'),
+				onClose: Fn.close,
+				'aria-label': 'Role Options',
+			},
+			o(F.MenuItem, {
+				id: 'vc-pw-view-as-role',
+				label: 'View As Role',
+				action: () => {
+					let i = e.roles[t];
+					!i ||
+						(n(),
+						L.dispatch({
+							type: 'IMPERSONATE_UPDATE',
+							guildId: e.id,
+							data: { type: 'ROLES', roles: { [t]: i } },
+						}));
+				},
+			}),
+		);
+	}
+	var R2,
+		pi,
+		mr = m(() => {
+			'use strict';
+			a();
+			re();
+			xt();
+			Bo();
+			ze();
+			x();
+			dr();
+			Cv();
+			(R2 = k.wrap(P2)), (pi = M2);
+		});
+	var Av = m(() => {});
+	function fr({
+		children: e,
+		onMoreClick: t,
+		buttons: n,
+		moreTooltipText: i,
+		defaultState: r = !1,
+		onDropDownClick: s,
+		headerText: l,
+	}) {
+		let [c, u] = V(r);
+		return o(
+			d,
+			null,
+			o(
+				'div',
+				{
+					style: {
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						marginBottom: '8px',
+					},
+				},
+				o(
+					q,
+					{
+						tag: 'h2',
+						variant: 'eyebrow',
+						style: {
+							color: 'var(--header-primary)',
+							display: 'inline',
+						},
+					},
+					l,
+				),
+				o(
+					'div',
+					{ className: vp('center-flex') },
+					n ?? null,
+					t &&
+						o(W, { text: i }, (h) =>
+							o(
+								'button',
+								{ ...h, className: vp('btn'), onClick: t },
+								o(
+									'svg',
+									{
+										width: '24',
+										height: '24',
+										viewBox: '0 0 24 24',
+									},
+									o('path', {
+										fill: 'var(--text-normal)',
+										d: 'M7 12.001C7 10.8964 6.10457 10.001 5 10.001C3.89543 10.001 3 10.8964 3 12.001C3 13.1055 3.89543 14.001 5 14.001C6.10457 14.001 7 13.1055 7 12.001ZM14 12.001C14 10.8964 13.1046 10.001 12 10.001C10.8954 10.001 10 10.8964 10 12.001C10 13.1055 10.8954 14.001 12 14.001C13.1046 14.001 14 13.1055 14 12.001ZM19 10.001C20.1046 10.001 21 10.8964 21 12.001C21 13.1055 20.1046 14.001 19 14.001C17.8954 14.001 17 13.1055 17 12.001C17 10.8964 17.8954 10.001 19 10.001Z',
+									}),
+								),
+							),
+						),
+					o(W, { text: c ? 'Hide ' + l : 'Show ' + l }, (h) =>
+						o(
+							'button',
+							{
+								...h,
+								className: vp('btn'),
+								onClick: () => {
+									u((f) => !f), s?.(c);
+								},
+							},
+							o(
+								'svg',
+								{
+									width: '24',
+									height: '24',
+									viewBox: '0 0 24 24',
+									transform: c ? 'scale(1 -1)' : 'scale(1 1)',
+								},
+								o('path', {
+									fill: 'var(--text-normal)',
+									d: 'M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z',
+								}),
+							),
+						),
+					),
+				),
+			),
+			c && e,
+		);
+	}
+	var vp,
+		Sp = m(() => {
+			'use strict';
+			a();
+			je();
+			x();
+			Av();
+			vp = Ue('vc-expandableheader-');
+		});
+	function A2({ guild: e, guildMember: t }) {
+		let n = ui.use(['permissionsSortOrder']),
+			[i, r] = Ut(() => {
+				let A = [],
+					C = Zs(e, t),
+					D = C.map((B) => ({ type: 0, ...B }));
+				if (e.ownerId === t.userId) {
+					D.push({
+						type: 2,
+						permissions: Object.values(io).reduce(
+							(O, K) => O | K,
+							0n,
+						),
+					});
+					let B = nt.Messages.GUILD_OWNER || 'Server Owner';
+					A.push({
+						permission: B,
+						roleColor: 'var(--primary-300)',
+						rolePosition: 1 / 0,
+					});
+				}
+				Pv(C);
+				for (let [B, O] of Object.entries(io))
+					for (let {
+						permissions: K,
+						colorString: ee,
+						position: j,
+						name: z,
+					} of C)
+						if ((K & O) === O) {
+							A.push({
+								permission: Ys(B),
+								roleColor: ee || 'var(--primary-300)',
+								rolePosition: j,
+							});
+							break;
+						}
+				return (
+					A.sort((B, O) => O.rolePosition - B.rolePosition), [D, A]
+				);
+			}, [n.permissionsSortOrder]),
+			{
+				root: s,
+				role: l,
+				roleRemoveButton: c,
+				roleNameOverflow: u,
+				roles: h,
+				rolePill: f,
+				rolePillBorder: v,
+				roleCircle: S,
+				roleName: b,
+			} = C2;
+		return o(
+			fr,
+			{
+				headerText: 'Permissions',
+				moreTooltipText: 'Role Details',
+				onMoreClick: () =>
+					pi(i, e, t.nick || U.getUser(t.userId).username),
+				defaultState: ui.store.defaultPermissionsDropdownState,
+				buttons: [
+					o(
+						W,
+						{
+							text: `Sorting by ${
+								n.permissionsSortOrder === 0
+									? 'Highest Role'
+									: 'Lowest Role'
+							}`,
+						},
+						(A) =>
+							o(
+								'button',
+								{
+									...A,
+									className: Mt('userperms-sortorder-btn'),
+									onClick: () => {
+										n.permissionsSortOrder =
+											n.permissionsSortOrder === 0
+												? 1
+												: 0;
+									},
+								},
+								o(
+									'svg',
+									{
+										width: '20',
+										height: '20',
+										viewBox: '0 96 960 960',
+										transform:
+											n.permissionsSortOrder === 0
+												? 'scale(1 1)'
+												: 'scale(1 -1)',
+									},
+									o('path', {
+										fill: 'var(--text-normal)',
+										d: 'M440 896V409L216 633l-56-57 320-320 320 320-56 57-224-224v487h-80Z',
+									}),
+								),
+							),
+					),
+				],
+			},
+			r.length > 0 &&
+				o(
+					'div',
+					{ className: J(s, h) },
+					r.map(({ permission: A, roleColor: C }) =>
+						o(
+							'div',
+							{ className: J(l, f, v) },
+							o(
+								'div',
+								{ className: c },
+								o('span', {
+									className: S,
+									style: { backgroundColor: C },
+								}),
+							),
+							o(
+								'div',
+								{ className: b },
+								o(
+									q,
+									{ className: u, variant: 'text-xs/medium' },
+									A,
+								),
+							),
+						),
+					),
+				),
+		);
+	}
+	var C2,
+		Nv,
+		kv = m(() => {
+			'use strict';
+			a();
+			re();
+			Sp();
+			rn();
+			de();
+			_();
+			x();
+			Js();
+			dr();
+			mr();
+			C2 = ct(() => {
+				let e = Ri(
+					Y.byProps('roles', 'rolePill', 'rolePillBorder'),
+					Y.byProps('roleCircle', 'dotBorderBase', 'dotBorderColor'),
+					Y.byProps(
+						'roleNameOverflow',
+						'root',
+						'roleName',
+						'roleRemoveButton',
+					),
+				);
+				return Object.assign({}, ...e);
+			});
+			Nv = k.wrap(A2, { noop: !0 });
+		});
+	function bp(e, t, n) {
+		return n === 0 && !ke.isMember(e, t)
+			? null
+			: o(F.MenuItem, {
+					id: 'perm-viewer-permissions',
+					label: 'Permissions',
+					action: () => {
+						let i = le.getGuild(e),
+							r,
+							s;
+						switch (n) {
+							case 0: {
+								let l = ke.getMember(e, t);
+								(r = Zs(i, l).map((c) => ({ type: 0, ...c }))),
+									i.ownerId === t &&
+										r.push({
+											type: 2,
+											permissions: Object.values(
+												io,
+											).reduce((c, u) => c | u, 0n),
+										}),
+									(s =
+										l.nick ?? U.getUser(l.userId).username);
+								break;
+							}
+							case 1: {
+								let l = X.getChannel(t);
+								(r = Xs(
+									Object.values(l.permissionOverwrites).map(
+										({
+											id: c,
+											allow: u,
+											deny: h,
+											type: f,
+										}) => ({
+											type: f,
+											id: c,
+											overwriteAllow: u,
+											overwriteDeny: h,
+										}),
+									),
+									e,
+								)),
+									(s = l.name);
+								break;
+							}
+							default: {
+								(r = Object.values(i.roles).map((l) => ({
+									type: 0,
+									...l,
+								}))),
+									(s = i.name);
+								break;
+							}
+						}
+						pi(r, i, s);
+					},
+			  });
+	}
+	function Tp(e, t) {
+		return (n, i) => () => {
+			if (!i) return n;
+			let r = Lt(e, n),
+				s = (() => {
+					switch (t) {
+						case 0:
+							return bp(i.guildId, i.user.id, t);
+						case 1:
+							return bp(i.guild.id, i.channel.id, t);
+						case 2:
+							return bp(i.guild.id);
+						default:
+							return null;
+					}
+				})();
+			s != null &&
+				(r
+					? r.push(s)
+					: e === 'roles' &&
+					  i.guildId &&
+					  n.splice(-1, 0, o(F.MenuGroup, null, s)));
+		};
+	}
+	var ui,
+		xp,
+		Js = m(() => {
+			'use strict';
+			a();
+			vv();
+			Jt();
+			E();
+			w();
+			T();
+			x();
+			mr();
+			kv();
+			dr();
+			ui = N({
+				permissionsSortOrder: {
+					description:
+						'The sort method used for defining which role grants an user a certain permission',
+					type: 4,
+					options: [
+						{ label: 'Highest Role', value: 0, default: !0 },
+						{ label: 'Lowest Role', value: 1 },
+					],
+				},
+				defaultPermissionsDropdownState: {
+					description:
+						'Whether the permissions dropdown on user popouts should be open by default',
+					type: 3,
+					default: !1,
+				},
+			});
+			xp = g({
+				name: 'PermissionsViewer',
+				description:
+					'View the permissions a user or channel has, and the roles of a server',
+				authors: [p.Nuckyz, p.Ven],
+				settings: ui,
+				patches: [
+					{
+						find: '.Messages.BOT_PROFILE_SLASH_COMMANDS',
+						replacement: {
+							match: /showBorder:.{0,60}}\),(?<=guild:(\i),guildMember:(\i),.+?)/,
+							replace: (e, t, n) =>
+								`${e}$self.UserPermissions(${t},${n}),`,
+						},
+					},
+				],
+				UserPermissions: (e, t) =>
+					!!t && o(Nv, { guild: e, guildMember: t }),
+				userContextMenuPatch: Tp('roles', 0),
+				channelContextMenuPatch: Tp(
+					['mute-channel', 'unmute-channel'],
+					1,
+				),
+				guildContextMenuPatch: Tp('privacy', 2),
+				start() {
+					we('user-context', this.userContextMenuPatch),
+						we('channel-context', this.channelContextMenuPatch),
+						we('guild-context', this.guildContextMenuPatch);
+				},
+				stop() {
+					Ae('user-context', this.userContextMenuPatch),
+						Ae('channel-context', this.channelContextMenuPatch),
+						Ae('guild-context', this.guildContextMenuPatch);
+				},
+			});
+		});
+	function Ev(e) {
 		let t = e instanceof File,
 			n = t ? URL.createObjectURL(e) : e;
 		return new Promise((i, r) => {
-			let a = new Image();
-			(a.onload = () => {
-				t && URL.revokeObjectURL(n), i(a);
+			let s = new Image();
+			(s.onload = () => {
+				t && URL.revokeObjectURL(n), i(s);
 			}),
-				(a.onerror = (l, u, m, y, h) => r(h || l)),
-				(a.crossOrigin = 'Anonymous'),
-				(a.src = n);
+				(s.onerror = (l, c, u, h, f) => r(f || l)),
+				(s.crossOrigin = 'Anonymous'),
+				(s.src = n);
 		});
 	}
-	async function ES(e, t, n) {
+	async function _2(e, t, n) {
 		for (let i of e)
 			switch (i.name) {
 				case 'image':
-					let r = LS.getUploads(t.channel.id, Lm)[0];
+					let r = O2.getUploads(t.channel.id, Lv)[0];
 					if (r) {
 						if (!r.isImage) throw 'Upload is not an image';
 						return r.item.file;
@@ -8797,15 +12866,15 @@ ${Dn(l)}`,
 					return i.value;
 				case 'user':
 					try {
-						return (await RS(i.value))
+						return (await E2(i.value))
 							.getAvatarURL(n ? void 0 : t.guild?.id, 2048)
 							.replace(/\?size=\d+$/, '?size=2048');
-					} catch (a) {
+					} catch (s) {
 						throw (
 							(console.error(
 								`[petpet] Failed to fetch user
 `,
-								a,
+								s,
 							),
 							'Failed to fetch user. Check the console for more info.')
 						);
@@ -8813,44 +12882,45 @@ ${Dn(l)}`,
 			}
 		return null;
 	}
-	var Lm,
-		CS,
-		MS,
-		_i,
-		NS,
-		RS,
-		AS,
-		LS,
-		ul,
-		Dm = d(() => {
+	var Lv,
+		N2,
+		k2,
+		Qs,
+		L2,
+		E2,
+		D2,
+		O2,
+		wp,
+		Dv = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
+			w();
+			tr();
+			rn();
 			T();
-			Io();
-			B();
-			v();
-			D();
-			(Lm = 0),
-				(CS = 20),
-				(MS = 128),
-				(_i = 10),
-				(NS = xt(() =>
+			_();
+			(Lv = 0),
+				(N2 = 20),
+				(k2 = 128),
+				(Qs = 10),
+				(L2 = On(() =>
 					Promise.all(
-						Array.from({ length: _i }, (e, t) =>
-							Em(
+						Array.from({ length: Qs }, (e, t) =>
+							Ev(
 								`https://raw.githubusercontent.com/VenPlugs/petpet/main/frames/pet${t}.gif`,
 							),
 						),
 					),
 				)),
-				(RS = oe('.USER(')),
-				(AS = oe('UPLOAD_FILE_LIMIT_ERROR')),
-				(LS = C('getUploads'));
-			ul = f({
+				(E2 = ce('.USER(')),
+				(D2 = ce('UPLOAD_FILE_LIMIT_ERROR')),
+				(O2 = P('getUploads'));
+			wp = g({
 				name: 'petpet',
-				description: 'headpet a cutie',
-				authors: [c.Ven],
+				description:
+					'Adds a /petpet slash command to create headpet gifs from any image',
+				authors: [p.Ven],
 				dependencies: ['CommandsAPI'],
 				commands: [
 					{
@@ -8899,61 +12969,247 @@ ${Dn(l)}`,
 									GIFEncoder: n,
 									quantize: i,
 									applyPalette: r,
-								} = await wi(),
-								a = await NS(),
-								l = ue(e, 'no-server-pfp', !1);
+								} = await Es(),
+								s = await L2(),
+								l = De(e, 'no-server-pfp', !1);
 							try {
-								var u = await ES(e, t, l);
-								if (!u) throw 'No Image specified!';
-							} catch (M) {
-								H(t.channel.id, { content: String(M) });
+								var c = await _2(e, t, l);
+								if (!c) throw 'No Image specified!';
+							} catch (C) {
+								ie(t.channel.id, { content: String(C) });
 								return;
 							}
-							let m = await Em(u),
-								y = ue(e, 'delay', CS),
-								h = ue(e, 'resolution', MS),
-								b = new n(),
-								x = document.createElement('canvas');
-							x.width = x.height = h;
-							let S = x.getContext('2d');
-							for (let M = 0; M < _i; M++) {
-								S.clearRect(0, 0, x.width, x.height);
-								let j = M < _i / 2 ? M : _i - M,
-									X = 0.8 + j * 0.02,
-									_ = 0.8 - j * 0.05,
-									Q = (1 - X) * 0.5 + 0.1,
-									ae = 1 - _ - 0.08;
-								S.drawImage(m, Q * h, ae * h, X * h, _ * h),
-									S.drawImage(a[M], 0, 0, h, h);
-								let { data: fe } = S.getImageData(0, 0, h, h),
-									$e = i(fe, 256),
-									yt = r(fe, $e);
-								b.writeFrame(yt, h, h, {
+							let u = await Ev(c),
+								h = De(e, 'delay', N2),
+								f = De(e, 'resolution', k2),
+								v = new n(),
+								S = document.createElement('canvas');
+							S.width = S.height = f;
+							let b = S.getContext('2d');
+							for (let C = 0; C < Qs; C++) {
+								b.clearRect(0, 0, S.width, S.height);
+								let D = C < Qs / 2 ? C : Qs - C,
+									B = 0.8 + D * 0.02,
+									O = 0.8 - D * 0.05,
+									K = (1 - B) * 0.5 + 0.1,
+									ee = 1 - O - 0.08;
+								b.drawImage(u, K * f, ee * f, B * f, O * f),
+									b.drawImage(s[C], 0, 0, f, f);
+								let { data: j } = b.getImageData(0, 0, f, f),
+									z = i(j, 256),
+									te = r(j, z);
+								v.writeFrame(te, f, f, {
 									transparent: !0,
-									palette: $e,
-									delay: y,
+									palette: z,
+									delay: h,
 								});
 							}
-							b.finish();
-							let A = new File([b.bytesView()], 'petpet.gif', {
+							v.finish();
+							let A = new File([v.bytesView()], 'petpet.gif', {
 								type: 'image/gif',
 							});
-							setTimeout(() => AS([A], t.channel, Lm), 10);
+							setTimeout(() => D2([A], t.channel, Lv), 10);
 						},
 					},
 				],
 			});
 		});
-	var dl,
-		_m = d(() => {
+	function Fv() {
+		return it(['plugins.PinDMs.pinnedDMs']), Vs();
+	}
+	function di(e) {
+		return Vs().has(e);
+	}
+	function Bv(e) {
+		let t = Vs();
+		t.delete(e) || t.add(e), _v([...t]);
+	}
+	function Pp() {
+		return (
+			Vs(),
+			gr.store.pinOrder === 0 ? F2.getPrivateChannelIds().filter(di) : Ln
+		);
+	}
+	function $v(e) {
+		return Pp()[e];
+	}
+	function Ip(e, t) {
+		let n = Ov(),
+			i = n.indexOf(e),
+			r = i + t;
+		([n[i], n[r]] = [n[r], n[i]]), _v(n);
+	}
+	var gr,
+		F2,
+		Ln,
+		Mp,
+		Ov,
+		_v,
+		B2,
+		Vs,
+		Rp = m(() => {
 			'use strict';
-			s();
+			a();
+			E();
 			T();
-			v();
-			dl = f({
+			_();
+			(gr = N({
+				pinOrder: {
+					type: 4,
+					description:
+						'Which order should pinned DMs be displayed in?',
+					options: [
+						{ label: 'Most recent message', value: 0, default: !0 },
+						{
+							label: 'Custom (right click channels to reorder)',
+							value: 1,
+						},
+					],
+				},
+			})),
+				(F2 = ue('PrivateChannelSortStore')),
+				(Ov = () => (M.plugins.PinDMs.pinnedDMs || void 0)?.split(',')),
+				(_v = (e) => {
+					(Mp = void 0), (M.plugins.PinDMs.pinnedDMs = e.join(','));
+				}),
+				(B2 = () => ((Ln = Ov() ?? []), (Mp = new Set(Ln)))),
+				(Vs = () => Mp ?? B2());
+		});
+	function Uv(e) {
+		let t = di(e),
+			n = t && gr.store.pinOrder === 1;
+		return o(
+			d,
+			null,
+			o(F.MenuItem, {
+				id: 'pin-dm',
+				label: t ? 'Unpin DM' : 'Pin DM',
+				action: () => Bv(e),
+			}),
+			n &&
+				Ln[0] !== e &&
+				o(F.MenuItem, {
+					id: 'move-pin-up',
+					label: 'Move Pin Up',
+					action: () => Ip(e, -1),
+				}),
+			n &&
+				Ln[Ln.length - 1] !== e &&
+				o(F.MenuItem, {
+					id: 'move-pin-down',
+					label: 'Move Pin Down',
+					action: () => Ip(e, 1),
+				}),
+		);
+	}
+	function zv() {
+		we('gdm-context', Gv), we('user-context', Hv);
+	}
+	function jv() {
+		Ae('gdm-context', Gv), Ae('user-context', Hv);
+	}
+	var Gv,
+		Hv,
+		Wv = m(() => {
+			'use strict';
+			a();
+			Jt();
+			x();
+			Rp();
+			(Gv = (e, t) => () => {
+				let n = Lt('leave-channel', e);
+				n && n.unshift(Uv(t.channel.id));
+			}),
+				(Hv = (e, t) => () => {
+					let n = Lt('close-dm', e);
+					if (n) {
+						let i = n.findIndex((r) => r?.props?.id === 'close-dm');
+						n.splice(i, 0, Uv(t.channel.id));
+					}
+				});
+		});
+	var Cp,
+		qv = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			Wv();
+			Rp();
+			Cp = g({
+				name: 'PinDMs',
+				description:
+					'Allows you to pin private channels to the top of your DM list. To pin/unpin or reorder pins, right click DMs',
+				authors: [p.Ven, p.Strencher],
+				settings: gr,
+				start: zv,
+				stop: jv,
+				usePinCount(e) {
+					let t = Fv();
+					return e.length ? [t.size] : [];
+				},
+				getChannel(e, t) {
+					return e[$v(t)];
+				},
+				isPinned: di,
+				getSnapshot: Pp,
+				getScrollOffset(e, t, n, i, r) {
+					return di(e)
+						? t * (Ln.indexOf(e) + i) + n
+						: (t + n) * 2 + t * Ln.length + r;
+				},
+				patches: [
+					{
+						find: '.privateChannelsHeaderContainer,',
+						replacement: [
+							{
+								match: /privateChannelIds:(\i),/,
+								replace:
+									'privateChannelIds:$1.filter(c=>!$self.isPinned(c)),pinCount:$self.usePinCount($1),',
+							},
+							{
+								match: /(?<=renderRow:(\i)\.renderRow,)sections:\[\i,/,
+								replace: '$&...$1.props.pinCount,',
+							},
+							{
+								match: /children:(\i\.\i\.Messages.DIRECT_MESSAGES)(?<=renderSection=function\((\i)\).+?)/,
+								replace:
+									"children:$2.section===1?'Pinned DMs':$1",
+							},
+							{
+								match: /(?<=preRenderedChildren,(\i)=)((\i)\[\i\[\i\]\]);/,
+								replace:
+									'arguments[0]===1?$self.getChannel($3,arguments[1]):$2;',
+							},
+							{ match: /===\i.DMS&&0/, replace: '-1$&' },
+							{
+								match: /(?<=else\{\i\+=)(\i)\*\(.+?(?=;)/,
+								replace:
+									'$self.getScrollOffset(arguments[0],$1,this.props.padding,this.state.preRenderedChildren,$&)',
+							},
+						],
+					},
+					{
+						find: '"mod+alt+right"',
+						replacement: {
+							match: /(?<=(\i)=__OVERLAY__\?\i:.{0,10})\.concat\((.{0,10})\)/,
+							replace:
+								'.concat($self.getSnapshot()).concat($2.filter(c=>!$self.isPinned(c)))',
+						},
+					},
+				],
+			});
+		});
+	var Ap,
+		Kv = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			Ap = g({
 				name: 'PlainFolderIcon',
 				description: "Doesn't show the small guild icons in folders",
-				authors: [c.botato],
+				authors: [p.botato],
 				patches: [
 					{
 						find: '.expandedFolderIconWrapper',
@@ -8967,212 +13223,225 @@ ${Dn(l)}`,
 				],
 			});
 		});
-	var gl = {};
-	te(gl, {
-		__addDecoratorsToList: () => DS,
-		addDecorator: () => ml,
-		decorators: () => Fi,
-		removeDecorator: () => fl,
+	var Lp = {};
+	me(Lp, {
+		__addDecoratorsToList: () => $2,
+		addDecorator: () => Np,
+		decorators: () => ea,
+		removeDecorator: () => kp,
 	});
-	function ml(e, t, n) {
-		Fi.set(e, { decorator: t, onlyIn: n });
+	function Np(e, t, n) {
+		ea.set(e, { decorator: t, onlyIn: n });
 	}
-	function fl(e) {
-		Fi.delete(e);
+	function kp(e) {
+		ea.delete(e);
 	}
-	function DS(e) {
+	function $2(e) {
 		let t = !!e.guildId;
-		return [...Fi.values()].map((n) => {
+		return [...ea.values()].map((n) => {
 			let { decorator: i, onlyIn: r } = n;
 			return !r || (r === 'guilds' && t) || (r === 'dms' && !t)
 				? i(e)
 				: null;
 		});
 	}
-	var Fi,
-		hl = d(() => {
+	var ea,
+		Ep = m(() => {
 			'use strict';
-			s();
-			Fi = new Map();
+			a();
+			ea = new Map();
 		});
-	var Sl = {};
-	te(Sl, {
-		__addDecorationsToMessage: () => _S,
-		addDecoration: () => yl,
-		decorations: () => Oi,
-		removeDecoration: () => bl,
+	var _p = {};
+	me(_p, {
+		__addDecorationsToMessage: () => U2,
+		addDecoration: () => Dp,
+		decorations: () => ta,
+		removeDecoration: () => Op,
 	});
-	function yl(e, t) {
-		Oi.set(e, t);
+	function Dp(e, t) {
+		ta.set(e, t);
 	}
-	function bl(e) {
-		Oi.delete(e);
+	function Op(e) {
+		ta.delete(e);
 	}
-	function _S(e) {
-		return [...Oi.values()].map((t) => t(e));
+	function U2(e) {
+		return [...ta.values()].map((t) => t(e));
 	}
-	var Oi,
-		vl = d(() => {
+	var ta,
+		Fp = m(() => {
 			'use strict';
-			s();
-			Oi = new Map();
+			a();
+			ta = new Map();
 		});
-	function $i(e, t = '0 0 24 24') {
+	function na(e, t) {
 		return ({ color: n, tooltip: i }) =>
-			o(Z, { text: i }, (r) =>
+			o(W, { text: i }, (r) =>
 				o(
 					'svg',
-					{ ...r, height: '20', width: '20', viewBox: t, fill: n },
+					{
+						...r,
+						height: t?.height ?? 20,
+						width: t?.width ?? 20,
+						viewBox: t?.viewBox ?? '0 0 24 24',
+						fill: n,
+					},
 					o('path', { d: e }),
 				),
 			);
 	}
-	var FS,
-		Fm,
-		OS,
-		$S,
-		BS,
-		xl,
-		Om,
-		Tl,
-		wl,
-		$m = d(() => {
+	var G2,
+		Yv,
+		H2,
+		z2,
+		j2,
+		$p,
+		Zv,
+		Bp,
+		Up,
+		Xv = m(() => {
 			'use strict';
-			s();
-			fi();
-			hl();
-			vl();
+			a();
+			xs();
+			Ep();
+			Fp();
 			E();
-			J();
+			re();
+			w();
 			T();
-			v();
-			D();
-			P();
-			FS = bt('SessionsStore');
-			(Fm = {
-				desktop: $i(
+			_();
+			x();
+			G2 = ue('SessionsStore');
+			(Yv = {
+				desktop: na(
 					'M4 2.5c-1.103 0-2 .897-2 2v11c0 1.104.897 2 2 2h7v2H7v2h10v-2h-4v-2h7c1.103 0 2-.896 2-2v-11c0-1.103-.897-2-2-2H4Zm16 2v9H4v-9h16Z',
 				),
-				web: $i(
+				web: na(
 					'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93Zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39Z',
 				),
-				mobile: $i(
-					'M15.5 1h-8A2.5 2.5 0 0 0 5 3.5v17A2.5 2.5 0 0 0 7.5 23h8a2.5 2.5 0 0 0 2.5-2.5v-17A2.5 2.5 0 0 0 15.5 1zm-4 21c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5-4H7V4h9v14z',
+				mobile: na(
+					'M 187 0 L 813 0 C 916.277 0 1000 83.723 1000 187 L 1000 1313 C 1000 1416.277 916.277 1500 813 1500 L 187 1500 C 83.723 1500 0 1416.277 0 1313 L 0 187 C 0 83.723 83.723 0 187 0 Z M 125 1000 L 875 1000 L 875 250 L 125 250 Z M 500 1125 C 430.964 1125 375 1180.964 375 1250 C 375 1319.036 430.964 1375 500 1375 C 569.036 1375 625 1319.036 625 1250 C 625 1180.964 569.036 1125 500 1125 Z',
+					{ viewBox: '0 0 1000 1500', height: 17, width: 17 },
 				),
-				console: $i(
+				console: na(
 					'M14.8 2.7 9 3.1V47h3.3c1.7 0 6.2.3 10 .7l6.7.6V2l-4.2.2c-2.4.1-6.9.3-10 .5zm1.8 6.4c1 1.7-1.3 3.6-2.7 2.2C12.7 10.1 13.5 8 15 8c.5 0 1.2.5 1.6 1.1zM16 33c0 6-.4 10-1 10s-1-4-1-10 .4-10 1-10 1 4 1 10zm15-8v23.3l3.8-.7c2-.3 4.7-.6 6-.6H43V3h-2.2c-1.3 0-4-.3-6-.6L31 1.7V25z',
-					'0 0 50 50',
+					{ viewBox: '0 0 50 50' },
 				),
 			}),
-				(OS = oe('.TWITCH', '.STREAMING', '.INVISIBLE')),
-				($S = ({ platform: e, status: t }) => {
+				(H2 = ce('.TWITCH', '.STREAMING', '.INVISIBLE')),
+				(z2 = ({ platform: e, status: t }) => {
 					let n = e[0].toUpperCase() + e.slice(1),
-						i = Fm[e] ?? Fm.desktop;
-					return o(i, { color: `var(--${OS(t)}`, tooltip: n });
+						i = Yv[e] ?? Yv.desktop;
+					return o(i, { color: `var(--${H2(t)}`, tooltip: n });
 				}),
-				(BS = (e) => Yt.getState()?.clientStatuses?.[e]),
-				(xl = ({ user: e, inline: t = !1, marginLeft: n = '4px' }) => {
+				(j2 = (e) => oo.getState()?.clientStatuses?.[e]),
+				($p = ({
+					user: e,
+					wantMargin: t = !0,
+					wantTopMargin: n = !1,
+				}) => {
 					if (!e || e.bot) return null;
 					if (e.id === U.getCurrentUser().id) {
-						let a = FS.getSessions();
-						if (typeof a != 'object') return null;
-						let l = Object.values(a).sort(
-								({ status: y }, { status: h }) =>
-									y === h
+						let s = G2.getSessions();
+						if (typeof s != 'object') return null;
+						let l = Object.values(s).sort(
+								({ status: h }, { status: f }) =>
+									h === f
 										? 0
-										: y === 'online'
-										? 1
 										: h === 'online'
-										? -1
-										: y === 'idle'
 										? 1
+										: f === 'online'
+										? -1
 										: h === 'idle'
+										? 1
+										: f === 'idle'
 										? -1
 										: 0,
 							),
-							u = Object.values(l).reduce(
-								(y, h) => (
-									h.clientInfo.client !== 'unknown' &&
-										(y[h.clientInfo.client] = h.status),
-									y
+							c = Object.values(l).reduce(
+								(h, f) => (
+									f.clientInfo.client !== 'unknown' &&
+										(h[f.clientInfo.client] = f.status),
+									h
 								),
 								{},
 							),
-							{ clientStatuses: m } = Yt.getState();
-						m[U.getCurrentUser().id] = u;
+							{ clientStatuses: u } = oo.getState();
+						u[U.getCurrentUser().id] = c;
 					}
-					let i = Yt.getState()?.clientStatuses?.[e.id];
+					let i = oo.getState()?.clientStatuses?.[e.id];
 					if (!i) return null;
-					let r = Object.entries(i).map(([a, l]) =>
-						o($S, { key: a, platform: a, status: l }),
+					let r = Object.entries(i).map(([s, l]) =>
+						o(z2, { key: s, platform: s, status: l }),
 					);
 					return r.length
 						? o(
-								'div',
+								'span',
 								{
 									className: 'vc-platform-indicator',
 									style: {
-										marginLeft: n,
-										gap: '4px',
-										display: t ? 'inline-flex' : 'flex',
+										display: 'inline-flex',
+										justifyContent: 'center',
 										alignItems: 'center',
-										transform: t
-											? 'translateY(4px)'
-											: void 0,
+										marginLeft: t ? 4 : 0,
+										verticalAlign: 'top',
+										position: 'relative',
+										top: n ? 2 : 0,
+										padding: t ? 0 : 1,
+										gap: 2,
 									},
 								},
 								r,
 						  )
 						: null;
 				}),
-				(Om = {
-					component: (e) => o(xl, { ...e, marginLeft: '' }),
+				(Zv = {
+					component: (e) => o($p, { ...e, wantMargin: !1 }),
 					position: 0,
 					shouldShow: (e) =>
-						!!Object.keys(BS(e.user.id) ?? {}).length,
+						!!Object.keys(j2(e.user.id) ?? {}).length,
 					key: 'indicator',
 				}),
-				(Tl = {
+				(Bp = {
 					list: {
 						description: 'In the member list',
 						onEnable: () =>
-							ml('platform-indicator', (e) =>
-								o(N, { noop: !0 }, o(xl, { user: e.user })),
+							Np('platform-indicator', (e) =>
+								o(k, { noop: !0 }, o($p, { user: e.user })),
 							),
-						onDisable: () => fl('platform-indicator'),
+						onDisable: () => kp('platform-indicator'),
 					},
 					badges: {
 						description: 'In user profiles, as badges',
-						onEnable: () => Pl(Om),
-						onDisable: () => Il(Om),
+						onEnable: () => Gp(Zv),
+						onDisable: () => Hp(Zv),
 					},
 					messages: {
 						description: 'Inside messages',
 						onEnable: () =>
-							yl('platform-indicator', (e) =>
+							Dp('platform-indicator', (e) =>
 								o(
-									N,
+									k,
 									{ noop: !0 },
-									o(xl, {
+									o($p, {
 										user: e.message?.author,
-										inline: !0,
+										wantTopMargin: !0,
 									}),
 								),
 							),
-						onDisable: () => bl('platform-indicator'),
+						onDisable: () => Op('platform-indicator'),
 					},
 				}),
-				(wl = f({
+				(Up = g({
 					name: 'PlatformIndicators',
 					description:
 						'Adds platform indicators (Desktop, Mobile, Web...) to users',
-					authors: [c.kemo, c.TheSun, c.Nuckyz],
+					authors: [p.kemo, p.TheSun, p.Nuckyz, p.Ven],
 					dependencies: [
 						'MessageDecorationsAPI',
 						'MemberListDecoratorsAPI',
 					],
 					start() {
-						let e = k.plugins.PlatformIndicators,
+						let e = M.plugins.PlatformIndicators,
 							{ displayMode: t } = e;
 						t &&
 							(t !== 'both'
@@ -9180,12 +13449,12 @@ ${Dn(l)}`,
 								: ((e.list = !0), (e.badges = !0)),
 							(e.messages = !0),
 							delete e.displayMode),
-							Object.entries(Tl).forEach(([n, i]) => {
+							Object.entries(Bp).forEach(([n, i]) => {
 								e[n] && i.onEnable();
 							});
 					},
 					stop() {
-						Object.entries(Tl).forEach(([e, t]) => {
+						Object.entries(Bp).forEach(([e, t]) => {
 							t.onDisable();
 						});
 					},
@@ -9193,7 +13462,7 @@ ${Dn(l)}`,
 						{
 							find: '.Masks.STATUS_ONLINE_MOBILE',
 							predicate: () =>
-								k.plugins.PlatformIndicators
+								M.plugins.PlatformIndicators
 									.colorMobileIndicator,
 							replacement: [
 								{
@@ -9211,7 +13480,7 @@ ${Dn(l)}`,
 						{
 							find: '.AVATAR_STATUS_MOBILE_16;',
 							predicate: () =>
-								k.plugins.PlatformIndicators
+								M.plugins.PlatformIndicators
 									.colorMobileIndicator,
 							replacement: [
 								{
@@ -9231,7 +13500,7 @@ ${Dn(l)}`,
 						{
 							find: 'isMobileOnline=function',
 							predicate: () =>
-								k.plugins.PlatformIndicators
+								M.plugins.PlatformIndicators
 									.colorMobileIndicator,
 							replacement: {
 								match: /(?<=\i\[\i\.\i\.MOBILE\])===\i\.\i\.ONLINE/,
@@ -9241,7 +13510,7 @@ ${Dn(l)}`,
 					],
 					options: {
 						...Object.fromEntries(
-							Object.entries(Tl).map(([e, t]) => [
+							Object.entries(Bp).map(([e, t]) => [
 								e,
 								{
 									type: 3,
@@ -9261,22 +13530,22 @@ ${Dn(l)}`,
 					},
 				}));
 		});
-	var Bm = d(() => {});
-	function kl() {
+	var Jv = m(() => {});
+	function zp() {
 		return o(
-			w.Fragment,
+			I.Fragment,
 			null,
-			o(g.FormTitle, { tag: 'h3' }, 'More Information'),
+			o(y.FormTitle, { tag: 'h3' }, 'More Information'),
 			o(
-				g.FormText,
+				y.FormText,
 				null,
 				'To add your own pronouns, visit',
 				' ',
-				o(Ne, { href: 'https://pronoundb.org' }, 'pronoundb.org'),
+				o(We, { href: 'https://pronoundb.org' }, 'pronoundb.org'),
 			),
-			o(g.FormDivider, null),
+			o(y.FormDivider, null),
 			o(
-				g.FormText,
+				y.FormText,
 				null,
 				'The two pronoun formats are lowercase and capitalized. Example:',
 				o(
@@ -9292,30 +13561,51 @@ ${Dn(l)}`,
 			),
 		);
 	}
-	var Um = d(() => {
+	var Qv = m(() => {
 		'use strict';
-		s();
-		Zt();
-		P();
+		a();
+		Wn();
+		x();
 	});
-	function Nt(e, t = 300) {
-		let n;
-		return function (...i) {
-			clearTimeout(n),
-				(n = setTimeout(() => {
-					e(...i);
-				}, t));
-		};
-	}
-	var Yn = d(() => {
-		'use strict';
-		s();
-	});
-	var Ro,
-		Gm = d(() => {
+	var vo,
+		oa = m(() => {
 			'use strict';
-			s();
-			Ro = {
+			a();
+			E();
+			T();
+			ia();
+			vo = N({
+				pronounsFormat: {
+					type: 4,
+					description: 'The format for pronouns to appear in chat',
+					options: [
+						{ label: 'Lowercase', value: 'LOWERCASE', default: !0 },
+						{ label: 'Capitalized', value: 'CAPITALIZED' },
+					],
+				},
+				showSelf: {
+					type: 3,
+					description:
+						'Enable or disable showing pronouns for the current user',
+					default: !0,
+				},
+				showInMessages: {
+					type: 3,
+					description: 'Show in messages',
+					default: !0,
+				},
+				showInProfile: {
+					type: 3,
+					description: 'Show in profile',
+					default: !0,
+				},
+			});
+		});
+	var hr,
+		Vv = m(() => {
+			'use strict';
+			a();
+			hr = {
 				hh: 'He/Him',
 				hi: 'He/It',
 				hs: 'He/She',
@@ -9339,23 +13629,33 @@ ${Dn(l)}`,
 				unspecified: 'Unspecified',
 			};
 		});
-	function Ao(e) {
-		let [t, , n] = Me(() => GS(e), {
-			fallbackValue: null,
-			onError: (i) => console.error('Fetching pronouns failed: ', i),
+	function sa(e) {
+		let [t] = ut(() => q2(e), {
+			fallbackValue: t1(e),
+			onError: (n) => console.error('Fetching pronouns failed: ', n),
 		});
-		return !n && t && t !== 'unspecified' && Ro[t] ? jS(t) : null;
+		return t && t !== 'unspecified' && hr[t] ? Y2(t) : null;
 	}
-	function GS(e) {
+	function e1(e) {
+		let t = sa(e);
+		return !vo.store.showInProfile ||
+			(!vo.store.showSelf && e === U.getCurrentUser().id)
+			? null
+			: t;
+	}
+	function t1(e) {
+		return ra[e] ?? null;
+	}
+	function q2(e) {
 		return new Promise((t) => {
-			e in Bi
-				? t(Bi[e])
-				: e in Qn
-				? Qn[e].push(t)
-				: ((Qn[e] = [t]), US());
+			e in ra
+				? t(t1(e))
+				: e in mi
+				? mi[e].push(t)
+				: ((mi[e] = [t]), W2());
 		});
 	}
-	async function HS(e) {
+	async function K2(e) {
 		let t = new URLSearchParams();
 		t.append('platform', 'discord'), t.append('ids', e.join(','));
 		try {
@@ -9366,83 +13666,84 @@ ${Dn(l)}`,
 						method: 'GET',
 						headers: {
 							Accept: 'application/json',
-							'X-PronounDB-Source': Or,
+							'X-PronounDB-Source': Za,
 						},
 					},
 				)
 			)
 				.json()
-				.then((i) => (Object.assign(Bi, i), i));
+				.then((i) => (Object.assign(ra, i), i));
 		} catch (n) {
 			console.error('PronounDB fetching failed: ', n);
 			let i = Object.fromEntries(e.map((r) => [r, 'unspecified']));
-			return Object.assign(Bi, i), i;
+			return Object.assign(ra, i), i;
 		}
 	}
-	function jS(e) {
-		let { pronounsFormat: t } = k.plugins.PronounDB;
+	function Y2(e) {
+		let { pronounsFormat: t } = M.plugins.PronounDB;
 		return t === 'CAPITALIZED'
-			? Ro[e]
+			? hr[e]
 			: t === 'LOWERCASE' && ['any', 'ask', 'avoid', 'other'].includes(e)
-			? Ro[e]
-			: Ro[e].toLowerCase();
+			? hr[e]
+			: hr[e].toLowerCase();
 	}
-	var Bi,
-		Qn,
-		US,
-		Cl = d(() => {
+	var ra,
+		mi,
+		W2,
+		ia = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			T();
-			Yn();
-			B();
-			Ml();
-			Gm();
-			(Bi = {}),
-				(Qn = {}),
-				(US = Nt(async () => {
-					let e = Object.keys(Qn),
-						t = await HS(e);
+			w();
+			Ko();
+			ye();
+			x();
+			oa();
+			Vv();
+			(ra = {}),
+				(mi = {}),
+				(W2 = Ct(async () => {
+					let e = Object.keys(mi),
+						t = await K2(e);
 					for (let n of e)
-						Qn[n].forEach((i) => i(t[n])), delete Qn[n];
+						mi[n]?.forEach((i) => i(t[n])), delete mi[n];
 				}));
 		});
-	function Hm(e) {
+	function n1(e) {
 		return !(
-			!k.plugins.PronounDB.showInMessages ||
+			!vo.store.showInMessages ||
 			e.author.bot ||
 			e.author.system ||
-			(!k.plugins.PronounDB.showSelf &&
-				e.author.id === U.getCurrentUser().id)
+			e.type === Z2 ||
+			(!vo.store.showSelf && e.author.id === U.getCurrentUser().id)
 		);
 	}
-	function jm({ message: e }) {
-		return Hm(e) ? o(zS, { message: e }) : null;
+	function o1({ message: e }) {
+		return n1(e) ? o(X2, { message: e }) : null;
 	}
-	function zm({ message: e }) {
-		return Hm(e) ? o(WS, { message: e }) : null;
+	function i1({ message: e }) {
+		return n1(e) ? o(J2, { message: e }) : null;
 	}
-	function zS({ message: e }) {
-		let t = Ao(e.author.id);
-		return t != null
+	function X2({ message: e }) {
+		let t = sa(e.author.id);
+		return t
 			? o(
 					'span',
-					{ className: me(Ui.timestampInline, Ui.timestamp) },
+					{ className: J(aa.timestampInline, aa.timestamp) },
 					'\u2022 ',
 					t,
 			  )
 			: null;
 	}
-	function WS({ message: e }) {
-		let t = Ao(e.author.id);
-		return t != null
+	function J2({ message: e }) {
+		let t = sa(e.author.id);
+		return t
 			? o(
 					'span',
 					{
-						className: me(
-							Ui.timestampInline,
-							Ui.timestamp,
+						className: J(
+							aa.timestampInline,
+							aa.timestamp,
 							'vc-pronoundb-compact',
 						),
 					},
@@ -9451,50 +13752,32 @@ ${Dn(l)}`,
 			  )
 			: null;
 	}
-	var Ui,
-		Wm = d(() => {
+	var aa,
+		Z2,
+		r1 = m(() => {
 			'use strict';
-			s();
-			E();
-			B();
-			D();
-			P();
-			Cl();
-			Ui = C('timestampInline');
+			a();
+			de();
+			_();
+			x();
+			ia();
+			oa();
+			(aa = P('timestampInline')), (Z2 = 24);
 		});
-	function Nl(e, t, n) {
-		let i = U.getUser(n.userId) ?? {};
-		return !k.plugins.PronounDB.showInProfile ||
-			i.bot ||
-			i.system ||
-			(!k.plugins.PronounDB.showSelf && i.id === U.getCurrentUser().id)
-			? null
-			: o(qS, { userId: n.userId, Component: e, leProps: t });
-	}
-	function qS({ userId: e, Component: t, leProps: n }) {
-		let i = Ao(e);
-		return i != null ? ((n.currentPronouns ||= i), o(t, { ...n })) : null;
-	}
-	var qm = d(() => {
-		'use strict';
-		s();
-		E();
-		P();
-		Cl();
-	});
-	var Rl,
-		Ml = d(() => {
+	var jp,
+		s1 = m(() => {
 			'use strict';
-			s();
-			Bm();
+			a();
+			Jv();
+			w();
 			T();
-			v();
-			Um();
-			Wm();
-			qm();
-			Rl = f({
+			Qv();
+			r1();
+			ia();
+			oa();
+			jp = g({
 				name: 'PronounDB',
-				authors: [c.Tyman, c.TheKodeToad],
+				authors: [p.Tyman, p.TheKodeToad, p.Ven],
 				description: 'Adds pronouns to user messages using pronoundb',
 				patches: [
 					{
@@ -9514,127 +13797,92 @@ ${Dn(l)}`,
 						},
 					},
 					{
-						find: '.Messages.BOT_PROFILE_SLASH_COMMANDS',
+						find: '.userTagNoNickname',
 						replacement: {
-							match: /\(0,.\.jsx\)\((?<PronounComponent>\i\..),(?<pronounProps>{currentPronouns.+?:(?<fullProps>\i)\.pronouns.+?})\)/,
-							replace:
-								'$<fullProps>&&$self.PronounsProfileWrapper($<PronounComponent>,$<pronounProps>,$<fullProps>)',
+							match: /=(\i)\.pronouns/,
+							replace: '=$self.useProfilePronouns($1.user.id)',
 						},
 					},
 					{
-						find: '.Messages.USER_POPOUT_PRONOUNS',
+						find: '.USER_PROFILE_ACTIVITY',
 						replacement: {
-							match: /\.showPronouns/,
-							replace: '.showPronouns||true',
+							match: /\).showPronouns/,
+							replace:
+								').showPronouns||true;const vcPronounce=$self.useProfilePronouns(arguments[0].user.id);if(arguments[0].displayProfile)arguments[0].displayProfile.pronouns=vcPronounce',
 						},
 					},
 				],
-				options: {
-					pronounsFormat: {
-						type: 4,
-						description:
-							'The format for pronouns to appear in chat',
-						options: [
-							{
-								label: 'Lowercase',
-								value: 'LOWERCASE',
-								default: !0,
-							},
-							{ label: 'Capitalized', value: 'CAPITALIZED' },
-						],
-					},
-					showSelf: {
-						type: 3,
-						description:
-							'Enable or disable showing pronouns for the current user',
-						default: !0,
-					},
-					showInMessages: {
-						type: 3,
-						description: 'Show in messages',
-						default: !0,
-					},
-					showInProfile: {
-						type: 3,
-						description: 'Show in profile',
-						default: !0,
-					},
-				},
-				settingsAboutComponent: kl,
-				PronounsChatComponentWrapper: jm,
-				CompactPronounsChatComponentWrapper: zm,
-				PronounsProfileWrapper: Nl,
+				settings: vo,
+				settingsAboutComponent: zp,
+				PronounsChatComponentWrapper: o1,
+				CompactPronounsChatComponentWrapper: i1,
+				useProfilePronouns: e1,
 			});
 		});
-	var KS,
-		Al,
-		Km = d(() => {
+	var Wp,
+		a1 = m(() => {
 			'use strict';
-			s();
-			Wn();
+			a();
+			Oo();
+			w();
+			$n();
 			T();
-			v();
-			D();
-			P();
-			(KS = Se((e) => e.emitter?._events?.INSERT_TEXT)),
-				(Al = f({
-					name: 'QuickMention',
-					authors: [c.kemo],
-					description:
-						'Adds a quick mention button to the message actions bar',
-					dependencies: ['MessagePopoverAPI'],
-					start() {
-						Bt('QuickMention', (e) => ({
-							label: 'Quick Mention',
-							icon: this.Icon,
-							message: e,
-							channel: G.getChannel(e.channel_id),
-							onClick: () =>
-								KS.dispatchToLastSubscribed('INSERT_TEXT', {
-									rawText: `<@${e.author.id}> `,
-								}),
-						}));
-					},
-					stop() {
-						Ut('QuickMention');
-					},
-					Icon: () =>
-						o(
-							'svg',
-							{
-								className: 'icon',
-								height: '24',
-								width: '24',
-								viewBox: '0 0 24 24',
-								fill: 'currentColor',
-							},
-							o('path', {
-								d: 'M12 2C6.486 2 2 6.486 2 12C2 17.515 6.486 22 12 22C14.039 22 15.993 21.398 17.652 20.259L16.521 18.611C15.195 19.519 13.633 20 12 20C7.589 20 4 16.411 4 12C4 7.589 7.589 4 12 4C16.411 4 20 7.589 20 12V12.782C20 14.17 19.402 15 18.4 15L18.398 15.018C18.338 15.005 18.273 15 18.209 15H18C17.437 15 16.6 14.182 16.6 13.631V12C16.6 9.464 14.537 7.4 12 7.4C9.463 7.4 7.4 9.463 7.4 12C7.4 14.537 9.463 16.6 12 16.6C13.234 16.6 14.35 16.106 15.177 15.313C15.826 16.269 16.93 17 18 17L18.002 16.981C18.064 16.994 18.129 17 18.195 17H18.4C20.552 17 22 15.306 22 12.782V12C22 6.486 17.514 2 12 2ZM12 14.599C10.566 14.599 9.4 13.433 9.4 11.999C9.4 10.565 10.566 9.399 12 9.399C13.434 9.399 14.6 10.565 14.6 11.999C14.6 13.433 13.434 14.599 12 14.599Z',
-							}),
-						),
-				}));
+			x();
+			Wp = g({
+				name: 'QuickMention',
+				authors: [p.kemo],
+				description:
+					'Adds a quick mention button to the message actions bar',
+				dependencies: ['MessagePopoverAPI'],
+				start() {
+					yn('QuickMention', (e) => ({
+						label: 'Quick Mention',
+						icon: this.Icon,
+						message: e,
+						channel: X.getChannel(e.channel_id),
+						onClick: () => Bn(`<@${e.author.id}> `),
+					}));
+				},
+				stop() {
+					vn('QuickMention');
+				},
+				Icon: () =>
+					o(
+						'svg',
+						{
+							className: 'icon',
+							height: '24',
+							width: '24',
+							viewBox: '0 0 24 24',
+							fill: 'currentColor',
+						},
+						o('path', {
+							d: 'M12 2C6.486 2 2 6.486 2 12C2 17.515 6.486 22 12 22C14.039 22 15.993 21.398 17.652 20.259L16.521 18.611C15.195 19.519 13.633 20 12 20C7.589 20 4 16.411 4 12C4 7.589 7.589 4 12 4C16.411 4 20 7.589 20 12V12.782C20 14.17 19.402 15 18.4 15L18.398 15.018C18.338 15.005 18.273 15 18.209 15H18C17.437 15 16.6 14.182 16.6 13.631V12C16.6 9.464 14.537 7.4 12 7.4C9.463 7.4 7.4 9.463 7.4 12C7.4 14.537 9.463 16.6 12 16.6C13.234 16.6 14.35 16.106 15.177 15.313C15.826 16.269 16.93 17 18 17L18.002 16.981C18.064 16.994 18.129 17 18.195 17H18.4C20.552 17 22 15.306 22 12.782V12C22 6.486 17.514 2 12 2ZM12 14.599C10.566 14.599 9.4 13.433 9.4 11.999C9.4 10.565 10.566 9.399 12 9.399C13.434 9.399 14.6 10.565 14.6 11.999C14.6 13.433 13.434 14.599 12 14.599Z',
+						}),
+					),
+			});
 		});
-	function ef(e, t) {
+	function g1(e, t) {
 		let n = e.findIndex((i) => i.id === t);
 		return n === -1 ? n : e.length - n - 1;
 	}
-	function Xm({ channelId: e, messageId: t, _isQuickEdit: n }) {
+	function u1({ channelId: e, messageId: t, _isQuickEdit: n }) {
 		if (n) return;
 		let i = U.getCurrentUser().id,
-			r = st.getMessages(e)._array.filter((a) => a.author.id === i);
-		Hi = ef(r, t);
+			r = cn.getMessages(e)._array.filter((s) => s.author.id === i);
+		ca = g1(r, t);
 	}
-	function Jm({ message: e, _isQuickReply: t }) {
-		t || (Gi = ef(st.getMessages(e.channel_id)._array, e.id));
+	function p1({ message: e, _isQuickReply: t }) {
+		t || (la = g1(cn.getMessages(e.channel_id)._array, e.id));
 	}
-	function Zm(e) {
+	function d1(e) {
 		let t = e.key === 'ArrowUp';
 		(!t && e.key !== 'ArrowDown') ||
-			!QS(e) ||
-			XS(e) ||
-			(e.shiftKey ? ZS(t) : JS(t));
+			!V2(e) ||
+			eM(e) ||
+			(e.shiftKey ? oM(t) : nM(t));
 	}
-	function tf(e, t) {
+	function h1(e, t) {
 		let n = document.getElementById('message-content-' + t);
 		if (!n) return;
 		let i = Math.max(
@@ -9643,181 +13891,218 @@ ${Dn(l)}`,
 			),
 			r = n.getBoundingClientRect();
 		(r.bottom < 200 || r.top - i >= -200) &&
-			YS.jumpToMessage({
+			Q2.jumpToMessage({
 				channelId: e,
 				messageId: t,
 				flash: !1,
 				jumpType: 'INSTANT',
 			});
 	}
-	function nf(e, t) {
-		let n = st.getMessages(re.getChannelId())._array;
+	function y1(e, t) {
+		let n = cn.getMessages(fe.getChannelId())._array;
 		if (!t) {
-			let a = U.getCurrentUser().id;
-			n = n.filter((l) => l.author.id === a);
+			let l = U.getCurrentUser().id;
+			n = n.filter((c) => c.author.id === l);
 		}
-		let i = (a) =>
-				e ? Math.min(n.length - 1, a + 1) : Math.max(-1, a - 1),
-			r;
+		let i = (l) =>
+				e ? Math.min(n.length - 1, l + 1) : Math.max(-1, l - 1),
+			r = (l) => {
+				do l = i(l);
+				while (l !== -1 && n[n.length - l - 1]?.deleted === !0);
+				return l;
+			},
+			s;
 		return (
-			t ? (Gi = r = i(Gi)) : (Hi = r = i(Hi)),
-			r === -1 ? void 0 : n[n.length - r - 1]
+			t ? (la = s = r(la)) : (ca = s = r(ca)),
+			s === -1 ? void 0 : n[n.length - s - 1]
 		);
 	}
-	function JS(e) {
-		let t = nf(e, !0);
+	function tM(e) {
+		let {
+				enabled: t,
+				userList: n,
+				shouldPingListed: i,
+			} = M.plugins.NoReplyMention,
+			r = !t || i === n.includes(e.author.id);
+		switch (f1.store.shouldMention) {
+			case 2:
+				return r;
+			case 0:
+				return !1;
+			default:
+				return !0;
+		}
+	}
+	function nM(e) {
+		let t = y1(e, !0);
 		if (!t)
-			return void I.dispatch({
+			return void L.dispatch({
 				type: 'DELETE_PENDING_REPLY',
-				channelId: re.getChannelId(),
+				channelId: fe.getChannelId(),
 			});
-		let n = G.getChannel(t.channel_id),
+		let n = X.getChannel(t.channel_id),
 			i = U.getCurrentUser().id;
-		I.dispatch({
+		L.dispatch({
 			type: 'CREATE_PENDING_REPLY',
 			channel: n,
 			message: t,
-			shouldMention: !0,
+			shouldMention: tM(t),
 			showMentionToggle: n.guild_id !== null && t.author.id !== i,
 			_isQuickReply: !0,
 		}),
-			tf(n.id, t.id);
+			h1(n.id, t.id);
 	}
-	function ZS(e) {
-		let t = nf(e, !1);
+	function oM(e) {
+		let t = y1(e, !1);
 		t
-			? (I.dispatch({
+			? (L.dispatch({
 					type: 'MESSAGE_START_EDIT',
 					channelId: t.channel_id,
 					messageId: t.id,
 					content: t.content,
 					_isQuickEdit: !0,
 			  }),
-			  tf(t.channel_id, t.id))
-			: I.dispatch({
+			  h1(t.channel_id, t.id))
+			: L.dispatch({
 					type: 'MESSAGE_END_EDIT',
-					channelId: re.getChannelId(),
+					channelId: fe.getChannelId(),
 			  });
 	}
-	var YS,
-		Vm,
-		Gi,
-		Hi,
-		Ll,
-		Ym,
-		Qm,
-		QS,
-		XS,
-		of = d(() => {
+	var Q2,
+		m1,
+		la,
+		ca,
+		f1,
+		qp,
+		l1,
+		c1,
+		V2,
+		eM,
+		v1 = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			v();
-			D();
-			P();
-			(YS = C('jumpToMessage')),
-				(Vm = navigator.platform.includes('Mac')),
-				(Gi = -1),
-				(Hi = -1);
-			ce('QuickReply', 'InteractionKeybinds');
-			(Ll = f({
-				name: 'QuickReply',
-				authors: [c.obscurity, c.Ven],
-				description:
-					'Reply to (ctrl + up/down) and edit (ctrl + shift + up/down) messages via keybinds',
-				start() {
-					I.subscribe('DELETE_PENDING_REPLY', Ym),
-						I.subscribe('MESSAGE_END_EDIT', Qm),
-						I.subscribe('MESSAGE_START_EDIT', Xm),
-						I.subscribe('CREATE_PENDING_REPLY', Jm),
-						document.addEventListener('keydown', Zm);
-				},
-				stop() {
-					I.unsubscribe('DELETE_PENDING_REPLY', Ym),
-						I.unsubscribe('MESSAGE_END_EDIT', Qm),
-						I.unsubscribe('MESSAGE_START_EDIT', Xm),
-						I.unsubscribe('CREATE_PENDING_REPLY', Jm),
-						document.removeEventListener('keydown', Zm);
-				},
-			})),
-				(Ym = () => (Gi = -1)),
-				(Qm = () => (Hi = -1));
-			(QS = (e) => (Vm ? e.metaKey : e.ctrlKey)),
-				(XS = (e) => e.altKey || (!Vm && e.metaKey));
+			_();
+			x();
+			(Q2 = P('jumpToMessage')),
+				(m1 = navigator.platform.includes('Mac')),
+				(la = -1),
+				(ca = -1),
+				(f1 = N({
+					shouldMention: {
+						type: 4,
+						description: 'Ping reply by default',
+						options: [
+							{
+								label: 'Follow NoReplyMention',
+								value: 2,
+								default: !0,
+							},
+							{ label: 'Enabled', value: 1 },
+							{ label: 'Disabled', value: 0 },
+						],
+					},
+				})),
+				(qp = g({
+					name: 'QuickReply',
+					authors: [p.obscurity, p.Ven, p.pylix],
+					description:
+						'Reply to (ctrl + up/down) and edit (ctrl + shift + up/down) messages via keybinds',
+					settings: f1,
+					start() {
+						L.subscribe('DELETE_PENDING_REPLY', l1),
+							L.subscribe('MESSAGE_END_EDIT', c1),
+							L.subscribe('MESSAGE_START_EDIT', u1),
+							L.subscribe('CREATE_PENDING_REPLY', p1),
+							document.addEventListener('keydown', d1);
+					},
+					stop() {
+						L.unsubscribe('DELETE_PENDING_REPLY', l1),
+							L.unsubscribe('MESSAGE_END_EDIT', c1),
+							L.unsubscribe('MESSAGE_START_EDIT', u1),
+							L.unsubscribe('CREATE_PENDING_REPLY', p1),
+							document.removeEventListener('keydown', d1);
+					},
+				})),
+				(l1 = () => (la = -1)),
+				(c1 = () => (ca = -1));
+			(V2 = (e) => (m1 ? e.metaKey : e.ctrlKey)),
+				(eM = (e) => e.altKey || (!m1 && e.metaKey));
 		});
-	var Dl = {};
-	te(Dl, {
-		ServerListRenderPosition: () => ji,
-		addServerListElement: () => Lo,
-		removeServerListElement: () => Eo,
-		renderAll: () => nv,
+	var Yp = {};
+	me(Yp, {
+		ServerListRenderPosition: () => ua,
+		addServerListElement: () => yr,
+		removeServerListElement: () => vr,
+		renderAll: () => aM,
 	});
-	function El(e) {
-		return e === 0 ? ev : tv;
+	function Kp(e) {
+		return e === 0 ? rM : sM;
 	}
-	function Lo(e, t) {
-		El(e).add(t);
+	function yr(e, t) {
+		Kp(e).add(t);
 	}
-	function Eo(e, t) {
-		El(e).delete(t);
+	function vr(e, t) {
+		Kp(e).delete(t);
 	}
-	var VS,
-		ji,
-		ev,
-		tv,
-		nv,
-		zi = d(() => {
+	var iM,
+		ua,
+		rM,
+		sM,
+		aM,
+		pa = m(() => {
 			'use strict';
-			s();
-			ge();
-			(VS = new F('ServerListAPI')),
-				(ji = ((n) => (
+			a();
+			Se();
+			(iM = new Z('ServerListAPI')),
+				(ua = ((n) => (
 					(n[(n.Above = 0)] = 'Above'), (n[(n.In = 1)] = 'In'), n
-				))(ji || {})),
-				(ev = new Set()),
-				(tv = new Set());
-			nv = (e) => {
+				))(ua || {})),
+				(rM = new Set()),
+				(sM = new Set());
+			aM = (e) => {
 				let t = [];
-				for (let n of El(e))
+				for (let n of Kp(e))
 					try {
 						t.unshift(n());
 					} catch (i) {
-						VS.error('Failed to render server list element:', i);
+						iM.error('Failed to render server list element:', i);
 					}
 				return t;
 			};
 		});
-	function ov() {
+	function lM() {
 		let e = [];
-		Object.values(de.getGuilds()).forEach((t) => {
-			ai.getChannels(t.id).SELECTABLE.forEach((n) => {
-				!ro.hasUnread(n.channel.id) ||
+		Object.values(le.getGuilds()).forEach((t) => {
+			es.getChannels(t.id).SELECTABLE.forEach((n) => {
+				!ki.hasUnread(n.channel.id) ||
 					e.push({
 						channelId: n.channel.id,
-						messageId: ro.lastMessageId(n.channel.id),
+						messageId: ki.lastMessageId(n.channel.id),
 						readStateType: 0,
 					});
 			});
 		}),
-			I.dispatch({ type: 'BULK_ACK', context: 'APP', channels: e });
+			L.dispatch({ type: 'BULK_ACK', context: 'APP', channels: e });
 	}
-	var iv,
-		_l,
-		rf = d(() => {
+	var cM,
+		Zp,
+		S1 = m(() => {
 			'use strict';
-			s();
-			zi();
+			a();
+			pa();
+			w();
 			T();
-			v();
-			P();
-			(iv = () =>
+			x();
+			(cM = () =>
 				o(
-					L,
+					R,
 					{
-						onClick: ov,
-						size: L.Sizes.MIN,
-						color: L.Colors.BRAND,
+						onClick: lM,
+						size: R.Sizes.MIN,
+						color: R.Colors.BRAND,
 						style: {
 							marginTop: '2px',
 							marginBottom: '8px',
@@ -9826,28 +14111,28 @@ ${Dn(l)}`,
 					},
 					'Read all',
 				)),
-				(_l = f({
+				(Zp = g({
 					name: 'ReadAllNotificationsButton',
 					description:
 						'Read all server notifications with a single button click!',
-					authors: [c.kemo],
+					authors: [p.kemo],
 					dependencies: ['ServerListAPI'],
-					renderReadAllButton: () => o(iv, null),
+					renderReadAllButton: () => o(cM, null),
 					start() {
-						Lo(1, this.renderReadAllButton);
+						yr(0, this.renderReadAllButton);
 					},
 					stop() {
-						Eo(1, this.renderReadAllButton);
+						vr(0, this.renderReadAllButton);
 					},
 				}));
 		});
-	var Oe,
-		Wi = d(() => {
+	var Et,
+		da = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			v();
-			Oe = V({
+			T();
+			Et = N({
 				notices: {
 					type: 3,
 					description:
@@ -9882,224 +14167,221 @@ ${Dn(l)}`,
 				},
 			});
 		});
-	var Fl = d(() => {
+	var Xp = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	async function sf() {
-		let [e, t, n] = await Ht.getMany([
+	async function dM() {
+		Pt.delMany([
 			'relationship-notifier-guilds',
 			'relationship-notifier-groups',
 			'relationship-notifier-friends',
 		]);
-		if ((await Promise.all([Ki(), Yi(), Fo()]), Oe.store.offlineRemovals)) {
-			if (Oe.store.groups && t?.size)
+	}
+	async function Jp() {
+		await dM();
+		let [e, t, n] = await Pt.getMany([b1(), T1(), x1()]);
+		if ((await Promise.all([fa(), ga(), Sr()]), Et.store.offlineRemovals)) {
+			if (Et.store.groups && t?.size)
 				for (let [i, r] of t)
-					_o.has(i) ||
-						Gt(
+					gi.has(i) ||
+						Jn(
 							`You are no longer in the group ${r.name}.`,
 							r.iconURL,
 						);
-			if (Oe.store.servers && e?.size)
+			if (Et.store.servers && e?.size)
 				for (let [i, r] of e)
-					Do.has(i) ||
-						Gt(
+					fi.has(i) ||
+						Jn(
 							`You are no longer in the server ${r.name}.`,
 							r.iconURL,
 						);
-			if (Oe.store.friends && n?.friends.length)
+			if (Et.store.friends && n?.friends.length)
 				for (let i of n.friends) {
-					if (Pn.friends.includes(i)) continue;
-					let r = await Qt.fetchUser(i).catch(() => {});
+					if ($o.friends.includes(i)) continue;
+					let r = await Rn.fetchUser(i).catch(() => {});
 					r &&
-						Gt(
+						Jn(
 							`You are no longer friends with ${r.tag}.`,
 							r.getAvatarURL(void 0, void 0, !1),
 						);
 				}
-			if (Oe.store.friendRequestCancels && n?.requests?.length)
+			if (Et.store.friendRequestCancels && n?.requests?.length)
 				for (let i of n.requests) {
-					if (Pn.requests.includes(i)) continue;
-					let r = await Qt.fetchUser(i).catch(() => {});
+					if ($o.requests.includes(i)) continue;
+					let r = await Rn.fetchUser(i).catch(() => {});
 					r &&
-						Gt(
+						Jn(
 							`Friend request from ${r.tag} has been revoked.`,
 							r.getAvatarURL(void 0, void 0, !1),
 						);
 				}
 		}
 	}
-	function Gt(e, t) {
-		Oe.store.notices && qi.showNotice(e, 'OK', () => qi.popNotice()),
-			Hn({ title: 'Relationship Notifier', body: e, icon: t });
+	function Jn(e, t) {
+		Et.store.notices && ma.showNotice(e, 'OK', () => ma.popNotice()),
+			ge({ title: 'Relationship Notifier', body: e, icon: t });
 	}
-	function af(e) {
-		return Do.get(e);
+	function w1(e) {
+		return fi.get(e);
 	}
-	function Ol(e) {
-		Do.delete(e), Ki();
+	function Qp(e) {
+		fi.delete(e), fa();
 	}
-	async function Ki() {
-		for (let [e, { name: t, icon: n }] of Object.entries(de.getGuilds()))
-			Do.set(e, {
-				id: e,
-				name: t,
-				iconURL: n && `https://cdn.discordapp.com/icons/${e}/${n}.png`,
-			});
-		await Ht.set('relationship-notifier-guilds', Do);
+	async function fa() {
+		fi.clear();
+		let e = U.getCurrentUser().id;
+		for (let [t, { name: n, icon: i }] of Object.entries(le.getGuilds()))
+			ke.isMember(t, e) &&
+				fi.set(t, {
+					id: t,
+					name: n,
+					iconURL:
+						i && `https://cdn.discordapp.com/icons/${t}/${i}.png`,
+				});
+		await Pt.set(b1(), fi);
 	}
-	function lf(e) {
-		return _o.get(e);
+	function M1(e) {
+		return gi.get(e);
 	}
-	function $l(e) {
-		_o.delete(e), Yi();
+	function Vp(e) {
+		gi.delete(e), ga();
 	}
-	async function Yi() {
+	async function ga() {
+		gi.clear();
 		for (let {
 			type: e,
 			id: t,
 			name: n,
 			rawRecipients: i,
 			icon: r,
-		} of G.getSortedPrivateChannels())
+		} of X.getSortedPrivateChannels())
 			e === 3 &&
-				_o.set(t, {
+				gi.set(t, {
 					id: t,
-					name: n || i.map((a) => a.username).join(', '),
+					name: n || i.map((s) => s.username).join(', '),
 					iconURL:
 						r &&
 						`https://cdn.discordapp.com/channel-icons/${t}/${r}.png`,
 				});
-		await Ht.set('relationship-notifier-groups', _o);
+		await Pt.set(T1(), gi);
 	}
-	async function Fo() {
-		(Pn.friends = []), (Pn.requests = []);
-		let e = Xe.getRelationships();
+	async function Sr() {
+		($o.friends = []), ($o.requests = []);
+		let e = Kt.getRelationships();
 		for (let t in e)
 			switch (e[t]) {
 				case 1:
-					Pn.friends.push(t);
+					$o.friends.push(t);
 					break;
 				case 3:
-					Pn.requests.push(t);
+					$o.requests.push(t);
 					break;
 			}
-		await Ht.set('relationship-notifier-friends', Pn);
+		await Pt.set(x1(), $o);
 	}
-	var Do,
-		_o,
-		Pn,
-		Qi = d(() => {
+	var fi,
+		gi,
+		$o,
+		b1,
+		T1,
+		x1,
+		ed = m(() => {
 			'use strict';
-			s();
-			Xi();
-			vo();
-			P();
-			Wi();
-			Fl();
-			(Do = new Map()),
-				(_o = new Map()),
-				(Pn = { friends: [], requests: [] });
+			a();
+			br();
+			so();
+			x();
+			da();
+			Xp();
+			(fi = new Map()),
+				(gi = new Map()),
+				($o = { friends: [], requests: [] }),
+				(b1 = () =>
+					`relationship-notifier-guilds-${U.getCurrentUser().id}`),
+				(T1 = () =>
+					`relationship-notifier-groups-${U.getCurrentUser().id}`),
+				(x1 = () =>
+					`relationship-notifier-friends-${U.getCurrentUser().id}`);
 		});
-	async function df({ relationship: { type: e, id: t } }) {
-		if (Bl === t) {
-			Bl = void 0;
+	async function C1({ relationship: { type: e, id: t } }) {
+		if (td === t) {
+			td = void 0;
 			return;
 		}
-		let n = await Qt.fetchUser(t).catch(() => null);
+		let n = await Rn.fetchUser(t).catch(() => null);
 		if (!!n)
 			switch (e) {
 				case 1:
-					Oe.store.friends &&
-						Gt(
+					Et.store.friends &&
+						Jn(
 							`${n.tag} removed you as a friend.`,
 							n.getAvatarURL(void 0, void 0, !1),
 						);
 					break;
 				case 3:
-					Oe.store.friendRequestCancels &&
-						Gt(
+					Et.store.friendRequestCancels &&
+						Jn(
 							`A friend request from ${n.tag} has been removed.`,
 							n.getAvatarURL(void 0, void 0, !1),
 						);
 					break;
 			}
 	}
-	function mf({ guild: { id: e, unavailable: t } }) {
-		if (!Oe.store.servers || t) return;
-		if (Ul === e) {
-			Ol(e), (Ul = void 0);
+	function A1({ guild: { id: e, unavailable: t } }) {
+		if (!Et.store.servers || t) return;
+		if (nd === e) {
+			Qp(e), (nd = void 0);
 			return;
 		}
-		let n = af(e);
+		let n = w1(e);
 		n &&
-			(Ol(e),
-			Gt(`You were removed from the server ${n.name}.`, n.iconURL));
+			(Qp(e),
+			Jn(`You were removed from the server ${n.name}.`, n.iconURL));
 	}
-	function ff({ channel: { id: e, type: t } }) {
-		if (!Oe.store.groups || t !== 3) return;
-		if (Gl === e) {
-			$l(e), (Gl = void 0);
+	function N1({ channel: { id: e, type: t } }) {
+		if (!Et.store.groups || t !== 3) return;
+		if (od === e) {
+			Vp(e), (od = void 0);
 			return;
 		}
-		let n = lf(e);
+		let n = M1(e);
 		n &&
-			($l(e),
-			Gt(`You were removed from the group ${n.name}.`, n.iconURL));
+			(Vp(e),
+			Jn(`You were removed from the group ${n.name}.`, n.iconURL));
 	}
-	var Bl,
-		Ul,
-		Gl,
-		cf,
-		pf,
-		uf,
-		Hl = d(() => {
+	var td,
+		nd,
+		od,
+		P1,
+		I1,
+		R1,
+		k1 = m(() => {
 			'use strict';
-			s();
-			P();
-			Wi();
-			Fl();
-			Qi();
-			(cf = (e) => (Bl = e)),
-				(pf = (e) => (Ul = e)),
-				(uf = (e) => (Gl = e));
+			a();
+			x();
+			da();
+			Xp();
+			ed();
+			(P1 = (e) => (td = e)),
+				(I1 = (e) => (nd = e)),
+				(R1 = (e) => (od = e));
 		});
-	function jl(e) {
-		for (let t in gf) for (let n of gf[t]) e(t, n);
-	}
-	var gf,
-		hf = d(() => {
+	var id,
+		L1 = m(() => {
 			'use strict';
-			s();
-			Hl();
-			Qi();
-			gf = {
-				GUILD_CREATE: [Ki],
-				GUILD_DELETE: [mf],
-				CHANNEL_CREATE: [Yi],
-				CHANNEL_DELETE: [ff],
-				RELATIONSHIP_ADD: [Fo],
-				RELATIONSHIP_UPDATE: [Fo],
-				RELATIONSHIP_REMOVE: [Fo, df],
-			};
-		});
-	var zl,
-		yf = d(() => {
-			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			P();
-			hf();
-			Hl();
-			Wi();
-			Qi();
-			zl = f({
+			k1();
+			da();
+			ed();
+			id = g({
 				name: 'RelationshipNotifier',
 				description:
 					'Notifies you when a friend, group chat, or server removes you.',
-				authors: [c.nick],
-				settings: Oe,
+				authors: [p.nick],
+				settings: Et,
 				patches: [
 					{
 						find: 'removeRelationship:function(',
@@ -10123,36 +14405,44 @@ ${Dn(l)}`,
 						},
 					},
 				],
+				flux: {
+					GUILD_CREATE: fa,
+					GUILD_DELETE: A1,
+					CHANNEL_CREATE: ga,
+					CHANNEL_DELETE: N1,
+					RELATIONSHIP_ADD: Sr,
+					RELATIONSHIP_UPDATE: Sr,
+					RELATIONSHIP_REMOVE(e) {
+						C1(e), Sr();
+					},
+					CONNECTION_OPEN: Jp,
+				},
 				async start() {
 					setTimeout(() => {
-						sf();
-					}, 5e3),
-						jl((e, t) => I.subscribe(e, t));
+						Jp();
+					}, 5e3);
 				},
-				stop() {
-					jl((e, t) => I.unsubscribe(e, t));
-				},
-				removeFriend: cf,
-				removeGroup: uf,
-				removeGuild: pf,
+				removeFriend: P1,
+				removeGroup: R1,
+				removeGuild: I1,
 			});
 		});
-	var av,
-		lv,
-		Wl,
-		bf = d(() => {
+	var mM,
+		fM,
+		rd,
+		E1 = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			D();
-			(av = C('spoilerText')),
-				(lv = C('messagesWrapper', 'messages')),
-				(Wl = f({
+			_();
+			(mM = P('spoilerContent')),
+				(fM = P('messagesWrapper', 'messages')),
+				(rd = g({
 					name: 'RevealAllSpoilers',
 					description:
 						'Reveal all spoilers in a message by Ctrl-clicking a spoiler, or in the chat with Ctrl+Shift-click',
-					authors: [c.whqwert],
+					authors: [p.whqwert],
 					patches: [
 						{
 							find: '.removeObscurity=function',
@@ -10165,30 +14455,32 @@ ${Dn(l)}`,
 					reveal(e) {
 						let { ctrlKey: t, shiftKey: n, target: i } = e;
 						if (!t) return;
-						let { spoilerText: r, hidden: a } = av,
-							{ messagesWrapper: l } = lv,
-							u = n
+						let { spoilerContent: r, hidden: s } = mM,
+							{ messagesWrapper: l } = fM,
+							c = n
 								? document.querySelector(`div.${l}`)
 								: i.parentElement;
-						for (let m of u.querySelectorAll(`span.${r}.${a}`))
-							m.click();
+						for (let u of c.querySelectorAll(`span.${r}.${s}`))
+							u.click();
 					},
 				}));
 		});
-	function Sf(e, t) {
+	function D1(e, t) {
 		open(t + encodeURIComponent(e), '_blank');
 	}
-	var ql,
-		vf,
-		Kl,
-		Tf = d(() => {
+	var ha,
+		O1,
+		sd,
+		_1 = m(() => {
 			'use strict';
-			s();
-			zn();
+			a();
+			Jt();
+			xt();
+			Bo();
+			w();
 			T();
-			v();
-			P();
-			ql = {
+			x();
+			ha = {
 				Google: 'https://lens.google.com/uploadbyurl?url=',
 				Yandex: 'https://yandex.com/images/search?rpt=imageview&url=',
 				SauceNAO: 'https://saucenao.com/search.php?url=',
@@ -10196,46 +14488,76 @@ ${Dn(l)}`,
 				TinEye: 'https://www.tineye.com/search?url=',
 				ImgOps: 'https://imgops.com/start?url=',
 			};
-			(vf = (e, t) => {
+			(O1 = (e, t) => () => {
 				if (!t) return;
 				let { reverseImageSearchType: n, itemHref: i, itemSrc: r } = t;
 				if (!n || n !== 'img') return;
-				let a = i ?? r,
-					l = $t('copy-link', e);
+				let s = i ?? r,
+					l = Lt('copy-link', e);
 				l &&
-					!l.some((u) => u?.props?.id === 'search-image') &&
 					l.push(
 						o(
-							le.MenuItem,
+							F.MenuItem,
 							{
 								label: 'Search Image',
 								key: 'search-image',
 								id: 'search-image',
 							},
-							Object.keys(ql).map((u) => {
-								let m = 'search-image-' + u;
-								return o(le.MenuItem, {
-									key: m,
-									id: m,
-									label: u,
-									action: () => Sf(a, ql[u]),
+							Object.keys(ha).map((c, u) => {
+								let h = 'search-image-' + c;
+								return o(F.MenuItem, {
+									key: h,
+									id: h,
+									label: o(
+										ae,
+										{
+											style: {
+												alignItems: 'center',
+												gap: '0.5em',
+											},
+										},
+										o('img', {
+											style: {
+												borderRadius:
+													u >= 3 ? '50%' : void 0,
+											},
+											'aria-hidden': 'true',
+											height: 16,
+											width: 16,
+											src: new URL('/favicon.ico', ha[c])
+												.toString()
+												.replace('lens.', ''),
+										}),
+										c,
+									),
+									action: () => D1(s, ha[c]),
 								});
 							}),
-							o(le.MenuItem, {
+							o(F.MenuItem, {
 								key: 'search-image-all',
 								id: 'search-image-all',
-								label: 'All',
+								label: o(
+									ae,
+									{
+										style: {
+											alignItems: 'center',
+											gap: '0.5em',
+										},
+									},
+									o(_o, { height: 16, width: 16 }),
+									'All',
+								),
 								action: () =>
-									Object.values(ql).forEach((u) => Sf(a, u)),
+									Object.values(ha).forEach((c) => D1(s, c)),
 							}),
 						),
 					);
 			}),
-				(Kl = f({
+				(sd = g({
 					name: 'ReverseImageSearch',
 					description: 'Adds ImageSearch to image context menus',
-					authors: [c.Ven, c.Nuckyz],
-					dependencies: ['MenuItemDeobfuscatorAPI', 'ContextMenuAPI'],
+					authors: [p.Ven, p.Nuckyz],
+					tags: ['ImageUtilities'],
 					patches: [
 						{
 							find: '.Messages.MESSAGE_ACTIONS_MENU_LABEL',
@@ -10247,23 +14569,814 @@ ${Dn(l)}`,
 						},
 					],
 					start() {
-						kt('message', vf);
+						we('message', O1);
 					},
 					stop() {
-						Ct('message', vf);
+						Ae('message', O1);
 					},
 				}));
 		});
-	var Oo,
-		Yl,
-		xf = d(() => {
+	var F1 = m(() => {});
+	var ya = m(() => {
+		'use strict';
+		a();
+	});
+	async function B1(e) {
+		await Rn.fetchUser(e),
+			await L.dispatch({
+				type: 'USER_PROFILE_MODAL_OPEN',
+				userId: e,
+				channelId: fe.getChannelId(),
+				analyticsLocation: 'Explosive Hotel',
+			});
+	}
+	function hi(e) {
+		let { OAuth2AuthorizeModal: t } = an('OAuth2AuthorizeModal');
+		be((n) =>
+			o(t, {
+				...n,
+				scopes: ['identify'],
+				responseType: 'code',
+				redirectUri: 'https://manti.vendicated.dev/api/reviewdb/auth',
+				permissions: 0n,
+				clientId: '915703782174752809',
+				cancelCompletesFlow: !1,
+				callback: async (i) => {
+					try {
+						let r = new URL(i.location);
+						r.searchParams.append('clientMod', 'vencord');
+						let s = await fetch(r, {
+								headers: new Headers({
+									Accept: 'application/json',
+								}),
+							}),
+							{ token: l, success: c } = await s.json();
+						c
+							? ((_e.store.token = l),
+							  Dt('Successfully logged in!'),
+							  e?.())
+							: s.status === 1 &&
+							  Dt('An Error occurred while logging in.');
+					} catch (r) {
+						new Z('ReviewDB').error('Failed to authorize', r);
+					}
+				},
+			}),
+		);
+	}
+	function Dt(e) {
+		Q.show({
+			type: Q.Type.MESSAGE,
+			message: e,
+			id: Q.genId(),
+			options: { position: Q.Position.BOTTOM },
+		});
+	}
+	function $1(e, t) {
+		return e.sender.discordID === t || _e.store.user?.type === 1;
+	}
+	var en,
+		So = m(() => {
 			'use strict';
-			s();
+			a();
+			je();
+			Se();
+			ze();
+			_();
+			x();
+			ya();
+			Uo();
+			en = Ue('vc-rdb-');
+		});
+	var _e,
+		Uo = m(() => {
+			'use strict';
+			a();
 			E();
 			T();
-			v();
-			P();
-			(Oo = V({
+			x();
+			So();
+			_e = N({
+				authorize: {
+					type: 6,
+					description: 'Authorize with ReviewDB',
+					component: () =>
+						o(R, { onClick: hi }, 'Authorize with ReviewDB'),
+				},
+				notifyReviews: {
+					type: 3,
+					description: 'Notify about new reviews on startup',
+					default: !0,
+				},
+				showWarning: {
+					type: 3,
+					description:
+						'Display warning to be respectful at the top of the reviews list',
+					default: !0,
+				},
+				hideTimestamps: {
+					type: 3,
+					description: 'Hide timestamps on reviews',
+					default: !1,
+				},
+				website: {
+					type: 6,
+					description: 'ReviewDB website',
+					component: () =>
+						o(
+							R,
+							{
+								onClick: () => {
+									let e = 'https://reviewdb.mantikafasi.dev/';
+									_e.store.token &&
+										(e +=
+											'/api/redirect?token=' +
+											encodeURIComponent(_e.store.token)),
+										VencordNative.native.openExternal(e);
+								},
+							},
+							'ReviewDB website',
+						),
+				},
+				supportServer: {
+					type: 6,
+					description: 'ReviewDB Support Server',
+					component: () =>
+						o(
+							R,
+							{
+								onClick: () => {
+									VencordNative.native.openExternal(
+										'https://discord.gg/eWPBSbvznt',
+									);
+								},
+							},
+							'ReviewDB Support Server',
+						),
+				},
+			}).withPrivateSettings();
+		});
+	async function U1(e, t = 0) {
+		let n = 0;
+		_e.store.showWarning || (n |= hM);
+		let i = new URLSearchParams({ flags: String(n), offset: String(t) }),
+			r = await fetch(`${Tr}/api/reviewdb/users/${e}/reviews?${i}`),
+			s =
+				r.status === 200
+					? await r.json()
+					: {
+							success: !1,
+							message:
+								'An Error occured while fetching reviews. Please try again later.',
+							reviews: [],
+							updated: !1,
+							hasNextPage: !1,
+							reviewCount: 0,
+					  };
+		return s.success
+			? s
+			: (Dt(s.message),
+			  {
+					...s,
+					reviews: [
+						{
+							id: 0,
+							comment:
+								'An Error occured while fetching reviews. Please try again later.',
+							star: 0,
+							timestamp: 0,
+							sender: {
+								id: 0,
+								username: 'Error',
+								profilePhoto:
+									'https://cdn.discordapp.com/attachments/1045394533384462377/1084900598035513447/646808599204593683.png?size=128',
+								discordID: '0',
+								badges: [],
+							},
+						},
+					],
+			  });
+	}
+	async function G1(e) {
+		return (
+			(e.token = _e.store.token),
+			e.token
+				? fetch(Tr + `/api/reviewdb/users/${e.userid}/reviews`, {
+						method: 'PUT',
+						body: JSON.stringify(e),
+						headers: { 'Content-Type': 'application/json' },
+				  })
+						.then((t) => t.json())
+						.then((t) => (Dt(t.message), t ?? null))
+				: (Dt('Please authorize to add a review.'), hi(), null)
+		);
+	}
+	function H1(e) {
+		return fetch(Tr + `/api/reviewdb/users/${e}/reviews`, {
+			method: 'DELETE',
+			headers: new Headers({
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+			}),
+			body: JSON.stringify({ token: _e.store.token, reviewid: e }),
+		}).then((t) => t.json());
+	}
+	async function z1(e) {
+		let t = await fetch(Tr + '/api/reviewdb/reports', {
+			method: 'PUT',
+			headers: new Headers({
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+			}),
+			body: JSON.stringify({ reviewid: e, token: _e.store.token }),
+		}).then((n) => n.json());
+		Dt(t.message);
+	}
+	function j1(e) {
+		return fetch(Tr + '/api/reviewdb/users', {
+			body: JSON.stringify({ token: e }),
+			method: 'POST',
+		}).then((t) => t.json());
+	}
+	var Tr,
+		va,
+		hM,
+		xr = m(() => {
+			'use strict';
+			a();
+			Uo();
+			So();
+			(Tr = 'https://manti.vendicated.dev'), (va = 50), (hM = 2);
+		});
+	function W1({ onClick: e }) {
+		return o(W, { text: 'Delete Review' }, (t) =>
+			o(
+				'div',
+				{ ...t, className: J(ad.button, ad.dangerous), onClick: e },
+				o(
+					'svg',
+					{ width: '16', height: '16', viewBox: '0 0 20 20' },
+					o('path', {
+						fill: 'currentColor',
+						d: 'M15 3.999V2H9V3.999H3V5.999H21V3.999H15Z',
+					}),
+					o('path', {
+						fill: 'currentColor',
+						d: 'M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z',
+					}),
+				),
+			),
+		);
+	}
+	function q1({ onClick: e }) {
+		return o(W, { text: 'Report Review' }, (t) =>
+			o(
+				'div',
+				{ ...t, className: ad.button, onClick: e },
+				o(
+					'svg',
+					{ width: '16', height: '16', viewBox: '0 0 20 20' },
+					o('path', {
+						fill: 'currentColor',
+						d: 'M20,6.002H14V3.002C14,2.45 13.553,2.002 13,2.002H4C3.447,2.002 3,2.45 3,3.002V22.002H5V14.002H10.586L8.293,16.295C8.007,16.581 7.922,17.011 8.076,17.385C8.23,17.759 8.596,18.002 9,18.002H20C20.553,18.002 21,17.554 21,17.002V7.002C21,6.45 20.553,6.002 20,6.002Z',
+					}),
+				),
+			),
+		);
+	}
+	var ad,
+		K1 = m(() => {
+			'use strict';
+			a();
+			de();
+			_();
+			x();
+			ad = P('button', 'wrapper', 'disabled', 'separator');
+		});
+	function ld(e) {
+		return o(W, { text: e.name }, ({ onMouseEnter: t, onMouseLeave: n }) =>
+			o('img', {
+				className: en('badge'),
+				width: '24px',
+				height: '24px',
+				onMouseEnter: t,
+				onMouseLeave: n,
+				src: e.icon,
+				alt: e.description,
+				onClick: () => ll.openUntrustedLink({ href: e.redirectURL }),
+			}),
+		);
+	}
+	var Y1 = m(() => {
+		'use strict';
+		a();
+		x();
+		So();
+	});
+	var Sa,
+		cd = m(() => {
+			'use strict';
+			a();
+			de();
+			ye();
+			_();
+			x();
+			ya();
+			xr();
+			Uo();
+			So();
+			K1();
+			Y1();
+			Sa = oe(() => {
+				let e = Y.byProps,
+					[
+						{
+							cozyMessage: t,
+							buttons: n,
+							message: i,
+							groupStart: r,
+						},
+						{ container: s, isHeader: l },
+						{
+							avatar: c,
+							clickable: u,
+							username: h,
+							messageContent: f,
+							wrapper: v,
+							cozy: S,
+						},
+						b,
+						A,
+					] = Ri(
+						e('cozyMessage'),
+						e('container', 'isHeader'),
+						e('avatar', 'zalgo'),
+						e('button', 'wrapper', 'selected'),
+						e('botTag'),
+					),
+					C = new Intl.DateTimeFormat();
+				return function ({ review: B, refetch: O }) {
+					function K() {
+						B1(B.sender.discordID);
+					}
+					function ee() {
+						vt.show({
+							title: 'Are you sure?',
+							body: 'Do you really want to delete this review?',
+							confirmText: 'Delete',
+							cancelText: 'Nevermind',
+							onConfirm: () => {
+								H1(B.id).then((z) => {
+									z.success && O(), Dt(z.message);
+								});
+							},
+						});
+					}
+					function j() {
+						vt.show({
+							title: 'Are you sure?',
+							body: 'Do you really you want to report this review?',
+							confirmText: 'Report',
+							cancelText: 'Nevermind',
+							onConfirm: () => z1(B.id),
+						});
+					}
+					return o(
+						'div',
+						{
+							className: J(t, v, i, r, S, en('review')),
+							style: {
+								marginLeft: '0px',
+								paddingLeft: '52px',
+								paddingRight: '16px',
+							},
+						},
+						o('img', {
+							className: J(c, u),
+							onClick: K,
+							src:
+								B.sender.profilePhoto ||
+								'/assets/1f0bfc0865d324c2587920a7d80c609b.png?size=128',
+							style: { left: '0px' },
+						}),
+						o(
+							'div',
+							{
+								style: {
+									display: 'inline-flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+								},
+							},
+							o(
+								'span',
+								{
+									className: J(u, h),
+									style: {
+										color: 'var(--channels-default)',
+										fontSize: '14px',
+									},
+									onClick: () => K(),
+								},
+								B.sender.username,
+							),
+							B.type === 3 &&
+								o(
+									'span',
+									{
+										className: J(
+											A.botTagVerified,
+											A.botTagRegular,
+											A.botTag,
+											A.px,
+											A.rem,
+										),
+										style: { marginLeft: '4px' },
+									},
+									o(
+										'span',
+										{ className: A.botText },
+										'System',
+									),
+								),
+						),
+						B.sender.badges.map((z) => o(ld, { ...z })),
+						!_e.store.hideTimestamps &&
+							B.type !== 3 &&
+							o(
+								In,
+								{ timestamp: Zt(B.timestamp * 1e3) },
+								C.format(B.timestamp * 1e3),
+							),
+						o(
+							'p',
+							{
+								className: J(f),
+								style: {
+									fontSize: 15,
+									marginTop: 4,
+									color: 'var(--text-normal)',
+								},
+							},
+							B.comment,
+						),
+						B.id !== 0 &&
+							o(
+								'div',
+								{
+									className: J(s, l, n),
+									style: { padding: '0px' },
+								},
+								o(
+									'div',
+									{ className: b.wrapper },
+									o(q1, { onClick: j }),
+									$1(B, U.getCurrentUser().id) &&
+										o(W1, { onClick: ee }),
+								),
+							),
+					);
+				};
+			});
+		});
+	function wr({
+		discordId: e,
+		name: t,
+		onFetchReviews: n,
+		refetchSignal: i,
+		scrollToTop: r,
+		page: s = 1,
+		showInput: l = !1,
+		hideOwnReview: c = !1,
+	}) {
+		let [u, h] = Bt(!0),
+			[f] = ut(() => U1(e, (s - 1) * va), {
+				fallbackValue: null,
+				deps: [i, u, s],
+				onSuccess: (v) => {
+					r?.(), n(v);
+				},
+			});
+		return f
+			? o(
+					d,
+					null,
+					o(vM, { refetch: h, reviews: f.reviews, hideOwnReview: c }),
+					l &&
+						o(ud, {
+							name: t,
+							discordId: e,
+							refetch: h,
+							isAuthor: f.reviews?.some(
+								(v) =>
+									v.sender.discordID ===
+									U.getCurrentUser().id,
+							),
+						}),
+			  )
+			: null;
+	}
+	function vM({ refetch: e, reviews: t, hideOwnReview: n }) {
+		let i = U.getCurrentUser().id;
+		return o(
+			'div',
+			{ className: en('view') },
+			t?.map(
+				(r) =>
+					(r.sender.discordID !== i || !n) &&
+					o(Sa, { key: r.id, review: r, refetch: e }),
+			),
+			t?.length === 0 &&
+				o(
+					y.FormText,
+					{ className: en('placeholder') },
+					'Looks like nobody reviewed this user yet. You could be the first!',
+				),
+		);
+	}
+	function ud({ discordId: e, isAuthor: t, refetch: n, name: i }) {
+		let { token: r } = _e.store;
+		function s({ key: l, target: c }) {
+			l === 'Enter' &&
+				G1({ userid: e, comment: c.value, star: -1 }).then((u) => {
+					u?.success
+						? ((c.value = ''), n())
+						: u?.message && Dt(u.message);
+				});
+		}
+		return o('textarea', {
+			className: J(yM.inputDefault, 'enter-comment', en('input')),
+			onKeyDownCapture: (l) => {
+				l.key === 'Enter' && l.preventDefault();
+			},
+			placeholder: r
+				? t
+					? `Update review for @${i}`
+					: `Review @${i}`
+				: 'You need to authorize to review users!',
+			onKeyDown: s,
+			onClick: () => {
+				r || (Dt('Opening authorization window...'), hi());
+			},
+		});
+	}
+	var yM,
+		pd = m(() => {
+			'use strict';
+			a();
+			de();
+			ye();
+			_();
+			x();
+			xr();
+			Uo();
+			So();
+			cd();
+			yM = P('inputDefault', 'editable');
+		});
+	function SM({ modalProps: e, discordId: t, name: n }) {
+		let [i, r] = V(),
+			[s, l] = Bt(!0),
+			[c, u] = V(1),
+			h = qt(null),
+			f = i?.reviewCount,
+			v = i?.reviews.find(
+				(S) => S.sender.discordID === _e.store.user?.discordID,
+			);
+		return o(
+			k,
+			null,
+			o(
+				Ie,
+				{ ...e, size: 'medium' },
+				o(
+					$e,
+					null,
+					o(
+						q,
+						{
+							variant: 'heading-lg/semibold',
+							className: en('modal-header'),
+						},
+						n,
+						"'s Reviews",
+						!!f && o('span', null, ' (', f, ' Reviews)'),
+					),
+					o(St, { onClick: e.onClose }),
+				),
+				o(
+					Le,
+					{ scrollerRef: h },
+					o(
+						'div',
+						{ className: en('modal-reviews') },
+						o(wr, {
+							discordId: t,
+							name: n,
+							page: c,
+							refetchSignal: s,
+							onFetchReviews: r,
+							scrollToTop: () =>
+								h.current?.scrollTo({
+									top: 0,
+									behavior: 'smooth',
+								}),
+							hideOwnReview: !0,
+						}),
+					),
+				),
+				o(
+					ot,
+					{ className: en('modal-footer') },
+					o(
+						'div',
+						null,
+						v && o(Sa, { refetch: l, review: v }),
+						o(ud, {
+							isAuthor: v != null,
+							discordId: t,
+							name: n,
+							refetch: l,
+						}),
+						!!f &&
+							o(Vr, {
+								currentPage: c,
+								maxVisiblePages: 5,
+								pageSize: va,
+								totalCount: f,
+								onPageChange: u,
+							}),
+					),
+				),
+			),
+		);
+	}
+	function dd(e, t) {
+		be((n) => o(SM, { modalProps: n, discordId: e, name: t }));
+	}
+	var Z1 = m(() => {
+		'use strict';
+		a();
+		re();
+		ze();
+		ye();
+		x();
+		xr();
+		Uo();
+		So();
+		cd();
+		pd();
+	});
+	var X1,
+		md,
+		J1 = m(() => {
+			'use strict';
+			a();
+			F1();
+			Jt();
+			re();
+			Sp();
+			Bo();
+			w();
+			T();
+			x();
+			Z1();
+			pd();
+			ya();
+			xr();
+			Uo();
+			So();
+			(X1 = (e, t) => () => {
+				e.push(
+					o(F.MenuItem, {
+						label: 'View Reviews',
+						id: 'vc-rdb-server-reviews',
+						icon: _o,
+						action: () => dd(t.guild.id, t.guild.name),
+					}),
+				);
+			}),
+				(md = g({
+					name: 'ReviewDB',
+					description:
+						'Review other users (Adds a new settings to profiles)',
+					authors: [p.mantikafasi, p.Ven],
+					settings: _e,
+					patches: [
+						{
+							find: 'disableBorderColor:!0',
+							replacement: {
+								match: /\(.{0,10}\{user:(.),setNote:.,canDM:.,.+?\}\)/,
+								replace: '$&,$self.getReviewsComponent($1)',
+							},
+						},
+					],
+					async start() {
+						let e = _e.store,
+							{ token: t, lastReviewId: n, notifyReviews: i } = e;
+						!i ||
+							!t ||
+							setTimeout(async () => {
+								let r = await j1(t);
+								if (
+									(n &&
+										n < r.lastReviewID &&
+										((e.lastReviewId = r.lastReviewID),
+										r.lastReviewID !== 0 &&
+											Dt(
+												'You have new reviews on your profile!',
+											)),
+									we('guild-header-popout', X1),
+									r.banInfo)
+								) {
+									let s = new Date(r.banInfo.banEndDate);
+									s.getTime() > Date.now() &&
+										(e.user?.banInfo?.banEndDate ?? 0) <
+											s.getTime() &&
+										vt.show({
+											title: 'You have been banned from ReviewDB',
+											body: o(
+												d,
+												null,
+												o(
+													'p',
+													null,
+													'You are banned from ReviewDB ',
+													r.type === -1
+														? 'permanently'
+														: 'until ' +
+																s.toLocaleString(),
+												),
+												r.banInfo.reviewContent &&
+													o(
+														'p',
+														null,
+														'Offending Review: ',
+														r.banInfo.reviewContent,
+													),
+												o(
+													'p',
+													null,
+													'Continued offenses will result in a permanent ban.',
+												),
+											),
+											cancelText: 'Appeal',
+											confirmText: 'Ok',
+											onCancel: () =>
+												VencordNative.native.openExternal(
+													'https://reviewdb.mantikafasi.dev/api/redirect?' +
+														new URLSearchParams({
+															token: _e.store
+																.token,
+															page: 'dashboard/appeal',
+														}),
+												),
+										});
+								}
+								e.user = r;
+							}, 4e3);
+					},
+					stop() {
+						Ae('guild-header-popout', X1);
+					},
+					getReviewsComponent: k.wrap(
+						(e) => {
+							let [t, n] = V();
+							return o(
+								fr,
+								{
+									headerText: 'User Reviews',
+									onMoreClick: () => dd(e.id, e.username),
+									moreTooltipText:
+										t && t > 50
+											? `View all ${t} reviews`
+											: 'Open Review Modal',
+									onDropDownClick: (i) =>
+										(_e.store.reviewsDropdownState = !i),
+									defaultState: _e.store.reviewsDropdownState,
+								},
+								o(wr, {
+									discordId: e.id,
+									name: e.username,
+									onFetchReviews: (i) => n(i.reviewCount),
+									showInput: !0,
+								}),
+							);
+						},
+						{ message: 'Failed to render Reviews' },
+					),
+				}));
+		});
+	var Mr,
+		fd,
+		Q1 = m(() => {
+			'use strict';
+			a();
+			E();
+			w();
+			T();
+			x();
+			(Mr = N({
 				chatMentions: {
 					type: 3,
 					default: !0,
@@ -10284,9 +15397,9 @@ ${Dn(l)}`,
 					restartNeeded: !0,
 				},
 			})),
-				(Yl = f({
+				(fd = g({
 					name: 'RoleColorEverywhere',
-					authors: [c.KingFish, c.lewisakura],
+					authors: [p.KingFish, p.lewisakura],
 					description: 'Adds the top role color anywhere possible',
 					patches: [
 						{
@@ -10295,10 +15408,10 @@ ${Dn(l)}`,
 								{
 									match: /user:(\i),channel:(\i).{0,300}?"@"\.concat\(.+?\)/,
 									replace:
-										'$&,color:$self.getUserColor($1.id,{channelId:$2?.id})',
+										'$&,color:$self.getUserColor($1?.id,{channelId:$2?.id})',
 								},
 							],
-							predicate: () => Oo.store.chatMentions,
+							predicate: () => Mr.store.chatMentions,
 						},
 						{
 							find: '.source,children',
@@ -10309,7 +15422,7 @@ ${Dn(l)}`,
 										'$&color:$self.getUserColor($1.id,{guildId:$1?.guildId}),',
 								},
 							],
-							predicate: () => Oo.store.chatMentions,
+							predicate: () => Mr.store.chatMentions,
 						},
 						{
 							find: '.memberGroupsPlaceholder',
@@ -10319,7 +15432,7 @@ ${Dn(l)}`,
 									replace: '$1$self.roleGroupColor($2)]',
 								},
 							],
-							predicate: () => Oo.store.memberList,
+							predicate: () => Mr.store.memberList,
 						},
 						{
 							find: 'renderPrioritySpeaker',
@@ -10330,13 +15443,13 @@ ${Dn(l)}`,
 										'$&...$self.getVoiceProps(this.props),',
 								},
 							],
-							predicate: () => Oo.store.voiceUsers,
+							predicate: () => Mr.store.voiceUsers,
 						},
 					],
-					settings: Oo,
+					settings: Mr,
 					getColor(e, { channelId: t, guildId: n }) {
-						return (n ??= G.getChannel(t)?.guild_id)
-							? Qe.getMember(n, e)?.colorString ?? null
+						return (n ??= X.getChannel(t)?.guild_id)
+							? ke.getMember(n, e)?.colorString ?? null
 							: null;
 					},
 					getUserColor(e, t) {
@@ -10344,12 +15457,12 @@ ${Dn(l)}`,
 						return n && parseInt(n.slice(1), 16);
 					},
 					roleGroupColor({ id: e, count: t, title: n, guildId: i }) {
-						let a = de.getGuild(i)?.roles[e];
+						let s = le.getGuild(i)?.roles[e];
 						return o(
 							'span',
 							{
 								style: {
-									color: a?.colorString,
+									color: s?.colorString,
 									fontWeight: 'unset',
 									letterSpacing: '.05em',
 								},
@@ -10366,69 +15479,295 @@ ${Dn(l)}`,
 					},
 				}));
 		});
-	var wf,
-		Pf,
-		If,
-		Ql,
-		kf = d(() => {
+	var V1,
+		eS,
+		tS,
+		gd,
+		nS = m(() => {
 			'use strict';
-			s();
-			zn();
+			a();
+			Jt();
+			w();
+			ye();
 			T();
-			B();
-			v();
-			D();
-			P();
-			(wf = Y(() =>
-				we(
+			_();
+			x();
+			(V1 = oe(() =>
+				He(
 					'M10 8.26667V4L3 11.4667L10 18.9333V14.56C15 14.56 18.5 16.2667 21 20C20 14.6667 17 9.33333 10 8.26667Z',
 				),
 			)),
-				(Pf = oe('showMentionToggle', 'TEXTAREA_FOCUS', 'shiftKey')),
-				(If = (e, { message: t }) => {
-					if (re.getChannelId() !== t.channel_id) return;
-					let n = G.getChannel(t?.channel_id);
-					if (!n) return;
-					let i = $t('pin', e);
-					if (i && !i.some((a) => a?.props?.id === 'reply')) {
-						let a = i.findIndex((l) => l.props.id === 'pin');
-						return i.splice(
-							a + 1,
-							0,
-							o(le.MenuItem, {
-								id: 'reply',
-								label: An.Messages.MESSAGE_ACTION_REPLY,
-								icon: wf,
-								action: (l) => Pf(n, t, l),
-							}),
-						);
-					}
-					let r = $t('mark-unread', e);
-					if (r && !r.some((a) => a?.props?.id === 'reply'))
-						return r.unshift(
-							o(le.MenuItem, {
-								id: 'reply',
-								label: An.Messages.MESSAGE_ACTION_REPLY,
-								icon: wf,
-								action: (a) => Pf(n, t, a),
-							}),
-						);
-				}),
-				(Ql = f({
+				(eS = ce('showMentionToggle', 'TEXTAREA_FOCUS', 'shiftKey')),
+				(tS =
+					(e, { message: t }) =>
+					() => {
+						if (fe.getChannelId() !== t.channel_id) return;
+						let n = X.getChannel(t?.channel_id);
+						if (!n) return;
+						let i = Lt('pin', e);
+						if (i && !i.some((s) => s?.props?.id === 'reply')) {
+							let s = i.findIndex((l) => l?.props.id === 'pin');
+							return i.splice(
+								s + 1,
+								0,
+								o(F.MenuItem, {
+									id: 'reply',
+									label: nt.Messages.MESSAGE_ACTION_REPLY,
+									icon: V1,
+									action: (l) => eS(n, t, l),
+								}),
+							);
+						}
+						let r = Lt('mark-unread', e);
+						if (r && !r.some((s) => s?.props?.id === 'reply'))
+							return r.unshift(
+								o(F.MenuItem, {
+									id: 'reply',
+									label: nt.Messages.MESSAGE_ACTION_REPLY,
+									icon: V1,
+									action: (s) => eS(n, t, s),
+								}),
+							);
+					}),
+				(gd = g({
 					name: 'SearchReply',
 					description: 'Adds a reply button to search results',
-					authors: [c.Aria],
+					authors: [p.Aria],
 					start() {
-						kt('message', If);
+						we('message', tS);
 					},
 					stop() {
-						Ct('message', If);
+						Ae('message', tS);
 					},
 				}));
 		});
-	function cv() {
+	var oS = m(() => {});
+	function iS(e) {
+		let t = e.slice(1, -1).replace(/(\d)(AM|PM)$/i, '$1 $2'),
+			n = new Date(`${new Date().toDateString()} ${t}`).getTime() / 1e3;
+		return isNaN(n)
+			? e
+			: (Date.now() / 1e3 > n && (n += 86400), `<t:${Math.round(n)}:t>`);
+	}
+	function TM({ rootProps: e, close: t }) {
+		let [n, i] = V(),
+			[r, s] = V(''),
+			l = Math.round((new Date(n).getTime() || Date.now()) / 1e3),
+			c = (f, v) => `<t:${f}${v && `:${v}`}>`,
+			[u, h] = Ut(() => {
+				let f = c(l, r);
+				return [f, Pe.parse(f)];
+			}, [l, r]);
+		return o(
+			Ie,
+			{ ...e },
+			o(
+				$e,
+				{ className: Pr('modal-header') },
+				o(y.FormTitle, { tag: 'h2' }, 'Timestamp Picker'),
+				o(St, { onClick: t }),
+			),
+			o(
+				Le,
+				{ className: Pr('modal-content') },
+				o('input', {
+					type: 'datetime-local',
+					value: n,
+					onChange: (f) => i(f.currentTarget.value),
+					style: { colorScheme: Di() === 2 ? 'light' : 'dark' },
+				}),
+				o(y.FormTitle, null, 'Timestamp Format'),
+				o($t, {
+					options: bM.map((f) => ({ label: f, value: f })),
+					isSelected: (f) => f === r,
+					select: (f) => s(f),
+					serialize: (f) => f,
+					renderOptionLabel: (f) =>
+						o(
+							'div',
+							{ className: Pr('format-label') },
+							Pe.parse(c(l, f.value)),
+						),
+					renderOptionValue: () => h,
+				}),
+				o(y.FormTitle, { className: G.bottom8 }, 'Preview'),
+				o(
+					y.FormText,
+					{ className: Pr('preview-text') },
+					h,
+					' (',
+					u,
+					')',
+				),
+			),
+			o(
+				ot,
+				null,
+				o(
+					R,
+					{
+						onClick: () => {
+							Bn(u + ' '), t();
+						},
+					},
+					'Insert',
+				),
+			),
+		);
+	}
+	var bM,
+		Pr,
+		hd,
+		rS = m(() => {
+			'use strict';
+			a();
+			oS();
+			gn();
+			je();
+			w();
+			$n();
+			Xe();
+			ze();
+			T();
+			x();
+			(bM = ['', 't', 'T', 'd', 'D', 'f', 'F', 'R']), (Pr = Ue('vc-st-'));
+			hd = g({
+				name: 'SendTimestamps',
+				description:
+					'Send timestamps easily via chat box button & text shortcuts. Read the extended description!',
+				authors: [p.Ven, p.Tyler],
+				dependencies: ['MessageEventsAPI'],
+				patches: [
+					{
+						find: '.activeCommandOption',
+						replacement: {
+							match: /(.)\.push.{1,30}disabled:(\i),.{1,20}\},"gift"\)\)/,
+							replace:
+								'$&;try{$2||$1.push($self.chatBarIcon())}catch{}',
+						},
+					},
+				],
+				start() {
+					this.listener = rt((e, t) => {
+						t.content = t.content.replace(
+							/`\d{1,2}:\d{2} ?(?:AM|PM)?`/gi,
+							iS,
+						);
+					});
+				},
+				stop() {
+					st(this.listener);
+				},
+				chatBarIcon() {
+					return o(
+						W,
+						{ text: 'Insert Timestamp' },
+						({ onMouseEnter: e, onMouseLeave: t }) =>
+							o(
+								'div',
+								{ style: { display: 'flex' } },
+								o(
+									R,
+									{
+										'aria-haspopup': 'dialog',
+										'aria-label': '',
+										size: '',
+										look: Wt.BLANK,
+										onMouseEnter: e,
+										onMouseLeave: t,
+										innerClassName: pt.button,
+										onClick: () => {
+											let n = be((i) =>
+												o(TM, {
+													rootProps: i,
+													close: () => Gn(n),
+												}),
+											);
+										},
+										className: Pr('button'),
+									},
+									o(
+										'div',
+										{ className: pt.buttonWrapper },
+										o(
+											'svg',
+											{
+												'aria-hidden': 'true',
+												role: 'img',
+												width: '24',
+												height: '24',
+												viewBox: '0 0 24 24',
+											},
+											o(
+												'g',
+												{
+													fill: 'none',
+													'fill-rule': 'evenodd',
+												},
+												o('path', {
+													fill: 'currentColor',
+													d: 'M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z',
+												}),
+												o('rect', {
+													width: '24',
+													height: '24',
+												}),
+											),
+										),
+									),
+								),
+							),
+					);
+				},
+				settingsAboutComponent() {
+					let e = [
+						'12:00',
+						'3:51',
+						'17:59',
+						'24:00',
+						'12:00 AM',
+						'0:13PM',
+					].map((t) => `\`${t}\``);
+					return o(
+						d,
+						null,
+						o(
+							y.FormText,
+							null,
+							'To quickly send send time only timestamps, include timestamps formatted as `HH:MM` (including the backticks!) in your message',
+						),
+						o(
+							y.FormText,
+							null,
+							'See below for examples. If you need anything more specific, use the Date button in the chat bar!',
+						),
+						o(
+							y.FormText,
+							null,
+							'Examples:',
+							o(
+								'ul',
+								null,
+								e.map((t) =>
+									o(
+										'li',
+										{ key: t },
+										o('code', null, t),
+										' ',
+										'->',
+										' ',
+										Pe.parse(iS(t)),
+									),
+								),
+							),
+						),
+					);
+				},
+			});
+		});
+	function xM() {
 		return (
-			(Mf = wt()),
+			(lS = Bt()),
 			o(
 				'span',
 				{
@@ -10443,14 +15782,14 @@ ${Dn(l)}`,
 						textAlign: 'center',
 					},
 				},
-				Xl,
+				vd,
 				' online',
 			)
 		);
 	}
-	function pv() {
+	function wM() {
 		return (
-			(Nf = wt()),
+			(cS = Bt()),
 			o(
 				'span',
 				{
@@ -10465,32 +15804,42 @@ ${Dn(l)}`,
 						textAlign: 'center',
 					},
 				},
-				Cf,
+				aS,
 				' servers',
 			)
 		);
 	}
-	var Xl,
-		Cf,
-		Mf,
-		Nf,
-		Jl,
-		Rf = d(() => {
+	function sS() {
+		vd = 0;
+		let e = Kt.getRelationships();
+		for (let t of Object.keys(e))
+			e[t] === 1 && oo.getStatus(t) !== 'offline' && (vd += 1);
+		lS?.();
+	}
+	function yd() {
+		(aS = le.getGuildCount()), cS?.();
+	}
+	var vd,
+		aS,
+		lS,
+		cS,
+		Sd,
+		uS = m(() => {
 			'use strict';
-			s();
-			zi();
+			a();
+			pa();
 			E();
-			J();
+			re();
+			w();
+			ye();
 			T();
-			B();
-			v();
-			P();
-			(Xl = 0), (Cf = 0);
-			Jl = f({
+			x();
+			(vd = 0), (aS = 0);
+			Sd = g({
 				name: 'ServerListIndicators',
 				description:
 					'Add online friend count or server count in the server list',
-				authors: [c.dzshn],
+				authors: [p.dzshn],
 				dependencies: ['ServerListAPI'],
 				options: {
 					mode: {
@@ -10511,400 +15860,528 @@ ${Dn(l)}`,
 					},
 				},
 				renderIndicator: () => {
-					let { mode: e } = k.plugins.ServerListIndicators;
+					let { mode: e } = M.plugins.ServerListIndicators;
 					return o(
-						N,
+						k,
 						{ noop: !0 },
 						o(
 							'div',
 							{ style: { marginBottom: '4px' } },
-							!!(e & 2) && o(cv, null),
-							!!(e & 1) && o(pv, null),
+							!!(e & 2) && o(xM, null),
+							!!(e & 1) && o(wM, null),
 						),
 					);
 				},
-				handlePresenceUpdate() {
-					Xl = 0;
-					let e = Xe.getRelationships();
-					for (let t of Object.keys(e))
-						e[t] === 1 &&
-							Yt.getStatus(t) !== 'offline' &&
-							(Xl += 1);
-					Mf?.();
-				},
-				handleGuildUpdate() {
-					(Cf = de.getGuildCount()), Nf?.();
+				flux: {
+					PRESENCE_UPDATES: sS,
+					GUILD_CREATE: yd,
+					GUILD_DELETE: yd,
 				},
 				start() {
-					this.handlePresenceUpdate(),
-						this.handleGuildUpdate(),
-						Lo(0, this.renderIndicator),
-						I.subscribe(
-							'PRESENCE_UPDATES',
-							this.handlePresenceUpdate,
-						),
-						I.subscribe('GUILD_CREATE', this.handleGuildUpdate),
-						I.subscribe('GUILD_DELETE', this.handleGuildUpdate);
+					yr(0, this.renderIndicator), sS(), yd();
 				},
 				stop() {
-					Eo(0, this.renderIndicator),
-						I.unsubscribe(
-							'PRESENCE_UPDATES',
-							this.handlePresenceUpdate,
-						),
-						I.unsubscribe('GUILD_CREATE', this.handleGuildUpdate),
-						I.unsubscribe('GUILD_DELETE', this.handleGuildUpdate);
+					vr(0, this.renderIndicator);
 				},
 			});
 		});
-	function Ji(e) {
-		if (typeof e == 'string') return e;
-		let t = e.source.replaceAll('\\i', '[A-Za-z_$][\\w$]*');
-		return new RegExp(t, e.flags);
-	}
-	function Lf(e, t) {
-		let n = `Vencord.Plugins.plugins[${JSON.stringify(t)}]`;
-		return typeof e != 'function'
-			? e.replaceAll('$self', n)
-			: (...i) => e(...i).replaceAll('$self', n);
-	}
-	function Af(e, t) {
-		if (e.get) {
-			let n = e.get;
-			e.get = function () {
-				return t(n.call(this));
-			};
-		} else e.value && (e.value = t(e.value));
-		return e;
-	}
-	function Ef(e, t) {
-		let n = Object.getOwnPropertyDescriptors(e);
-		(n.match = Af(n.match, Ji)),
-			(n.replace = Af(n.replace, (i) => Lf(i, t))),
-			Object.defineProperties(e, n);
-	}
-	var Zi = d(() => {
-		'use strict';
-		s();
-	});
-	var A5,
-		Df,
-		Zl = d(() => {
-			'use strict';
-			s();
-			Yn();
-			Be();
-			B();
-			Zi();
-			D();
-			P();
-			oa();
-			J();
-			(A5 = Nt(function ({ find: e, setModule: t, setError: n }) {
-				let i = io(e),
-					r = Object.keys(i),
-					a = r.length;
-				a === 0
-					? n('No match. Perhaps that module is lazy loaded?')
-					: a !== 1
-					? n('Multiple matches. Please refine your filter')
-					: t([r[0], i[r[0]]]);
-			})),
-				(Df = null);
-		});
-	var _f = d(() => {});
-	function Vi() {
-		xo(
+	var pS = m(() => {});
+	function dS() {
+		Qi(
 			'Uh Oh! Failed to render this Page. However, there is an update available that might fix it. Would you like to update and restart now?',
 		);
 	}
-	var er = d(() => {
+	var mS = m(() => {
 		'use strict';
-		s();
-		xn();
+		a();
+		ii();
 	});
-	async function uv(e) {
-		try {
-			var t = JSON.parse(e);
-		} catch (n) {
-			throw (
-				(console.log(e),
-				new Error('Failed to parse JSON: ' + String(n)))
-			);
-		}
-		if ('settings' in t && 'quickCss' in t)
-			await VencordNative.ipc.invoke(
-				$.SET_SETTINGS,
-				JSON.stringify(t.settings, null, 4),
-			),
-				await VencordNative.ipc.invoke($.SET_QUICK_CSS, t.quickCss);
-		else
-			throw new Error(
-				'Invalid Settings. Is this even a Vencord Settings file?',
-			);
-	}
-	async function dv() {
-		let e = JSON.parse(VencordNative.ipc.sendSync($.GET_SETTINGS)),
-			t = await VencordNative.ipc.invoke($.GET_QUICK_CSS);
-		return JSON.stringify({ settings: e, quickCss: t }, null, 4);
-	}
-	async function Ff() {
-		let e = 'vencord-settings-backup.json',
-			t = await dv(),
-			n = new TextEncoder().encode(t);
-		{
-			let i = new File([n], e, { type: 'application/json' }),
-				r = document.createElement('a');
-			(r.href = URL.createObjectURL(i)),
-				(r.download = e),
-				document.body.appendChild(r),
-				r.click(),
-				setImmediate(() => {
-					URL.revokeObjectURL(r.href), document.body.removeChild(r);
-				});
-		}
-	}
-	async function Of(e = !0) {
-		if (!0) {
-			let t = document.createElement('input');
-			(t.type = 'file'),
-				(t.style.display = 'none'),
-				(t.accept = 'application/json'),
-				(t.onchange = async () => {
-					let n = t.files?.[0];
-					if (!n) return;
-					let i = new FileReader();
-					(i.onload = async () => {
-						try {
-							await uv(i.result), e && mv();
-						} catch (r) {
-							new F('SettingsSync').error(r), e && fv(r);
-						}
-					}),
-						i.readAsText(n);
-				}),
-				document.body.appendChild(t),
-				t.click(),
-				setImmediate(() => document.body.removeChild(t));
-		} else if (t)
-			try {
-			} catch (n) {}
-	}
-	var mv,
-		fv,
-		$f = d(() => {
-			'use strict';
-			s();
-			P();
-			Ke();
-			ge();
-			(mv = () =>
-				K.show({
-					type: K.Type.SUCCESS,
-					message:
-						'Settings successfully imported. Restart to apply changes!',
-					id: K.genId(),
-				})),
-				(fv = (e) =>
-					K.show({
-						type: K.Type.FAILURE,
-						message: `Failed to import settings: ${String(e)}`,
-						id: K.genId(),
-					}));
-		});
-	function gv() {
+	function En({ title: e, children: t }) {
 		return o(
-			g.FormSection,
-			{ title: 'Settings Sync', className: O.top16 },
+			y.FormSection,
+			null,
 			o(
-				Ye,
-				{ className: me('vc-settings-card', 'vc-backup-restore-card') },
+				q,
+				{
+					variant: 'heading-lg/semibold',
+					tag: 'h2',
+					className: G.bottom16,
+				},
+				e,
+			),
+			t,
+		);
+	}
+	function Dn(e, t) {
+		return k.wrap(e, {
+			message: `Failed to render the ${t} tab. If this issue persists, try using the installer to reinstall!`,
+			onError: MM,
+		});
+	}
+	var MM,
+		Go = m(() => {
+			'use strict';
+			a();
+			pS();
+			re();
+			mS();
+			Xe();
+			gl();
+			x();
+			MM = fl(dS);
+		});
+	var hS = {};
+	me(hS, { default: () => AM });
+	function IM() {
+		let [e, , t] = ut(VencordNative.settings.getSettingsDir, {
+				fallbackValue: 'Loading...',
+			}),
+			n = it(),
+			i = I.useMemo(() => (Math.random() > 0.5 ? gS : PM), []),
+			r = navigator.platform.toLowerCase().startsWith('win'),
+			s = navigator.platform.toLowerCase().startsWith('mac'),
+			l = [
+				{
+					key: 'useQuickCss',
+					title: 'Enable Custom CSS',
+					note: 'Loads your Custom CSS',
+				},
+				!1,
+				!1,
+				!1,
+				!1,
+				!1,
+				!1,
+			];
+		return o(
+			En,
+			{ title: 'Vencord Settings' },
+			o(CM, { image: i }),
+			o(
+				y.FormSection,
+				{ title: 'Quick Actions' },
 				o(
-					pe,
-					{ flexDirection: 'column' },
-					o('strong', null, 'Warning'),
+					At,
+					{ className: fS('quick-actions-card') },
 					o(
-						'span',
+						I.Fragment,
 						null,
-						'Importing a settings file will overwrite your current settings.',
+						!1,
+						o(
+							R,
+							{
+								onClick: () =>
+									VencordNative.quickCss.openEditor(),
+								size: R.Sizes.SMALL,
+								disabled: e === 'Loading...',
+							},
+							'Open QuickCSS File',
+						),
+						!1,
+						o(
+							R,
+							{
+								onClick: () =>
+									VencordNative.native.openExternal(
+										'https://github.com/Vendicated/Vencord',
+									),
+								size: R.Sizes.SMALL,
+								disabled: t,
+							},
+							'Open in GitHub',
+						),
 					),
 				),
 			),
+			o(y.FormDivider, null),
 			o(
-				z,
-				{ variant: 'text-md/normal', className: O.bottom8 },
-				'You can import and export your Vencord settings as a JSON file. This allows you to easily transfer your settings to another device, or recover your settings after reinstalling Vencord or Discord.',
+				y.FormSection,
+				{ className: G.top16, title: 'Settings', tag: 'h5' },
+				o(
+					y.FormText,
+					{ className: G.bottom20 },
+					'Hint: You can change the position of this settings section in the settings of the "Settings" plugin!',
+				),
+				l.map(
+					(c) =>
+						c &&
+						o(
+							Nt,
+							{
+								key: c.key,
+								value: n[c.key],
+								onChange: (u) => (n[c.key] = u),
+								note: c.note,
+							},
+							c.title,
+						),
+				),
 			),
+			typeof Notification < 'u' && o(RM, { settings: n.notifications }),
+		);
+	}
+	function RM({ settings: e }) {
+		return o(
+			d,
+			null,
+			o(y.FormTitle, { tag: 'h5' }, 'Notification Style'),
+			e.useNative !== 'never' &&
+				Notification?.permission === 'denied' &&
+				o(
+					Hn,
+					{ style: { padding: '1em' }, className: G.bottom8 },
+					o(
+						y.FormTitle,
+						{ tag: 'h5' },
+						'Desktop Notification Permission denied',
+					),
+					o(
+						y.FormText,
+						null,
+						'You have denied Notification Permissions. Thus, Desktop notifications will not work!',
+					),
+				),
 			o(
-				z,
-				{ variant: 'text-md/normal', className: O.bottom8 },
-				'Settings Export contains:',
+				y.FormText,
+				{ className: G.bottom8 },
+				'Some plugins may show you notifications. These come in two styles:',
 				o(
 					'ul',
 					null,
-					o('li', null, '\u2014 Custom QuickCSS'),
-					o('li', null, '\u2014 Plugin Settings'),
+					o(
+						'li',
+						null,
+						o('strong', null, 'Vencord Notifications'),
+						': These are in-app notifications',
+					),
+					o(
+						'li',
+						null,
+						o('strong', null, 'Desktop Notifications'),
+						': Native Desktop notifications (like when you get a ping)',
+					),
 				),
 			),
+			o($t, {
+				placeholder: 'Notification Style',
+				options: [
+					{
+						label: 'Only use Desktop notifications when Discord is not focused',
+						value: 'not-focused',
+						default: !0,
+					},
+					{
+						label: 'Always use Desktop notifications',
+						value: 'always',
+					},
+					{
+						label: 'Always use Vencord notifications',
+						value: 'never',
+					},
+				],
+				closeOnSelect: !0,
+				select: (t) => (e.useNative = t),
+				isSelected: (t) => t === e.useNative,
+				serialize: Xr,
+			}),
 			o(
-				pe,
-				null,
-				o(
-					L,
-					{ onClick: () => Of(), size: L.Sizes.SMALL },
-					'Import Settings',
-				),
-				o(L, { onClick: Ff, size: L.Sizes.SMALL }, 'Export Settings'),
+				y.FormTitle,
+				{ tag: 'h5', className: G.top16 + ' ' + G.bottom8 },
+				'Notification Position',
+			),
+			o($t, {
+				isDisabled: e.useNative === 'always',
+				placeholder: 'Notification Position',
+				options: [
+					{
+						label: 'Bottom Right',
+						value: 'bottom-right',
+						default: !0,
+					},
+					{ label: 'Top Right', value: 'top-right' },
+				],
+				select: (t) => (e.position = t),
+				isSelected: (t) => t === e.position,
+				serialize: Xr,
+			}),
+			o(
+				y.FormTitle,
+				{ tag: 'h5', className: G.top16 + ' ' + G.bottom8 },
+				'Notification Timeout',
+			),
+			o(
+				y.FormText,
+				{ className: G.bottom16 },
+				'Set to 0s to never automatically time out',
+			),
+			o(Io, {
+				disabled: e.useNative === 'always',
+				markers: [0, 1e3, 2500, 5e3, 1e4, 2e4],
+				minValue: 0,
+				maxValue: 2e4,
+				initialValue: e.timeout,
+				onValueChange: (t) => (e.timeout = t),
+				onValueRender: (t) => (t / 1e3).toFixed(2) + 's',
+				onMarkerRender: (t) => t / 1e3 + 's',
+				stickToMarkers: !1,
+			}),
+			o(
+				y.FormTitle,
+				{ tag: 'h5', className: G.top16 + ' ' + G.bottom8 },
+				'Notification Log Limit',
+			),
+			o(
+				y.FormText,
+				{ className: G.bottom16 },
+				'The amount of notifications to save in the log until old ones are removed. Set to ',
+				o('code', null, '0'),
+				' to disable Notification log and ',
+				o('code', null, '\u221E'),
+				' to never automatically remove old Notifications',
+			),
+			o(Io, {
+				markers: [0, 25, 50, 75, 100, 200],
+				minValue: 0,
+				maxValue: 200,
+				stickToMarkers: !0,
+				initialValue: e.logLimit,
+				onValueChange: (t) => (e.logLimit = t),
+				onValueRender: (t) => (t === 200 ? '\u221E' : t),
+				onMarkerRender: (t) => (t === 200 ? '\u221E' : t),
+			}),
+			o(
+				R,
+				{ onClick: us, disabled: e.logLimit === 0 },
+				'Open Notification Log',
 			),
 		);
 	}
-	var Bf,
-		Uf = d(() => {
-			'use strict';
-			s();
-			J();
-			ct();
-			Be();
-			B();
-			$f();
-			P();
-			Bf = N.wrap(gv);
-		});
-	var Gf = d(() => {});
-	function Hf(e) {
-		let t = new bv({ username: e.name, id: Ms(), bot: !0 });
-		return I.dispatch({ type: 'USER_UPDATE', user: t }), t;
+	function CM({ image: e }) {
+		return o(
+			At,
+			{ className: fS('card', 'donate') },
+			o(
+				'div',
+				null,
+				o(y.FormTitle, { tag: 'h5' }, 'Support the Project'),
+				o(
+					y.FormText,
+					null,
+					'Please consider supporting the development of Vencord by donating!',
+				),
+				o(Ki, { style: { transform: 'translateX(-1em)' } }),
+			),
+			o('img', {
+				role: 'presentation',
+				src: e,
+				alt: '',
+				height: 128,
+				style: {
+					marginLeft: 'auto',
+					transform: e === gS ? 'rotate(10deg)' : '',
+				},
+			}),
+		);
 	}
-	function Vl({
+	var fS,
+		gS,
+		PM,
+		AM,
+		yS = m(() => {
+			'use strict';
+			a();
+			ps();
+			E();
+			je();
+			ql();
+			Ui();
+			Xe();
+			de();
+			Ji();
+			ye();
+			x();
+			Go();
+			(fS = Ue('vc-settings-')),
+				(gS =
+					'https://cdn.discordapp.com/emojis/1026533090627174460.png'),
+				(PM =
+					'https://media.discordapp.net/stickers/1039992459209490513.png');
+			AM = Dn(IM, 'Vencord Settings');
+		});
+	var vS = m(() => {});
+	var bd,
+		SS = m(() => {
+			a();
+			(window.VencordStyles ??= new Map()).set(
+				'src/components/PluginSettings/userPopoutHideBotTag.css',
+				{
+					name: 'src/components/PluginSettings/userPopoutHideBotTag.css',
+					source: `[class|="userPopoutOuter"] [class*="botTag"] {
+    display: none;
+}
+`,
+					classNames: {},
+					dom: null,
+				},
+			);
+			bd = 'src/components/PluginSettings/userPopoutHideBotTag.css';
+		});
+	function Td(e) {
+		let t = new LM({
+			username: e.username,
+			id: e.id ?? Qc(),
+			avatar: e.avatar,
+			bot: !0,
+		});
+		return L.dispatch({ type: 'USER_UPDATE', user: t }), t;
+	}
+	function xd({
 		plugin: e,
 		onRestartNeeded: t,
 		onClose: n,
 		transitionState: i,
 	}) {
-		let [r, a] = w.useState([]),
-			l = Ge().plugins[e.name],
-			[u, m] = w.useState({}),
-			[y, h] = w.useState({}),
-			[b, x] = w.useState(null),
-			S = () => Object.values(y).every((_) => !_),
+		let [r, s] = I.useState([]),
+			l = it().plugins[e.name],
+			[c, u] = I.useState({}),
+			[h, f] = I.useState({}),
+			[v, S] = I.useState(null),
+			b = () => Object.values(h).every((O) => !O),
 			A = Boolean(l && e.options);
-		w.useEffect(() => {
-			(async () => {
-				for (let _ of e.authors.slice(0, 6)) {
-					let Q = _.id
-						? await Qt.fetchUser(`${_.id}`).catch(() => Hf(_))
-						: Hf(_);
-					a((ae) => [...ae, Q]);
+		I.useEffect(() => {
+			Je(bd);
+			let O;
+			return (
+				(async () => {
+					for (let K of e.authors.slice(0, 6)) {
+						let ee = K.id
+							? await Rn.fetchUser(`${K.id}`)
+									.then((j) => ((O = j), Td(j)))
+									.catch(() => Td({ username: K.name }))
+							: Td({ username: K.name });
+						s((j) => [...j, ee]);
+					}
+				})(),
+				() => {
+					bt(bd), O && L.dispatch({ type: 'USER_UPDATE', user: O });
 				}
-			})();
+			);
 		}, []);
-		async function M() {
+		async function C() {
 			if (!e.options) {
 				n();
 				return;
 			}
 			if (e.beforeSave) {
-				let Q = await Promise.resolve(e.beforeSave(u));
-				if (Q !== !0) {
-					x(Q);
+				let K = await Promise.resolve(e.beforeSave(c));
+				if (K !== !0) {
+					S(K);
 					return;
 				}
 			}
-			let _ = !1;
-			for (let [Q, ae] of Object.entries(u)) {
-				let fe = e.options[Q];
-				(l[Q] = ae), fe?.onChange?.(ae), fe?.restartNeeded && (_ = !0);
+			let O = !1;
+			for (let [K, ee] of Object.entries(c)) {
+				let j = e.options[K];
+				(l[K] = ee), j?.onChange?.(ee), j?.restartNeeded && (O = !0);
 			}
-			_ && t(), n();
+			O && t(), n();
 		}
-		function j() {
+		function D() {
 			if (!A || !e.options)
 				return o(
-					g.FormText,
+					y.FormText,
 					null,
 					'There are no settings for this plugin.',
 				);
 			{
-				let _ = Object.entries(e.options).map(([Q, ae]) => {
-					function fe(Rt) {
-						m((an) => ({ ...an, [Q]: Rt }));
+				let O = Object.entries(e.options).map(([K, ee]) => {
+					if (ee.hidden) return null;
+					function j($) {
+						u((Re) => ({ ...Re, [K]: $ }));
 					}
-					function $e(Rt) {
-						h((an) => ({ ...an, [Q]: Rt }));
+					function z($) {
+						f((Re) => ({ ...Re, [K]: $ }));
 					}
-					let yt = Sv[ae.type];
-					return o(yt, {
-						id: Q,
-						key: Q,
-						option: ae,
-						onChange: fe,
-						onError: $e,
+					let te = EM[ee.type];
+					return o(te, {
+						id: K,
+						key: K,
+						option: ee,
+						onChange: j,
+						onError: z,
 						pluginSettings: l,
 						definedSettings: e.settings,
 					});
 				});
 				return o(
-					pe,
-					{ flexDirection: 'column', style: { gap: 12 } },
-					_,
+					ae,
+					{
+						flexDirection: 'column',
+						style: { gap: 12, marginBottom: 16 },
+					},
+					O,
 				);
 			}
 		}
-		function X(_, Q) {
-			let ae = e.authors.length - Q,
-				fe = e.authors.length - ae,
-				$e = fe + e.authors.length - Q;
+		function B(O, K) {
+			let ee = e.authors.length - K,
+				j = e.authors.length - ee,
+				z = j + e.authors.length - K;
 			return o(
-				Z,
+				W,
 				{
 					text: e.authors
-						.slice(fe, $e)
-						.map((yt) => yt.name)
+						.slice(j, z)
+						.map((te) => te.name)
 						.join(', '),
 				},
-				({ onMouseEnter: yt, onMouseLeave: Rt }) =>
+				({ onMouseEnter: te, onMouseLeave: $ }) =>
 					o(
 						'div',
 						{
-							className: yv.moreUsers,
-							onMouseEnter: yt,
-							onMouseLeave: Rt,
+							className: kM.moreUsers,
+							onMouseEnter: te,
+							onMouseLeave: $,
 						},
 						'+',
-						ae,
+						ee,
 					),
 			);
 		}
 		return o(
-			Ee,
-			{ transitionState: i, size: 'medium' },
+			Ie,
+			{
+				transitionState: i,
+				size: 'medium',
+				className: 'vc-text-selectable',
+			},
 			o(
-				He,
+				$e,
 				{ separator: !1 },
 				o(
-					z,
+					q,
 					{ variant: 'heading-lg/semibold', style: { flexGrow: 1 } },
 					e.name,
 				),
-				o(hn, { onClick: n }),
+				o(St, { onClick: n }),
 			),
 			o(
-				je,
-				{ style: { marginBottom: 8, marginTop: 8 } },
+				Le,
+				null,
 				o(
-					g.FormSection,
+					y.FormSection,
 					null,
-					o(g.FormTitle, { tag: 'h3' }, 'About ', e.name),
-					o(g.FormText, null, e.description),
+					o(y.FormTitle, { tag: 'h3' }, 'About ', e.name),
+					o(y.FormText, null, e.description),
 					o(
-						g.FormTitle,
+						y.FormTitle,
 						{ tag: 'h3', style: { marginTop: 8, marginBottom: 0 } },
 						'Authors',
 					),
 					o(
 						'div',
 						{ style: { width: 'fit-content', marginBottom: 8 } },
-						o(hv, {
+						o(NM, {
 							users: r,
 							count: e.authors.length,
 							guildId: void 0,
@@ -10912,151 +16389,155 @@ ${Dn(l)}`,
 							max: 6,
 							showDefaultAvatarsForNullUsers: !0,
 							showUserPopout: !0,
-							renderMoreUsers: X,
+							renderMoreUsers: B,
 						}),
 					),
 				),
 				!!e.settingsAboutComponent &&
 					o(
 						'div',
-						{ style: { marginBottom: 8 } },
+						{ className: J(G.bottom8, 'vc-text-selectable') },
 						o(
-							g.FormSection,
+							y.FormSection,
 							null,
 							o(
-								N,
+								k,
 								{
 									message:
 										"An error occurred while rendering this plugin's custom InfoComponent",
 								},
 								o(e.settingsAboutComponent, {
-									tempSettings: u,
+									tempSettings: c,
 								}),
 							),
 						),
 					),
 				o(
-					g.FormSection,
+					y.FormSection,
 					null,
-					o(g.FormTitle, { tag: 'h3' }, 'Settings'),
-					j(),
+					o(y.FormTitle, { tag: 'h3' }, 'Settings'),
+					D(),
 				),
 			),
 			A &&
 				o(
-					ut,
+					ot,
 					null,
 					o(
-						pe,
+						ae,
 						{ flexDirection: 'column', style: { width: '100%' } },
 						o(
-							pe,
+							ae,
 							{ style: { marginLeft: 'auto' } },
 							o(
-								L,
+								R,
 								{
 									onClick: n,
-									size: L.Sizes.SMALL,
-									color: L.Colors.WHITE,
-									look: L.Looks.LINK,
+									size: R.Sizes.SMALL,
+									color: R.Colors.WHITE,
+									look: R.Looks.LINK,
 								},
 								'Cancel',
 							),
 							o(
-								Z,
+								W,
 								{
 									text: 'You must fix all errors before saving',
-									shouldShow: !S(),
+									shouldShow: !b(),
 								},
-								({ onMouseEnter: _, onMouseLeave: Q }) =>
+								({ onMouseEnter: O, onMouseLeave: K }) =>
 									o(
-										L,
+										R,
 										{
-											size: L.Sizes.SMALL,
-											color: L.Colors.BRAND,
-											onClick: M,
-											onMouseEnter: _,
-											onMouseLeave: Q,
-											disabled: !S(),
+											size: R.Sizes.SMALL,
+											color: R.Colors.BRAND,
+											onClick: C,
+											onMouseEnter: O,
+											onMouseLeave: K,
+											disabled: !b(),
 										},
 										'Save & Close',
 									),
 							),
 						),
-						b &&
+						v &&
 							o(
-								z,
+								q,
 								{
 									variant: 'text-md/semibold',
 									style: { color: 'var(--text-danger)' },
 								},
 								'Error while saving: ',
-								b,
+								v,
 							),
 					),
 				),
 		);
 	}
-	var hv,
-		yv,
-		bv,
-		Sv,
-		jf = d(() => {
+	var NM,
+		kM,
+		LM,
+		EM,
+		bS = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
 			E();
-			J();
-			ct();
-			B();
-			Ze();
-			ln();
-			v();
-			D();
-			P();
-			Mi();
-			(hv = Y(() =>
-				we('defaultRenderUser', 'showDefaultAvatarsForNullUsers'),
+			je();
+			re();
+			xt();
+			rn();
+			Xe();
+			de();
+			ze();
+			ye();
+			T();
+			_();
+			x();
+			ir();
+			SS();
+			(NM = oe(() =>
+				He('defaultRenderUser', 'showDefaultAvatarsForNullUsers'),
 			)),
-				(yv = C(
+				(kM = P(
 					'moreUsers',
 					'emptyUser',
 					'avatarContainer',
 					'clickableAvatar',
 				)),
-				(bv = Ue(() => U.getCurrentUser().constructor));
-			Sv = {
-				[0]: Nd,
-				[1]: ma,
-				[2]: ma,
-				[3]: Td,
-				[4]: kd,
-				[5]: Md,
-				[6]: wd,
+				(LM = ct(() => U.getCurrentUser().constructor));
+			EM = {
+				[0]: Zh,
+				[1]: iu,
+				[2]: iu,
+				[3]: Gh,
+				[4]: qh,
+				[5]: Yh,
+				[6]: zh,
 			};
 		});
-	var zf = d(() => {});
-	function Wf({ checked: e, onChange: t, disabled: n }) {
+	var TS = m(() => {});
+	function xS({ checked: e, onChange: t, disabled: n }) {
 		return o(
 			'div',
 			null,
 			o(
 				'div',
 				{
-					className: me(
-						tr.container,
+					className: J(
+						ba.container,
 						'default-colors',
-						e ? tr.checked : void 0,
+						e ? ba.checked : void 0,
 					),
 					style: {
-						backgroundColor: e ? ec : tc,
+						backgroundColor: e ? wd : Md,
 						opacity: n ? 0.3 : 1,
 					},
 				},
 				o(
 					'svg',
 					{
-						className: tr.slider + ' vc-switch-slider',
+						className: ba.slider + ' vc-switch-slider',
 						viewBox: '0 0 28 20',
 						preserveAspectRatio: 'xMinYMid meet',
 						'aria-hidden': 'true',
@@ -11079,26 +16560,26 @@ ${Dn(l)}`,
 						{ viewBox: '0 0 20 20', fill: 'none' },
 						e
 							? o(
-									p,
+									d,
 									null,
 									o('path', {
-										fill: ec,
+										fill: wd,
 										d: 'M7.89561 14.8538L6.30462 13.2629L14.3099 5.25755L15.9009 6.84854L7.89561 14.8538Z',
 									}),
 									o('path', {
-										fill: ec,
+										fill: wd,
 										d: 'M4.08643 11.0903L5.67742 9.49929L9.4485 13.2704L7.85751 14.8614L4.08643 11.0903Z',
 									}),
 							  )
 							: o(
-									p,
+									d,
 									null,
 									o('path', {
-										fill: tc,
+										fill: Md,
 										d: 'M5.13231 6.72963L6.7233 5.13864L14.855 13.2704L13.264 14.8614L5.13231 6.72963Z',
 									}),
 									o('path', {
-										fill: tc,
+										fill: Md,
 										d: 'M13.2704 5.13864L14.8614 6.72963L6.72963 14.8614L5.13864 13.2704L13.2704 5.13864Z',
 									}),
 							  ),
@@ -11107,7 +16588,7 @@ ${Dn(l)}`,
 				o('input', {
 					disabled: n,
 					type: 'checkbox',
-					className: tr.input,
+					className: ba.input,
 					tabIndex: 0,
 					checked: e,
 					onChange: (i) => t(i.currentTarget.checked),
@@ -11115,116 +16596,89 @@ ${Dn(l)}`,
 			),
 		);
 	}
-	var ec,
-		tc,
-		tr,
-		qf = d(() => {
+	var wd,
+		Md,
+		ba,
+		wS = m(() => {
 			'use strict';
-			s();
-			zf();
-			B();
-			D();
-			(ec = 'var(--green-360)'),
-				(tc = 'var(--primary-400)'),
-				(tr = C('slider', 'input', 'container'));
+			a();
+			TS();
+			de();
+			_();
+			(wd = 'var(--green-360)'),
+				(Md = 'var(--primary-400)'),
+				(ba = P('slider', 'input', 'container'));
 		});
-	var $o,
-		nc = d(() => {
-			'use strict';
-			s();
-			$o = class {
-				set = new Set();
-				get changeCount() {
-					return this.set.size;
-				}
-				get hasChanges() {
-					return this.changeCount > 0;
-				}
-				handleChange(t) {
-					this.set.delete(t) || this.set.add(t);
-				}
-				add(t) {
-					return this.set.add(t);
-				}
-				remove(t) {
-					return this.set.delete(t);
-				}
-				getChanges() {
-					return this.set.values();
-				}
-				map(t) {
-					return [...this.getChanges()].map(t);
-				}
-			};
-		});
-	var ac = {};
-	te(ac, {
-		PMLogger: () => vv,
-		isPluginEnabled: () => ic,
-		patches: () => Kf,
-		plugins: () => Tv,
-		startAllPlugins: () => rc,
-		startDependenciesRecursive: () => nr,
-		startPlugin: () => Bo,
-		stopPlugin: () => sc,
+	var Ad = {};
+	me(Ad, {
+		PMLogger: () => DM,
+		isPluginEnabled: () => Id,
+		patches: () => MS,
+		plugins: () => OM,
+		startAllPlugins: () => Rd,
+		startDependenciesRecursive: () => Ta,
+		startPlugin: () => Ir,
+		stopPlugin: () => Cd,
 	});
-	function ic(e) {
-		return (se[e]?.required || se[e]?.isDependency || oc[e]?.enabled) ?? !1;
+	function Id(e) {
+		return (Te[e]?.required || Te[e]?.isDependency || Pd[e]?.enabled) ?? !1;
 	}
-	function nr(e) {
+	function Ta(e) {
 		let t = !1,
 			n = [];
 		return (
 			e.dependencies?.forEach((i) => {
-				if (!k.plugins[i].enabled) {
-					if ((nr(se[i]), se[i].patches)) {
-						qe.warn(`Enabling dependency ${i} requires restart.`),
-							(k.plugins[i].enabled = !0),
+				if (!M.plugins[i].enabled) {
+					if (
+						(Ta(Te[i]), (M.plugins[i].enabled = !0), Te[i].patches)
+					) {
+						Gt.warn(`Enabling dependency ${i} requires restart.`),
 							(t = !0);
 						return;
 					}
-					Bo(se[i]) || n.push(i);
+					Ir(Te[i]) || n.push(i);
 				}
 			}),
 			{ restartNeeded: t, failures: n }
 		);
 	}
-	var qe,
-		vv,
-		Tv,
-		Kf,
-		oc,
-		Yf,
-		rc,
-		Bo,
-		sc,
-		or = d(() => {
+	var Gt,
+		DM,
+		OM,
+		MS,
+		Pd,
+		PS,
+		Rd,
+		Ir,
+		Cd,
+		xa = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
 			E();
-			ge();
-			Fn();
-			ti();
-			(qe = new F('PluginManager', '#a6d189')),
-				(vv = qe),
-				(Tv = se),
-				(Kf = []),
-				(oc = k.plugins);
-			Yf = Object.values(se);
-			for (let e of Yf)
-				oc[e.name]?.enabled &&
+			Se();
+			x();
+			ni();
+			qr();
+			(Gt = new Z('PluginManager', '#a6d189')),
+				(DM = Gt),
+				(OM = Te),
+				(MS = []),
+				(Pd = M.plugins);
+			PS = Object.values(Te);
+			for (let e of PS)
+				Pd[e.name]?.enabled &&
 					e.dependencies?.forEach((t) => {
-						let n = se[t];
-						if (n) (oc[t].enabled = !0), (n.isDependency = !0);
+						let n = Te[t];
+						if (n) (Pd[t].enabled = !0), (n.isDependency = !0);
 						else {
 							let i = new Error(
 								`Plugin ${e.name} has unresolved dependency ${t}`,
 							);
-							qe.warn(i);
+							Gt.warn(i);
 						}
 					});
-			for (let e of Yf) {
+			for (let e of PS) {
 				if (e.settings) {
 					(e.settings.pluginName = e.name), (e.options ??= {});
 					for (let [t, n] of Object.entries(e.settings.def)) {
@@ -11232,501 +16686,489 @@ ${Dn(l)}`,
 						e.options[t] = { ...n, ...i };
 					}
 				}
-				if (e.patches && ic(e.name))
+				if (e.patches && Id(e.name))
 					for (let t of e.patches)
 						(t.plugin = e.name),
 							Array.isArray(t.replacement) ||
 								(t.replacement = [t.replacement]),
-							Kf.push(t);
+							MS.push(t);
 			}
-			rc = ot('startAllPlugins', function () {
-				for (let t in se) ic(t) && Bo(se[t]);
+			Rd = sn('startAllPlugins', function () {
+				for (let t in Te) Id(t) && Ir(Te[t]);
 			});
-			(Bo = ot(
+			(Ir = sn(
 				'startPlugin',
 				function (t) {
+					let { name: n, commands: i, flux: r } = t;
 					if (t.start) {
-						if ((qe.info('Starting plugin', t.name), t.started))
-							return qe.warn(`${t.name} already started`), !1;
+						if ((Gt.info('Starting plugin', n), t.started))
+							return Gt.warn(`${n} already started`), !1;
 						try {
 							t.start(), (t.started = !0);
-						} catch (n) {
+						} catch (s) {
 							return (
-								qe.error(
-									`Failed to start ${t.name}
+								Gt.error(
+									`Failed to start ${n}
 `,
-									n,
+									s,
 								),
 								!1
 							);
 						}
 					}
-					if (t.commands?.length) {
-						qe.info('Registering commands of plugin', t.name);
-						for (let n of t.commands)
+					if (i?.length) {
+						Gt.info('Registering commands of plugin', n);
+						for (let s of i)
 							try {
-								Bn(n, t.name);
-							} catch (i) {
+								ri(s, n);
+							} catch (l) {
 								return (
-									qe.error(
-										`Failed to register command ${n.name}
+									Gt.error(
+										`Failed to register command ${s.name}
 `,
-										i,
+										l,
 									),
 									!1
 								);
 							}
 					}
+					if (r) for (let s in r) L.subscribe(s, r[s]);
 					return !0;
 				},
 				(e) => `startPlugin ${e.name}`,
 			)),
-				(sc = ot(
+				(Cd = sn(
 					'stopPlugin',
 					function (t) {
+						let { name: n, commands: i, flux: r } = t;
 						if (t.stop) {
-							if (
-								(qe.info('Stopping plugin', t.name), !t.started)
-							)
-								return qe.warn(`${t.name} already stopped`), !1;
+							if ((Gt.info('Stopping plugin', n), !t.started))
+								return Gt.warn(`${n} already stopped`), !1;
 							try {
 								t.stop(), (t.started = !1);
-							} catch (n) {
+							} catch (s) {
 								return (
-									qe.error(
-										`Failed to stop ${t.name}
+									Gt.error(
+										`Failed to stop ${n}
 `,
-										n,
+										s,
 									),
 									!1
 								);
 							}
 						}
-						if (t.commands?.length) {
-							qe.info('Unregistering commands of plugin', t.name);
-							for (let n of t.commands)
+						if (i?.length) {
+							Gt.info('Unregistering commands of plugin', n);
+							for (let s of i)
 								try {
-									yo(n.name);
-								} catch (i) {
+									or(s.name);
+								} catch (l) {
 									return (
-										qe.error(
-											`Failed to unregister command ${n.name}
+										Gt.error(
+											`Failed to unregister command ${s.name}
 `,
-											i,
+											l,
 										),
 										!1
 									);
 								}
 						}
+						if (r) for (let s in r) L.unsubscribe(s, r[s]);
 						return !0;
 					},
 					(e) => `stopPlugin ${e.name}`,
 				));
 		});
-	function Pv(e) {
-		K.show({
+	function $M(e) {
+		Q.show({
 			message: e,
-			type: K.Type.FAILURE,
-			id: K.genId(),
-			options: { position: K.Position.BOTTOM },
+			type: Q.Type.FAILURE,
+			id: Q.genId(),
+			options: { position: Q.Position.BOTTOM },
 		});
 	}
-	function Iv({ required: e }) {
+	function UM({ required: e }) {
 		return o(
-			Ye,
-			{ className: gt('info-card', { 'restart-card': e }) },
+			At,
+			{ className: bn('info-card', { 'restart-card': e }) },
 			e
 				? o(
-						p,
+						d,
 						null,
-						o(g.FormTitle, { tag: 'h5' }, 'Restart required!'),
+						o(y.FormTitle, { tag: 'h5' }, 'Restart required!'),
 						o(
-							g.FormText,
-							{ className: gt('dep-text') },
+							y.FormText,
+							{ className: bn('dep-text') },
 							'Restart now to apply new plugins and their settings',
 						),
 						o(
-							L,
+							R,
 							{
-								color: L.Colors.YELLOW,
+								color: R.Colors.YELLOW,
 								onClick: () => location.reload(),
 							},
 							'Restart',
 						),
 				  )
 				: o(
-						p,
+						d,
 						null,
-						o(g.FormTitle, { tag: 'h5' }, 'Plugin Management'),
+						o(y.FormTitle, { tag: 'h5' }, 'Plugin Management'),
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							'Press the cog wheel or info icon to get more info on a plugin',
 						),
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							'Plugins with a cog wheel have settings you can modify!',
 						),
 				  ),
 		);
 	}
-	function Jf({
+	function CS({
 		plugin: e,
 		disabled: t,
 		onRestartNeeded: n,
 		onMouseEnter: i,
 		onMouseLeave: r,
-		isNew: a,
+		isNew: s,
 	}) {
-		let l = Ge([`plugins.${e.name}.enabled`]).plugins[e.name],
-			u = () => l.enabled ?? !1;
-		function m() {
-			Wr(
-				async () => (h) =>
-					o(Vl, {
-						...h,
+		let l = M.plugins[e.name],
+			c = () => l.enabled ?? !1;
+		function u() {
+			Oi(
+				async () => (f) =>
+					o(xd, {
+						...f,
 						plugin: e,
 						onRestartNeeded: () => n(e.name),
 					}),
 			);
 		}
-		function y() {
-			let h = u();
-			if (!h) {
-				let { restartNeeded: S, failures: A } = nr(e);
+		function h() {
+			let f = c();
+			if (!f) {
+				let { restartNeeded: b, failures: A } = Ta(e);
 				if (A.length) {
-					Qf.error(
+					IS.error(
 						`Failed to start dependencies for ${e.name}: ${A.join(
 							', ',
 						)}`,
 					),
-						fo(
+						Zi(
 							'Failed to start dependencies: ' + A.join(', '),
 							'Close',
 							() => null,
 						);
 					return;
-				} else if (S) {
+				} else if (b) {
 					(l.enabled = !0), n(e.name);
 					return;
 				}
 			}
-			if (e.patches) {
-				(l.enabled = !h), n(e.name);
+			if (e.patches?.length) {
+				(l.enabled = !f), n(e.name);
 				return;
 			}
-			if (h && !e.started) {
-				l.enabled = !h;
+			if (f && !e.started) {
+				l.enabled = !f;
 				return;
 			}
-			let b = h ? sc(e) : Bo(e),
-				x = h ? 'stop' : 'start';
-			if (!b) {
-				Qf.error(`Failed to ${x} plugin ${e.name}`),
-					Pv(`Failed to ${x} plugin: ${e.name}`);
+			let v = f ? Cd(e) : Ir(e),
+				S = f ? 'stop' : 'start';
+			if (!v) {
+				IS.error(`Failed to ${S} plugin ${e.name}`),
+					$M(`Failed to ${S} plugin: ${e.name}`);
 				return;
 			}
-			l.enabled = !h;
+			l.enabled = !f;
 		}
 		return o(
-			pe,
+			ae,
 			{
-				className: gt('card', { 'card-disabled': t }),
+				className: bn('card', { 'card-disabled': t }),
 				flexDirection: 'column',
 				onMouseEnter: i,
 				onMouseLeave: r,
 			},
 			o(
 				'div',
-				{ className: gt('card-header') },
+				{ className: bn('card-header') },
 				o(
-					z,
-					{ variant: 'text-md/bold', className: gt('name') },
+					q,
+					{ variant: 'text-md/bold', className: bn('name') },
 					e.name,
-					a && o(Sd, { text: 'NEW', color: '#ED4245' }),
+					s && o($h, { text: 'NEW', color: '#ED4245' }),
 				),
 				o(
 					'button',
 					{
 						role: 'switch',
-						onClick: () => m(),
-						className: me('button-12Fmur', gt('info-button')),
+						onClick: () => u(),
+						className: J(_M.button, bn('info-button')),
 					},
 					e.options
-						? o(xv, null)
-						: o(wv, { width: '24', height: '24' }),
+						? o(FM, null)
+						: o(BM, { width: '24', height: '24' }),
 				),
-				o(Wf, { checked: u(), onChange: y, disabled: t }),
+				o(xS, { checked: c(), onChange: h, disabled: t }),
 			),
 			o(
-				z,
-				{ className: gt('note'), variant: 'text-sm/normal' },
+				q,
+				{ className: bn('note'), variant: 'text-sm/normal' },
 				e.description,
 			),
 		);
 	}
-	function kv(e) {
+	function Nd() {
+		let e = it(),
+			t = I.useMemo(() => new Pi(), []);
+		I.useEffect(
+			() => () =>
+				void (
+					t.hasChanges &&
+					vt.show({
+						title: 'Restart required',
+						body: o(
+							d,
+							null,
+							o(
+								'p',
+								null,
+								'The following plugins require a restart:',
+							),
+							o(
+								'div',
+								null,
+								t.map((S, b) =>
+									o(
+										d,
+										null,
+										b > 0 && ', ',
+										Pe.parse('`' + S + '`'),
+									),
+								),
+							),
+						),
+						confirmText: 'Restart now',
+						cancelText: 'Later!',
+						onConfirm: () => location.reload(),
+					})
+				),
+			[],
+		);
+		let n = I.useMemo(() => {
+				let S = {};
+				for (let b in Te) {
+					let A = Te[b].dependencies;
+					if (A) for (let C of A) (S[C] ??= []), S[C].push(b);
+				}
+				return S;
+			}, []),
+			i = I.useMemo(
+				() =>
+					Object.values(Te).sort((S, b) =>
+						S.name.localeCompare(b.name),
+					),
+				[],
+			),
+			[r, s] = I.useState({ value: '', status: 0 }),
+			l = (S) => s((b) => ({ ...b, value: S })),
+			c = (S) => s((b) => ({ ...b, status: S })),
+			u = (S) => {
+				let b = e.plugins[S.name]?.enabled;
+				if ((b && r.status === 2) || (!b && r.status === 1)) return !1;
+				if (!r.value.length) return !0;
+				let A = r.value.toLowerCase();
+				return (
+					S.name.toLowerCase().includes(A) ||
+					S.description.toLowerCase().includes(A) ||
+					S.tags?.some((C) => C.toLowerCase().includes(A))
+				);
+			},
+			[h] = ut(() =>
+				Qe('Vencord_existingPlugins').then((S) => {
+					let b = Date.now() / 1e3,
+						A = {},
+						C = Object.values(i).map((B) => B.name),
+						D = [];
+					for (let { name: B } of i)
+						(A[B] = S?.[B] ?? b) + 60 * 60 * 24 * 2 > b &&
+							D.push(B);
+					return (
+						Ve('Vencord_existingPlugins', A),
+						window._.isEqual(D, C) ? [] : D
+					);
+				}),
+			),
+			f,
+			v;
+		if (i?.length) {
+			(f = []), (v = []);
+			for (let S of i) {
+				if (
+					(!S.options &&
+						S.name.endsWith('API') &&
+						r.value !== 'API') ||
+					!u(S)
+				)
+					continue;
+				if (
+					S.required ||
+					n[S.name]?.some((A) => e.plugins[A].enabled)
+				) {
+					let A = S.required
+						? 'This plugin is required for Vencord to function.'
+						: GM(n[S.name]?.filter((C) => e.plugins[C].enabled));
+					v.push(
+						o(
+							W,
+							{ text: A, key: S.name },
+							({ onMouseLeave: C, onMouseEnter: D }) =>
+								o(CS, {
+									onMouseLeave: C,
+									onMouseEnter: D,
+									onRestartNeeded: (B) => t.handleChange(B),
+									disabled: !0,
+									plugin: S,
+								}),
+						),
+					);
+				} else
+					f.push(
+						o(CS, {
+							onRestartNeeded: (A) => t.handleChange(A),
+							disabled: !1,
+							plugin: S,
+							isNew: h?.includes(S.name),
+							key: S.name,
+						}),
+					);
+			}
+		} else
+			f = v = o(
+				q,
+				{ variant: 'text-md/normal' },
+				'No plugins meet search criteria.',
+			);
 		return o(
-			w.Fragment,
-			null,
-			o(g.FormText, null, 'This plugin is required by:'),
-			e.map((t) => o(g.FormText, { className: gt('dep-text') }, t)),
+			En,
+			{ title: 'Plugins' },
+			o(UM, { required: t.hasChanges }),
+			o(
+				y.FormTitle,
+				{ tag: 'h5', className: J(G.top20, G.bottom8) },
+				'Filters',
+			),
+			o(
+				'div',
+				{ className: bn('filter-controls') },
+				o(Ne, {
+					autoFocus: !0,
+					value: r.value,
+					placeholder: 'Search for a plugin...',
+					onChange: l,
+					className: G.bottom20,
+				}),
+				o(
+					'div',
+					{ className: RS.inputWrapper },
+					o($t, {
+						className: RS.inputDefault,
+						options: [
+							{ label: 'Show All', value: 0, default: !0 },
+							{ label: 'Show Enabled', value: 1 },
+							{ label: 'Show Disabled', value: 2 },
+						],
+						serialize: String,
+						select: c,
+						isSelected: (S) => S === r.status,
+						closeOnSelect: !0,
+					}),
+				),
+			),
+			o(y.FormTitle, { className: G.top20 }, 'Plugins'),
+			o('div', { className: bn('grid') }, f),
+			o(y.FormDivider, { className: G.top20 }),
+			o(
+				y.FormTitle,
+				{ tag: 'h5', className: J(G.top20, G.bottom8) },
+				'Required Plugins',
+			),
+			o('div', { className: bn('grid') }, v),
 		);
 	}
-	var gt,
-		Qf,
-		Xf,
-		xv,
-		wv,
-		ir,
-		lc = d(() => {
+	function GM(e) {
+		return o(
+			I.Fragment,
+			null,
+			o(y.FormText, null, 'This plugin is required by:'),
+			e.map((t) => o(y.FormText, { className: bn('dep-text') }, t)),
+		);
+	}
+	var bn,
+		IS,
+		RS,
+		_M,
+		FM,
+		BM,
+		AS = m(() => {
 			'use strict';
-			s();
-			Gf();
-			Lt();
-			gi();
+			a();
+			vS();
+			Pn();
+			ws();
 			E();
-			It();
-			J();
-			ct();
-			er();
-			Mi();
-			jf();
-			qf();
-			nc();
-			ge();
-			Be();
-			B();
-			Ze();
-			D();
-			P();
-			Fn();
-			or();
-			(gt = mt('vc-plugins-')),
-				(Qf = new F('PluginSettings', '#a6d189')),
-				(Xf = C('inputDefault', 'inputWrapper')),
-				(xv = Y(() =>
-					we(
+			je();
+			xt();
+			ir();
+			bS();
+			wS();
+			Go();
+			Ya();
+			Se();
+			Xe();
+			de();
+			ze();
+			ye();
+			_();
+			x();
+			ni();
+			xa();
+			(bn = Ue('vc-plugins-')),
+				(IS = new Z('PluginSettings', '#a6d189')),
+				(RS = P('inputDefault', 'inputWrapper')),
+				(_M = P('button', 'disabled', 'enabled')),
+				(FM = oe(() =>
+					He(
 						'18.564C15.797 19.099 14.932 19.498 14 19.738V22H10V19.738C9.069',
 					),
 				)),
-				(wv = Y(() =>
-					we(
+				(BM = oe(() =>
+					He(
 						'4.4408921e-16 C4.4771525,-1.77635684e-15 4.4408921e-16',
 					),
 				));
-			ir = N.wrap(
-				function () {
-					let t = Ge(),
-						n = w.useMemo(() => new $o(), []);
-					w.useEffect(
-						() => () =>
-							void (
-								n.hasChanges &&
-								Dt.show({
-									title: 'Restart required',
-									body: o(
-										p,
-										null,
-										o(
-											'p',
-											null,
-											'The following plugins require a restart:',
-										),
-										o(
-											'div',
-											null,
-											n.map((S, A) =>
-												o(
-													p,
-													null,
-													A > 0 && ', ',
-													Ce.parse('`' + S + '`'),
-												),
-											),
-										),
-									),
-									confirmText: 'Restart now',
-									cancelText: 'Later!',
-									onConfirm: () => location.reload(),
-								})
-							),
-						[],
-					);
-					let i = w.useMemo(() => {
-							let S = {};
-							for (let A in se) {
-								let M = se[A].dependencies;
-								if (M)
-									for (let j of M)
-										(S[j] ??= []), S[j].push(A);
-							}
-							return S;
-						}, []),
-						r = w.useMemo(
-							() =>
-								Object.values(se).sort((S, A) =>
-									S.name.localeCompare(A.name),
-								),
-							[],
-						),
-						[a, l] = w.useState({ value: '', status: 0 }),
-						u = (S) => l((A) => ({ ...A, value: S })),
-						m = (S) => l((A) => ({ ...A, status: S })),
-						y = (S) => {
-							let A = t.plugins[S.name]?.enabled;
-							return (A && a.status === 2) ||
-								(!A && a.status === 1)
-								? !1
-								: a.value.length
-								? S.name
-										.toLowerCase()
-										.includes(a.value.toLowerCase()) ||
-								  S.description
-										.toLowerCase()
-										.includes(a.value.toLowerCase())
-								: !0;
-						},
-						[h] = Me(() =>
-							xe('Vencord_existingPlugins').then((S) => {
-								let A = Date.now() / 1e3,
-									M = {},
-									j = Object.values(r).map((_) => _.name),
-									X = [];
-								for (let { name: _ } of r)
-									(M[_] = S?.[_] ?? A) + 60 * 60 * 24 * 2 >
-										A && X.push(_);
-								return (
-									be('Vencord_existingPlugins', M),
-									window._.isEqual(X, j) ? [] : X
-								);
-							}),
-						),
-						b,
-						x;
-					if (r?.length) {
-						(b = []), (x = []);
-						for (let S of r) {
-							if (!y(S)) continue;
-							if (
-								S.required ||
-								i[S.name]?.some((M) => t.plugins[M].enabled)
-							) {
-								let M = S.required
-									? 'This plugin is required for Vencord to function.'
-									: kv(
-											i[S.name]?.filter(
-												(j) => t.plugins[j].enabled,
-											),
-									  );
-								x.push(
-									o(
-										Z,
-										{ text: M, key: S.name },
-										({
-											onMouseLeave: j,
-											onMouseEnter: X,
-										}) =>
-											o(Jf, {
-												onMouseLeave: j,
-												onMouseEnter: X,
-												onRestartNeeded: (_) =>
-													n.handleChange(_),
-												disabled: !0,
-												plugin: S,
-											}),
-									),
-								);
-							} else
-								b.push(
-									o(Jf, {
-										onRestartNeeded: (M) =>
-											n.handleChange(M),
-										disabled: !1,
-										plugin: S,
-										isNew: h?.includes(S.name),
-										key: S.name,
-									}),
-								);
-						}
-					} else
-						b = x = o(
-							z,
-							{ variant: 'text-md/normal' },
-							'No plugins meet search criteria.',
-						);
-					return o(
-						g.FormSection,
-						{ className: O.top16 },
-						o(Iv, { required: n.hasChanges }),
-						o(
-							g.FormTitle,
-							{ tag: 'h5', className: me(O.top20, O.bottom8) },
-							'Filters',
-						),
-						o(
-							'div',
-							{ className: gt('filter-controls') },
-							o(Te, {
-								autoFocus: !0,
-								value: a.value,
-								placeholder: 'Search for a plugin...',
-								onChange: u,
-								className: O.bottom20,
-							}),
-							o(
-								'div',
-								{ className: Xf.inputWrapper },
-								o(St, {
-									className: Xf.inputDefault,
-									options: [
-										{
-											label: 'Show All',
-											value: 0,
-											default: !0,
-										},
-										{ label: 'Show Enabled', value: 1 },
-										{ label: 'Show Disabled', value: 2 },
-									],
-									serialize: String,
-									select: m,
-									isSelected: (S) => S === a.status,
-									closeOnSelect: !0,
-								}),
-							),
-						),
-						o(g.FormTitle, { className: O.top20 }, 'Plugins'),
-						o('div', { className: gt('grid') }, b),
-						o(g.FormDivider, { className: O.top20 }),
-						o(
-							g.FormTitle,
-							{ tag: 'h5', className: me(O.top20, O.bottom8) },
-							'Required Plugins',
-						),
-						o('div', { className: gt('grid') }, x),
-					);
-				},
-				{
-					message:
-						'Failed to render the Plugin Settings. If this persists, try using the installer to reinstall!',
-					onError: Vi,
-				},
-			);
 		});
-	var Zf,
-		Vf = d(() => {
+	var NS = {};
+	me(NS, { default: () => HM });
+	var HM,
+		kS = m(() => {
 			'use strict';
-			s();
-			J();
-			lc();
-			Zf = N.wrap(ir);
+			a();
+			AS();
+			Go();
+			HM = Dn(Nd, 'Plugins');
 		});
-	function Mv({ link: e }) {
-		let [t, n, i] = Me(() =>
-				fetch(e).then((a) => {
-					if (a.status > 300) throw `${a.status} ${a.statusText}`;
-					let l = a.headers.get('Content-Type');
+	var LS = {};
+	me(LS, { default: () => KM });
+	function jM({ link: e }) {
+		let [t, n, i] = ut(() =>
+				fetch(e).then((s) => {
+					if (s.status > 300) throw `${s.status} ${s.statusText}`;
+					let l = s.headers.get('Content-Type');
 					if (
 						!l?.startsWith('text/css') &&
 						!l?.startsWith('text/plain')
@@ -11741,7 +17183,7 @@ ${Dn(l)}`,
 				? `Error: ${n instanceof Error ? n.message : String(n)}`
 				: 'Valid!';
 		return o(
-			g.FormText,
+			y.FormText,
 			{
 				style: {
 					color: i
@@ -11754,18 +17196,18 @@ ${Dn(l)}`,
 			r,
 		);
 	}
-	function Nv({ themeLinks: e }) {
+	function WM({ themeLinks: e }) {
 		return e.length
 			? o(
-					p,
+					d,
 					null,
 					o(
-						g.FormTitle,
-						{ className: O.top20, tag: 'h5' },
+						y.FormTitle,
+						{ className: G.top20, tag: 'h5' },
 						'Validator',
 					),
 					o(
-						g.FormText,
+						y.FormText,
 						null,
 						'This section will tell you whether your themes can successfully be loaded',
 					),
@@ -11774,7 +17216,7 @@ ${Dn(l)}`,
 						null,
 						e.map((t) =>
 							o(
-								Ye,
+								At,
 								{
 									style: {
 										padding: '.5em',
@@ -11784,778 +17226,575 @@ ${Dn(l)}`,
 									key: t,
 								},
 								o(
-									g.FormTitle,
+									y.FormTitle,
 									{
 										tag: 'h5',
 										style: { overflowWrap: 'break-word' },
 									},
 									t,
 								),
-								o(Mv, { link: t }),
+								o(jM, { link: t }),
 							),
 						),
 					),
 			  )
 			: null;
 	}
-	var Cv,
-		eg,
-		tg = d(() => {
-			'use strict';
-			s();
-			E();
-			J();
-			Zt();
-			Be();
-			B();
-			D();
-			P();
-			Cv = Se((e) => typeof e.textarea == 'string');
-			eg = N.wrap(function () {
-				let e = Ge(),
-					[t, n] = w.useState(
-						e.themeLinks.join(`
+	function qM() {
+		let e = it(['themeLinks']),
+			[t, n] = I.useState(
+				e.themeLinks.join(`
 `),
-					);
-				function i() {
-					e.themeLinks = [
-						...new Set(
-							t
-								.trim()
-								.split(/\n+/)
-								.map((r) => r.trim())
-								.filter(Boolean),
-						),
-					];
-				}
-				return o(
-					p,
+			);
+		function i() {
+			e.themeLinks = [
+				...new Set(
+					t
+						.trim()
+						.split(/\n+/)
+						.map((r) => r.trim())
+						.filter(Boolean),
+				),
+			];
+		}
+		return o(
+			En,
+			{ title: 'Themes' },
+			o(
+				At,
+				{ className: 'vc-settings-card vc-text-selectable' },
+				o(
+					y.FormTitle,
+					{ tag: 'h5' },
+					'Paste links to .theme.css files here',
+				),
+				o(y.FormText, null, 'One link per line'),
+				o(
+					y.FormText,
 					null,
 					o(
-						Ye,
-						{ className: 'vc-settings-card' },
+						'strong',
+						null,
+						'Make sure to use the raw links or github.io links!',
+					),
+				),
+				o(y.FormDivider, { className: G.top8 + ' ' + G.bottom8 }),
+				o(y.FormTitle, { tag: 'h5' }, 'Find Themes:'),
+				o(
+					'div',
+					{ style: { marginBottom: '.5em' } },
+					o(
+						We,
+						{
+							style: { marginRight: '.5em' },
+							href: 'https://betterdiscord.app/themes',
+						},
+						'BetterDiscord Themes',
+					),
+					o(
+						We,
+						{ href: 'https://github.com/search?q=discord+theme' },
+						'GitHub',
+					),
+				),
+				o(
+					y.FormText,
+					null,
+					'If using the BD site, click on "Source" somewhere below the Download button',
+				),
+				o(
+					y.FormText,
+					null,
+					'In the GitHub repository of your theme, find X.theme.css, click on it, then click the "Raw" button',
+				),
+				o(
+					y.FormText,
+					null,
+					'If the theme has configuration that requires you to edit the file:',
+					o(
+						'ul',
+						null,
 						o(
-							g.FormTitle,
-							{ tag: 'h5' },
-							'Paste links to .css / .theme.css files here',
-						),
-						o(g.FormText, null, 'One link per line'),
-						o(
-							g.FormText,
+							'li',
 							null,
-							'Make sure to use the raw links or github.io links!',
-						),
-						o(g.FormDivider, {
-							className: O.top8 + ' ' + O.bottom8,
-						}),
-						o(g.FormTitle, { tag: 'h5' }, 'Find Themes:'),
-						o(
-							'div',
-							{ style: { marginBottom: '.5em' } },
+							'\u2022 Make a ',
 							o(
-								Ne,
-								{
-									style: { marginRight: '.5em' },
-									href: 'https://betterdiscord.app/themes',
-								},
-								'BetterDiscord Themes',
-							),
-							o(
-								Ne,
-								{
-									href: 'https://github.com/search?q=discord+theme',
-								},
+								We,
+								{ href: 'https://github.com/signup' },
 								'GitHub',
 							),
+							' account',
 						),
 						o(
-							g.FormText,
+							'li',
 							null,
-							'If using the BD site, click on "Source" somewhere below the Download button',
+							'\u2022 Click the fork button on the top right',
 						),
+						o('li', null, '\u2022 Edit the file'),
 						o(
-							g.FormText,
+							'li',
 							null,
-							'In the GitHub repository of your theme, find X.theme.css / X.css, click on it, then click the "Raw" button',
-						),
-						o(
-							g.FormText,
-							null,
-							'If the theme has configuration that requires you to edit the file:',
-							o(
-								'ul',
-								null,
-								o(
-									'li',
-									null,
-									'\u2022 Make a ',
-									o(
-										Ne,
-										{ href: 'https://github.com/signup' },
-										'GitHub',
-									),
-									' account',
-								),
-								o(
-									'li',
-									null,
-									'\u2022 Click the fork button on the top right',
-								),
-								o('li', null, '\u2022 Edit the file'),
-								o(
-									'li',
-									null,
-									'\u2022 Use the link to your own repository instead',
-								),
-							),
+							'\u2022 Use the link to your own repository instead',
 						),
 					),
-					o(g.FormTitle, { tag: 'h5' }, 'Themes'),
-					o(Mr, {
-						value: t,
-						onChange: (r) => n(r.currentTarget.value),
-						className: `${Cv.textarea} vc-settings-theme-links`,
-						placeholder: 'Theme Links',
-						spellCheck: !1,
-						onBlur: i,
-					}),
-					o(Nv, { themeLinks: e.themeLinks }),
-				);
-			});
+				),
+			),
+			o(y.FormTitle, { tag: 'h5' }, 'Themes'),
+			o(Jr, {
+				value: t,
+				onChange: n,
+				className: `${zM.textarea} vc-settings-theme-links`,
+				placeholder: 'Theme Links',
+				spellCheck: !1,
+				onBlur: i,
+			}),
+			o(WM, { themeLinks: e.themeLinks }),
+		);
+	}
+	var zM,
+		KM,
+		ES = m(() => {
+			'use strict';
+			a();
+			E();
+			Wn();
+			Xe();
+			ye();
+			_();
+			x();
+			Go();
+			zM = Ce((e) => typeof e.textarea == 'string');
+			KM = Dn(qM, 'Themes');
 		});
-	var ng = d(() => {
-		'use strict';
-		s();
-		E();
-		J();
-		po();
-		ct();
-		er();
-		Zt();
-		Be();
-		B();
-		xn();
-		P();
-		_n();
-	});
-	var og,
-		ig = d(() => {
-			s();
-			og = `<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <title>QuickCss Editor</title>
-    <link rel="stylesheet" data-name="vs/editor/editor.main"
-        href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/editor/editor.main.min.css">
-    <style>
-        html,
-        body,
-        #container {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="container"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"><\/script>
-
-    <script>
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs' } });
-        require(["vs/editor/editor.main"], () => {
-            getCurrentCss().then(css => {
-                var editor = monaco.editor.create(document.getElementById('container'), {
-                    value: css,
-                    language: 'css',
-                    theme: getTheme(),
-                });
-                editor.onDidChangeModelContent(() =>
-                    setCss(editor.getValue())
-                );
-                window.addEventListener("resize", () => {
-                    // make monaco re-layout
-                    editor.layout();
-                });
-            });
-        });
-
-
-    <\/script>
-</body>
-
-</html>
-`;
+	var DS = {};
+	me(DS, { default: () => QM });
+	function YM(e) {
+		try {
+			return new URL(e), !0;
+		} catch {
+			return 'Invalid URL';
+		}
+	}
+	async function ZM() {
+		let e = await fetch(new URL('/v1/', An()), {
+			method: 'DELETE',
+			headers: new Headers({ Authorization: await ei() }),
 		});
-	var rg = {};
-	te(rg, { launchMonacoEditor: () => Lv });
-	async function Lv() {
-		let e = `popup,width=${Math.min(
-				window.innerWidth,
-				1e3,
-			)},height=${Math.min(window.innerHeight, 1e3)}`,
-			t = open('about:blank', 'VencordQuickCss', e);
-		if (!t) {
-			alert('Failed to open QuickCSS popup. Make sure to allow popups!');
+		if (!e.ok) {
+			gs.error(`Failed to erase data, API returned ${e.status}`),
+				ge({
+					title: 'Cloud Integrations',
+					body: `Could not erase all data (API returned ${e.status}), please contact support.`,
+					color: 'var(--red-360)',
+				});
 			return;
 		}
-		(t.setCss = Av),
-			(t.getCurrentCss = () => VencordNative.ipc.invoke($.GET_QUICK_CSS)),
-			(t.getTheme = () =>
-				he((n) =>
-					n.ProtoClass?.typeName.endsWith('PreloadedUserSettings'),
-				)?.getCurrentValue()?.appearance?.theme === 2
-					? 'vs-light'
-					: 'vs-dark'),
-			t.document.write(og),
-			(window.__VENCORD_MONACO_WIN__ = new WeakRef(t));
+		(M.cloud.authenticated = !1),
+			await $l(),
+			ge({
+				title: 'Cloud Integrations',
+				body: 'Successfully erased all data.',
+				color: 'var(--green-360)',
+			});
 	}
-	var Rv,
-		Av,
-		sg = d(() => {
-			'use strict';
-			s();
-			Yn();
-			Ke();
-			Un();
-			D();
-			ig();
-			(Rv = new dt()),
-				(Av = Nt((e) => {
-					Rv.push(() => VencordNative.ipc.invoke($.SET_QUICK_CSS, e));
-				}));
-		});
-	function Dv() {
-		let [e, , t] = Me(() => VencordNative.ipc.invoke($.GET_SETTINGS_DIR), {
-				fallbackValue: 'Loading...',
-			}),
-			n = Ge(),
-			i = n.notifications,
-			r = w.useMemo(() => (Math.random() > 0.5 ? lg : Ev), []),
-			a = navigator.platform.toLowerCase().startsWith('win'),
-			l = [
-				{
-					key: 'useQuickCss',
-					title: 'Enable Custom CSS',
-					note: 'Loads your Custom CSS',
-				},
-				!1,
-				!1,
-				!1,
-				!1,
-			];
+	function XM() {
+		let { cloud: e } = it(['cloud.authenticated', 'cloud.settingsSync']),
+			t = e.authenticated && e.settingsSync;
 		return o(
-			w.Fragment,
-			null,
-			o(_v, { image: r }),
+			y.FormSection,
+			{ title: 'Settings Sync', className: G.top16 },
 			o(
-				g.FormSection,
-				{ title: 'Quick Actions' },
-				o(
-					Ye,
-					{ className: ag('quick-actions-card') },
-					o(
-						L,
-						{
-							onClick: () => (sg(), Zo(rg)).launchMonacoEditor(),
-							size: L.Sizes.SMALL,
-							disabled: e === 'Loading...',
-						},
-						'Open QuickCSS File',
-					),
-				),
+				y.FormText,
+				{ variant: 'text-md/normal', className: G.bottom20 },
+				'Synchronize your settings to the cloud. This allows easy synchronization across multiple devices with minimal effort.',
 			),
-			o(g.FormDivider, null),
 			o(
-				g.FormSection,
-				{ className: O.top16, title: 'Settings', tag: 'h5' },
+				Nt,
+				{
+					key: 'cloud-sync',
+					disabled: !e.authenticated,
+					value: e.settingsSync,
+					onChange: (n) => {
+						e.settingsSync = n;
+					},
+				},
+				'Settings Sync',
+			),
+			o(
+				'div',
+				{ className: 'vc-cloud-settings-sync-grid' },
 				o(
-					g.FormText,
-					{ className: O.bottom20 },
-					'Hint: You can change the position of this settings section in the settings of the "Settings" plugin!',
+					R,
+					{ size: R.Sizes.SMALL, disabled: !t, onClick: () => ti() },
+					'Sync to Cloud',
 				),
-				l.map(
-					(u) =>
-						u &&
+				o(
+					W,
+					{
+						text: 'This will overwrite your local settings with the ones on the cloud. Use wisely!',
+					},
+					({ onMouseLeave: n, onMouseEnter: i }) =>
 						o(
-							pn,
+							R,
 							{
-								key: u.key,
-								value: n[u.key],
-								onChange: (m) => (n[u.key] = m),
-								note: u.note,
+								onMouseLeave: n,
+								onMouseEnter: i,
+								size: R.Sizes.SMALL,
+								color: R.Colors.RED,
+								disabled: !t,
+								onClick: () => ys(!0, !0),
 							},
-							u.title,
+							'Sync from Cloud',
 						),
 				),
-			),
-			o(g.FormTitle, { tag: 'h5' }, 'Notification Style'),
-			i.useNative !== 'never' &&
-				Notification.permission === 'denied' &&
 				o(
-					Xt,
-					{ style: { padding: '1em' }, className: O.bottom8 },
+					R,
+					{
+						size: R.Sizes.SMALL,
+						color: R.Colors.RED,
+						disabled: !t,
+						onClick: () => hg(),
+					},
+					'Delete Cloud Settings',
+				),
+			),
+		);
+	}
+	function JM() {
+		let e = it(['cloud.authenticated', 'cloud.url']);
+		return o(
+			En,
+			{ title: 'Vencord Cloud' },
+			o(
+				y.FormSection,
+				{ title: 'Cloud Settings', className: G.top16 },
+				o(
+					y.FormText,
+					{ variant: 'text-md/normal', className: G.bottom20 },
+					'Vencord comes with a cloud integration that adds goodies like settings sync across devices. It ',
 					o(
-						g.FormTitle,
-						{ tag: 'h5' },
-						'Desktop Notification Permission denied',
+						We,
+						{ href: 'https://vencord.dev/cloud/privacy' },
+						'respects your privacy',
 					),
+					', and the ',
 					o(
-						g.FormText,
+						We,
+						{ href: 'https://github.com/Vencord/Backend' },
+						'source code',
+					),
+					' is AGPL 3.0 licensed so you can host it yourself.',
+				),
+				o(
+					Nt,
+					{
+						key: 'backend',
+						value: e.cloud.authenticated,
+						onChange: (t) => {
+							t && ug(), t || (e.cloud.authenticated = t);
+						},
+						note: 'This will request authorization if you have not yet set up cloud integrations.',
+					},
+					'Enable Cloud Integrations',
+				),
+				o(y.FormTitle, { tag: 'h5' }, 'Backend URL'),
+				o(
+					y.FormText,
+					{ className: G.bottom8 },
+					'Which backend to use when using cloud integrations.',
+				),
+				o(ks, {
+					key: 'backendUrl',
+					value: e.cloud.url,
+					onChange: (t) => {
+						(e.cloud.url = t), (e.cloud.authenticated = !1), $l();
+					},
+					validate: YM,
+				}),
+				o(
+					R,
+					{
+						className: G.top8,
+						size: R.Sizes.MEDIUM,
+						color: R.Colors.RED,
+						disabled: !e.cloud.authenticated,
+						onClick: () =>
+							vt.show({
+								title: 'Are you sure?',
+								body: "Once your data is erased, we cannot recover it. There's no going back!",
+								onConfirm: ZM,
+								confirmText: 'Erase it!',
+								confirmColor: 'vc-cloud-erase-data-danger-btn',
+								cancelText: 'Nevermind',
+							}),
+					},
+					'Erase All Data',
+				),
+				o(y.FormDivider, { className: G.top16 }),
+			),
+			o(XM, null),
+		);
+	}
+	var QM,
+		OS = m(() => {
+			'use strict';
+			a();
+			so();
+			E();
+			Uc();
+			Wn();
+			Ul();
+			Xe();
+			qi();
+			x();
+			Go();
+			QM = Dn(JM, 'Cloud');
+		});
+	var _S = {};
+	me(_S, { default: () => eP });
+	function VM() {
+		return o(
+			En,
+			{ title: 'Backup & Restore' },
+			o(
+				At,
+				{ className: J('vc-settings-card', 'vc-backup-restore-card') },
+				o(
+					ae,
+					{ flexDirection: 'column' },
+					o('strong', null, 'Warning'),
+					o(
+						'span',
 						null,
-						'You have denied Notification Permissions. Thus, Desktop notifications will not work!',
+						'Importing a settings file will overwrite your current settings.',
 					),
 				),
+			),
 			o(
-				g.FormText,
-				{ className: O.bottom8 },
-				'Some plugins may show you notifications. These come in two styles:',
+				q,
+				{ variant: 'text-md/normal', className: G.bottom8 },
+				'You can import and export your Vencord settings as a JSON file. This allows you to easily transfer your settings to another device, or recover your settings after reinstalling Vencord or Discord.',
+			),
+			o(
+				q,
+				{ variant: 'text-md/normal', className: G.bottom8 },
+				'Settings Export contains:',
 				o(
 					'ul',
 					null,
-					o(
-						'li',
-						null,
-						o('strong', null, 'Vencord Notifications'),
-						': These are in-app notifications',
-					),
-					o(
-						'li',
-						null,
-						o('strong', null, 'Desktop Notifications'),
-						': Native Desktop notifications (like when you get a ping)',
-					),
+					o('li', null, '\u2014 Custom QuickCSS'),
+					o('li', null, '\u2014 Theme Links'),
+					o('li', null, '\u2014 Plugin Settings'),
 				),
 			),
-			o(St, {
-				placeholder: 'Notification Style',
-				options: [
-					{
-						label: 'Only use Desktop notifications when Discord is not focused',
-						value: 'not-focused',
-						default: !0,
-					},
-					{
-						label: 'Always use Desktop notifications',
-						value: 'always',
-					},
-					{
-						label: 'Always use Vencord notifications',
-						value: 'never',
-					},
-				],
-				closeOnSelect: !0,
-				select: (u) => (i.useNative = u),
-				isSelected: (u) => u === i.useNative,
-				serialize: li,
-			}),
 			o(
-				g.FormTitle,
-				{ tag: 'h5', className: O.top16 + ' ' + O.bottom8 },
-				'Notification Position',
-			),
-			o(St, {
-				isDisabled: i.useNative === 'always',
-				placeholder: 'Notification Position',
-				options: [
-					{
-						label: 'Bottom Right',
-						value: 'bottom-right',
-						default: !0,
-					},
-					{ label: 'Top Right', value: 'top-right' },
-				],
-				select: (u) => (i.position = u),
-				isSelected: (u) => u === i.position,
-				serialize: li,
-			}),
-			o(
-				g.FormTitle,
-				{ tag: 'h5', className: O.top16 + ' ' + O.bottom8 },
-				'Notification Timeout',
-			),
-			o(
-				g.FormText,
-				{ className: O.bottom16 },
-				'Set to 0s to never automatically time out',
-			),
-			o(Nn, {
-				disabled: i.useNative === 'always',
-				markers: [0, 1e3, 2500, 5e3, 1e4, 2e4],
-				minValue: 0,
-				maxValue: 2e4,
-				initialValue: i.timeout,
-				onValueChange: (u) => (i.timeout = u),
-				onValueRender: (u) => (u / 1e3).toFixed(2) + 's',
-				onMarkerRender: (u) => u / 1e3 + 's',
-				stickToMarkers: !1,
-			}),
-			o(
-				g.FormTitle,
-				{ tag: 'h5', className: O.top16 + ' ' + O.bottom8 },
-				'Notification Log Limit',
-			),
-			o(
-				g.FormText,
-				{ className: O.bottom16 },
-				'The amount of notifications to save in the log until old ones are removed. Set to ',
-				o('code', null, '0'),
-				' to disable Notification log and ',
-				o('code', null, '\u221E'),
-				' to never automatically remove old Notifications',
-			),
-			o(Nn, {
-				markers: [0, 25, 50, 75, 100, 200],
-				minValue: 0,
-				maxValue: 200,
-				stickToMarkers: !0,
-				initialValue: i.logLimit,
-				onValueChange: (u) => (i.logLimit = u),
-				onValueRender: (u) => (u === 200 ? '\u221E' : u),
-				onMarkerRender: (u) => (u === 200 ? '\u221E' : u),
-			}),
-			o(
-				L,
-				{ onClick: Wu, disabled: i.logLimit === 0 },
-				'Open Notification Log',
-			),
-		);
-	}
-	function _v({ image: e }) {
-		return o(
-			Ye,
-			{ className: ag('card', 'donate') },
-			o(
-				'div',
+				ae,
 				null,
-				o(g.FormTitle, { tag: 'h5' }, 'Support the Project'),
 				o(
-					g.FormText,
-					null,
-					'Please consider supporting the development of Vencord by donating!',
+					R,
+					{ onClick: () => gg(), size: R.Sizes.SMALL },
+					'Import Settings',
 				),
-				o(uo, { style: { transform: 'translateX(-1em)' } }),
+				o(R, { onClick: mg, size: R.Sizes.SMALL }, 'Export Settings'),
 			),
-			o('img', {
-				role: 'presentation',
-				src: e,
-				alt: '',
-				height: 128,
-				style: {
-					marginLeft: 'auto',
-					transform: e === lg ? 'rotate(10deg)' : '',
-				},
-			}),
 		);
 	}
-	var ag,
-		lg,
-		Ev,
-		cg,
-		pg = d(() => {
+	var eP,
+		FS = m(() => {
 			'use strict';
-			s();
-			$s();
-			E();
-			It();
-			zr();
-			J();
-			po();
-			Ke();
-			Be();
-			B();
-			P();
-			(ag = mt('vc-settings-')),
-				(lg =
-					'https://cdn.discordapp.com/emojis/1026533090627174460.png'),
-				(Ev =
-					'https://media.discordapp.net/stickers/1039992459209490513.png');
-			cg = N.wrap(Dv);
+			a();
+			xt();
+			Xe();
+			de();
+			qi();
+			x();
+			Go();
+			eP = Dn(VM, 'Backup & Restore');
 		});
-	var fg = {};
-	te(fg, { default: () => cc });
-	function Fv(e) {
-		let { tab: t = 'VencordSettings' } = e,
-			n = mg[t]?.component;
-		return o(
-			g.FormSection,
-			null,
-			o(
-				z,
-				{
-					variant: 'heading-lg/semibold',
-					style: { color: 'var(--header-primary)' },
-					tag: 'h2',
-				},
-				'Vencord Settings',
-			),
-			o(
-				dg,
-				{
-					type: 'top',
-					look: 'brand',
-					className: ug('tab-bar'),
-					selectedItem: t,
-					onItemSelect: En.open,
-				},
-				Object.entries(mg).map(([i, { name: r, component: a }]) =>
-					a
-						? o(
-								dg.Item,
-								{
-									id: i,
-									className: ug('tab-bar-item'),
-									key: i,
-								},
-								r,
-						  )
-						: null,
-				),
-			),
-			o(g.FormDivider, null),
-			n && o(n, null),
-		);
-	}
-	function cc(e) {
-		return o(N, { onError: Vi }, o(Fv, { tab: e.tab }));
-	}
-	var ug,
-		dg,
-		mg,
-		pc = d(() => {
+	var Rr,
+		kd = m(() => {
 			'use strict';
-			s();
-			_f();
-			It();
-			J();
-			er();
-			D();
-			P();
-			Uf();
-			Vf();
-			tg();
-			ng();
-			pg();
-			(ug = mt('vc-settings-')),
-				(dg = oe('[role="tab"][aria-disabled="false"]')),
-				(mg = {
-					VencordSettings: {
-						name: 'Vencord',
-						component: () => o(cg, null),
-					},
-					VencordPlugins: {
-						name: 'Plugins',
-						component: () => o(Zf, null),
-					},
-					VencordThemes: {
-						name: 'Themes',
-						component: () => o(eg, null),
-					},
-					VencordUpdater: { name: 'Updater' },
-					VencordSettingsSync: {
-						name: 'Backup & Restore',
-						component: () => o(Bf, null),
-					},
-				});
-		});
-	var jt,
-		Xn,
-		uc = d(() => {
-			'use strict';
-			s();
+			a();
+			Jt();
 			E();
-			Zl();
+			w();
+			Se();
 			T();
-			ge();
-			B();
-			v();
-			P();
-			_n();
-			(jt = Y(() => (pc(), Zo(fg)).default)),
-				(Xn = f({
-					name: 'Settings',
-					description: 'Adds Settings UI and debug info',
-					authors: [c.Ven, c.Megu],
-					required: !0,
-					patches: [
-						{
-							find: '.versionHash',
-							replacement: [
-								{
-									match: /\[\(0,.{1,3}\.jsxs?\)\((.{1,10}),(\{[^{}}]+\{.{0,20}.versionHash,.+?\})\)," "/,
-									replace: (e, t, n) => (
-										(n = n.replace(/children:\[.+\]/, '')),
-										`${e},Vencord.Plugins.plugins.Settings.makeInfoElements(${t}, ${n})`
-									),
-								},
-							],
-						},
-						{
-							find: 'Messages.ACTIVITY_SETTINGS',
-							replacement: {
-								get match() {
-									switch (
-										k.plugins.Settings.settingsLocation
-									) {
-										case 'top':
-											return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.USER_SETTINGS\}/;
-										case 'aboveNitro':
-											return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.BILLING_SETTINGS\}/;
-										case 'belowNitro':
-											return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.APP_SETTINGS\}/;
-										case 'aboveActivity':
-											return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.ACTIVITY_SETTINGS\}/;
-										case 'belowActivity':
-											return /(?<=\{section:(.{1,2})\.ID\.DIVIDER},)\{section:"changelog"/;
-										case 'bottom':
-											return /\{section:(.{1,2})\.ID\.CUSTOM,\s*element:.+?}/;
-										default:
-											return (
-												new F('Settings').error(
-													new Error(
-														"No switch case matched????? Don't mess with the settings, silly",
-													),
-												),
-												/(?!a)a/
-											);
-									}
-								},
-								replace:
-									'...$self.makeSettingsCategories($1),$&',
+			x();
+			Ii();
+			Rr = g({
+				name: 'Settings',
+				description: 'Adds Settings UI and debug info',
+				authors: [p.Ven, p.Megu],
+				required: !0,
+				start() {
+					we('user-settings-cog', (e) => () => {
+						e.find(
+							(n) =>
+								Array.isArray(n) &&
+								n.some(
+									(i) => i?.props?.id === 'VencordSettings',
+								),
+						)?.forEach((n) => {
+							n?.props?.id?.startsWith('Vencord') &&
+								(n.props.action = () => ts.open(n.props.id));
+						});
+					});
+				},
+				patches: [
+					{
+						find: '.versionHash',
+						replacement: [
+							{
+								match: /\[\(0,.{1,3}\.jsxs?\)\((.{1,10}),(\{[^{}}]+\{.{0,20}.versionHash,.+?\})\)," "/,
+								replace: (e, t, n) => (
+									(n = n.replace(/children:\[.+\]/, '')),
+									`${e},Vencord.Plugins.plugins.Settings.makeInfoElements(${t}, ${n})`
+								),
 							},
-						},
-					],
-					makeSettingsCategories({ ID: e }) {
-						let t = (i) => () => En.open(i),
-							n = [
-								{ section: e.HEADER, label: 'Vencord' },
-								{
-									section: 'VencordSettings',
-									label: 'Vencord',
-									element: () =>
-										o(jt, { tab: 'VencordSettings' }),
-									onClick: t('VencordSettings'),
-								},
-								{
-									section: 'VencordPlugins',
-									label: 'Plugins',
-									element: () =>
-										o(jt, { tab: 'VencordPlugins' }),
-									onClick: t('VencordPlugins'),
-								},
-								{
-									section: 'VencordThemes',
-									label: 'Themes',
-									element: () =>
-										o(jt, { tab: 'VencordThemes' }),
-									onClick: t('VencordThemes'),
-								},
-							];
-						return (
-							n.push({
-								section: 'VencordSettingsSync',
-								label: 'Backup & Restore',
-								element: () =>
-									o(jt, { tab: 'VencordSettingsSync' }),
-								onClick: t('VencordSettingsSync'),
-							}),
-							n.push({ section: e.DIVIDER }),
-							n
-						);
+						],
 					},
-					options: {
-						settingsLocation: {
-							type: 4,
-							description:
-								'Where to put the Vencord settings section',
-							options: [
-								{ label: 'At the very top', value: 'top' },
-								{
-									label: 'Above the Nitro section',
-									value: 'aboveNitro',
-								},
-								{
-									label: 'Below the Nitro section',
-									value: 'belowNitro',
-								},
-								{
-									label: 'Above Activity Settings',
-									value: 'aboveActivity',
-									default: !0,
-								},
-								{
-									label: 'Below Activity Settings',
-									value: 'belowActivity',
-								},
-								{
-									label: 'At the very bottom',
-									value: 'bottom',
-								},
-							],
-							restartNeeded: !0,
+					{
+						find: 'Messages.ACTIVITY_SETTINGS',
+						replacement: {
+							get match() {
+								switch (M.plugins.Settings.settingsLocation) {
+									case 'top':
+										return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.USER_SETTINGS\}/;
+									case 'aboveNitro':
+										return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.BILLING_SETTINGS\}/;
+									case 'belowNitro':
+										return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.APP_SETTINGS\}/;
+									case 'aboveActivity':
+										return /\{section:(.{1,2})\.ID\.HEADER,\s*label:(.{1,2})\..{1,2}\.Messages\.ACTIVITY_SETTINGS\}/;
+									case 'belowActivity':
+										return /(?<=\{section:(.{1,2})\.ID\.DIVIDER},)\{section:"changelog"/;
+									case 'bottom':
+										return /\{section:(.{1,2})\.ID\.CUSTOM,\s*element:.+?}/;
+									default:
+										return (
+											new Z('Settings').error(
+												new Error(
+													"No switch case matched????? Don't mess with the settings, silly",
+												),
+											),
+											/(?!a)a/
+										);
+								}
+							},
+							replace: '...$self.makeSettingsCategories($1),$&',
 						},
 					},
-					tabs: {
-						vencord: () => o(jt, { tab: 'VencordSettings' }),
-						plugins: () => o(jt, { tab: 'VencordPlugins' }),
-						themes: () => o(jt, { tab: 'VencordThemes' }),
-						updater: () => o(jt, { tab: 'VencordUpdater' }),
-						sync: () => o(jt, { tab: 'VencordSettingsSync' }),
+				],
+				makeSettingsCategories({ ID: e }) {
+					return [
+						{ section: e.HEADER, label: 'Vencord' },
+						{
+							section: 'VencordSettings',
+							label: 'Vencord',
+							element: (yS(), Mo(hS)).default,
+						},
+						{
+							section: 'VencordPlugins',
+							label: 'Plugins',
+							element: (kS(), Mo(NS)).default,
+						},
+						{
+							section: 'VencordThemes',
+							label: 'Themes',
+							element: (ES(), Mo(LS)).default,
+						},
+						!1,
+						{
+							section: 'VencordCloud',
+							label: 'Cloud',
+							element: (OS(), Mo(DS)).default,
+						},
+						{
+							section: 'VencordSettingsSync',
+							label: 'Backup & Restore',
+							element: (FS(), Mo(_S)).default,
+						},
+						!1,
+						!1,
+						{ section: e.DIVIDER },
+					].filter(Boolean);
+				},
+				options: {
+					settingsLocation: {
+						type: 4,
+						description:
+							'Where to put the Vencord settings section',
+						options: [
+							{ label: 'At the very top', value: 'top' },
+							{
+								label: 'Above the Nitro section',
+								value: 'aboveNitro',
+							},
+							{
+								label: 'Below the Nitro section',
+								value: 'belowNitro',
+							},
+							{
+								label: 'Above Activity Settings',
+								value: 'aboveActivity',
+								default: !0,
+							},
+							{
+								label: 'Below Activity Settings',
+								value: 'belowActivity',
+							},
+							{ label: 'At the very bottom', value: 'bottom' },
+						],
+						restartNeeded: !0,
 					},
-					get electronVersion() {
+				},
+				get electronVersion() {
+					return (
+						VencordNative.native.getVersions().electron ||
+						window.armcord?.electron ||
+						null
+					);
+				},
+				get chromiumVersion() {
+					try {
 						return (
-							VencordNative.getVersions().electron ||
-							window.armcord?.electron ||
+							VencordNative.native.getVersions().chrome ||
+							navigator.userAgentData?.brands?.find(
+								(e) =>
+									e.brand === 'Chromium' ||
+									e.brand === 'Google Chrome',
+							)?.version ||
 							null
 						);
-					},
-					get chromiumVersion() {
-						try {
-							return (
-								VencordNative.getVersions().chrome ||
-								navigator.userAgentData?.brands?.find(
-									(e) =>
-										e.brand === 'Chromium' ||
-										e.brand === 'Google Chrome',
-								)?.version ||
-								null
-							);
-						} catch {
-							return null;
-						}
-					},
-					get additionalInfo() {
-						return ' (Web)';
-					},
-					makeInfoElements(e, t) {
-						let {
-							electronVersion: n,
-							chromiumVersion: i,
-							additionalInfo: r,
-						} = this;
-						return o(
-							p,
-							null,
-							o(e, { ...t }, 'Vencord ', lt, r),
-							n && o(e, { ...t }, 'Electron ', n),
-							i && o(e, { ...t }, 'Chromium ', i),
-						);
-					},
-				}));
+					} catch {
+						return null;
+					}
+				},
+				get additionalInfo() {
+					return ' (Web)';
+				},
+				makeInfoElements(e, t) {
+					let {
+						electronVersion: n,
+						chromiumVersion: i,
+						additionalInfo: r,
+					} = this;
+					return o(
+						d,
+						null,
+						o(e, { ...t }, 'Vencord ', on, r),
+						n && o(e, { ...t }, 'Electron ', n),
+						i && o(e, { ...t }, 'Chromium ', i),
+					);
+				},
+			});
 		});
-	var gg = d(() => {});
-	var hg,
-		yg = d(() => {
-			s();
-			hg = `/* eslint-disable header/header */
+	var BS = m(() => {});
+	var $S,
+		US = m(() => {
+			a();
+			$S = `/* eslint-disable header/header */
 import React from "react";
 
 const handleClick = async () =>
@@ -12570,183 +17809,183 @@ export const Example: React.FC<{
 </>;
 `;
 		});
-	var Sg = oo((v3, dc) => {
+	var HS = Mi((Oz, Ld) => {
 		'use strict';
-		s();
-		var Ov = Object.prototype.hasOwnProperty,
-			_e = '~';
-		function Uo() {}
+		a();
+		var tP = Object.prototype.hasOwnProperty,
+			It = '~';
+		function Cr() {}
 		Object.create &&
-			((Uo.prototype = Object.create(null)),
-			new Uo().__proto__ || (_e = !1));
-		function $v(e, t, n) {
+			((Cr.prototype = Object.create(null)),
+			new Cr().__proto__ || (It = !1));
+		function nP(e, t, n) {
 			(this.fn = e), (this.context = t), (this.once = n || !1);
 		}
-		function bg(e, t, n, i, r) {
+		function GS(e, t, n, i, r) {
 			if (typeof n != 'function')
 				throw new TypeError('The listener must be a function');
-			var a = new $v(n, i || e, r),
-				l = _e ? _e + t : t;
+			var s = new nP(n, i || e, r),
+				l = It ? It + t : t;
 			return (
 				e._events[l]
 					? e._events[l].fn
-						? (e._events[l] = [e._events[l], a])
-						: e._events[l].push(a)
-					: ((e._events[l] = a), e._eventsCount++),
+						? (e._events[l] = [e._events[l], s])
+						: e._events[l].push(s)
+					: ((e._events[l] = s), e._eventsCount++),
 				e
 			);
 		}
-		function rr(e, t) {
+		function wa(e, t) {
 			--e._eventsCount === 0
-				? (e._events = new Uo())
+				? (e._events = new Cr())
 				: delete e._events[t];
 		}
-		function Ae() {
-			(this._events = new Uo()), (this._eventsCount = 0);
+		function dt() {
+			(this._events = new Cr()), (this._eventsCount = 0);
 		}
-		Ae.prototype.eventNames = function () {
+		dt.prototype.eventNames = function () {
 			var t = [],
 				n,
 				i;
 			if (this._eventsCount === 0) return t;
 			for (i in (n = this._events))
-				Ov.call(n, i) && t.push(_e ? i.slice(1) : i);
+				tP.call(n, i) && t.push(It ? i.slice(1) : i);
 			return Object.getOwnPropertySymbols
 				? t.concat(Object.getOwnPropertySymbols(n))
 				: t;
 		};
-		Ae.prototype.listeners = function (t) {
-			var n = _e ? _e + t : t,
+		dt.prototype.listeners = function (t) {
+			var n = It ? It + t : t,
 				i = this._events[n];
 			if (!i) return [];
 			if (i.fn) return [i.fn];
-			for (var r = 0, a = i.length, l = new Array(a); r < a; r++)
+			for (var r = 0, s = i.length, l = new Array(s); r < s; r++)
 				l[r] = i[r].fn;
 			return l;
 		};
-		Ae.prototype.listenerCount = function (t) {
-			var n = _e ? _e + t : t,
+		dt.prototype.listenerCount = function (t) {
+			var n = It ? It + t : t,
 				i = this._events[n];
 			return i ? (i.fn ? 1 : i.length) : 0;
 		};
-		Ae.prototype.emit = function (t, n, i, r, a, l) {
-			var u = _e ? _e + t : t;
-			if (!this._events[u]) return !1;
-			var m = this._events[u],
-				y = arguments.length,
-				h,
-				b;
-			if (m.fn) {
+		dt.prototype.emit = function (t, n, i, r, s, l) {
+			var c = It ? It + t : t;
+			if (!this._events[c]) return !1;
+			var u = this._events[c],
+				h = arguments.length,
+				f,
+				v;
+			if (u.fn) {
 				switch (
-					(m.once && this.removeListener(t, m.fn, void 0, !0), y)
+					(u.once && this.removeListener(t, u.fn, void 0, !0), h)
 				) {
 					case 1:
-						return m.fn.call(m.context), !0;
+						return u.fn.call(u.context), !0;
 					case 2:
-						return m.fn.call(m.context, n), !0;
+						return u.fn.call(u.context, n), !0;
 					case 3:
-						return m.fn.call(m.context, n, i), !0;
+						return u.fn.call(u.context, n, i), !0;
 					case 4:
-						return m.fn.call(m.context, n, i, r), !0;
+						return u.fn.call(u.context, n, i, r), !0;
 					case 5:
-						return m.fn.call(m.context, n, i, r, a), !0;
+						return u.fn.call(u.context, n, i, r, s), !0;
 					case 6:
-						return m.fn.call(m.context, n, i, r, a, l), !0;
+						return u.fn.call(u.context, n, i, r, s, l), !0;
 				}
-				for (b = 1, h = new Array(y - 1); b < y; b++)
-					h[b - 1] = arguments[b];
-				m.fn.apply(m.context, h);
+				for (v = 1, f = new Array(h - 1); v < h; v++)
+					f[v - 1] = arguments[v];
+				u.fn.apply(u.context, f);
 			} else {
-				var x = m.length,
-					S;
-				for (b = 0; b < x; b++)
+				var S = u.length,
+					b;
+				for (v = 0; v < S; v++)
 					switch (
-						(m[b].once &&
-							this.removeListener(t, m[b].fn, void 0, !0),
-						y)
+						(u[v].once &&
+							this.removeListener(t, u[v].fn, void 0, !0),
+						h)
 					) {
 						case 1:
-							m[b].fn.call(m[b].context);
+							u[v].fn.call(u[v].context);
 							break;
 						case 2:
-							m[b].fn.call(m[b].context, n);
+							u[v].fn.call(u[v].context, n);
 							break;
 						case 3:
-							m[b].fn.call(m[b].context, n, i);
+							u[v].fn.call(u[v].context, n, i);
 							break;
 						case 4:
-							m[b].fn.call(m[b].context, n, i, r);
+							u[v].fn.call(u[v].context, n, i, r);
 							break;
 						default:
-							if (!h)
-								for (S = 1, h = new Array(y - 1); S < y; S++)
-									h[S - 1] = arguments[S];
-							m[b].fn.apply(m[b].context, h);
+							if (!f)
+								for (b = 1, f = new Array(h - 1); b < h; b++)
+									f[b - 1] = arguments[b];
+							u[v].fn.apply(u[v].context, f);
 					}
 			}
 			return !0;
 		};
-		Ae.prototype.on = function (t, n, i) {
-			return bg(this, t, n, i, !1);
+		dt.prototype.on = function (t, n, i) {
+			return GS(this, t, n, i, !1);
 		};
-		Ae.prototype.once = function (t, n, i) {
-			return bg(this, t, n, i, !0);
+		dt.prototype.once = function (t, n, i) {
+			return GS(this, t, n, i, !0);
 		};
-		Ae.prototype.removeListener = function (t, n, i, r) {
-			var a = _e ? _e + t : t;
-			if (!this._events[a]) return this;
-			if (!n) return rr(this, a), this;
-			var l = this._events[a];
+		dt.prototype.removeListener = function (t, n, i, r) {
+			var s = It ? It + t : t;
+			if (!this._events[s]) return this;
+			if (!n) return wa(this, s), this;
+			var l = this._events[s];
 			if (l.fn)
 				l.fn === n &&
 					(!r || l.once) &&
 					(!i || l.context === i) &&
-					rr(this, a);
+					wa(this, s);
 			else {
-				for (var u = 0, m = [], y = l.length; u < y; u++)
-					(l[u].fn !== n ||
-						(r && !l[u].once) ||
-						(i && l[u].context !== i)) &&
-						m.push(l[u]);
-				m.length
-					? (this._events[a] = m.length === 1 ? m[0] : m)
-					: rr(this, a);
+				for (var c = 0, u = [], h = l.length; c < h; c++)
+					(l[c].fn !== n ||
+						(r && !l[c].once) ||
+						(i && l[c].context !== i)) &&
+						u.push(l[c]);
+				u.length
+					? (this._events[s] = u.length === 1 ? u[0] : u)
+					: wa(this, s);
 			}
 			return this;
 		};
-		Ae.prototype.removeAllListeners = function (t) {
+		dt.prototype.removeAllListeners = function (t) {
 			var n;
 			return (
 				t
-					? ((n = _e ? _e + t : t), this._events[n] && rr(this, n))
-					: ((this._events = new Uo()), (this._eventsCount = 0)),
+					? ((n = It ? It + t : t), this._events[n] && wa(this, n))
+					: ((this._events = new Cr()), (this._eventsCount = 0)),
 				this
 			);
 		};
-		Ae.prototype.off = Ae.prototype.removeListener;
-		Ae.prototype.addListener = Ae.prototype.on;
-		Ae.prefixed = _e;
-		Ae.EventEmitter = Ae;
-		typeof dc < 'u' && (dc.exports = Ae);
+		dt.prototype.off = dt.prototype.removeListener;
+		dt.prototype.addListener = dt.prototype.on;
+		dt.prefixed = It;
+		dt.EventEmitter = dt;
+		typeof Ld < 'u' && (Ld.exports = dt);
 	});
-	var hc = oo((Jn) => {
+	var _d = Mi((yi) => {
 		'use strict';
-		s();
-		Object.defineProperty(Jn, '__esModule', { value: !0 });
-		Jn.Channel = Jn.ChannelPort = void 0;
-		var Bv = Sg(),
-			sr = 'vapIpc',
-			mc = Symbol.for('vapIpc.edgeCreate'),
-			fc = class {
+		a();
+		Object.defineProperty(yi, '__esModule', { value: !0 });
+		yi.Channel = yi.ChannelPort = void 0;
+		var oP = HS(),
+			Ma = 'vapIpc',
+			Ed = Symbol.for('vapIpc.edgeCreate'),
+			Dd = class {
 				_pipes = new Map();
 				_listeners = new Map();
 				_createListenerMap() {
 					return new Map();
 				}
 				_emit(t, n, ...i) {
-					for (let [r, a] of this._listeners.entries()) {
+					for (let [r, s] of this._listeners.entries()) {
 						if (r === t) continue;
-						let l = a.get(n);
+						let l = s.get(n);
 						l && l(...i);
 					}
 				}
@@ -12757,7 +17996,7 @@ export const Example: React.FC<{
 					this._listeners.set(t, i);
 					let r = {
 						emit: this._emit.bind(this, t),
-						listen: (a, l) => void i.set(a, l),
+						listen: (s, l) => void i.set(s, l),
 					};
 					return this._pipes.set(t, r), r;
 				}
@@ -12765,25 +18004,25 @@ export const Example: React.FC<{
 					return this._pipes.get(t) ?? null;
 				}
 			};
-		Jn.ChannelPort = fc;
-		var gc = class {
+		yi.ChannelPort = Dd;
+		var Od = class {
 			id;
 			_edges = new Map();
 			_callbacks = new Map();
 			_callers = new Map();
 			_edgePipes = new Map();
 			_pipes = [];
-			_emitter = new Bv.EventEmitter();
+			_emitter = new oP.EventEmitter();
 			_logger;
 			_destroyed = !1;
 			constructor(t) {
 				this.id = t;
 			}
 			addPipe(t) {
-				t.listen(`${sr}:handshake`, (n) => {
+				t.listen(`${Ma}:handshake`, (n) => {
 					this._handleHandshake(t, n);
 				}),
-					t.listen(`${sr}:message`, (n) => {
+					t.listen(`${Ma}:message`, (n) => {
 						this._handleMessage(t, n);
 					}),
 					this._pipes.push(t),
@@ -12802,7 +18041,7 @@ export const Example: React.FC<{
 				let i = this._edges.get(n.id);
 				if (i) {
 					let r = n.channelIds.filter(
-						(a) => !i?.channelIds.includes(a),
+						(s) => !i?.channelIds.includes(s),
 					);
 					if (
 						(r.includes(this.id) && r.splice(r.indexOf(this.id), 1),
@@ -12814,11 +18053,11 @@ export const Example: React.FC<{
 						channelIds: [...i.channelIds, ...r],
 					});
 				} else {
-					let r = [...n.channelIds].filter((a) => a !== this.id);
+					let r = [...n.channelIds].filter((s) => s !== this.id);
 					this._edges.set(n.id, { ...n, channelIds: r }),
 						this._edgePipes.set(n.id, t);
 				}
-				this._emitter.emit(mc, n), this.handshakeAll();
+				this._emitter.emit(Ed, n), this.handshakeAll();
 			}
 			_handleMessage(t, n) {
 				if (n.proxiedBy === this.id) return;
@@ -12831,17 +18070,17 @@ export const Example: React.FC<{
 				if (r) {
 					r(n.data)
 						.catch(
-							(a) => (
-								console.error(a),
-								new Error(a?.message ?? `${a}`)
+							(s) => (
+								console.error(s),
+								new Error(s?.message ?? `${s}`)
 							),
 						)
-						.then((a) => {
+						.then((s) => {
 							this._emitMessage({
 								name: n.name,
 								source: this.id,
 								destination: n.source,
-								data: a,
+								data: s,
 								nonce: n.nonce,
 							});
 						});
@@ -12850,12 +18089,12 @@ export const Example: React.FC<{
 			}
 			_emitHandshake(t) {
 				let n = this.getEdge();
-				t.emit(`${sr}:handshake`, n);
+				t.emit(`${Ma}:handshake`, n);
 			}
 			_emitMessage(t) {
 				let n = this.findEdgeId(t.destination);
 				if (!n) return;
-				this._edgePipes.get(n)?.emit(`${sr}:message`, t);
+				this._edgePipes.get(n)?.emit(`${Ma}:message`, t);
 			}
 			getEdge() {
 				let t = [
@@ -12876,11 +18115,11 @@ export const Example: React.FC<{
 				return n
 					? Promise.resolve(n)
 					: new Promise((i) => {
-							let r = (a) => {
-								(a.id === t || a.channelIds.includes(t)) &&
-									(this._emitter.off(mc, r), i(a.id));
+							let r = (s) => {
+								(s.id === t || s.channelIds.includes(t)) &&
+									(this._emitter.off(Ed, r), i(s.id));
 							};
-							this._emitter.on(mc, r);
+							this._emitter.on(Ed, r);
 					  });
 			}
 			createNonce() {
@@ -12891,20 +18130,20 @@ export const Example: React.FC<{
 			}
 			call(t, n = { timeout: 1e4 }) {
 				let i = this.createNonce(),
-					r = new Promise((a, l) => {
-						let u = setTimeout(() => {
+					r = new Promise((s, l) => {
+						let c = setTimeout(() => {
 							this._callbacks.delete(i),
 								l(new Error('Call timed out'));
 						}, n.timeout);
-						this._callbacks.set(i, (m) => {
+						this._callbacks.set(i, (u) => {
 							this._callbacks.delete(i),
-								clearTimeout(u),
+								clearTimeout(c),
 								n.signal?.aborted
 									? n.signal.reason instanceof Error &&
 									  l(n.signal.reason)
-									: m instanceof Error
-									? l(m)
-									: a(m);
+									: u instanceof Error
+									? l(u)
+									: s(u);
 						});
 					});
 				return (
@@ -12936,24 +18175,24 @@ export const Example: React.FC<{
 					(this._destroyed = !0);
 			}
 		};
-		Jn.Channel = gc;
+		yi.Channel = Od;
 	});
-	var Sc = oo((Zn) => {
+	var $d = Mi((vi) => {
 		'use strict';
-		s();
-		Object.defineProperty(Zn, '__esModule', { value: !0 });
-		Zn.RemoteClient = Zn.RemoteHost = void 0;
-		var yc = class {
+		a();
+		Object.defineProperty(vi, '__esModule', { value: !0 });
+		vi.RemoteClient = vi.RemoteHost = void 0;
+		var Fd = class {
 			channel;
 			constructor(t, n) {
 				this.channel = t;
 				for (let [i, r] of Object.entries(n))
-					t.onCall(i, async (a) => await r(...a));
+					t.onCall(i, async (s) => await r(...s));
 				t.handshakeAll();
 			}
 		};
-		Zn.RemoteHost = yc;
-		var bc = class {
+		vi.RemoteHost = Fd;
+		var Bd = class {
 			hostName;
 			channel;
 			constructor(t, n) {
@@ -12970,37 +18209,37 @@ export const Example: React.FC<{
 				});
 			}
 		};
-		Zn.RemoteClient = bc;
+		vi.RemoteClient = Bd;
 	});
-	var xg = oo((Vn) => {
+	var WS = Mi((Si) => {
 		'use strict';
-		s();
-		Object.defineProperty(Vn, '__esModule', { value: !0 });
-		Vn.WorkerClient = Vn.createWorkerHost = void 0;
-		var vg = hc(),
-			Tg = Sc(),
-			Uv = (e, t) => {
-				let n = new vg.Channel(e);
+		a();
+		Object.defineProperty(Si, '__esModule', { value: !0 });
+		Si.WorkerClient = Si.createWorkerHost = void 0;
+		var zS = _d(),
+			jS = $d(),
+			iP = (e, t) => {
+				let n = new zS.Channel(e);
 				return (
 					n.addPipe({
 						emit: (i, r) => postMessage({ event: i, data: r }),
 						listen: (i, r) =>
-							addEventListener('message', ({ data: a }) => {
-								a.event === i && r(a.data);
+							addEventListener('message', ({ data: s }) => {
+								s.event === i && r(s.data);
 							}),
 					}),
-					new Tg.RemoteHost(n, t)
+					new jS.RemoteHost(n, t)
 				);
 			};
-		Vn.createWorkerHost = Uv;
-		var vc = class extends Tg.RemoteClient {
+		Si.createWorkerHost = iP;
+		var Ud = class extends jS.RemoteClient {
 			workerOpts;
 			worker;
 			workerListeners = [];
 			url;
 			constructor(t, n, i, r = {}) {
-				let a = new vg.Channel(t);
-				if ((super(n, a), (this.workerOpts = r), i instanceof Blob)) {
+				let s = new zS.Channel(t);
+				if ((super(n, s), (this.workerOpts = r), i instanceof Blob)) {
 					let l = new Blob([i], { type: 'text/javascript' });
 					this.url = URL.createObjectURL(l);
 				} else this.url = i;
@@ -13010,9 +18249,9 @@ export const Example: React.FC<{
 				this.channel.addPipe({
 					emit: (n, i) => t.postMessage({ event: n, data: i }),
 					listen: (n, i) => {
-						let r = (a) => {
-							let { event: l, data: u } = a.data;
-							l === n && i(u);
+						let r = (s) => {
+							let { event: l, data: c } = s.data;
+							l === n && i(c);
 						};
 						this.workerListeners.push(r),
 							t.addEventListener('message', r);
@@ -13031,13 +18270,13 @@ export const Example: React.FC<{
 						URL.revokeObjectURL(this.url);
 			}
 		};
-		Vn.WorkerClient = vc;
+		Si.WorkerClient = Ud;
 	});
-	var wg = oo((zt) => {
+	var qS = Mi((Qn) => {
 		'use strict';
-		s();
-		var Gv =
-				(zt && zt.__createBinding) ||
+		a();
+		var rP =
+				(Qn && Qn.__createBinding) ||
 				(Object.create
 					? function (e, t, n, i) {
 							i === void 0 && (i = n);
@@ -13057,327 +18296,225 @@ export const Example: React.FC<{
 					: function (e, t, n, i) {
 							i === void 0 && (i = n), (e[i] = t[n]);
 					  }),
-			Tc =
-				(zt && zt.__exportStar) ||
+			Gd =
+				(Qn && Qn.__exportStar) ||
 				function (e, t) {
 					for (var n in e)
 						n !== 'default' &&
 							!Object.prototype.hasOwnProperty.call(t, n) &&
-							Gv(t, e, n);
+							rP(t, e, n);
 				};
-		Object.defineProperty(zt, '__esModule', { value: !0 });
-		Tc(hc(), zt);
-		Tc(Sc(), zt);
-		Tc(xg(), zt);
+		Object.defineProperty(Qn, '__esModule', { value: !0 });
+		Gd(_d(), Qn);
+		Gd($d(), Qn);
+		Gd(WS(), Qn);
 	});
-	function wc(e) {
-		ar.id !== e.id && (Object.assign(ar, e), xc.forEach((t) => t(e)));
+	function zd(e) {
+		Pa.id !== e.id && (Object.assign(Pa, e), Hd.forEach((t) => t(e)));
 	}
-	var ar,
-		xc,
-		Pg,
-		Pc = d(() => {
+	var Pa,
+		Hd,
+		KS,
+		jd = m(() => {
 			'use strict';
-			s();
-			P();
-			(ar = { id: null, theme: null }),
-				(xc = new Set()),
-				(Pg = () => {
-					let [, e] = w.useState(ar);
+			a();
+			x();
+			(Pa = { id: null, theme: null }),
+				(Hd = new Set()),
+				(KS = () => {
+					let [, e] = I.useState(Pa);
 					return (
-						w.useEffect(
-							() => (xc.add(e), () => void xc.delete(e)),
+						I.useEffect(
+							() => (Hd.add(e), () => void Hd.delete(e)),
 							[],
 						),
-						ar
+						Pa
 					);
 				});
 		});
-	function In(e) {
-		if (Object.prototype.hasOwnProperty.call(eo, e)) return eo[e];
-		let t = Object.values(eo).find((n) => n.aliases?.includes(e));
-		return t ? (qv.set(e, t), t) : null;
+	function Ho(e) {
+		if (Object.prototype.hasOwnProperty.call(bi, e)) return bi[e];
+		let t = Object.values(bi).find((n) => n.aliases?.includes(e));
+		return t ? (uP.set(e, t), t) : null;
 	}
-	var Hv,
-		jv,
-		Ig,
-		zv,
-		Wv,
-		eo,
-		kg,
-		Cg,
-		qv,
-		lr = d(() => {
+	var sP,
+		aP,
+		YS,
+		lP,
+		cP,
+		bi,
+		ZS,
+		XS,
+		uP,
+		Ia = m(() => {
 			'use strict';
-			s();
-			(Hv = 'Vap0r1ze/vapcord'),
-				(jv = '88a7032a59cca40da170926651b08201ea3b965a'),
-				(Ig = `https://raw.githubusercontent.com/${Hv}/${jv}/assets/shiki-codeblocks`),
-				(zv = (e) => `${Ig}/${e}`),
-				(Wv = `${Ig}/languages.json`),
-				(eo = {}),
-				(kg = async () => {
-					let e = await fetch(Wv).then((n) => n.json()),
+			a();
+			(sP = 'Vap0r1ze/vapcord'),
+				(aP = '88a7032a59cca40da170926651b08201ea3b965a'),
+				(YS = `https://raw.githubusercontent.com/${sP}/${aP}/assets/shiki-codeblocks`),
+				(lP = (e) => `${YS}/${e}`),
+				(cP = `${YS}/languages.json`),
+				(bi = {}),
+				(ZS = async () => {
+					let e = await fetch(cP).then((n) => n.json()),
 						t = Object.fromEntries(
 							e.map((n) => [
 								n.id,
-								{ ...n, grammarUrl: zv(n.fileName) },
+								{ ...n, grammarUrl: lP(n.fileName) },
 							]),
 						);
-					Object.assign(eo, t);
+					Object.assign(bi, t);
 				}),
-				(Cg = (e) =>
+				(XS = (e) =>
 					e.grammar
 						? Promise.resolve(e.grammar)
 						: fetch(e.grammarUrl).then((t) => t.json())),
-				(qv = new Map());
+				(uP = new Map());
 		});
-	var Kv,
-		Yv,
-		ne,
-		Wt,
-		Ic = d(() => {
+	var pP,
+		dP,
+		ve,
+		Vn,
+		Wd = m(() => {
 			'use strict';
-			s();
-			(Kv = 'shikijs/shiki'),
-				(Yv = '0b28ad8ccfbf2615f2d9d38ea8255416b8ac3043'),
-				(ne = (e) =>
-					`https://raw.githubusercontent.com/${Kv}/${Yv}/packages/shiki/themes/${e}.json`),
-				(Wt = {
-					DarkPlus: ne('dark-plus'),
+			a();
+			(pP = 'shikijs/shiki'),
+				(dP = '0b28ad8ccfbf2615f2d9d38ea8255416b8ac3043'),
+				(ve = (e) =>
+					`https://raw.githubusercontent.com/${pP}/${dP}/packages/shiki/themes/${e}.json`),
+				(Vn = {
+					DarkPlus: ve('dark-plus'),
 					MaterialCandy:
 						'https://raw.githubusercontent.com/millsp/material-candy/master/material-candy.json',
-					DraculaSoft: ne('dracula-soft'),
-					Dracula: ne('dracula'),
-					GithubDarkDimmed: ne('github-dark-dimmed'),
-					GithubDark: ne('github-dark'),
-					GithubLight: ne('github-light'),
-					LightPlus: ne('light-plus'),
-					MaterialDarker: ne('material-darker'),
-					MaterialDefault: ne('material-default'),
-					MaterialLighter: ne('material-lighter'),
-					MaterialOcean: ne('material-ocean'),
-					MaterialPalenight: ne('material-palenight'),
-					MinDark: ne('min-dark'),
-					MinLight: ne('min-light'),
-					Monokai: ne('monokai'),
-					Nord: ne('nord'),
-					OneDarkPro: ne('one-dark-pro'),
-					Poimandres: ne('poimandres'),
-					RosePineDawn: ne('rose-pine-dawn'),
-					RosePineMoon: ne('rose-pine-moon'),
-					RosePine: ne('rose-pine'),
-					SlackDark: ne('slack-dark'),
-					SlackOchin: ne('slack-ochin'),
-					SolarizedDark: ne('solarized-dark'),
-					SolarizedLight: ne('solarized-light'),
-					VitesseDark: ne('vitesse-dark'),
-					VitesseLight: ne('vitesse-light'),
-					CssVariables: ne('css-variables'),
+					DraculaSoft: ve('dracula-soft'),
+					Dracula: ve('dracula'),
+					GithubDarkDimmed: ve('github-dark-dimmed'),
+					GithubDark: ve('github-dark'),
+					GithubLight: ve('github-light'),
+					LightPlus: ve('light-plus'),
+					MaterialDarker: ve('material-darker'),
+					MaterialDefault: ve('material-default'),
+					MaterialLighter: ve('material-lighter'),
+					MaterialOcean: ve('material-ocean'),
+					MaterialPalenight: ve('material-palenight'),
+					MinDark: ve('min-dark'),
+					MinLight: ve('min-light'),
+					Monokai: ve('monokai'),
+					Nord: ve('nord'),
+					OneDarkPro: ve('one-dark-pro'),
+					Poimandres: ve('poimandres'),
+					RosePineDawn: ve('rose-pine-dawn'),
+					RosePineMoon: ve('rose-pine-moon'),
+					RosePine: ve('rose-pine'),
+					SlackDark: ve('slack-dark'),
+					SlackOchin: ve('slack-ochin'),
+					SolarizedDark: ve('solarized-dark'),
+					SolarizedLight: ve('solarized-light'),
+					VitesseDark: ve('vitesse-dark'),
+					VitesseLight: ve('vitesse-light'),
+					CssVariables: ve('css-variables'),
 				});
 		});
-	var Ng,
-		kc,
-		Mg,
-		q,
-		Go = d(() => {
+	var QS,
+		qd,
+		JS,
+		se,
+		Ar = m(() => {
 			'use strict';
-			s();
-			Io();
-			Ng = gr(wg());
-			Pc();
-			lr();
-			Ic();
-			(kc = Object.values(Wt)),
-				(q = {
+			a();
+			tr();
+			QS = Wa(qS());
+			jd();
+			Ia();
+			Wd();
+			(qd = Object.values(Vn)),
+				(se = {
 					client: null,
 					currentTheme: null,
 					currentThemeUrl: null,
 					timeoutMs: 1e4,
-					languages: eo,
-					themes: Wt,
+					languages: bi,
+					themes: Vn,
 					loadedThemes: new Set(),
 					loadedLangs: new Set(),
-					clientPromise: new Promise((e) => (Mg = e)),
+					clientPromise: new Promise((e) => (JS = e)),
 					init: async (e) => {
-						let t = await fetch(md).then((r) => r.blob()),
-							n = (q.client = new Ng.WorkerClient(
+						let t = await fetch(Ih).then((r) => r.blob()),
+							n = (se.client = new QS.WorkerClient(
 								'shiki-client',
 								'shiki-host',
 								t,
 								{ name: 'ShikiWorker' },
 							));
 						await n.init();
-						let i = e || kc[0];
-						await kg(),
-							await n.run('setOnigasm', { wasm: fd }),
+						let i = e || qd[0];
+						await ZS(),
+							await n.run('setOnigasm', { wasm: Rh }),
 							await n.run('setHighlighter', {
 								theme: i,
 								langs: [],
 							}),
-							q.loadedThemes.add(i),
-							await q._setTheme(i),
-							Mg(n);
+							se.loadedThemes.add(i),
+							await se._setTheme(i),
+							JS(n);
 					},
 					_setTheme: async (e) => {
-						q.currentThemeUrl = e;
-						let { themeData: t } = await q.client.run('getTheme', {
+						se.currentThemeUrl = e;
+						let { themeData: t } = await se.client.run('getTheme', {
 							theme: e,
 						});
-						(q.currentTheme = JSON.parse(t)),
-							wc({ id: e, theme: q.currentTheme });
+						(se.currentTheme = JSON.parse(t)),
+							zd({ id: e, theme: se.currentTheme });
 					},
 					loadTheme: async (e) => {
-						let t = await q.clientPromise;
-						q.loadedThemes.has(e) ||
+						let t = await se.clientPromise;
+						se.loadedThemes.has(e) ||
 							(await t.run('loadTheme', { theme: e }),
-							q.loadedThemes.add(e));
+							se.loadedThemes.add(e));
 					},
 					setTheme: async (e) => {
-						await q.clientPromise,
-							(e ||= kc[0]),
-							q.loadedThemes.has(e) || (await q.loadTheme(e)),
-							await q._setTheme(e);
+						await se.clientPromise,
+							(e ||= qd[0]),
+							se.loadedThemes.has(e) || (await se.loadTheme(e)),
+							await se._setTheme(e);
 					},
 					loadLang: async (e) => {
-						let t = await q.clientPromise,
-							n = In(e);
+						let t = await se.clientPromise,
+							n = Ho(e);
 						!n ||
-							q.loadedLangs.has(n.id) ||
+							se.loadedLangs.has(n.id) ||
 							(await t.run('loadLanguage', {
 								lang: {
 									...n,
-									grammar: n.grammar ?? (await Cg(n)),
+									grammar: n.grammar ?? (await XS(n)),
 								},
 							}),
-							q.loadedLangs.add(n.id));
+							se.loadedLangs.add(n.id));
 					},
 					tokenizeCode: async (e, t) => {
-						let n = await q.clientPromise,
-							i = In(t);
+						let n = await se.clientPromise,
+							i = Ho(t);
 						return i
-							? (q.loadedLangs.has(i.id) ||
-									(await q.loadLang(i.id)),
+							? (se.loadedLangs.has(i.id) ||
+									(await se.loadLang(i.id)),
 							  await n.run('codeToThemedTokens', {
 									code: e,
 									lang: t,
-									theme: q.currentThemeUrl ?? kc[0],
+									theme: se.currentThemeUrl ?? qd[0],
 							  }))
 							: [];
 					},
 					destroy() {
-						(q.currentTheme = null),
-							(q.currentThemeUrl = null),
-							wc({ id: null, theme: null }),
-							q.client?.destroy();
+						(se.currentTheme = null),
+							(se.currentThemeUrl = null),
+							zd({ id: null, theme: null }),
+							se.client?.destroy();
 					},
 				});
 		});
-	var Rg,
-		Ag = d(() => {
-			'use strict';
-			s();
-			P();
-			B();
-			Rg = (e = !1) => {
-				let t = w.useRef(null),
-					[n, i] = Ie(!1);
-				return [
-					(a) => {
-						t.current?.disconnect(),
-							(t.current = null),
-							a &&
-								((Dr(a) && (i(!0), e)) ||
-									((t.current = new IntersectionObserver(
-										(l) => {
-											for (let u of l)
-												u.target === a &&
-													(u.isIntersecting && e
-														? (i(!0),
-														  t.current?.disconnect(),
-														  (t.current = null))
-														: i(u.isIntersecting));
-										},
-									)),
-									t.current.observe(a)));
-					},
-					n,
-				];
-			};
-		});
-	function Lg(e, t, n) {
-		return n === !1 ? (t ? e.slice(0, -1) : e) : e[0];
-	}
-	function jo(e, t, n = !1) {
-		let i = Tt.duration(e, t),
-			r = o1.map((m) => ({ amount: i[m](), unit: m })),
-			a = 0;
-		e: for (let m = 0; m < r.length; m++)
-			if (!(r[m].amount === 0 || !(m + 1 < r.length))) {
-				for (let y = m + 1; y < r.length; y++)
-					if (r[y].amount !== 0) continue e;
-				a = r.length - (m + 1);
-			}
-		r = a === 0 ? r : r.slice(0, -a);
-		let l = r.findIndex(({ unit: m }) => m === 'days');
-		if (l !== -1) {
-			let m = r[l],
-				y = m.amount % 7;
-			y === 0 ? r.splice(l, 1) : (m.amount = y);
-		}
-		let u = '';
-		for (; r.length; ) {
-			let { amount: m, unit: y } = r.shift();
-			u.length && (u += r.length ? ', ' : ' and '),
-				(m > 0 || u.length) && (u += `${m} ${Lg(y, m === 1, n)}`);
-		}
-		return u.length ? u : `0 ${Lg(t, !1, n)}`;
-	}
-	var Qv,
-		Xv,
-		Jv,
-		Cc,
-		Zv,
-		Vv,
-		e1,
-		t1,
-		n1,
-		Ho,
-		o1,
-		zo = d(() => {
-			'use strict';
-			s();
-			P();
-			(Qv = (e) => e.split(/(?=[A-Z])/).map((t) => t.toLowerCase())),
-				(Xv = (e) => e.toLowerCase().split('_')),
-				(Jv = (e) => e.toLowerCase().split('-')),
-				(Cc = (e) => e.split(/(?=[A-Z])/).map((t) => t.toLowerCase())),
-				(Zv = (e) => e.toLowerCase().split(' ')),
-				(Vv = (e) =>
-					e
-						.map((t, n) =>
-							n ? t[0].toUpperCase() + t.slice(1) : t,
-						)
-						.join('')),
-				(e1 = (e) => e.join('_').toUpperCase()),
-				(t1 = (e) => e.join('-').toLowerCase()),
-				(n1 = (e) =>
-					e.map((t) => t[0].toUpperCase() + t.slice(1)).join('')),
-				(Ho = (e) =>
-					e.map((t) => t[0].toUpperCase() + t.slice(1)).join(' ')),
-				(o1 = [
-					'years',
-					'months',
-					'weeks',
-					'days',
-					'hours',
-					'minutes',
-					'seconds',
-				]);
-		});
-	var Wo,
-		Mc = d(() => {
-			s();
+	var Nr,
+		Kd = m(() => {
+			a();
 			(window.VencordStyles ??= new Map()).set(
 				'src/plugins/shikiCodeblocks/devicon.css',
 				{
@@ -13388,45 +18525,45 @@ export const Example: React.FC<{
 					dom: null,
 				},
 			);
-			Wo = 'src/plugins/shikiCodeblocks/devicon.css';
+			Nr = 'src/plugins/shikiCodeblocks/devicon.css';
 		});
-	var qo = d(() => {
+	var kr = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	var r1,
-		rn,
-		Nc = d(() => {
+	var fP,
+		bo,
+		Yd = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			It();
-			B();
-			zo();
-			v();
-			Go();
-			Ic();
-			Mc();
-			qo();
-			(r1 = Object.keys(Wt)),
-				(rn = V(
+			je();
+			de();
+			ro();
+			T();
+			Ar();
+			Wd();
+			Kd();
+			kr();
+			(fP = Object.keys(Vn)),
+				(bo = N(
 					{
 						theme: {
 							type: 4,
 							description: 'Default themes',
-							options: r1.map((e) => ({
-								label: Ho(Cc(e)),
-								value: Wt[e],
-								default: Wt[e] === Wt.DarkPlus,
+							options: fP.map((e) => ({
+								label: ko(yl(e)),
+								value: Vn[e],
+								default: Vn[e] === Vn.DarkPlus,
 							})),
-							onChange: q.setTheme,
+							onChange: se.setTheme,
 						},
 						customTheme: {
 							type: 0,
 							description: 'A link to a custom vscode theme',
-							placeholder: Wt.MaterialCandy,
+							placeholder: Vn.MaterialCandy,
 							onChange: (e) => {
-								q.setTheme(e || rn.store.theme);
+								se.setTheme(e || bo.store.theme);
 							},
 						},
 						tryHljs: {
@@ -13461,7 +18598,7 @@ export const Example: React.FC<{
 								{ label: 'Colored', value: 'COLOR' },
 							],
 							onChange: (e) => {
-								e === 'DISABLED' ? Tn(Wo) : Ot(Wo);
+								e === 'DISABLED' ? bt(Nr) : Je(Nr);
 							},
 						},
 						bgOpacity: {
@@ -13484,7 +18621,7 @@ export const Example: React.FC<{
 						customTheme: {
 							isValid(e) {
 								if (!e) return !0;
-								let t = Er(e);
+								let t = nl(e);
 								return t
 									? t.pathname.endsWith('.json')
 										? !0
@@ -13495,26 +18632,26 @@ export const Example: React.FC<{
 					},
 				));
 		});
-	function Dg(e, t) {
-		let n = rn.use(e),
-			[i, r] = w.useState(!1),
-			a = { ...n, ...t },
-			l = a.customTheme || a.theme;
+	function e0(e, t) {
+		let n = bo.use(e),
+			[i, r] = I.useState(!1),
+			s = { ...n, ...t },
+			l = s.customTheme || s.theme;
 		if (t) {
-			let u = q.currentThemeUrl && l && l !== q.currentThemeUrl,
-				m = Object.keys(t).length === 0;
-			i && (!u || m) && r(!1), !i && u && (r(!0), q.setTheme(l));
+			let c = se.currentThemeUrl && l && l !== se.currentThemeUrl,
+				u = Object.keys(t).length === 0;
+			i && (!c || u) && r(!1), !i && c && (r(!0), se.setTheme(l));
 		}
-		return { ...a, isThemeLoading: l !== q.currentThemeUrl };
+		return { ...s, isThemeLoading: l !== se.currentThemeUrl };
 	}
-	var _g = d(() => {
+	var t0 = m(() => {
 		'use strict';
-		s();
-		P();
-		Go();
-		Nc();
+		a();
+		x();
+		Ar();
+		Yd();
 	});
-	function Fg(e) {
+	function n0(e) {
 		return (
 			(e = e.slice(1)),
 			e.length < 6 &&
@@ -13530,23 +18667,23 @@ export const Example: React.FC<{
 				.map((t) => parseInt(t, 16))
 		);
 	}
-	var Og = d(() => {
+	var o0 = m(() => {
 		'use strict';
-		s();
+		a();
 	});
-	var ht,
-		$g,
-		Ko = d(() => {
+	var Tn,
+		i0,
+		Lr = m(() => {
 			'use strict';
-			s();
-			It();
-			P();
-			lr();
-			qo();
-			(ht = mt('shiki-')),
-				($g = ({ lang: e, tryHljs: t }) => {
-					let n = e ? mn?.getLanguage?.(e) : null,
-						r = (e ? In(e) : null)?.name;
+			a();
+			je();
+			x();
+			Ia();
+			kr();
+			(Tn = Ue('shiki-')),
+				(i0 = ({ lang: e, tryHljs: t }) => {
+					let n = e ? Co?.getLanguage?.(e) : null,
+						r = (e ? Ho(e) : null)?.name;
 					switch (t) {
 						case 'ALWAYS':
 							return !0;
@@ -13561,10 +18698,10 @@ export const Example: React.FC<{
 					}
 				});
 		});
-	function Bg(e) {
-		let [t, n] = w.useState(!1);
+	function r0(e) {
+		let [t, n] = I.useState(!1);
 		function i(r) {
-			at.copy(r),
+			jt.copy(r),
 				n(!0),
 				setTimeout(() => {
 					n(!1);
@@ -13572,13 +18709,13 @@ export const Example: React.FC<{
 		}
 		return [t, i];
 	}
-	var Ug = d(() => {
+	var s0 = m(() => {
 		'use strict';
-		s();
-		P();
+		a();
+		x();
 	});
-	function Gg({ content: e, ...t }) {
-		let [n, i] = Bg(1e3);
+	function a0({ content: e, ...t }) {
+		let [n, i] = r0(1e3);
 		return o(
 			'button',
 			{
@@ -13589,76 +18726,76 @@ export const Example: React.FC<{
 			n ? 'Copied!' : 'Copy',
 		);
 	}
-	var Hg = d(() => {
+	var l0 = m(() => {
 		'use strict';
-		s();
-		Ug();
+		a();
+		s0();
 	});
-	function jg({ content: e, theme: t }) {
+	function c0({ content: e, theme: t }) {
 		let n = [];
 		return (
-			at.SUPPORTS_COPY &&
+			jt.SUPPORTS_COPY &&
 				n.push(
-					o(Gg, {
+					o(a0, {
 						content: e,
-						className: ht('btn'),
+						className: Tn('btn'),
 						style: {
 							backgroundColor: t.accentBgColor,
 							color: t.accentFgColor,
 						},
 					}),
 				),
-			o('div', { className: ht('btns') }, n)
+			o('div', { className: Tn('btns') }, n)
 		);
 	}
-	var zg = d(() => {
+	var u0 = m(() => {
 		'use strict';
-		s();
-		P();
-		Ko();
-		Hg();
+		a();
+		x();
+		Lr();
+		l0();
 	});
-	var Wg,
-		qg = d(() => {
+	var p0,
+		d0 = m(() => {
 			'use strict';
-			s();
-			P();
-			Ko();
-			Wg = ({ theme: e, useHljs: t, lang: n, content: i, tokens: r }) => {
-				let a;
+			a();
+			x();
+			Lr();
+			p0 = ({ theme: e, useHljs: t, lang: n, content: i, tokens: r }) => {
+				let s;
 				if (t)
 					try {
-						let { value: u } = mn.highlight(n, i, !0);
-						a = u
+						let { value: c } = Co.highlight(n, i, !0);
+						s = c
 							.split(
 								`
 `,
 							)
-							.map((m, y) =>
+							.map((u, h) =>
 								o('span', {
-									key: y,
-									dangerouslySetInnerHTML: { __html: m },
+									key: h,
+									dangerouslySetInnerHTML: { __html: u },
 								}),
 							);
 					} catch {
-						a = i
+						s = i
 							.split(
 								`
 `,
 							)
-							.map((u) => o('span', null, u));
+							.map((c) => o('span', null, c));
 					}
 				else
-					a = (
+					s = (
 						r ??
 						i
 							.split(
 								`
 `,
 							)
-							.map((m) => [{ color: e.plainColor, content: m }])
-					).map((m) =>
-						m.length === 0
+							.map((u) => [{ color: e.plainColor, content: u }])
+					).map((u) =>
+						u.length === 0
 							? o(
 									'span',
 									null,
@@ -13666,100 +18803,99 @@ export const Example: React.FC<{
 `,
 							  )
 							: o(
-									p,
+									d,
 									null,
-									m.map(
+									u.map(
 										(
 											{
-												content: y,
-												color: h,
-												fontStyle: b,
+												content: h,
+												color: f,
+												fontStyle: v,
 											},
-											x,
+											S,
 										) =>
 											o(
 												'span',
 												{
-													key: x,
+													key: S,
 													style: {
-														color: h,
+														color: f,
 														fontStyle:
-															(b ?? 0) & 1
+															(v ?? 0) & 1
 																? 'italic'
 																: void 0,
 														fontWeight:
-															(b ?? 0) & 2
+															(v ?? 0) & 2
 																? 'bold'
 																: void 0,
 														textDecoration:
-															(b ?? 0) & 4
+															(v ?? 0) & 4
 																? 'underline'
 																: void 0,
 													},
 												},
-												y,
+												h,
 											),
 									),
 							  ),
 					);
-				let l = a.map((u, m) =>
+				let l = s.map((c, u) =>
 					o(
 						'tr',
-						{ key: m },
-						o('td', { style: { color: e.plainColor } }, m + 1),
-						o('td', null, u),
+						{ key: u },
+						o('td', { style: { color: e.plainColor } }, u + 1),
+						o('td', null, c),
 					),
 				);
-				return o('table', { className: ht('table') }, ...l);
+				return o('table', { className: Tn('table') }, ...l);
 			};
 		});
-	function Kg({ langName: e, useDevIcon: t, shikiLang: n }) {
+	function m0({ langName: e, useDevIcon: t, shikiLang: n }) {
 		return e
 			? o(
 					'div',
-					{ className: ht('lang') },
+					{ className: Tn('lang') },
 					t !== 'DISABLED' &&
 						n?.devicon &&
 						o('i', {
-							className: `${ht('devicon')} devicon-${n.devicon}${
+							className: `${Tn('devicon')} devicon-${n.devicon}${
 								t === 'COLOR' ? ' colored' : ''
 							}`,
 						}),
 					e,
 			  )
-			: o(p, null);
+			: o(d, null);
 	}
-	var Yg = d(() => {
+	var f0 = m(() => {
 		'use strict';
-		s();
-		qo();
-		Ko();
+		a();
+		kr();
+		Lr();
 	});
-	var cr,
-		s1,
-		Qg = d(() => {
+	var Ra,
+		gP,
+		g0 = m(() => {
 			'use strict';
-			s();
-			J();
-			B();
-			Ag();
-			P();
-			lr();
-			Go();
-			_g();
-			Pc();
-			Og();
-			Ko();
-			zg();
-			qg();
-			Yg();
-			(cr = (e) =>
+			a();
+			re();
+			ye();
+			x();
+			Ia();
+			Ar();
+			t0();
+			jd();
+			o0();
+			Lr();
+			u0();
+			d0();
+			f0();
+			(Ra = (e) =>
 				o(
 					'pre',
-					{ className: ht('container') },
-					o(N, null, o(s1, { ...e })),
+					{ className: Tn('container') },
+					o(k, null, o(gP, { ...e })),
 				)),
-				(s1 = ({
+				(gP = ({
 					lang: e,
 					content: t,
 					isPreview: n,
@@ -13767,46 +18903,46 @@ export const Example: React.FC<{
 				}) => {
 					let {
 							tryHljs: r,
-							useDevIcon: a,
+							useDevIcon: s,
 							bgOpacity: l,
-						} = Dg(['tryHljs', 'useDevIcon', 'bgOpacity'], i),
-						{ id: u, theme: m } = Pg(),
-						y = e ? In(e) : null,
-						h = $g({ lang: e, tryHljs: r }),
-						[b, x] = Rg(!0),
-						[S] = Me(
+						} = e0(['tryHljs', 'useDevIcon', 'bgOpacity'], i),
+						{ id: c, theme: u } = KS(),
+						h = e ? Ho(e) : null,
+						f = i0({ lang: e, tryHljs: r }),
+						[v, S] = vf(!0),
+						[b] = ut(
 							async () =>
-								!y || h || !x
+								!h || f || !S
 									? null
-									: await q.tokenizeCode(t, e),
-							{ fallbackValue: null, deps: [e, t, u, x] },
+									: await se.tokenizeCode(t, e),
+							{ fallbackValue: null, deps: [e, t, c, S] },
 						),
 						A = {
-							plainColor: m?.fg || 'var(--text-normal)',
+							plainColor: u?.fg || 'var(--text-normal)',
 							accentBgColor:
-								m?.colors?.['statusBar.background'] ||
-								(h ? '#7289da' : '#007BC8'),
+								u?.colors?.['statusBar.background'] ||
+								(f ? '#7289da' : '#007BC8'),
 							accentFgColor:
-								m?.colors?.['statusBar.foreground'] || '#FFF',
+								u?.colors?.['statusBar.foreground'] || '#FFF',
 							backgroundColor:
-								m?.colors?.['editor.background'] ||
+								u?.colors?.['editor.background'] ||
 								'var(--background-secondary)',
 						},
-						M;
+						C;
 					return (
-						e && (M = h ? mn?.getLanguage?.(e)?.name : y?.name),
+						e && (C = f ? Co?.getLanguage?.(e)?.name : h?.name),
 						o(
 							'div',
 							{
-								ref: b,
-								className: ht('root', {
-									plain: !M,
+								ref: v,
+								className: Tn('root', {
+									plain: !C,
 									preview: n,
 								}),
 								style: {
-									backgroundColor: h
+									backgroundColor: f
 										? A.backgroundColor
-										: `rgba(${Fg(A.backgroundColor)
+										: `rgba(${n0(A.backgroundColor)
 												.concat(l / 100)
 												.join(', ')})`,
 									color: A.plainColor,
@@ -13815,54 +18951,54 @@ export const Example: React.FC<{
 							o(
 								'code',
 								null,
-								o(Kg, {
-									langName: M,
-									useDevIcon: a,
-									shikiLang: y,
+								o(m0, {
+									langName: C,
+									useDevIcon: s,
+									shikiLang: h,
 								}),
-								o(Wg, {
+								o(p0, {
 									theme: A,
-									useHljs: h,
+									useHljs: f,
 									lang: e,
 									content: t,
-									tokens: S,
+									tokens: b,
 								}),
-								!n && o(jg, { content: t, theme: A }),
+								!n && o(c0, { content: t, theme: A }),
 							),
 						)
 					);
 				});
 		});
-	var Xg,
-		Jg,
-		Zg = d(() => {
+	var h0,
+		y0,
+		v0 = m(() => {
 			'use strict';
-			s();
-			(Xg = new Map()),
-				(Jg = () => {
-					Xg.forEach((e) => e.remove()), Xg.clear();
+			a();
+			(h0 = new Map()),
+				(y0 = () => {
+					h0.forEach((e) => e.remove()), h0.clear();
 				});
 		});
-	var Rc,
-		Vg = d(() => {
+	var Zd,
+		S0 = m(() => {
 			'use strict';
-			s();
-			gg();
-			It();
+			a();
+			BS();
+			je();
+			w();
 			T();
-			v();
-			yg();
-			Go();
-			Qg();
-			Mc();
-			Nc();
-			qo();
-			Zg();
-			Rc = f({
+			US();
+			Ar();
+			g0();
+			Kd();
+			Yd();
+			kr();
+			v0();
+			Zd = g({
 				name: 'ShikiCodeblocks',
 				description:
 					'Brings vscode-style codeblocks into Discord, powered by Shiki',
-				authors: [c.Vap],
+				authors: [p.Vap],
 				patches: [
 					{
 						find: 'codeBlock:{react:function',
@@ -13874,94 +19010,319 @@ export const Example: React.FC<{
 					},
 				],
 				start: async () => {
-					rn.store.useDevIcon !== 'DISABLED' && Ot(Wo),
-						await q.init(rn.store.customTheme || rn.store.theme);
+					bo.store.useDevIcon !== 'DISABLED' && Je(Nr),
+						await se.init(bo.store.customTheme || bo.store.theme);
 				},
 				stop: () => {
-					q.destroy(), Jg();
+					se.destroy(), y0();
 				},
 				settingsAboutComponent: ({ tempSettings: e }) =>
-					cr({
+					Ra({
 						lang: 'tsx',
-						content: hg,
+						content: $S,
 						isPreview: !0,
 						tempSettings: e,
 					}),
-				settings: rn,
-				shiki: q,
-				createHighlighter: cr,
+				settings: bo,
+				shiki: se,
+				createHighlighter: Ra,
 				renderHighlighter: ({ lang: e, content: t }) =>
-					cr({ lang: e, content: t, isPreview: !1 }),
+					Ra({ lang: e, content: t, isPreview: !1 }),
 			});
 		});
-	var eh = d(() => {});
-	function oh(e) {
-		th = e;
+	var Xd,
+		b0 = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			Xd = g({
+				name: 'ShowAllMessageButtons',
+				description:
+					'Always show all message buttons no matter if you are holding the shift key or not.',
+				authors: [p.Nuckyz],
+				patches: [
+					{
+						find: '.Messages.MESSAGE_UTILITIES_A11Y_LABEL',
+						replacement: {
+							match: /isExpanded:(\i),(?<=,\1=\i&&(!.+);.+?)/,
+							replace: 'isExpanded:$2,',
+						},
+					},
+				],
+			});
+		});
+	var T0 = m(() => {});
+	function w0() {
+		let e = Ni(x0.colors.INTERACTIVE_MUTED).hex(),
+			t = Ni(x0.colors.INTERACTIVE_ACTIVE).hex();
+		return o(hP, {
+			color: e,
+			forcedIconColor: t,
+			size: 16,
+			tooltipText: nt.Messages.CONNECTION_VERIFIED,
+		});
 	}
-	function ih(e) {
-		nh = e;
+	var x0,
+		hP,
+		M0 = m(() => {
+			'use strict';
+			a();
+			ye();
+			_();
+			x();
+			(x0 = Ce((e) => e.colors?.INTERACTIVE_MUTED?.css)),
+				(hP = oe(() => He('.CONNECTIONS_ROLE_OFFICIAL_ICON_TOOLTIP')));
+		});
+	function P0({ id: e, theme: t }) {
+		let n = vP.getUserProfile(e);
+		if (!n) return null;
+		let i = n.connectedAccounts;
+		return i?.length
+			? o(
+					yP,
+					null,
+					o(
+						q,
+						{
+							tag: 'h2',
+							variant: 'eyebrow',
+							style: { color: 'var(--header-primary)' },
+						},
+						'Connections',
+					),
+					o(
+						ae,
+						{
+							style: {
+								marginTop: '8px',
+								gap: xP(Ca.store.iconSpacing),
+								flexWrap: 'wrap',
+							},
+						},
+						i.map((r) => o(PP, { connection: r, theme: t })),
+					),
+			  )
+			: null;
 	}
-	function f1({ channel: e }) {
-		let {
-				type: t,
-				topic: n,
-				lastMessageId: i,
-				defaultForumLayout: r,
-				lastPinTimestamp: a,
-				defaultAutoArchiveDuration: l,
-				availableTags: u,
-				id: m,
-				rateLimitPerUser: y,
-				defaultThreadRateLimitPerUser: h,
-				defaultSortOrder: b,
-				defaultReactionEmoji: x,
-				bitrate: S,
-				rtcRegion: A,
-				videoQualityMode: M,
-				permissionOverwrites: j,
-			} = e,
-			X = [],
-			_ = de.getGuild(e.guild_id).ownerId;
-		return (
-			Qe.getMember(e.guild_id, _) || X.push(_),
-			Object.values(j).forEach(({ type: Q, id: ae }) => {
-				Q === 1 && (Qe.getMember(e.guild_id, ae) || X.push(ae));
+	function PP({ connection: e, theme: t }) {
+		let n = bP.get(e.type),
+			i = n.getPlatformUserUrl?.(e),
+			r = o('img', {
+				'aria-label': e.name,
+				src: t === 'light' ? n.icon.lightSVG : n.icon.darkSVG,
+				style: { width: Ca.store.iconSize, height: Ca.store.iconSize },
 			}),
-			X.length > 0 &&
-				I.dispatch({
-					type: 'GUILD_MEMBERS_REQUEST',
-					guildIds: [e.guild_id],
-					userIds: X,
-				}),
+			s = i ? Ks : bv;
+		return o(
+			W,
+			{
+				text: o(
+					'span',
+					{ className: 'vc-sc-tooltip' },
+					e.name,
+					e.verified && o(w0, null),
+					o(s, { height: 16, width: 16 }),
+				),
+				key: e.id,
+			},
+			(l) =>
+				i
+					? o(
+							'a',
+							{
+								...l,
+								className: 'vc-user-connection',
+								href: i,
+								target: '_blank',
+							},
+							r,
+					  )
+					: o(
+							'button',
+							{
+								...l,
+								className: 'vc-user-connection',
+								onClick: () => ln(e.name),
+							},
+							r,
+					  ),
+		);
+	}
+	var yP,
+		vP,
+		SP,
+		bP,
+		TP,
+		xP,
+		Ca,
+		wP,
+		MP,
+		Jd,
+		I0 = m(() => {
+			'use strict';
+			a();
+			T0();
+			E();
+			re();
+			xt();
+			Bo();
+			w();
+			de();
+			ye();
+			T();
+			_();
+			x();
+			M0();
+			(yP = oe(() => He('().lastSection'))),
+				(vP = ue('UserProfileStore')),
+				(SP = ue('ThemeStore')),
+				(bP = P('isSupported', 'getByUrl')),
+				(TP = ce(',"--profile-gradient-primary-color"')),
+				(xP = (e) => (e ?? 0) * 2 + 4),
+				(Ca = N({
+					iconSize: {
+						type: 1,
+						description: 'Icon size (px)',
+						default: 32,
+					},
+					iconSpacing: {
+						type: 4,
+						description: 'Icon margin',
+						default: 1,
+						options: [
+							{ label: 'Compact', value: 0 },
+							{ label: 'Cozy', value: 1 },
+							{ label: 'Roomy', value: 2 },
+						],
+					},
+				})),
+				(wP = k.wrap((e) =>
+					o(P0, {
+						id: e.user.id,
+						theme: TP(e.user, e.displayProfile).profileTheme,
+					}),
+				)),
+				(MP = k.wrap((e) =>
+					o(P0, { id: e.channel.recipients[0], theme: SP.theme }),
+				));
+			Jd = g({
+				name: 'ShowConnections',
+				description: 'Show connected accounts in user popouts',
+				authors: [p.TheKodeToad],
+				patches: [
+					{
+						find: '.Messages.BOT_PROFILE_SLASH_COMMANDS',
+						replacement: {
+							match: /,theme:\i\}\)(?=,.{0,100}setNote:)/,
+							replace:
+								'$&,$self.profilePopoutComponent(arguments[0])',
+						},
+					},
+					{
+						find: '"Profile Panel: user cannot be undefined"',
+						replacement: {
+							match: /\(0,\i\.jsx\)\(\i\.\i,\{\}\).{0,100}setNote:/,
+							replace:
+								'$self.profilePanelComponent(arguments[0]),$&',
+						},
+					},
+				],
+				settings: Ca,
+				profilePopoutComponent: wP,
+				profilePanelComponent: MP,
+			});
+		});
+	var R0 = m(() => {});
+	function N0(e) {
+		A0 = e;
+	}
+	function OP({ channel: e }) {
+		let [t, n] = V(To.store.defaultAllowedUsersAndRolesDropdownState),
+			[i, r] = V([]),
+			{
+				type: s,
+				topic: l,
+				lastMessageId: c,
+				defaultForumLayout: u,
+				lastPinTimestamp: h,
+				defaultAutoArchiveDuration: f,
+				availableTags: v,
+				id: S,
+				rateLimitPerUser: b,
+				defaultThreadRateLimitPerUser: A,
+				defaultSortOrder: C,
+				defaultReactionEmoji: D,
+				bitrate: B,
+				rtcRegion: O,
+				videoQualityMode: K,
+				permissionOverwrites: ee,
+				guild_id: j,
+			} = e;
+		return (
+			tt(() => {
+				let z = [],
+					te = le.getGuild(j).ownerId;
+				ke.getMember(j, te) || z.push(te),
+					Object.values(ee).forEach(({ type: $, id: Re }) => {
+						$ === 1 && !ke.getMember(j, Re) && z.push(Re);
+					}),
+					z.length > 0 &&
+						L.dispatch({
+							type: 'GUILD_MEMBERS_REQUEST',
+							guildIds: [j],
+							userIds: z,
+						}),
+					M.plugins.PermissionsViewer.enabled &&
+						r(
+							Xs(
+								Object.values(ee).map(($) => ({
+									type: $.type,
+									id: $.id,
+									overwriteAllow: $.allow,
+									overwriteDeny: $.deny,
+								})),
+								j,
+							),
+						);
+			}, [S]),
 			o(
 				'div',
-				{ className: a1.auto + ' shc-lock-screen-outer-container' },
+				{
+					className:
+						C0.auto +
+						' ' +
+						C0.customTheme +
+						' ' +
+						IP.chatContent +
+						' shc-lock-screen-outer-container',
+				},
 				o(
 					'div',
 					{ className: 'shc-lock-screen-container' },
-					o('img', { className: 'shc-lock-screen-logo', src: m1 }),
+					o('img', { className: 'shc-lock-screen-logo', src: DP }),
 					o(
 						'div',
 						{ className: 'shc-lock-screen-heading-container' },
 						o(
-							z,
+							q,
 							{ variant: 'heading-xxl/bold' },
 							'This is a ',
-							ke.can(Ac, e) ? 'locked' : 'hidden',
+							et.can(Qd, e) ? 'locked' : 'hidden',
 							' ',
-							c1[t],
+							NP[s],
 							' channel.',
 						),
 						e.isNSFW() &&
 							o(
-								Z,
+								W,
 								{ text: 'NSFW' },
-								({ onMouseLeave: Q, onMouseEnter: ae }) =>
+								({ onMouseLeave: z, onMouseEnter: te }) =>
 									o(
 										'svg',
 										{
-											onMouseLeave: Q,
-											onMouseEnter: ae,
+											onMouseLeave: z,
+											onMouseEnter: te,
 											className:
 												'shc-lock-screen-heading-nsfw-icon',
 											width: '32',
@@ -13971,6 +19332,7 @@ export const Example: React.FC<{
 											role: 'img',
 										},
 										o('path', {
+											fill: 'currentColor',
 											d: 'M.7 43.05 24 2.85l23.3 40.2Zm23.55-6.25q.75 0 1.275-.525.525-.525.525-1.275 0-.75-.525-1.3t-1.275-.55q-.8 0-1.325.55-.525.55-.525 1.3t.55 1.275q.55.525 1.3.525Zm-1.85-6.1h3.65V19.4H22.4Z',
 										}),
 									),
@@ -13979,101 +19341,101 @@ export const Example: React.FC<{
 					!e.isGuildVoice() &&
 						!e.isGuildStageVoice() &&
 						o(
-							z,
+							q,
 							{ variant: 'text-lg/normal' },
 							'You can not see the ',
 							e.isForumChannel() ? 'posts' : 'messages',
 							' of this channel.',
 							e.isForumChannel() &&
-								n &&
-								n.length > 0 &&
-								'However you may see its guidelines:',
+								l &&
+								l.length > 0 &&
+								' However you may see its guidelines:',
 						),
 					e.isForumChannel() &&
-						n &&
-						n.length > 0 &&
+						l &&
+						l.length > 0 &&
 						o(
 							'div',
 							{ className: 'shc-lock-screen-topic-container' },
-							Ce.parseTopic(n, !1, { channelId: m }),
+							Pe.parseTopic(l, !1, { channelId: S }),
 						),
-					i &&
+					c &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Last ',
 							e.isForumChannel() ? 'post' : 'message',
 							' created:',
-							o(Kt, { timestamp: Tt(Ln.extractTimestamp(i)) }),
+							o(In, { timestamp: Zt(Jo.extractTimestamp(c)) }),
 						),
-					a &&
+					h &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Last message pin: ',
-							o(Kt, { timestamp: Tt(a) }),
+							o(In, { timestamp: Zt(h) }),
 						),
-					(y ?? 0) > 0 &&
+					(b ?? 0) > 0 &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Slowmode: ',
-							jo(y, 'seconds'),
+							Bi(b, 'seconds'),
 						),
-					(h ?? 0) > 0 &&
+					(A ?? 0) > 0 &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Default thread slowmode: ',
-							jo(h, 'seconds'),
+							Bi(A, 'seconds'),
 						),
 					(e.isGuildVoice() || e.isGuildStageVoice()) &&
-						S != null &&
+						B != null &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Bitrate: ',
-							S,
+							B,
 							' bits',
 						),
-					A !== void 0 &&
+					O !== void 0 &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Region: ',
-							A ?? 'Automatic',
+							O ?? 'Automatic',
 						),
 					(e.isGuildVoice() || e.isGuildStageVoice()) &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Video quality mode: ',
-							d1[M ?? 1],
+							EP[K ?? 1],
 						),
-					(l ?? 0) > 0 &&
+					(f ?? 0) > 0 &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Default inactivity duration before archiving ',
 							e.isForumChannel() ? 'posts' : 'threads',
 							':',
-							' ' + jo(l, 'minutes'),
+							' ' + Bi(f, 'minutes'),
 						),
-					r != null &&
+					u != null &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Default layout: ',
-							u1[r],
+							LP[u],
 						),
-					b != null &&
+					C != null &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Default sort order: ',
-							p1[b],
+							kP[C],
 						),
-					x != null &&
+					D != null &&
 						o(
 							'div',
 							{
@@ -14081,38 +19443,48 @@ export const Example: React.FC<{
 									'shc-lock-screen-default-emoji-container',
 							},
 							o(
-								z,
+								q,
 								{ variant: 'text-md/normal' },
 								'Default reaction emoji:',
 							),
-							o(th, {
-								node: {
-									type: x.emojiName ? 'emoji' : 'customEmoji',
-									name: x.emojiName ?? '',
-									emojiId: x.emojiId,
+							Pe.defaultRules[
+								D.emojiName ? 'emoji' : 'customEmoji'
+							].react(
+								{
+									name: D.emojiName
+										? CP.convertSurrogateToName(D.emojiName)
+										: un.getCustomEmojiById(D.emojiId)
+												?.name ?? '',
+									emojiId: D.emojiId ?? void 0,
+									surrogate: D.emojiName ?? void 0,
+									src: D.emojiName
+										? AP.getURL(D.emojiName)
+										: void 0,
 								},
-							}),
+								void 0,
+								{ key: '0' },
+							),
 						),
 					e.hasFlag(16) &&
 						o(
-							z,
+							q,
 							{ variant: 'text-md/normal' },
 							'Posts on this forum require a tag to be set.',
 						),
-					u &&
-						u.length > 0 &&
+					v &&
+						v.length > 0 &&
 						o(
 							'div',
 							{ className: 'shc-lock-screen-tags-container' },
 							o(
-								z,
+								q,
 								{ variant: 'text-lg/bold' },
 								'Available tags:',
 							),
 							o(
 								'div',
 								{ className: 'shc-lock-screen-tags' },
-								u.map((Q) => o(l1, { tag: Q })),
+								v.map((z) => o(RP, { tag: z })),
 							),
 						),
 					o(
@@ -14122,38 +19494,118 @@ export const Example: React.FC<{
 								'shc-lock-screen-allowed-users-and-roles-container',
 						},
 						o(
-							z,
-							{ variant: 'text-lg/bold' },
-							'Allowed users and roles:',
+							'div',
+							{
+								className:
+									'shc-lock-screen-allowed-users-and-roles-container-title',
+							},
+							M.plugins.PermissionsViewer.enabled &&
+								o(
+									W,
+									{ text: 'Permission Details' },
+									({ onMouseLeave: z, onMouseEnter: te }) =>
+										o(
+											'button',
+											{
+												onMouseLeave: z,
+												onMouseEnter: te,
+												className:
+													'shc-lock-screen-allowed-users-and-roles-container-permdetails-btn',
+												onClick: () =>
+													pi(
+														i,
+														le.getGuild(e.guild_id),
+														e.name,
+													),
+											},
+											o(
+												'svg',
+												{
+													width: '24',
+													height: '24',
+													viewBox: '0 0 24 24',
+												},
+												o('path', {
+													fill: 'currentColor',
+													d: 'M7 12.001C7 10.8964 6.10457 10.001 5 10.001C3.89543 10.001 3 10.8964 3 12.001C3 13.1055 3.89543 14.001 5 14.001C6.10457 14.001 7 13.1055 7 12.001ZM14 12.001C14 10.8964 13.1046 10.001 12 10.001C10.8954 10.001 10 10.8964 10 12.001C10 13.1055 10.8954 14.001 12 14.001C13.1046 14.001 14 13.1055 14 12.001ZM19 10.001C20.1046 10.001 21 10.8964 21 12.001C21 13.1055 20.1046 14.001 19 14.001C17.8954 14.001 17 13.1055 17 12.001C17 10.8964 17.8954 10.001 19 10.001Z',
+												}),
+											),
+										),
+								),
+							o(
+								q,
+								{ variant: 'text-lg/bold' },
+								'Allowed users and roles:',
+							),
+							o(
+								W,
+								{
+									text: t
+										? 'Hide Allowed Users and Roles'
+										: 'View Allowed Users and Roles',
+								},
+								({ onMouseLeave: z, onMouseEnter: te }) =>
+									o(
+										'button',
+										{
+											onMouseLeave: z,
+											onMouseEnter: te,
+											className:
+												'shc-lock-screen-allowed-users-and-roles-container-toggle-btn',
+											onClick: () => n(($) => !$),
+										},
+										o(
+											'svg',
+											{
+												width: '24',
+												height: '24',
+												viewBox: '0 0 24 24',
+												transform: t
+													? 'scale(1 -1)'
+													: 'scale(1 1)',
+											},
+											o('path', {
+												fill: 'currentColor',
+												d: 'M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z',
+											}),
+										),
+									),
+							),
 						),
-						o(nh, { channel: e }),
+						t && o(A0, { channel: e }),
 					),
 				),
 			)
 		);
 	}
-	var th,
-		nh,
-		a1,
-		l1,
-		c1,
-		p1,
-		u1,
-		d1,
-		m1,
-		rh,
-		sh = d(() => {
+	var A0,
+		C0,
+		IP,
+		RP,
+		CP,
+		AP,
+		NP,
+		kP,
+		LP,
+		EP,
+		DP,
+		k0,
+		L0 = m(() => {
 			'use strict';
-			s();
-			J();
-			B();
-			zo();
-			D();
-			P();
-			Lc();
-			(a1 = C('auto', 'content', 'scrollerBase')),
-				(l1 = Y(() =>
-					he((e) => {
+			a();
+			E();
+			re();
+			ye();
+			ro();
+			_();
+			x();
+			mr();
+			dr();
+			Vd();
+			(C0 = P('auto', 'content', 'scrollerBase')),
+				(IP = P('chat', 'content', 'noChat', 'chatContent')),
+				(RP = oe(() =>
+					ht((e) => {
 						if (typeof e != 'function') return !1;
 						let t = Function.prototype.toString.call(e);
 						return (
@@ -14163,44 +19615,46 @@ export const Example: React.FC<{
 						);
 					}),
 				)),
-				(c1 = {
+				(CP = P('convertSurrogateToName')),
+				(AP = P('getURL', 'buildEmojiReactionColorsPlatformed')),
+				(NP = {
 					[0]: 'text',
 					[5]: 'announcement',
 					[15]: 'forum',
 					[2]: 'voice',
 					[13]: 'stage',
 				}),
-				(p1 = { [0]: 'Latest activity', [1]: 'Creation date' }),
-				(u1 = {
+				(kP = { [0]: 'Latest activity', [1]: 'Creation date' }),
+				(LP = {
 					[0]: 'Not set',
 					[1]: 'List view',
 					[2]: 'Gallery view',
 				}),
-				(d1 = { [1]: 'Automatic', [2]: '720p' }),
-				(m1 = '/assets/433e3ec4319a9d11b0cbe39342614982.svg');
-			rh = N.wrap(f1);
+				(EP = { [1]: 'Automatic', [2]: '720p' }),
+				(DP = '/assets/433e3ec4319a9d11b0cbe39342614982.svg');
+			k0 = k.wrap(OP);
 		});
-	var ah,
-		Ac,
-		Ec,
-		to,
-		Dc,
-		Lc = d(() => {
+	var E0,
+		Qd,
+		em,
+		To,
+		tm,
+		Vd = m(() => {
 			'use strict';
-			s();
-			eh();
+			a();
+			R0();
 			E();
-			J();
+			re();
+			w();
+			Fi();
 			T();
-			Zi();
-			v();
-			D();
-			P();
-			sh();
-			(ah = C('channelName', 'subtitle', 'modeMuted', 'iconContainer')),
-				(Ac = 1n << 10n),
-				(Ec = 1n << 20n),
-				(to = V({
+			_();
+			x();
+			L0();
+			(E0 = P('channelName', 'subtitle', 'modeMuted', 'iconContainer')),
+				(Qd = 1n << 10n),
+				(em = 1n << 20n),
+				(To = N({
 					hideUnreads: {
 						description: 'Hide Unreads',
 						type: 3,
@@ -14224,21 +19678,27 @@ export const Example: React.FC<{
 						],
 						restartNeeded: !0,
 					},
+					defaultAllowedUsersAndRolesDropdownState: {
+						description:
+							'Whether the allowed users and roles dropdown on hidden channels should be open by default',
+						type: 3,
+						default: !0,
+					},
 				})),
-				(Dc = f({
+				(tm = g({
 					name: 'ShowHiddenChannels',
 					description:
 						'Show channels that you do not have access to view.',
 					authors: [
-						c.BigDuck,
-						c.AverageReactEnjoyer,
-						c.D3SOX,
-						c.Ven,
-						c.Nuckyz,
-						c.Nickyux,
-						c.dzshn,
+						p.BigDuck,
+						p.AverageReactEnjoyer,
+						p.D3SOX,
+						p.Ven,
+						p.Nuckyz,
+						p.Nickyux,
+						p.dzshn,
 					],
-					settings: to,
+					settings: To,
 					patches: [
 						{
 							find: '.CannotShow=',
@@ -14275,14 +19735,14 @@ export const Example: React.FC<{
 										`!$self.isHiddenChannel(${t})&&`,
 								},
 								{
-									match: /(?=\|\|\i\.default\.selectVoiceChannel\((\i)\.id\))/,
+									match: /if\(!\i&&!\i(?=.{0,50}?selectVoiceChannel\((\i)\.id\))/,
 									replace: (e, t) =>
-										`||$self.isHiddenChannel(${t})`,
+										`${e}&&!$self.isHiddenChannel(${t})`,
 								},
 								{
-									match: /(?<=\|\|\i\.default\.selectVoiceChannel\((\i)\.id\);!__OVERLAY__&&\()/,
+									match: /!__OVERLAY__&&\((?<=selectVoiceChannel\((\i)\.id\).+?)/,
 									replace: (e, t) =>
-										`$self.isHiddenChannel(${t},true)||`,
+										`${e}$self.isHiddenChannel(${t},true)||`,
 								},
 							],
 						},
@@ -14305,7 +19765,7 @@ export const Example: React.FC<{
 						},
 						{
 							find: '.Messages.CHANNEL_TOOLTIP_DIRECTORY',
-							predicate: () => to.store.showMode === 0,
+							predicate: () => To.store.showMode === 0,
 							replacement: {
 								match: /(?=switch\((\i)\.type\).{0,30}\.GUILD_ANNOUNCEMENT.{0,30}\(0,\i\.\i\))/,
 								replace: (e, t) =>
@@ -14314,7 +19774,7 @@ export const Example: React.FC<{
 						},
 						{
 							find: '.UNREAD_HIGHLIGHT',
-							predicate: () => to.store.showMode === 1,
+							predicate: () => To.store.showMode === 1,
 							replacement: [
 								{
 									match: /(?<=\i\.name,\i=)(?=(\i)\.muted)/,
@@ -14338,15 +19798,15 @@ export const Example: React.FC<{
 							replacement: [
 								{
 									predicate: () =>
-										to.store.hideUnreads === !1 &&
-										to.store.showMode === 1,
+										To.store.hideUnreads === !1 &&
+										To.store.showMode === 1,
 									match: /\.LOCKED:\i(?<=(\i)=\i\.channel,.+?)/,
 									replace: (e, t) =>
 										`${e}&&!$self.isHiddenChannel(${t})`,
 								},
 								{
 									predicate: () =>
-										to.store.hideUnreads === !0,
+										To.store.hideUnreads === !0,
 									match: /(?<=\i\.connected,\i=)(?=(\i)\.unread)/,
 									replace: (e, t) =>
 										`$self.isHiddenChannel(${t}.channel)?false:`,
@@ -14370,7 +19830,7 @@ export const Example: React.FC<{
 										`if($self.isHiddenChannel(${n})){${t}break;}`,
 								},
 								{
-									match: /(?<=renderHeaderToolbar=function.+?case \i\.\i\.GUILD_FORUM:if\(!\i\){)(?=.+?;(.+?{channel:(\i)},"notifications"\)\)))/,
+									match: /(?<=renderHeaderToolbar=function.+?case \i\.\i\.GUILD_FORUM:.+?if\(!\i\){)(?=.+?;(.+?{channel:(\i)},"notifications"\)\)))/,
 									replace: (e, t, n) =>
 										`if($self.isHiddenChannel(${n})){${t};break;}`,
 								},
@@ -14421,14 +19881,6 @@ export const Example: React.FC<{
 							},
 						},
 						{
-							find: 'jumboable?"jumbo":"default"',
-							replacement: {
-								match: /jumboable\?"jumbo":"default",emojiId.+?}}\)},(?<=(\i)=function\(\i\){var \i=\i\.node.+?)/,
-								replace: (e, t) =>
-									`${e}shcEmojiComponentExport=($self.setEmojiComponent(${t}),void 0),`,
-							},
-						},
-						{
 							find: '.Messages.ROLE_REQUIRED_SINGLE_USER_MESSAGE',
 							replacement: [
 								{
@@ -14439,19 +19891,33 @@ export const Example: React.FC<{
 								{
 									match: /ADMINISTRATOR\)\|\|(?<=context:(\i)}.+?)(?=(.+?)VIEW_CHANNEL)/,
 									replace: (e, t, n) =>
-										`${e}!Vencord.Webpack.Common.PermissionStore.can(${Ec}n,${t})?${n}CONNECT):`,
+										`${e}!Vencord.Webpack.Common.PermissionStore.can(${em}n,${t})?${n}CONNECT):`,
 								},
 								{
 									match: /permissionOverwrites\[.+?\i=(?<=context:(\i)}.+?)(?=(.+?)VIEW_CHANNEL)/,
 									replace: (e, t, n) =>
-										`${e}!Vencord.Webpack.Common.PermissionStore.can(${Ec}n,${t})?${n}CONNECT):`,
+										`${e}!Vencord.Webpack.Common.PermissionStore.can(${em}n,${t})?${n}CONNECT):`,
+								},
+								{
+									match: /sortBy.{0,100}?return (?<=var (\i)=\i\.channel.+?)(?=\i\.id)/,
+									replace: (e, t) =>
+										`${e}$self.isHiddenChannel(${t})?true:`,
+								},
+								{
+									match: /computePermissionsForRoles.+?.value\(\)(?<=var (\i)=\i\.channel.+?)/,
+									replace: (e, t) =>
+										`${e}.reduce(...$self.makeAllowedRolesReduce(${t}.guild_id))`,
 								},
 								{
 									match: /MANAGE_ROLES.{0,60}?return(?=\(.+?(\(0,\i\.jsxs\)\("div",{className:\i\(\)\.members.+?guildId:(\i)\.guild_id.+?roleColor.+?]}\)))/,
 									replace: (e, t, n) => (
 										(t = t.replace(
-											Ji(/(?<=users:\i)/),
+											No(/(?<=users:\i)/),
 											`,channel:${n}`,
+										)),
+										(t = t.replace(
+											No(/1!==\i\.length/),
+											'true',
 										)),
 										`${e} $self.isHiddenChannel(${n},true)?${t}:`
 									),
@@ -14492,6 +19958,11 @@ export const Example: React.FC<{
 										`${e}!${t}.inCall&&$self.isHiddenChannel(${t}.channel,true)){}else if(`,
 								},
 								{
+									match: /"popup".{0,100}?if\((?<=(\i)\.channel.+?)/,
+									replace: (e, t) =>
+										`${e}(${t}.inCall||!$self.isHiddenChannel(${t}.channel,true))&&`,
+								},
+								{
 									match: /this\.renderVoiceChannelEffects.+?children:(?<=renderContent=function.+?)/,
 									replace:
 										'$&!this.props.inCall&&$self.isHiddenChannel(this.props.channel,true)?$self.HiddenChannelLockScreen(this.props.channel):',
@@ -14505,6 +19976,11 @@ export const Example: React.FC<{
 									match: /(?:{|,)render(?!Header|ExternalHeader).{0,30}?:(?<=renderContent=function.+?)(?!void)/g,
 									replace:
 										'$&!this.props.inCall&&$self.isHiddenChannel(this.props.channel,true)?null:',
+								},
+								{
+									match: /callContainer,(?<=\(\)\.callContainer,)/,
+									replace:
+										'$&!this.props.inCall&&$self.isHiddenChannel(this.props.channel,true)?"":',
 								},
 							],
 						},
@@ -14542,7 +20018,7 @@ export const Example: React.FC<{
 										`$self.isHiddenChannel(${t})?null:(${e})`,
 								},
 								{
-									match: /"recents".+?null,(?=.{0,120}?channelId:(\i)\.id)/,
+									match: /"recents".+?null,(?=.+?channelId:(\i)\.id,showRequestToSpeakSidebar)/,
 									replace: (e, t) =>
 										`${e}!$self.isHiddenChannel(${t})&&`,
 								},
@@ -14585,17 +20061,16 @@ export const Example: React.FC<{
 							},
 						},
 					],
-					setEmojiComponent: oh,
-					setChannelBeginHeaderComponent: ih,
+					setChannelBeginHeaderComponent: N0,
 					isHiddenChannel(e, t = !1) {
 						return !e ||
-							(e.channelId && (e = G.getChannel(e.channelId)),
+							(e.channelId && (e = X.getChannel(e.channelId)),
 							!e ||
 								e.isDM() ||
 								e.isGroupDM() ||
 								e.isMultiUserDM())
 							? !1
-							: !ke.can(Ac, e) || (t && !ke.can(Ec, e));
+							: !et.can(Qd, e) || (t && !et.can(em, e));
 					},
 					resolveGuildChannels(e, t) {
 						if (t) return e;
@@ -14606,19 +20081,29 @@ export const Example: React.FC<{
 								continue;
 							}
 							n[i] ??= [];
-							for (let a of r)
-								(a.channel.id === null ||
-									!this.isHiddenChannel(a.channel)) &&
-									n[i].push(a);
+							for (let s of r)
+								(s.channel.id === null ||
+									!this.isHiddenChannel(s.channel)) &&
+									n[i].push(s);
 						}
 						return n;
 					},
-					HiddenChannelLockScreen: (e) => o(rh, { channel: e }),
+					makeAllowedRolesReduce(e) {
+						return [
+							(t, n, i, r) => {
+								if (i !== 0) return t;
+								let s = r.find((l) => l.id === e);
+								return s ? [s] : r;
+							},
+							[],
+						];
+					},
+					HiddenChannelLockScreen: (e) => o(k0, { channel: e }),
 					LockIcon: () =>
 						o(
 							'svg',
 							{
-								className: ah.icon,
+								className: E0.icon,
 								height: '18',
 								width: '20',
 								viewBox: '0 0 24 24',
@@ -14630,10 +20115,10 @@ export const Example: React.FC<{
 								d: 'M17 11V7C17 4.243 14.756 2 12 2C9.242 2 7 4.243 7 7V11C5.897 11 5 11.896 5 13V20C5 21.103 5.897 22 7 22H17C18.103 22 19 21.103 19 20V13C19 11.896 18.103 11 17 11ZM12 18C11.172 18 10.5 17.328 10.5 16.5C10.5 15.672 11.172 15 12 15C12.828 15 13.5 15.672 13.5 16.5C13.5 17.328 12.828 18 12 18ZM15 11H9V7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V11Z',
 							}),
 						),
-					HiddenChannelIcon: N.wrap(
+					HiddenChannelIcon: k.wrap(
 						() =>
 							o(
-								Z,
+								W,
 								{ text: 'Hidden Channel' },
 								({ onMouseLeave: e, onMouseEnter: t }) =>
 									o(
@@ -14642,7 +20127,7 @@ export const Example: React.FC<{
 											onMouseLeave: e,
 											onMouseEnter: t,
 											className:
-												ah.icon +
+												E0.icon +
 												' shc-hidden-channel-icon',
 											width: '24',
 											height: '24',
@@ -14661,84 +20146,208 @@ export const Example: React.FC<{
 					),
 				}));
 		});
-	function g1(e) {
-		let [t, n] = w.useState(!1);
+	var D0 = m(() => {});
+	var Aa,
+		nm,
+		O0 = m(() => {
+			'use strict';
+			a();
+			D0();
+			E();
+			w();
+			T();
+			(Aa = N({
+				mode: {
+					type: 4,
+					description: 'How to display usernames and nicks',
+					options: [
+						{
+							label: 'Username then nickname',
+							value: 'user-nick',
+							default: !0,
+						},
+						{ label: 'Nickname then username', value: 'nick-user' },
+						{ label: 'Username only', value: 'user' },
+					],
+				},
+				inReplies: {
+					type: 3,
+					default: !1,
+					description: 'Also apply functionality to reply previews',
+				},
+			})),
+				(nm = g({
+					name: 'ShowMeYourName',
+					description:
+						'Display usernames next to nicks, or no nicks at all',
+					authors: [p.dzshn],
+					patches: [
+						{
+							find: '.withMentionPrefix',
+							replacement: {
+								match: /(?<=onContextMenu:\i,children:)\i\+\i/,
+								replace: '$self.renderUsername(arguments[0])',
+							},
+						},
+					],
+					settings: Aa,
+					renderUsername: ({
+						author: e,
+						message: t,
+						isRepliedMessage: n,
+						withMentionPrefix: i,
+					}) => {
+						if (t.interaction) return e?.nick;
+						try {
+							let { username: r } = t.author,
+								{ nick: s } = e,
+								l = i ? '@' : '';
+							return r === s || (n && !Aa.store.inReplies)
+								? l + s
+								: Aa.store.mode === 'user-nick'
+								? o(
+										d,
+										null,
+										l,
+										r,
+										' ',
+										o(
+											'span',
+											{ className: 'vc-smyn-suffix' },
+											s,
+										),
+								  )
+								: Aa.store.mode === 'nick-user'
+								? o(
+										d,
+										null,
+										l,
+										s,
+										' ',
+										o(
+											'span',
+											{ className: 'vc-smyn-suffix' },
+											r,
+										),
+								  )
+								: l + r;
+						} catch {
+							return e?.nick;
+						}
+					},
+				}));
+		});
+	function _P(e) {
+		let [t, n] = I.useState(om);
+		function i(r) {
+			im.store.persistState && (om = r), n(r);
+		}
 		return (
-			w.useEffect(() => {
-				let i = (r, a) => {
+			I.useEffect(() => {
+				let r = (s, l) => {
 					t &&
-						(n(!1),
-						a.content.startsWith('@silent ') ||
-							(a.content = '@silent ' + a.content));
+						(im.store.autoDisable && i(!1),
+						l.content.startsWith('@silent ') ||
+							(l.content = '@silent ' + l.content));
 				};
-				return ze(i), () => void We(i);
+				return rt(r), () => void st(r);
 			}, [t]),
 			e.type.analyticsName !== 'normal'
 				? null
-				: o(Z, { text: 'Toggle Silent Message' }, (i) =>
-						o(
-							'div',
-							{ style: { display: 'flex' } },
+				: o(
+						W,
+						{
+							text: t
+								? 'Disable Silent Message'
+								: 'Enable Silent Message',
+						},
+						(r) =>
 							o(
-								L,
-								{
-									...i,
-									onClick: () => n((r) => !r),
-									size: '',
-									look: un.BLANK,
-									innerClassName: vt.button,
-									style: { margin: '0px 8px' },
-								},
+								'div',
+								{ style: { display: 'flex' } },
 								o(
-									'div',
-									{ className: vt.buttonWrapper },
+									R,
+									{
+										...r,
+										onClick: () => i(!t),
+										size: '',
+										look: Wt.BLANK,
+										innerClassName: pt.button,
+										style: { padding: '0 6px' },
+									},
 									o(
-										'svg',
-										{
-											width: '24',
-											height: '24',
-											viewBox: '0 0 24 24',
-										},
+										'div',
+										{ className: pt.buttonWrapper },
 										o(
-											'g',
-											{ fill: 'currentColor' },
-											o('path', {
-												d: 'M18 10.7101C15.1085 9.84957 13 7.17102 13 4C13 3.69264 13.0198 3.3899 13.0582 3.093C12.7147 3.03189 12.3611 3 12 3C8.686 3 6 5.686 6 9V14C6 15.657 4.656 17 3 17V18H21V17C19.344 17 18 15.657 18 14V10.7101ZM8.55493 19C9.24793 20.19 10.5239 21 11.9999 21C13.4759 21 14.7519 20.19 15.4449 19H8.55493Z',
-											}),
-											o('path', {
-												d: 'M18.2624 5.50209L21 2.5V1H16.0349V2.49791H18.476L16 5.61088V7H21V5.50209H18.2624Z',
-											}),
-											!t &&
-												o('line', {
-													x1: '22',
-													y1: '2',
-													x2: '2',
-													y2: '22',
-													stroke: 'var(--red-500)',
-													'stroke-width': '2.5',
+											'svg',
+											{
+												width: '24',
+												height: '24',
+												viewBox: '0 0 24 24',
+											},
+											o(
+												'g',
+												{ fill: 'currentColor' },
+												o('path', {
+													d: 'M18 10.7101C15.1085 9.84957 13 7.17102 13 4C13 3.69264 13.0198 3.3899 13.0582 3.093C12.7147 3.03189 12.3611 3 12 3C8.686 3 6 5.686 6 9V14C6 15.657 4.656 17 3 17V18H21V17C19.344 17 18 15.657 18 14V10.7101ZM8.55493 19C9.24793 20.19 10.5239 21 11.9999 21C13.4759 21 14.7519 20.19 15.4449 19H8.55493Z',
 												}),
+												o('path', {
+													d: 'M18.2624 5.50209L21 2.5V1H16.0349V2.49791H18.476L16 5.61088V7H21V5.50209H18.2624Z',
+												}),
+												!t &&
+													o('line', {
+														x1: '22',
+														y1: '2',
+														x2: '2',
+														y2: '22',
+														stroke: 'var(--red-500)',
+														'stroke-width': '2.5',
+													}),
+											),
 										),
 									),
 								),
 							),
-						),
 				  )
 		);
 	}
-	var _c,
-		lh = d(() => {
+	var om,
+		im,
+		rm,
+		_0 = m(() => {
 			'use strict';
-			s();
-			Ft();
-			J();
+			a();
+			gn();
+			E();
+			re();
+			w();
 			T();
-			v();
-			P();
-			_c = f({
+			x();
+			(om = !1),
+				(im = N({
+					persistState: {
+						type: 3,
+						description:
+							'Whether to persist the state of the silent message toggle when changing channels',
+						default: !1,
+						onChange(e) {
+							e === !1 && (om = !1);
+						},
+					},
+					autoDisable: {
+						type: 3,
+						description:
+							'Automatically disable the silent message toggle again after sending one',
+						default: !0,
+					},
+				}));
+			rm = g({
 				name: 'SilentMessageToggle',
-				authors: [c.Nuckyz],
+				authors: [p.Nuckyz, p.CatNoir],
 				description:
 					'Adds a button to the chat bar to toggle sending a silent message.',
+				dependencies: ['MessageEventsAPI'],
+				settings: im,
 				patches: [
 					{
 						find: '.activeCommandOption',
@@ -14749,38 +20358,38 @@ export const Example: React.FC<{
 						},
 					},
 				],
-				SilentMessageToggle: N.wrap(g1, { noop: !0 }),
+				SilentMessageToggle: k.wrap(_P, { noop: !0 }),
 			});
 		});
-	function h1(e) {
-		let { isEnabled: t } = qt.use(['isEnabled']),
-			n = () => (qt.store.isEnabled = !qt.store.isEnabled);
+	function FP(e) {
+		let { isEnabled: t } = eo.use(['isEnabled']),
+			n = () => (eo.store.isEnabled = !eo.store.isEnabled);
 		return e.type.analyticsName !== 'normal'
 			? null
 			: o(
-					Z,
+					W,
 					{
 						text: t
-							? 'Disable silent typing'
-							: 'Enable silent typing',
+							? 'Disable Silent Typing'
+							: 'Enable Silent Typing',
 					},
 					(i) =>
 						o(
 							'div',
 							{ style: { display: 'flex' } },
 							o(
-								L,
+								R,
 								{
 									...i,
 									onClick: n,
 									size: '',
-									look: un.BLANK,
-									innerClassName: vt.button,
-									style: { margin: '0 8px 0' },
+									look: Wt.BLANK,
+									innerClassName: pt.button,
+									style: { padding: '0 6px' },
 								},
 								o(
 									'div',
-									{ className: vt.buttonWrapper },
+									{ className: pt.buttonWrapper },
 									o(
 										'svg',
 										{
@@ -14806,18 +20415,18 @@ export const Example: React.FC<{
 						),
 			  );
 	}
-	var qt,
-		Fc,
-		ch = d(() => {
+	var eo,
+		sm,
+		F0 = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
 			E();
-			J();
+			re();
+			w();
 			T();
-			v();
-			P();
-			qt = V({
+			x();
+			eo = N({
 				showIcon: {
 					type: 3,
 					default: !1,
@@ -14830,9 +20439,9 @@ export const Example: React.FC<{
 					default: !0,
 				},
 			});
-			Fc = f({
+			sm = g({
 				name: 'SilentTyping',
-				authors: [c.Ven, c.dzshn],
+				authors: [p.Ven, p.dzshn],
 				description: 'Hide that you are typing',
 				patches: [
 					{
@@ -14844,7 +20453,7 @@ export const Example: React.FC<{
 					},
 					{
 						find: '.activeCommandOption',
-						predicate: () => qt.store.showIcon,
+						predicate: () => eo.store.showIcon,
 						replacement: {
 							match: /(.)\.push.{1,30}disabled:(\i),.{1,20}\},"gift"\)\)/,
 							replace:
@@ -14853,7 +20462,7 @@ export const Example: React.FC<{
 					},
 				],
 				dependencies: ['CommandsAPI'],
-				settings: qt,
+				settings: eo,
 				commands: [
 					{
 						name: 'silenttype',
@@ -14870,13 +20479,13 @@ export const Example: React.FC<{
 							},
 						],
 						execute: async (e, t) => {
-							(qt.store.isEnabled = !!ue(
+							(eo.store.isEnabled = !!De(
 								e,
 								'value',
-								!qt.store.isEnabled,
+								!eo.store.isEnabled,
 							)),
-								H(t.channel.id, {
-									content: qt.store.isEnabled
+								ie(t.channel.id, {
+									content: eo.store.isEnabled
 										? 'Silent typing enabled!'
 										: 'Silent typing disabled!',
 								});
@@ -14884,27 +20493,27 @@ export const Example: React.FC<{
 					},
 				],
 				async startTyping(e) {
-					qt.store.isEnabled ||
-						I.dispatch({
+					eo.store.isEnabled ||
+						L.dispatch({
 							type: 'TYPING_START_LOCAL',
 							channelId: e,
 						});
 				},
-				chatBarIcon: N.wrap(h1, { noop: !0 }),
+				chatBarIcon: k.wrap(FP, { noop: !0 }),
 			});
 		});
-	var Oc,
-		ph = d(() => {
+	var am,
+		B0 = m(() => {
 			'use strict';
-			s();
-			ct();
+			a();
+			xt();
+			w();
 			T();
-			v();
-			P();
-			$c();
-			Oc = f({
+			x();
+			lm();
+			am = g({
 				name: 'SortFriendRequests',
-				authors: [c.Megu],
+				authors: [p.Megu],
 				description: 'Sorts friend requests by date of receipt',
 				patches: [
 					{
@@ -14920,7 +20529,7 @@ export const Example: React.FC<{
 							},
 							{
 								predicate: () =>
-									k.plugins.SortFriendRequests.showDates,
+									M.plugins.SortFriendRequests.showDates,
 								match: /(user:(\w{1,3}),.{10,30}),subText:(\w{1,3}),(.{10,30}userInfo}\))/,
 								replace: (e, t, n, i, r) => `${t},
                 subText: Vencord.Plugins.plugins.SortFriendRequests.makeSubtext(${i}, ${n}),
@@ -14930,12 +20539,12 @@ export const Example: React.FC<{
 					},
 				],
 				getSince(e) {
-					return new Date(Xe.getSince(e.id));
+					return new Date(Kt.getSince(e.id));
 				},
 				makeSubtext(e, t) {
 					let n = this.getSince(t);
 					return o(
-						pe,
+						ae,
 						{
 							flexDirection: 'row',
 							style: {
@@ -14964,20 +20573,49 @@ export const Example: React.FC<{
 				},
 			});
 		});
-	var uh = d(() => {});
-	var ee,
-		dh = d(() => {
+	var $0,
+		U0 = m(() => {
+			a();
+			(window.VencordStyles ??= new Map()).set(
+				'src/plugins/spotifyControls/hoverOnly.css',
+				{
+					name: 'src/plugins/spotifyControls/hoverOnly.css',
+					source: `.vc-spotify-button-row {
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+    transition-property: height;
+}
+
+#vc-spotify-player:hover .vc-spotify-button-row {
+    opacity: 1;
+    height: 32px;
+    pointer-events: auto;
+
+    /* only transition opacity on show to prevent clipping */
+    transition-property: height, opacity;
+}
+`,
+					classNames: {},
+					dom: null,
+				},
+			);
+			$0 = 'src/plugins/spotifyControls/hoverOnly.css';
+		});
+	var G0 = m(() => {});
+	var he,
+		H0 = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			Ke();
-			ln();
-			D();
-			P();
-			ee = Ue(() => {
-				let { Store: e } = Rr,
-					t = C('getActiveSocketAndDevice'),
-					n = C('SpotifyAPIMarker'),
+			rn();
+			_();
+			x();
+			he = ct(() => {
+				let { Store: e } = sl,
+					t = P('getActiveSocketAndDevice'),
+					n = P('SpotifyAPIMarker'),
 					i = 'https://api.spotify.com/v1/me/player';
 				class r extends e {
 					mPosition = 0;
@@ -14989,21 +20627,21 @@ export const Example: React.FC<{
 					shuffle = !1;
 					volume = 0;
 					isSettingPosition = !1;
-					openExternal(u) {
-						let m = k.plugins.SpotifyControls.useSpotifyUris
+					openExternal(c) {
+						let u = M.plugins.SpotifyControls.useSpotifyUris
 							? 'spotify:' +
-							  u.replaceAll('/', (y, h) => (h === 0 ? '' : ':'))
-							: 'https://open.spotify.com' + u;
-						VencordNative.ipc.invoke($.OPEN_EXTERNAL, m);
+							  c.replaceAll('/', (h, f) => (f === 0 ? '' : ':'))
+							: 'https://open.spotify.com' + c;
+						VencordNative.native.openExternal(u);
 					}
 					get position() {
-						let u = this.mPosition;
+						let c = this.mPosition;
 						return (
-							this.isPlaying && (u += Date.now() - this.start), u
+							this.isPlaying && (c += Date.now() - this.start), c
 						);
 					}
-					set position(u) {
-						(this.mPosition = u), (this.start = Date.now());
+					set position(c) {
+						(this.mPosition = c), (this.start = Date.now());
 					}
 					prev() {
 						this.req('post', '/previous');
@@ -15011,70 +20649,70 @@ export const Example: React.FC<{
 					next() {
 						this.req('post', '/next');
 					}
-					setVolume(u) {
+					setVolume(c) {
 						this.req('put', '/volume', {
-							query: { volume_percent: Math.round(u) },
+							query: { volume_percent: Math.round(c) },
 						}).then(() => {
-							(this.volume = u), this.emitChange();
+							(this.volume = c), this.emitChange();
 						});
 					}
-					setPlaying(u) {
-						this.req('put', u ? '/play' : '/pause');
+					setPlaying(c) {
+						this.req('put', c ? '/play' : '/pause');
 					}
-					setRepeat(u) {
-						this.req('put', '/repeat', { query: { state: u } });
+					setRepeat(c) {
+						this.req('put', '/repeat', { query: { state: c } });
 					}
-					setShuffle(u) {
+					setShuffle(c) {
 						this.req('put', '/shuffle', {
-							query: { state: u },
+							query: { state: c },
 						}).then(() => {
-							(this.shuffle = u), this.emitChange();
+							(this.shuffle = c), this.emitChange();
 						});
 					}
-					seek(u) {
+					seek(c) {
 						return this.isSettingPosition
 							? Promise.resolve()
 							: ((this.isSettingPosition = !0),
 							  this.req('put', '/seek', {
-									query: { position_ms: Math.round(u) },
-							  }).catch((m) => {
+									query: { position_ms: Math.round(c) },
+							  }).catch((u) => {
 									console.error(
 										'[VencordSpotifyControls] Failed to seek',
-										m,
+										u,
 									),
 										(this.isSettingPosition = !1);
 							  }));
 					}
-					req(u, m, y = {}) {
+					req(c, u, h = {}) {
 						this.device?.is_active &&
-							((y.query ??= {}).device_id = this.device.id);
-						let { socket: h } = t.getActiveSocketAndDevice();
-						return n[u](h.accountId, h.accessToken, {
-							url: i + m,
-							...y,
+							((h.query ??= {}).device_id = this.device.id);
+						let { socket: f } = t.getActiveSocketAndDevice();
+						return n[c](f.accountId, f.accessToken, {
+							url: i + u,
+							...h,
 						});
 					}
 				}
-				let a = new r(I, {
+				let s = new r(L, {
 					SPOTIFY_PLAYER_STATE(l) {
-						(a.track = l.track),
-							(a.device = l.device ?? null),
-							(a.isPlaying = l.isPlaying ?? !1),
-							(a.volume = l.volumePercent ?? 0),
-							(a.repeat = l.actual_repeat || 'off'),
-							(a.position = l.position ?? 0),
-							(a.isSettingPosition = !1),
-							a.emitChange();
+						(s.track = l.track),
+							(s.device = l.device ?? null),
+							(s.isPlaying = l.isPlaying ?? !1),
+							(s.volume = l.volumePercent ?? 0),
+							(s.repeat = l.actual_repeat || 'off'),
+							(s.position = l.position ?? 0),
+							(s.isSettingPosition = !1),
+							s.emitChange();
 					},
 					SPOTIFY_SET_DEVICES({ devices: l }) {
-						(a.device = l.find((u) => u.is_active) ?? l[0] ?? null),
-							a.emitChange();
+						(s.device = l.find((c) => c.is_active) ?? l[0] ?? null),
+							s.emitChange();
 					},
 				});
-				return a;
+				return s;
 			});
 		});
-	function Bc(e) {
+	function cm(e) {
 		let t = e / 1e3 / 60,
 			n = Math.floor(t),
 			i = Math.floor((t - n) * 60);
@@ -15082,12 +20720,12 @@ export const Example: React.FC<{
 			.toString()
 			.padStart(2, '0')}`;
 	}
-	function no(e, t) {
+	function Ti(e, t) {
 		return () =>
 			o(
 				'svg',
 				{
-					className: me(ie('button-icon'), ie(t)),
+					className: J(xe('button-icon'), xe(t)),
 					height: '24',
 					width: '24',
 					viewBox: '0 0 24 24',
@@ -15098,38 +20736,40 @@ export const Example: React.FC<{
 				o('path', { d: e }),
 			);
 	}
-	function Yo(e) {
-		return o('button', { className: ie('button'), ...e }, e.children);
+	function Er(e) {
+		return o('button', { className: xe('button'), ...e }, e.children);
 	}
-	function w1({ name: e, path: t }) {
+	function jP({ name: e, path: t }) {
 		let n = `spotify-copy-${e}`,
 			i = `spotify-open-${e}`;
 		return o(
-			le.ContextMenu,
+			F.Menu,
 			{
 				navId: `spotify-${e}-menu`,
-				onClose: () => I.dispatch({ type: 'CONTEXT_MENU_CLOSE' }),
+				onClose: () => L.dispatch({ type: 'CONTEXT_MENU_CLOSE' }),
 				'aria-label': `Spotify ${e} Menu`,
 			},
-			o(le.MenuItem, {
+			o(F.MenuItem, {
 				key: n,
 				id: n,
 				label: `Copy ${e} Link`,
-				action: () => gn('https://open.spotify.com' + t),
+				action: () => ln('https://open.spotify.com' + t),
+				icon: Ks,
 			}),
-			o(le.MenuItem, {
+			o(F.MenuItem, {
 				key: i,
 				id: i,
 				label: `Open ${e} in Spotify`,
-				action: () => ee.openExternal(t),
+				action: () => he.openExternal(t),
+				icon: _o,
 			}),
 		);
 	}
-	function Uc(e, t) {
-		return (n) => ri.open(n, () => o(w1, { name: e, path: t }));
+	function um(e, t) {
+		return (n) => Fn.open(n, () => o(jP, { name: e, path: t }));
 	}
-	function P1() {
-		let [e, t, n] = Je([ee], () => [ee.isPlaying, ee.shuffle, ee.repeat]),
+	function WP() {
+		let [e, t, n] = Be([he], () => [he.isPlaying, he.shuffle, he.repeat]),
 			[i, r] = (() => {
 				switch (n) {
 					case 'off':
@@ -15143,105 +20783,106 @@ export const Example: React.FC<{
 				}
 			})();
 		return o(
-			pe,
-			{ className: ie('button-row'), style: { gap: 0 } },
+			ae,
+			{ className: xe('button-row'), style: { gap: 0 } },
 			o(
-				Yo,
+				Er,
 				{
-					className: me(
-						ie('button'),
-						ie(t ? 'shuffle-on' : 'shuffle-off'),
+					className: J(
+						xe('button'),
+						xe(t ? 'shuffle-on' : 'shuffle-off'),
 					),
-					onClick: () => ee.setShuffle(!t),
+					onClick: () => he.setShuffle(!t),
 				},
-				o(x1, null),
+				o(zP, null),
 			),
-			o(Yo, { onClick: () => ee.prev() }, o(S1, null)),
+			o(Er, { onClick: () => he.prev() }, o(UP, null)),
 			o(
-				Yo,
-				{ onClick: () => ee.setPlaying(!e) },
-				e ? o(b1, null) : o(y1, null),
+				Er,
+				{ onClick: () => he.setPlaying(!e) },
+				e ? o($P, null) : o(BP, null),
 			),
-			o(Yo, { onClick: () => ee.next() }, o(v1, null)),
+			o(Er, { onClick: () => he.next() }, o(GP, null)),
 			o(
-				Yo,
+				Er,
 				{
-					className: me(ie('button'), ie(r)),
-					onClick: () => ee.setRepeat(i),
+					className: J(xe('button'), xe(r)),
+					onClick: () => he.setRepeat(i),
 					style: { position: 'relative' },
 				},
-				n === 'track' && o('span', { className: ie('repeat-1') }, '1'),
-				o(T1, null),
+				n === 'track' && o('span', { className: xe('repeat-1') }, '1'),
+				o(HP, null),
 			),
 		);
 	}
-	function k1() {
-		let { duration: e } = ee.track,
-			[t, n, i] = Je([ee], () => [
-				ee.mPosition,
-				ee.isSettingPosition,
-				ee.isPlaying,
+	function KP() {
+		let { duration: e } = he.track,
+			[t, n, i] = Be([he], () => [
+				he.mPosition,
+				he.isSettingPosition,
+				he.isPlaying,
 			]),
-			[r, a] = Ie(t);
+			[r, s] = V(t);
 		return (
-			rt(() => {
+			tt(() => {
 				if (i && !n) {
-					a(ee.position);
+					s(he.position);
 					let l = setInterval(() => {
-						a((u) => u + 1e3);
+						s((c) => c + 1e3);
 					}, 1e3);
 					return () => clearInterval(l);
 				}
 			}, [t, n, i]),
 			o(
 				'div',
-				{ id: ie('progress-bar') },
+				{ id: xe('progress-bar') },
 				o(
-					g.FormText,
+					y.FormText,
 					{
 						variant: 'text-xs/medium',
-						className: ie('progress-time') + ' ' + ie('time-left'),
+						className: xe('progress-time') + ' ' + xe('time-left'),
 						'aria-label': 'Progress',
 					},
-					Bc(r),
+					cm(r),
 				),
-				o(mh, {
+				o(F.MenuSliderControl, {
 					minValue: 0,
 					maxValue: e,
 					value: r,
 					onChange: (l) => {
-						n || (a(l), I1(l));
+						n || (s(l), qP(l));
 					},
-					renderValue: Bc,
+					renderValue: cm,
 				}),
 				o(
-					g.FormText,
+					y.FormText,
 					{
 						variant: 'text-xs/medium',
-						className: ie('progress-time') + ' ' + ie('time-right'),
+						className: xe('progress-time') + ' ' + xe('time-right'),
 						'aria-label': 'Total Duration',
 					},
-					Bc(e),
+					cm(e),
 				),
 			)
 		);
 	}
-	function C1({ track: e }) {
-		let t = Je([ee], () => ee.volume);
+	function YP({ track: e }) {
+		let t = Be([he], () => he.volume);
 		return o(
-			le.ContextMenu,
+			F.Menu,
 			{
 				navId: 'spotify-album-menu',
-				onClose: () => I.dispatch({ type: 'CONTEXT_MENU_CLOSE' }),
+				onClose: () => L.dispatch({ type: 'CONTEXT_MENU_CLOSE' }),
 				'aria-label': 'Spotify Album Menu',
 			},
-			o(le.MenuItem, {
+			o(F.MenuItem, {
 				key: 'open-album',
 				id: 'open-album',
 				label: 'Open Album',
-				action: () => ee.openExternal(`/album/${e.album.id}`),
+				action: () => he.openExternal(`/album/${e.album.id}`),
+				icon: _o,
 			}),
-			o(le.MenuItem, {
+			o(F.MenuItem, {
 				key: 'view-cover',
 				id: 'view-cover',
 				label: 'View Album Cover',
@@ -15249,99 +20890,100 @@ export const Example: React.FC<{
 					Vencord.Plugins.plugins.ViewIcons.openImage(
 						e.album.image.url,
 					),
+				icon: Fo,
 			}),
-			o(le.MenuControlItem, {
+			o(F.MenuControlItem, {
 				id: 'spotify-volume',
 				key: 'spotify-volume',
 				label: 'Volume',
 				control: (n, i) =>
-					o(mh, {
+					o(F.MenuSliderControl, {
 						...n,
 						ref: i,
 						value: t,
 						minValue: 0,
 						maxValue: 100,
-						onChange: Nt((r) => ee.setVolume(r)),
+						onChange: Ct((r) => he.setVolume(r)),
 					}),
 			}),
 		);
 	}
-	function M1({ track: e }) {
+	function ZP({ track: e }) {
 		let t = e?.album?.image,
-			[n, i] = Ie(!1),
+			[n, i] = V(!1),
 			r = o(
-				p,
+				d,
 				null,
 				t &&
 					o('img', {
-						id: ie('album-image'),
+						id: xe('album-image'),
 						src: t.url,
 						alt: 'Album Image',
 						onClick: () => i(!n),
-						onContextMenu: (a) => {
-							ri.open(a, () => o(C1, { track: e }));
+						onContextMenu: (s) => {
+							Fn.open(s, () => o(YP, { track: e }));
 						},
 					}),
 			);
 		return n && t
-			? o('div', { id: ie('album-expanded-wrapper') }, r)
+			? o('div', { id: xe('album-expanded-wrapper') }, r)
 			: o(
 					'div',
-					{ id: ie('info-wrapper') },
+					{ id: xe('info-wrapper') },
 					r,
 					o(
 						'div',
-						{ id: ie('titles') },
+						{ id: xe('titles') },
 						o(
-							g.FormText,
+							y.FormText,
 							{
 								variant: 'text-sm/semibold',
-								id: ie('song-title'),
-								className: ie('ellipoverflow'),
+								id: xe('song-title'),
+								className: xe('ellipoverflow'),
 								role: e.id ? 'link' : void 0,
 								title: e.name,
 								onClick: e.id
 									? () => {
-											ee.openExternal(`/track/${e.id}`);
+											he.openExternal(`/track/${e.id}`);
 									  }
 									: void 0,
 								onContextMenu: e.id
-									? Uc('Song', `/track/${e.id}`)
+									? um('Song', `/track/${e.id}`)
 									: void 0,
 							},
 							e.name,
 						),
-						e.artists.some((a) => a.name) &&
+						e.artists.some((s) => s.name) &&
 							o(
-								g.FormText,
+								y.FormText,
 								{
 									variant: 'text-sm/normal',
-									className: ie('ellipoverflow'),
+									className: xe('ellipoverflow'),
 								},
 								'by\xA0',
-								e.artists.map((a, l) =>
+								e.artists.map((s, l) =>
 									o(
-										w.Fragment,
-										{ key: a.name },
+										I.Fragment,
+										{ key: s.name },
 										o(
-											Ne,
+											We,
 											{
-												className: ie('artist'),
-												disabled: !a.id,
-												href: `https://open.spotify.com/artist/${a.id}`,
+												className: xe('artist'),
+												disabled: !s.id,
+												href: `https://open.spotify.com/artist/${s.id}`,
 												style: { fontSize: 'inherit' },
-												title: a.name,
-												onContextMenu: Uc(
+												title: s.name,
+												onContextMenu: um(
 													'Artist',
-													`/artist/${a.id}`,
+													`/artist/${s.id}`,
 												),
 											},
-											a.name,
+											s.name,
 										),
 										l !== e.artists.length - 1 &&
 											o(
 												'span',
-												{ className: ie('comma') },
+												{ className: xe('comma') },
 												', ',
 											),
 									),
@@ -15349,23 +20991,23 @@ export const Example: React.FC<{
 							),
 						e.album.name &&
 							o(
-								g.FormText,
+								y.FormText,
 								{
 									variant: 'text-sm/normal',
-									className: ie('ellipoverflow'),
+									className: xe('ellipoverflow'),
 								},
 								'on\xA0',
 								o(
-									Ne,
+									We,
 									{
-										id: ie('album-title'),
+										id: xe('album-title'),
 										href: `https://open.spotify.com/album/${e.album.id}`,
 										target: '_blank',
-										className: ie('album'),
+										className: xe('album'),
 										disabled: !e.album.id,
 										style: { fontSize: 'inherit' },
 										title: e.album.name,
-										onContextMenu: Uc(
+										onContextMenu: um(
 											'Album',
 											`/album/${e.album.id}`,
 										),
@@ -15376,44 +21018,44 @@ export const Example: React.FC<{
 					),
 			  );
 	}
-	function fh() {
-		let e = Je(
-				[ee],
-				() => ee.track,
+	function z0() {
+		let e = Be(
+				[he],
+				() => he.track,
 				null,
-				(a, l) => (a?.id ? a.id === l?.id : a?.name === l?.name),
+				(s, l) => (s?.id ? s.id === l?.id : s?.name === l?.name),
 			),
-			t = Je(
-				[ee],
-				() => ee.device,
+			t = Be(
+				[he],
+				() => he.device,
 				null,
-				(a, l) => a?.id === l?.id,
+				(s, l) => s?.id === l?.id,
 			),
-			n = Je([ee], () => ee.isPlaying),
-			[i, r] = Ie(!1);
+			n = Be([he], () => he.isPlaying),
+			[i, r] = V(!1);
 		return (
-			w.useEffect(() => {
+			I.useEffect(() => {
 				if ((r(!1), !n)) {
-					let a = setTimeout(() => r(!0), 3e5);
-					return () => clearTimeout(a);
+					let s = setTimeout(() => r(!0), 3e5);
+					return () => clearTimeout(s);
 				}
 			}, [n]),
 			!e || !t?.is_active || i
 				? null
 				: o(
-						N,
+						k,
 						{
 							fallback: () =>
 								o(
-									p,
-									null,
+									'div',
+									{ className: 'vc-spotify-fallback' },
 									o(
-										g.FormText,
+										'p',
 										null,
 										'Failed to render Spotify Modal :(',
 									),
 									o(
-										g.FormText,
+										'p',
 										null,
 										'Check the console for errors',
 									),
@@ -15421,100 +21063,86 @@ export const Example: React.FC<{
 						},
 						o(
 							'div',
-							{ id: ie('player') },
-							o(M1, { track: e }),
-							o(k1, null),
-							o(P1, null),
+							{ id: xe('player') },
+							o(ZP, { track: e }),
+							o(KP, null),
+							o(WP, null),
 						),
 				  )
 		);
 	}
-	var ie,
-		y1,
-		b1,
-		S1,
-		v1,
-		T1,
-		x1,
-		I1,
-		mh,
-		gh = d(() => {
+	var xe,
+		BP,
+		$P,
+		UP,
+		GP,
+		HP,
+		zP,
+		qP,
+		j0 = m(() => {
 			'use strict';
-			s();
-			uh();
-			J();
-			ct();
-			Zt();
-			Yn();
-			B();
-			D();
-			P();
-			dh();
-			ie = (e) => `vc-spotify-${e}`;
-			(y1 = no(
+			a();
+			G0();
+			re();
+			xt();
+			Bo();
+			Wn();
+			Ko();
+			de();
+			x();
+			H0();
+			xe = (e) => `vc-spotify-${e}`;
+			(BP = Ti(
 				'M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z',
 				'play',
 			)),
-				(b1 = no(
+				($P = Ti(
 					'M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z',
 					'pause',
 				)),
-				(S1 = no(
+				(UP = Ti(
 					'M7 6c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1s-1-.45-1-1V7c0-.55.45-1 1-1zm3.66 6.82l5.77 4.07c.66.47 1.58-.01 1.58-.82V7.93c0-.81-.91-1.28-1.58-.82l-5.77 4.07c-.57.4-.57 1.24 0 1.64z',
 					'previous',
 				)),
-				(v1 = no(
+				(GP = Ti(
 					'M7.58 16.89l5.77-4.07c.56-.4.56-1.24 0-1.63L7.58 7.11C6.91 6.65 6 7.12 6 7.93v8.14c0 .81.91 1.28 1.58.82zM16 7v10c0 .55.45 1 1 1s1-.45 1-1V7c0-.55-.45-1-1-1s-1 .45-1 1z',
 					'next',
 				)),
-				(T1 = no(
+				(HP = Ti(
 					'M7 7h10v1.79c0 .45.54.67.85.35l2.79-2.79c.2-.2.2-.51 0-.71l-2.79-2.79c-.31-.31-.85-.09-.85.36V5H6c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1V7zm10 10H7v-1.79c0-.45-.54-.67-.85-.35l-2.79 2.79c-.2.2-.2.51 0 .71l2.79 2.79c.31.31.85.09.85-.36V19h11c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1s-1 .45-1 1v3z',
 					'repeat',
 				)),
-				(x1 = no(
+				(zP = Ti(
 					'M10.59 9.17L6.12 4.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.46 4.46 1.42-1.4zm4.76-4.32l1.19 1.19L4.7 17.88c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L17.96 7.46l1.19 1.19c.31.31.85.09.85-.36V4.5c0-.28-.22-.5-.5-.5h-3.79c-.45 0-.67.54-.36.85zm-.52 8.56l-1.41 1.41 3.13 3.13-1.2 1.2c-.31.31-.09.85.36.85h3.79c.28 0 .5-.22.5-.5v-3.79c0-.45-.54-.67-.85-.35l-1.19 1.19-3.13-3.14z',
 					'shuffle',
 				));
-			(I1 = Nt((e) => {
-				ee.seek(e);
-			})),
-				(mh = Y(() => {
-					let e = R.byCode('sliderContainer');
-					return he((t) => t.render && e(t.render));
-				}));
+			qP = Ct((e) => {
+				he.seek(e);
+			});
 		});
-	function hh(e) {
-		if (
-			(document.getElementById('vc-spotify-hover-controls')?.remove(), e)
-		) {
-			let t = document.createElement('style');
-			(t.id = 'vc-spotify-hover-controls'),
-				(t.textContent = `
-.vc-spotify-button-row { height: 0; opacity: 0; will-change: height, opacity; transition: height .2s, opacity .05s; }
-#vc-spotify-player:hover .vc-spotify-button-row { opacity: 1; height: 32px; }
-`),
-				document.head.appendChild(t);
-		}
+	function W0(e) {
+		(e ? Je : bt)($0);
 	}
-	var Gc,
-		yh = d(() => {
+	var pm,
+		q0 = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			je();
+			w();
 			T();
-			v();
-			gh();
-			Gc = f({
+			U0();
+			j0();
+			pm = g({
 				name: 'SpotifyControls',
-				description: 'Spotify Controls',
-				authors: [c.Ven, c.afn, c.KraXen72],
-				dependencies: ['MenuItemDeobfuscatorAPI'],
+				description: 'Adds a Spotify player above the account panel',
+				authors: [p.Ven, p.afn, p.KraXen72],
 				options: {
 					hoverControls: {
 						description: 'Show controls on hover',
 						type: 3,
 						default: !1,
-						onChange: (e) => hh(e),
+						onChange: (e) => W0(e),
 					},
 					useSpotifyUris: {
 						type: 3,
@@ -15547,19 +21175,19 @@ export const Example: React.FC<{
 						},
 					},
 				],
-				start: () => hh(k.plugins.SpotifyControls.hoverControls),
-				renderPlayer: () => o(fh, null),
+				start: () => W0(M.plugins.SpotifyControls.hoverControls),
+				renderPlayer: () => o(z0, null),
 			});
 		});
-	var Hc,
-		jc,
-		bh = d(() => {
+	var dm,
+		mm,
+		K0 = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
+			w();
 			T();
-			v();
-			Hc = V({
+			(dm = N({
 				noSpotifyAutoPause: {
 					description: 'Disable Spotify auto-pause',
 					type: 3,
@@ -15572,73 +21200,71 @@ export const Example: React.FC<{
 					default: !1,
 					restartNeeded: !0,
 				},
-			});
-			ce('SpotifyCrack', 'Ify');
-			jc = f({
-				name: 'SpotifyCrack',
-				description:
-					'Free listen along, no auto-pausing in voice chat, and allows activity to continue playing when idling',
-				authors: [c.Cyn, c.Nuckyz],
-				settings: Hc,
-				patches: [
-					{
-						find: 'dispatch({type:"SPOTIFY_PROFILE_UPDATE"',
-						replacement: {
-							match: /SPOTIFY_PROFILE_UPDATE.+?isPremium:(?="premium"===(\i)\.body\.product)/,
-							replace: (e, t) =>
-								`${e}(${t}.body.product="premium")&&`,
+			})),
+				(mm = g({
+					name: 'SpotifyCrack',
+					description:
+						'Free listen along, no auto-pausing in voice chat, and allows activity to continue playing when idling',
+					authors: [p.Cyn, p.Nuckyz],
+					settings: dm,
+					patches: [
+						{
+							find: 'dispatch({type:"SPOTIFY_PROFILE_UPDATE"',
+							replacement: {
+								match: /SPOTIFY_PROFILE_UPDATE.+?isPremium:(?="premium"===(\i)\.body\.product)/,
+								replace: (e, t) =>
+									`${e}(${t}.body.product="premium")&&`,
+							},
 						},
-					},
-					{
-						find: '.displayName="SpotifyStore"',
-						replacement: [
-							{
-								predicate: () => Hc.store.noSpotifyAutoPause,
-								match: /(?<=function \i\(\){)(?=.{0,200}SPOTIFY_AUTO_PAUSED\))/,
-								replace: 'return;',
-							},
-							{
-								predicate: () =>
-									Hc.store.keepSpotifyActivityOnIdle,
-								match: /(?<=shouldShowActivity=function\(\){.{0,50})&&!\i\.\i\.isIdle\(\)/,
-								replace: '',
-							},
-						],
-					},
-				],
-			});
+						{
+							find: '.displayName="SpotifyStore"',
+							replacement: [
+								{
+									predicate: () =>
+										dm.store.noSpotifyAutoPause,
+									match: /(?<=function \i\(\){)(?=.{0,200}SPOTIFY_AUTO_PAUSED\))/,
+									replace: 'return;',
+								},
+								{
+									predicate: () =>
+										dm.store.keepSpotifyActivityOnIdle,
+									match: /(?<=shouldShowActivity=function\(\){.{0,50})&&!\i\.\i\.isIdle\(\)/,
+									replace: '',
+								},
+							],
+						},
+					],
+				}));
 		});
-	function Wc(e, t) {
+	function gm(e, t) {
 		t = { invalidEmojis: [], tts: !1, validNonShortcutEmojis: [], ...t };
-		let n = N1.getPendingReply(e);
-		Sh.sendMessage(e, t, void 0, Sh.getSendMessageOptionsForReply(n)).then(
+		let n = XP.getPendingReply(e);
+		Y0.sendMessage(e, t, void 0, Y0.getSendMessageOptionsForReply(n)).then(
 			() => {
-				n && I.dispatch({ type: 'DELETE_PENDING_REPLY', channelId: e });
+				n && L.dispatch({ type: 'DELETE_PENDING_REPLY', channelId: e });
 			},
 		);
 	}
-	var zc,
-		Sh,
-		N1,
-		qc,
-		vh = d(() => {
+	var fm,
+		Y0,
+		XP,
+		hm,
+		Z0 = m(() => {
 			'use strict';
-			s();
-			Re();
-			E();
+			a();
+			wt();
+			w();
 			T();
-			v();
-			D();
-			P();
-			(zc = C('getPlayerState')),
-				(Sh = C('getSendMessageOptionsForReply', 'sendMessage')),
-				(N1 = C('getPendingReply'));
-			ce('SpotifyShareCommands', 'Sendify');
-			qc = f({
+			_();
+			x();
+			(fm = P('getPlayerState')),
+				(Y0 = P('getSendMessageOptionsForReply', 'sendMessage')),
+				(XP = P('getPendingReply'));
+			hm = g({
 				name: 'SpotifyShareCommands',
 				description:
 					'Share your current Spotify track, album or artist via slash command (/track, /album, /artist)',
-				authors: [c.katlyn],
+				authors: [p.katlyn],
 				dependencies: ['CommandsAPI'],
 				commands: [
 					{
@@ -15647,15 +21273,15 @@ export const Example: React.FC<{
 						inputType: 0,
 						options: [],
 						execute: (e, t) => {
-							let n = zc.getTrack();
+							let n = fm.getTrack();
 							if (n === null) {
-								H(t.channel.id, {
+								ie(t.channel.id, {
 									content:
 										"You're not listening to any music.",
 								});
 								return;
 							}
-							Wc(t.channel.id, {
+							gm(t.channel.id, {
 								content: `https://open.spotify.com/track/${n.id}`,
 							});
 						},
@@ -15666,15 +21292,15 @@ export const Example: React.FC<{
 						inputType: 0,
 						options: [],
 						execute: (e, t) => {
-							let n = zc.getTrack();
+							let n = fm.getTrack();
 							if (n === null) {
-								H(t.channel.id, {
+								ie(t.channel.id, {
 									content:
 										"You're not listening to any music.",
 								});
 								return;
 							}
-							Wc(t.channel.id, {
+							gm(t.channel.id, {
 								content: `https://open.spotify.com/album/${n.album.id}`,
 							});
 						},
@@ -15685,15 +21311,15 @@ export const Example: React.FC<{
 						inputType: 0,
 						options: [],
 						execute: (e, t) => {
-							let n = zc.getTrack();
+							let n = fm.getTrack();
 							if (n === null) {
-								H(t.channel.id, {
+								ie(t.channel.id, {
 									content:
 										"You're not listening to any music.",
 								});
 								return;
 							}
-							Wc(t.channel.id, {
+							gm(t.channel.id, {
 								content: n.artists[0].external_urls.spotify,
 							});
 						},
@@ -15701,11 +21327,11 @@ export const Example: React.FC<{
 				],
 			});
 		});
-	var Th = {};
-	te(Th, { default: () => D1 });
-	function R1({ emoji: e, prefix: t, log: n, delta: i, instance: r }) {
+	var X0 = {};
+	me(X0, { default: () => tI });
+	function JP({ emoji: e, prefix: t, log: n, delta: i, instance: r }) {
 		return o(
-			w.Fragment,
+			I.Fragment,
 			null,
 			o('span', null, r.sinceStart.toFixed(3), 's'),
 			o('span', null, r.sinceLast.toFixed(3), 's'),
@@ -15713,17 +21339,17 @@ export const Example: React.FC<{
 			o('span', null, o('pre', null, e, ' ', t ?? ' ', n)),
 		);
 	}
-	function A1({ title: e, logs: t, traceEnd: n }) {
+	function QP({ title: e, logs: t, traceEnd: n }) {
 		let i = t.find((l) => l.timestamp)?.timestamp ?? 0,
 			r = i,
-			a = t.map((l) => {
-				let u = l.timestamp ?? r,
-					m = (u - i) / 1e3,
-					y = (u - r) / 1e3;
-				return (r = u), { sinceStart: m, sinceLast: y };
+			s = t.map((l) => {
+				let c = l.timestamp ?? r,
+					u = (c - i) / 1e3,
+					h = (c - r) / 1e3;
+				return (r = c), { sinceStart: u, sinceLast: h };
 			});
 		return o(
-			g.FormSection,
+			y.FormSection,
 			{ title: e, tag: 'h1' },
 			o(
 				'code',
@@ -15756,24 +21382,24 @@ export const Example: React.FC<{
 					o('span', null, 'Interval'),
 					o('span', null, 'Delta'),
 					o('span', { style: { marginBottom: 5 } }, 'Event'),
-					Qo.logs.map((l, u) =>
-						o(R1, { key: u, ...l, instance: a[u] }),
+					Dr.logs.map((l, c) =>
+						o(JP, { key: c, ...l, instance: s[c] }),
 					),
 				),
 			),
 		);
 	}
-	function L1({ trace: e }) {
+	function VP({ trace: e }) {
 		let t = e.split(`
 `);
 		return o(
-			g.FormSection,
+			y.FormSection,
 			{ title: 'Server Trace', tag: 'h2' },
 			o(
 				'code',
 				null,
 				o(
-					pe,
+					ae,
 					{
 						flexDirection: 'column',
 						style: {
@@ -15787,44 +21413,44 @@ export const Example: React.FC<{
 			),
 		);
 	}
-	function E1() {
-		if (!Qo?.logs) return o('div', null, 'Loading...');
-		let e = Qo.logGroups.find((t) => t.serverTrace)?.serverTrace;
+	function eI() {
+		if (!Dr?.logs) return o('div', null, 'Loading...');
+		let e = Dr.logGroups.find((t) => t.serverTrace)?.serverTrace;
 		return o(
-			w.Fragment,
+			I.Fragment,
 			null,
-			o(A1, {
+			o(QP, {
 				title: 'Startup Timings',
-				logs: Qo.logs,
-				traceEnd: Qo.endTime_,
+				logs: Dr.logs,
+				traceEnd: Dr.endTime_,
 			}),
 			o('div', { style: { marginTop: 5 } }, '\xA0'),
-			e && o(L1, { trace: e }),
+			e && o(VP, { trace: e }),
 		);
 	}
-	var Qo,
-		D1,
-		xh = d(() => {
+	var Dr,
+		tI,
+		J0 = m(() => {
 			'use strict';
-			s();
-			J();
-			ct();
-			D();
-			P();
-			Qo = C('markWithDelta', 'markAndLog', 'markAt');
-			D1 = N.wrap(E1);
+			a();
+			re();
+			xt();
+			_();
+			x();
+			Dr = P('markWithDelta', 'markAndLog', 'markAt');
+			tI = k.wrap(eI);
 		});
-	var Kc,
-		wh = d(() => {
+	var ym,
+		Q0 = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
+			ye();
 			T();
-			B();
-			v();
-			Kc = f({
+			ym = g({
 				name: 'StartupTimings',
 				description: 'Adds Startup Timings to the Settings menu',
-				authors: [c.Megu],
+				authors: [p.Megu],
 				patches: [
 					{
 						find: 'PAYMENT_FLOW_MODAL_TEST_PAGE,',
@@ -15835,105 +21461,376 @@ export const Example: React.FC<{
 						},
 					},
 				],
-				StartupTimingPage: Y(() => (xh(), Zo(Th)).default),
+				StartupTimingPage: oe(() => (J0(), Mo(X0)).default),
 			});
 		});
-	var Ph,
-		Yc,
-		Ih = d(() => {
+	var V0,
+		nI,
+		vm,
+		eb = m(() => {
 			'use strict';
-			s();
-			Xi();
+			a();
+			br();
+			w();
+			de();
+			ro();
 			T();
-			B();
-			v();
-			xn();
-			P();
-			_n();
-			Fn();
-			uc();
-			(Ph = 'Vencord-SupportHelper-Dismiss'),
-				(Yc = f({
+			ii();
+			x();
+			Ii();
+			ni();
+			kd();
+			(V0 = 'Vencord-SupportHelper-Dismiss'),
+				(nI = [zr, '1024286218801926184', '1033680203433660458']),
+				(vm = g({
 					name: 'SupportHelper',
 					required: !0,
-					description: 'Helps me provide support to you',
-					authors: [c.Ven],
+					description: 'Helps us provide support to you',
+					authors: [p.Ven],
+					dependencies: ['CommandsAPI'],
 					commands: [
 						{
 							name: 'vencord-debug',
 							description: 'Send Vencord Debug info',
-							predicate: (e) => e.channel.id === ci,
+							predicate: (e) => nI.includes(e.channel.id),
 							execute() {
-								let { RELEASE_CHANNEL: e } = window.GLOBAL_ENV;
+								let { RELEASE_CHANNEL: e } = window.GLOBAL_ENV,
+									t = (() =>
+										'armcord' in window
+											? `ArmCord v${window.armcord.version}`
+											: `Web (${navigator.userAgent})`)(),
+									n = (l) =>
+										l.endsWith('API') || Te[l].required,
+									i = Object.keys(Te).filter(
+										(l) =>
+											Vencord.Plugins.isPluginEnabled(
+												l,
+											) && !n(l),
+									),
+									r = Object.keys(Te).filter(
+										(l) =>
+											Vencord.Plugins.isPluginEnabled(
+												l,
+											) && n(l),
+									);
 								return {
 									content: `
 **Vencord Debug Info**
+>>> Discord Branch: ${e}
+Client: ${t}
+Platform: ${window.navigator.platform}
+Vencord: ${on}${Rr.additionalInfo}
+Outdated: ${uo}
+OpenAsar: ${'openasar' in window}
 
-> Discord Branch: ${e}
-> Client: ${
-										typeof DiscordNative > 'u'
-											? window.armcord
-												? 'Armcord'
-												: `Web (${navigator.userAgent})`
-											: `Desktop (Electron v${Xn.electronVersion})`
-									}
-> Platform: ${window.navigator.platform}
-> Vencord Version: ${lt}${Xn.additionalInfo}
-> Outdated: ${tn}
-> Enabled Plugins:
-${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
-`.trim(),
+Enabled Plugins (${i.length + r.length}):
+${$i(
+	i.join(', ') +
+		`
+
+` +
+		r.join(', '),
+)}
+`
+										.trim()
+										.replaceAll('```\n', '```'),
 								};
 							},
 						},
 					],
-					rememberDismiss() {
-						Ht.set(Ph, lt);
-					},
-					start() {
-						I.subscribe(
-							'CHANNEL_SELECT',
-							async ({ channelId: e }) => {
-								if (e !== ci) return;
-								let t = BigInt(U.getCurrentUser().id);
-								Object.values(c).some((n) => n.id === t) ||
-									(tn &&
-										lt !== (await Ht.get(Ph)) &&
-										Dt.show({
-											title: 'Hold on!',
-											body: o(
-												'div',
-												null,
-												o(
-													g.FormText,
-													null,
-													'You are using an outdated version of Vencord! Chances are, your issue is already fixed.',
-												),
-												o(
-													g.FormText,
-													null,
-													"Please first update using the Updater Page in Settings, or use the VencordInstaller (Update Vencord Button) to do so, in case you can't access the Updater page.",
-												),
-											),
-											onCancel: this.rememberDismiss,
-											onConfirm: this.rememberDismiss,
-										}));
-							},
-						);
+					flux: {
+						async CHANNEL_SELECT({ channelId: e }) {
+							if (
+								e === zr &&
+								!Ci(U.getCurrentUser().id) &&
+								uo &&
+								on !== (await Pt.get(V0))
+							) {
+								let t = () => Pt.set(V0, on);
+								vt.show({
+									title: 'Hold on!',
+									body: o(
+										'div',
+										null,
+										o(
+											y.FormText,
+											null,
+											'You are using an outdated version of Vencord! Chances are, your issue is already fixed.',
+										),
+										o(
+											y.FormText,
+											null,
+											"Please first update using the Updater Page in Settings, or use the VencordInstaller (Update Vencord Button) to do so, in case you can't access the Updater page.",
+										),
+									),
+									onCancel: t,
+									onConfirm: t,
+								});
+							}
+						},
 					},
 				}));
 		});
-	var Qc,
-		kh = d(() => {
+	function rb(e) {
+		let t = e.match(/^(\/)?(.+?)(?:\/([gimsuy]*))?$/);
+		return t
+			? new RegExp(
+					t[2],
+					t[3]
+						?.split('')
+						.filter((n, i, r) => r.indexOf(n) === i)
+						.join('') ?? 'g',
+			  )
+			: new RegExp(e);
+	}
+	function iI(e) {
+		try {
+			return rb(e), null;
+		} catch (t) {
+			return o(
+				'span',
+				{ style: { color: 'var(--text-danger)' } },
+				String(t),
+			);
+		}
+	}
+	function Sm({ initialValue: e, onChange: t, placeholder: n }) {
+		let [i, r] = V(e);
+		return o(Ne, {
+			placeholder: n,
+			value: i,
+			onChange: r,
+			spellCheck: !1,
+			onBlur: () => i !== e && t(i),
+		});
+	}
+	function tb({ title: e, rulesArray: t, rulesKey: n, update: i }) {
+		let r = e === 'Using Regex';
+		async function s(c) {
+			t.splice(c, 1), await Pt.set(n, t), i();
+		}
+		async function l(c, u, h) {
+			u === t.length - 1 && t.push(ib()),
+				(t[u][h] = c),
+				t[u].find === '' &&
+					t[u].replace === '' &&
+					t[u].onlyIfIncludes === '' &&
+					u !== t.length - 1 &&
+					t.splice(u, 1),
+				await Pt.set(n, t),
+				i();
+		}
+		return o(
+			d,
+			null,
+			o(y.FormTitle, { tag: 'h4' }, e),
+			o(
+				ae,
+				{ flexDirection: 'column', style: { gap: '0.5em' } },
+				t.map((c, u) =>
+					o(
+						I.Fragment,
+						{ key: `${c.find}-${u}` },
+						o(
+							ae,
+							{ flexDirection: 'row', style: { gap: 0 } },
+							o(
+								ae,
+								{
+									flexDirection: 'row',
+									style: { flexGrow: 1, gap: '0.5em' },
+								},
+								o(Sm, {
+									placeholder: 'Find',
+									initialValue: c.find,
+									onChange: (h) => l(h, u, 'find'),
+								}),
+								o(Sm, {
+									placeholder: 'Replace',
+									initialValue: c.replace,
+									onChange: (h) => l(h, u, 'replace'),
+								}),
+								o(Sm, {
+									placeholder: 'Only if includes',
+									initialValue: c.onlyIfIncludes,
+									onChange: (h) => l(h, u, 'onlyIfIncludes'),
+								}),
+							),
+							o(
+								R,
+								{
+									size: R.Sizes.MIN,
+									onClick: () => s(u),
+									style: {
+										background: 'none',
+										...(u === t.length - 1
+											? {
+													visibility: 'hidden',
+													pointerEvents: 'none',
+											  }
+											: {}),
+									},
+								},
+								o(
+									'svg',
+									{
+										width: '24',
+										height: '24',
+										viewBox: '0 0 24 24',
+									},
+									o('title', null, 'Delete Rule'),
+									o('path', {
+										fill: 'var(--status-danger)',
+										d: 'M15 3.999V2H9V3.999H3V5.999H21V3.999H15Z',
+									}),
+									o('path', {
+										fill: 'var(--status-danger)',
+										d: 'M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z',
+									}),
+								),
+							),
+						),
+						r && iI(c.find),
+					),
+				),
+			),
+		);
+	}
+	function rI() {
+		let [e, t] = V('');
+		return o(
+			d,
+			null,
+			o(y.FormTitle, { tag: 'h4' }, 'Test Rules'),
+			o(Ne, { placeholder: 'Type a message', onChange: t }),
+			o(Ne, {
+				placeholder: 'Message with rules applied',
+				editable: !1,
+				value: sb(e),
+			}),
+		);
+	}
+	function sb(e) {
+		if (e.length === 0) return e;
+		if (((e = ' ' + e + ' '), ka))
+			for (let t of ka)
+				!t.find ||
+					!t.replace ||
+					(t.onlyIfIncludes && !e.includes(t.onlyIfIncludes)) ||
+					(e = e.replaceAll(
+						t.find,
+						t.replace.replaceAll(
+							'\\n',
+							`
+`,
+						),
+					));
+		if (La) {
+			for (let t of La)
+				if (
+					!(!t.find || !t.replace) &&
+					!(t.onlyIfIncludes && !e.includes(t.onlyIfIncludes))
+				)
+					try {
+						let n = rb(t.find);
+						e = e.replace(
+							n,
+							t.replace.replaceAll(
+								'\\n',
+								`
+`,
+							),
+						);
+					} catch {
+						new Z('TextReplace').error(`Invalid regex: ${t.find}`);
+					}
+		}
+		return (e = e.trim()), e;
+	}
+	var nb,
+		ob,
+		ib,
+		Na,
+		ka,
+		La,
+		oI,
+		sI,
+		bm,
+		ab = m(() => {
 			'use strict';
-			s();
+			a();
+			br();
+			gn();
+			E();
+			xt();
+			w();
+			Se();
+			ye();
 			T();
-			v();
-			Qc = f({
+			x();
+			(nb = 'TextReplace_rulesString'),
+				(ob = 'TextReplace_rulesRegex'),
+				(ib = () => ({ find: '', replace: '', onlyIfIncludes: '' })),
+				(Na = () => [ib()]),
+				(ka = Na()),
+				(La = Na()),
+				(oI = N({
+					replace: {
+						type: 6,
+						description: '',
+						component: () => {
+							let e = Bt();
+							return o(
+								d,
+								null,
+								o(tb, {
+									title: 'Using String',
+									rulesArray: ka,
+									rulesKey: nb,
+									update: e,
+								}),
+								o(tb, {
+									title: 'Using Regex',
+									rulesArray: La,
+									rulesKey: ob,
+									update: e,
+								}),
+								o(rI, null),
+							);
+						},
+					},
+				}));
+			(sI = '1102784112584040479'),
+				(bm = g({
+					name: 'TextReplace',
+					description:
+						"Replace text in your messages. You can find pre-made rules in the #textreplace-rules channel in Vencord's Server",
+					authors: [p.AutumnVN, p.TheKodeToad],
+					dependencies: ['MessageEventsAPI'],
+					settings: oI,
+					async start() {
+						(ka = (await Pt.get(nb)) ?? Na()),
+							(La = (await Pt.get(ob)) ?? Na()),
+							(this.preSend = rt((e, t) => {
+								e !== sI && (t.content = sb(t.content));
+							}));
+					},
+					stop() {
+						st(this.preSend);
+					},
+				}));
+		});
+	var Tm,
+		lb = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			Tm = g({
 				name: 'TimeBarAllActivities',
 				description:
 					'Adds the Spotify time bar to all activities if they have start and end timestamps',
-				authors: [c.obscurity],
+				authors: [p.obscurity],
 				patches: [
 					{
 						find: 'renderTimeBar=function',
@@ -15945,7 +21842,465 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 				],
 			});
 		});
-	function Xc({ a: e, b: t, c: n }) {
+	var cb = m(() => {});
+	var mt,
+		Or = m(() => {
+			'use strict';
+			a();
+			E();
+			T();
+			mt = N({
+				receivedInput: {
+					type: 0,
+					description: 'Input language for received messages',
+					default: 'auto',
+					hidden: !0,
+				},
+				receivedOutput: {
+					type: 0,
+					description: 'Output language for received messages',
+					default: 'en',
+					hidden: !0,
+				},
+				sentInput: {
+					type: 0,
+					description: 'Input language for sent messages',
+					default: 'auto',
+					hidden: !0,
+				},
+				sentOutput: {
+					type: 0,
+					description: 'Output language for sent messages',
+					default: 'en',
+					hidden: !0,
+				},
+				autoTranslate: {
+					type: 3,
+					description:
+						'Automatically translate your messages before sending. You can also shift/right click the translate button to toggle this',
+					default: !1,
+				},
+			});
+		});
+	var Ea,
+		xm = m(() => {
+			'use strict';
+			a();
+			Ea = {
+				auto: 'Detect language',
+				af: 'Afrikaans',
+				sq: 'Albanian',
+				am: 'Amharic',
+				ar: 'Arabic',
+				hy: 'Armenian',
+				as: 'Assamese',
+				ay: 'Aymara',
+				az: 'Azerbaijani',
+				bm: 'Bambara',
+				eu: 'Basque',
+				be: 'Belarusian',
+				bn: 'Bengali',
+				bho: 'Bhojpuri',
+				bs: 'Bosnian',
+				bg: 'Bulgarian',
+				ca: 'Catalan',
+				ceb: 'Cebuano',
+				ny: 'Chichewa',
+				'zh-CN': 'Chinese (Simplified)',
+				'zh-TW': 'Chinese (Traditional)',
+				co: 'Corsican',
+				hr: 'Croatian',
+				cs: 'Czech',
+				da: 'Danish',
+				dv: 'Dhivehi',
+				doi: 'Dogri',
+				nl: 'Dutch',
+				en: 'English',
+				eo: 'Esperanto',
+				et: 'Estonian',
+				ee: 'Ewe',
+				tl: 'Filipino',
+				fi: 'Finnish',
+				fr: 'French',
+				fy: 'Frisian',
+				gl: 'Galician',
+				ka: 'Georgian',
+				de: 'German',
+				el: 'Greek',
+				gn: 'Guarani',
+				gu: 'Gujarati',
+				ht: 'Haitian Creole',
+				ha: 'Hausa',
+				haw: 'Hawaiian',
+				iw: 'Hebrew',
+				hi: 'Hindi',
+				hmn: 'Hmong',
+				hu: 'Hungarian',
+				is: 'Icelandic',
+				ig: 'Igbo',
+				ilo: 'Ilocano',
+				id: 'Indonesian',
+				ga: 'Irish',
+				it: 'Italian',
+				ja: 'Japanese',
+				jw: 'Javanese',
+				kn: 'Kannada',
+				kk: 'Kazakh',
+				km: 'Khmer',
+				rw: 'Kinyarwanda',
+				gom: 'Konkani',
+				ko: 'Korean',
+				kri: 'Krio',
+				ku: 'Kurdish (Kurmanji)',
+				ckb: 'Kurdish (Sorani)',
+				ky: 'Kyrgyz',
+				lo: 'Lao',
+				la: 'Latin',
+				lv: 'Latvian',
+				ln: 'Lingala',
+				lt: 'Lithuanian',
+				lg: 'Luganda',
+				lb: 'Luxembourgish',
+				mk: 'Macedonian',
+				mai: 'Maithili',
+				mg: 'Malagasy',
+				ms: 'Malay',
+				ml: 'Malayalam',
+				mt: 'Maltese',
+				mi: 'Maori',
+				mr: 'Marathi',
+				'mni-Mtei': 'Meiteilon (Manipuri)',
+				lus: 'Mizo',
+				mn: 'Mongolian',
+				my: 'Myanmar (Burmese)',
+				ne: 'Nepali',
+				no: 'Norwegian',
+				or: 'Odia (Oriya)',
+				om: 'Oromo',
+				ps: 'Pashto',
+				fa: 'Persian',
+				pl: 'Polish',
+				pt: 'Portuguese',
+				pa: 'Punjabi',
+				qu: 'Quechua',
+				ro: 'Romanian',
+				ru: 'Russian',
+				sm: 'Samoan',
+				sa: 'Sanskrit',
+				gd: 'Scots Gaelic',
+				nso: 'Sepedi',
+				sr: 'Serbian',
+				st: 'Sesotho',
+				sn: 'Shona',
+				sd: 'Sindhi',
+				si: 'Sinhala',
+				sk: 'Slovak',
+				sl: 'Slovenian',
+				so: 'Somali',
+				es: 'Spanish',
+				su: 'Sundanese',
+				sw: 'Swahili',
+				sv: 'Swedish',
+				tg: 'Tajik',
+				ta: 'Tamil',
+				tt: 'Tatar',
+				te: 'Telugu',
+				th: 'Thai',
+				ti: 'Tigrinya',
+				ts: 'Tsonga',
+				tr: 'Turkish',
+				tk: 'Turkmen',
+				ak: 'Twi',
+				uk: 'Ukrainian',
+				ur: 'Urdu',
+				ug: 'Uyghur',
+				uz: 'Uzbek',
+				vi: 'Vietnamese',
+				cy: 'Welsh',
+				xh: 'Xhosa',
+				yi: 'Yiddish',
+				yo: 'Yoruba',
+				zu: 'Zulu',
+			};
+		});
+	async function Da(e, t) {
+		let n = mt.store[e + 'Input'],
+			i = mt.store[e + 'Output'],
+			r =
+				'https://translate.googleapis.com/translate_a/single?' +
+				new URLSearchParams({
+					client: 'gtx',
+					sl: n,
+					tl: i,
+					dt: 't',
+					dj: '1',
+					source: 'input',
+					q: t,
+				}),
+			s = await fetch(r);
+		if (!s.ok)
+			throw new Error(`Failed to translate "${t}" (${n} -> ${i})
+${s.status} ${s.statusText}`);
+		let { src: l, sentences: c } = await s.json();
+		return {
+			src: l,
+			text: c
+				.map((u) => u?.trans)
+				.filter(Boolean)
+				.join(''),
+		};
+	}
+	var to,
+		_r = m(() => {
+			'use strict';
+			a();
+			je();
+			Or();
+			to = Ue('vc-trans-');
+		});
+	function lI({ settingsKey: e, includeAuto: t }) {
+		let n = mt.use([e])[e],
+			i = Ut(() => {
+				let r = Object.entries(Ea).map(([s, l]) => ({
+					value: s,
+					label: l,
+				}));
+				return t || r.shift(), r;
+			}, []);
+		return o(
+			'section',
+			{ className: G.bottom16 },
+			o(y.FormTitle, { tag: 'h3' }, mt.def[e].description),
+			o(Qr, {
+				options: i,
+				value: i.find((r) => r.value === n),
+				placeholder: 'Select a language',
+				maxVisibleItems: 5,
+				closeOnSelect: !0,
+				onChange: (r) => (mt.store[e] = r),
+			}),
+		);
+	}
+	function cI() {
+		let e = mt.use(['autoTranslate']).autoTranslate;
+		return o(
+			Nt,
+			{
+				value: e,
+				onChange: (t) => (mt.store.autoTranslate = t),
+				note: mt.def.autoTranslate.description,
+				hideBorder: !0,
+			},
+			'Auto Translate',
+		);
+	}
+	function ub({ rootProps: e }) {
+		return o(
+			Ie,
+			{ ...e },
+			o(
+				$e,
+				{ className: to('modal-header') },
+				o(y.FormTitle, { tag: 'h2' }, 'Translate'),
+				o(St, { onClick: e.onClose }),
+			),
+			o(
+				Le,
+				{ className: to('modal-content') },
+				aI.map((t) =>
+					o(lI, {
+						key: t,
+						settingsKey: t,
+						includeAuto: t.endsWith('Input'),
+					}),
+				),
+				o(y.FormDivider, { className: G.bottom16 }),
+				o(cI, null),
+			),
+		);
+	}
+	var aI,
+		pb = m(() => {
+			'use strict';
+			a();
+			Xe();
+			ze();
+			x();
+			xm();
+			Or();
+			_r();
+			aI = ['receivedInput', 'receivedOutput', 'sentInput', 'sentOutput'];
+		});
+	function Fr({ height: e = 24, width: t = 24, className: n }) {
+		return o(
+			'svg',
+			{
+				viewBox: '0 96 960 960',
+				height: e,
+				width: t,
+				className: J(to('icon'), n),
+			},
+			o('path', {
+				fill: 'currentColor',
+				d: 'm475 976 181-480h82l186 480h-87l-41-126H604l-47 126h-82Zm151-196h142l-70-194h-2l-70 194Zm-466 76-55-55 204-204q-38-44-67.5-88.5T190 416h87q17 33 37.5 62.5T361 539q45-47 75-97.5T487 336H40v-80h280v-80h80v80h280v80H567q-22 69-58.5 135.5T419 598l98 99-30 81-127-122-200 200Z',
+			}),
+		);
+	}
+	function db({ slateProps: e }) {
+		let { autoTranslate: t } = mt.use(['autoTranslate']);
+		if (e.type.analyticsName !== 'normal') return null;
+		let n = () => (mt.store.autoTranslate = !t);
+		return o(
+			W,
+			{ text: 'Open Translate Modal' },
+			({ onMouseEnter: i, onMouseLeave: r }) =>
+				o(
+					'div',
+					{ style: { display: 'flex' } },
+					o(
+						R,
+						{
+							'aria-haspopup': 'dialog',
+							'aria-label': '',
+							size: '',
+							look: Wt.BLANK,
+							onMouseEnter: i,
+							onMouseLeave: r,
+							innerClassName: pt.button,
+							onClick: (s) => {
+								if (s.shiftKey) return n();
+								be((l) => o(ub, { rootProps: l }));
+							},
+							onContextMenu: () => n(),
+							style: { padding: '0 4px' },
+						},
+						o(
+							'div',
+							{ className: pt.buttonWrapper },
+							o(Fr, { className: to({ 'auto-translate': t }) }),
+						),
+					),
+				),
+		);
+	}
+	var wm = m(() => {
+		'use strict';
+		a();
+		de();
+		ze();
+		x();
+		Or();
+		pb();
+		_r();
+	});
+	function mb(e, t) {
+		Mm.get(e)(t);
+	}
+	function uI({ onDismiss: e }) {
+		return o('button', { onClick: e, className: to('dismiss') }, 'Dismiss');
+	}
+	function fb({ message: e }) {
+		let [t, n] = V();
+		return (
+			tt(() => (Mm.set(e.id, n), () => void Mm.delete(e.id)), []),
+			t
+				? o(
+						'span',
+						{ className: to('accessory') },
+						o(Fr, { width: 16, height: 16 }),
+						Pe.parse(t.text),
+						' ',
+						'(translated from ',
+						Ea[t.src] ?? t.src,
+						' - ',
+						o(uI, { onDismiss: () => n(void 0) }),
+						')',
+				  )
+				: null
+		);
+	}
+	var Mm,
+		gb = m(() => {
+			'use strict';
+			a();
+			x();
+			xm();
+			wm();
+			_r();
+			Mm = new Map();
+		});
+	var Pm,
+		hb = m(() => {
+			'use strict';
+			a();
+			cb();
+			Gs();
+			gn();
+			Oo();
+			re();
+			w();
+			T();
+			x();
+			Or();
+			wm();
+			gb();
+			_r();
+			Pm = g({
+				name: 'Translate',
+				description: 'Translate messages with Google Translate',
+				authors: [p.Ven],
+				dependencies: [
+					'MessageAccessoriesAPI',
+					'MessagePopoverAPI',
+					'MessageEventsAPI',
+				],
+				settings: mt,
+				translate: Da,
+				patches: [
+					{
+						find: '.activeCommandOption',
+						replacement: {
+							match: /(.)\.push.{1,30}disabled:(\i),.{1,20}\},"gift"\)\)/,
+							replace:
+								'$&;try{$2||$1.push($self.chatBarIcon(arguments[0]))}catch{}',
+						},
+					},
+				],
+				start() {
+					cr('vc-translation', (e) => o(fb, { message: e.message })),
+						yn('vc-translate', (e) =>
+							e.content
+								? {
+										label: 'Translate',
+										icon: Fr,
+										message: e,
+										channel: X.getChannel(e.channel_id),
+										onClick: async () => {
+											let t = await Da(
+												'received',
+												e.content,
+											);
+											mb(e.id, t);
+										},
+								  }
+								: null,
+						),
+						(this.preSend = rt(async (e, t) => {
+							!mt.store.autoTranslate ||
+								!t.content ||
+								(t.content = (
+									await Da('sent', t.content)
+								).text);
+						}));
+				},
+				stop() {
+					st(this.preSend), vn('vc-translate'), Uu('vc-translation');
+				},
+				chatBarIcon: (e) =>
+					o(k, { noop: !0 }, o(db, { slateProps: e })),
+			});
+		});
+	function Im({ a: e, b: t, c: n }) {
 		return [
 			o('strong', { key: '0' }, e),
 			', ',
@@ -15953,23 +22308,23 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 			`, and ${n} others are typing...`,
 		];
 	}
-	var _1,
-		F1,
-		pr,
-		O1,
-		Jc,
-		Zc = d(() => {
+	var pI,
+		dI,
+		Oa,
+		mI,
+		Rm,
+		Cm = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			J();
+			re();
+			w();
 			T();
-			v();
-			D();
-			P();
-			(_1 = oe('"top",spacing:')),
-				(F1 = oe('friendToken', 'USER_PROFILE_MODAL_OPEN')),
-				(pr = V({
+			_();
+			x();
+			(pI = ce('.typingIndicatorRef', 'svg')),
+				(dI = ce('friendToken', 'USER_PROFILE_MODAL_OPEN')),
+				(Oa = N({
 					showAvatars: {
 						type: 3,
 						default: !0,
@@ -15987,17 +22342,17 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 							'Show a more useful message when several users are typing',
 					},
 				}));
-			(O1 = N.wrap(
+			(mI = k.wrap(
 				function ({ user: e, guildId: t }) {
 					return o(
 						'strong',
 						{
 							role: 'button',
 							onClick: () => {
-								F1({
+								dI({
 									userId: e.id,
 									guildId: t,
-									channelId: re.getChannelId(),
+									channelId: fe.getChannelId(),
 									analyticsLocation: {
 										page: t
 											? 'Guild Channel'
@@ -16010,33 +22365,34 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 								display: 'grid',
 								gridAutoFlow: 'column',
 								gap: '4px',
-								color: pr.store.showRoleColors
-									? Qe.getMember(t, e.id)?.colorString
+								color: Oa.store.showRoleColors
+									? ke.getMember(t, e.id)?.colorString
 									: void 0,
 								cursor: 'pointer',
 							},
 						},
-						pr.store.showAvatars &&
+						Oa.store.showAvatars &&
 							o(
 								'div',
 								{ style: { marginTop: '4px' } },
-								o(_1, {
+								o(pI, {
 									size: 'SIZE_16',
 									src: e.getAvatarURL(t, 128),
 								}),
 							),
-						Qe.getNick(t, e.id) ||
-							(!t && Xe.getNickname(e.id)) ||
+						ke.getNick(t, e.id) ||
+							(!t && Kt.getNickname(e.id)) ||
+							e.globalName ||
 							e.username,
 					);
 				},
 				{ noop: !0 },
 			)),
-				(Jc = f({
+				(Rm = g({
 					name: 'TypingTweaks',
 					description:
 						'Show avatars and role colours in the typing indicator',
-					authors: [c.zt],
+					authors: [p.zt],
 					patches: [
 						{
 							find: 'getCooldownTextStyle',
@@ -16060,120 +22416,123 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 								replace:
 									'$1:$self.buildSeveralUsers({a:$3,b:$4,c:$2.length-2})',
 							},
-							predicate: () => pr.store.alternativeFormatting,
+							predicate: () => Oa.store.alternativeFormatting,
 						},
 					],
-					settings: pr,
-					buildSeveralUsers: Xc,
+					settings: Oa,
+					buildSeveralUsers: Im,
 					mutateChildren(e, t, n) {
 						if (!Array.isArray(n)) return n;
 						let i = 0;
 						return n.map((r) =>
 							r.type === 'strong'
-								? o(O1, { ...e, user: t[i++] })
+								? o(mI, { ...e, user: t[i++] })
 								: r,
 						);
 					},
 				}));
 		});
-	function sn(e, t) {
-		return Qe.getNick(e, t) ?? U.getUser(t).username;
+	function xo(e, t) {
+		return ke.getNick(e, t) ?? U.getUser(t).username;
 	}
-	function U1({ channelId: e }) {
-		let t = Je(
-				[Ch],
-				() => ({ ...Ch.getTypingUsers(e) }),
+	function hI({ channelId: e }) {
+		let t = Be(
+				[yb],
+				() => ({ ...yb.getTypingUsers(e) }),
 				null,
-				(l, u) => {
-					let m = Object.keys(l),
-						y = Object.keys(u);
+				(l, c) => {
+					let u = Object.keys(l),
+						h = Object.keys(c);
 					return (
-						m.length === y.length &&
-						JSON.stringify(m) === JSON.stringify(y)
+						u.length === h.length &&
+						JSON.stringify(u) === JSON.stringify(h)
 					);
 				},
 			),
-			n = G.getChannel(e).guild_id;
-		if (!Vc.store.includeMutedChannels && B1.isChannelMuted(n, e))
+			n = X.getChannel(e).guild_id;
+		if (!Am.store.includeMutedChannels && gI.isChannelMuted(n, e))
 			return null;
-		let i = U.getCurrentUser().id,
+		let i = U.getCurrentUser()?.id,
 			r = Object.keys(t).filter(
 				(l) =>
 					l !== i &&
-					!(Xe.isBlocked(l) && !Vc.store.includeBlockedUsers),
+					!(Kt.isBlocked(l) && !Am.store.includeBlockedUsers),
 			),
-			a;
+			s;
 		switch (r.length) {
 			case 0:
 				break;
 			case 1: {
-				a = ur.Messages.ONE_USER_TYPING.format({ a: sn(n, r[0]) });
+				s = _a.Messages.ONE_USER_TYPING.format({ a: xo(n, r[0]) });
 				break;
 			}
 			case 2: {
-				a = ur.Messages.TWO_USERS_TYPING.format({
-					a: sn(n, r[0]),
-					b: sn(n, r[1]),
+				s = _a.Messages.TWO_USERS_TYPING.format({
+					a: xo(n, r[0]),
+					b: xo(n, r[1]),
 				});
 				break;
 			}
 			case 3: {
-				a = ur.Messages.THREE_USERS_TYPING.format({
-					a: sn(n, r[0]),
-					b: sn(n, r[1]),
-					c: sn(n, r[2]),
+				s = _a.Messages.THREE_USERS_TYPING.format({
+					a: xo(n, r[0]),
+					b: xo(n, r[1]),
+					c: xo(n, r[2]),
 				});
 				break;
 			}
 			default: {
-				a = k.plugins.TypingTweaks.enabled
-					? Xc({ a: sn(n, r[0]), b: sn(n, r[1]), c: r.length - 2 })
-					: ur.Messages.SEVERAL_USERS_TYPING;
+				s = M.plugins.TypingTweaks.enabled
+					? Im({ a: xo(n, r[0]), b: xo(n, r[1]), c: r.length - 2 })
+					: _a.Messages.SEVERAL_USERS_TYPING;
 				break;
 			}
 		}
 		return r.length > 0
-			? o(Z, { text: a }, ({ onMouseLeave: l, onMouseEnter: u }) =>
+			? o(W, { text: s }, ({ onMouseLeave: l, onMouseEnter: c }) =>
 					o(
 						'div',
 						{
 							style: {
 								marginLeft: 6,
+								height: 16,
+								display: 'flex',
+								alignItems: 'center',
 								zIndex: 0,
 								cursor: 'pointer',
 							},
 							onMouseLeave: l,
-							onMouseEnter: u,
+							onMouseEnter: c,
 						},
-						o($1, { dotRadius: 3, themed: !0 }),
+						o(fI, { dotRadius: 3, themed: !0 }),
 					),
 			  )
 			: null;
 	}
-	var $1,
-		Ch,
-		B1,
-		ur,
-		Vc,
-		ep,
-		Mh = d(() => {
+	var fI,
+		yb,
+		gI,
+		_a,
+		Am,
+		Nm,
+		vb = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			J();
+			re();
+			w();
+			ye();
 			T();
-			B();
-			v();
-			D();
-			P();
-			Zc();
-			($1 = Y(() =>
-				he((e) => e.type?.render?.toString()?.includes('().dots')),
+			_();
+			x();
+			Cm();
+			(fI = oe(() =>
+				ht((e) => e.type?.render?.toString()?.includes('().dots')),
 			)),
-				(Ch = bt('TypingStore')),
-				(B1 = bt('UserGuildSettingsStore')),
-				(ur = Se((e) => e.Messages?.SEVERAL_USERS_TYPING));
-			(Vc = V({
+				(yb = ue('TypingStore')),
+				(gI = ue('UserGuildSettingsStore')),
+				(_a = Ce((e) => e.Messages?.SEVERAL_USERS_TYPING));
+			(Am = N({
 				includeMutedChannels: {
 					type: 3,
 					description:
@@ -16187,12 +22546,12 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 					default: !1,
 				},
 			})),
-				(ep = f({
+				(Nm = g({
 					name: 'TypingIndicator',
 					description:
 						'Adds an indicator if someone is typing on a channel.',
-					authors: [c.Nuckyz, c.obscurity],
-					settings: Vc,
+					authors: [p.Nuckyz, p.obscurity],
+					settings: Am,
 					patches: [
 						{
 							find: '.UNREAD_HIGHLIGHT',
@@ -16204,20 +22563,20 @@ ${Dn(Object.keys(se).filter(Vencord.Plugins.isPluginEnabled).join(', '))}
 						},
 					],
 					TypingIndicator: (e) =>
-						o(N, { noop: !0 }, o(U1, { channelId: e })),
+						o(k, { noop: !0 }, o(hI, { channelId: e })),
 				}));
 		});
-	var tp,
-		Nh = d(() => {
+	var km,
+		Sb = m(() => {
 			'use strict';
-			s();
-			Ft();
+			a();
+			gn();
+			w();
 			T();
-			v();
-			tp = f({
+			km = g({
 				name: 'Unindent',
 				description: 'Trims leading indentation from codeblocks',
-				authors: [c.Ven],
+				authors: [p.Ven],
 				dependencies: ['MessageEventsAPI'],
 				patches: [
 					{
@@ -16256,29 +22615,29 @@ ${i}`
 					});
 				},
 				start() {
-					(this.preSend = ze((e, t) => this.unindentMsg(t))),
-						(this.preEdit = bn((e, t, n) => this.unindentMsg(n)));
+					(this.preSend = rt((e, t) => this.unindentMsg(t))),
+						(this.preEdit = Kn((e, t, n) => this.unindentMsg(n)));
 				},
 				stop() {
-					We(this.preSend), Sn(this.preEdit);
+					st(this.preSend), Yn(this.preEdit);
 				},
 			});
 		});
-	var np,
-		G1,
-		op,
-		Rh = d(() => {
+	var Lm,
+		yI,
+		Em,
+		bb = m(() => {
 			'use strict';
-			s();
+			a();
+			w();
 			T();
-			v();
-			(G1 =
+			(yI =
 				'https://raw.githubusercontent.com/facebook/react/17.0.2/scripts/error-codes/codes.json'),
-				(op = f({
+				(Em = g({
 					name: 'ReactErrorDecoder',
 					description:
 						'Replaces "Minifed React Error" with the actual error.',
-					authors: [c.Cyn],
+					authors: [p.Cyn],
 					patches: [
 						{
 							find: '"https://reactjs.org/docs/error-decoder.html?invariant="',
@@ -16290,7 +22649,7 @@ ${i}`
 						},
 					],
 					async start() {
-						np = await fetch(G1)
+						Lm = await fetch(yI)
 							.then((e) => e.json())
 							.catch((e) =>
 								console.error(
@@ -16301,24 +22660,401 @@ ${i}`
 							);
 					},
 					stop() {
-						np = void 0;
+						Lm = void 0;
 					},
 					decodeError(e, ...t) {
 						let n = 0;
-						return np?.[e]?.replace(/%s/g, () => {
+						return Lm?.[e]?.replace(/%s/g, () => {
 							let i = t[n];
 							return n++, i;
 						});
 					},
 				}));
 		});
-	function z1(e) {
+	var Dm,
+		Tb = m(() => {
+			'use strict';
+			a();
+			wt();
+			_s();
+			w();
+			T();
+			Dm = g({
+				name: 'UrbanDictionary',
+				description:
+					'Search for a word on Urban Dictionary via /urban slash command',
+				authors: [p.jewdev],
+				dependencies: ['CommandsAPI'],
+				commands: [
+					{
+						name: 'urban',
+						description:
+							'Returns the definition of a word from Urban Dictionary',
+						inputType: 0,
+						options: [
+							{
+								type: 3,
+								name: 'word',
+								description:
+									'The word to search for on Urban Dictionary',
+								required: !0,
+							},
+						],
+						execute: async (e, t) => {
+							try {
+								let n = encodeURIComponent(e[0].value),
+									{
+										list: [i],
+									} = await (
+										await fetch(
+											`https://api.urbandictionary.com/v0/define?term=${n}`,
+										)
+									).json();
+								if (!i)
+									return void ie(t.channel.id, {
+										content: 'No results found.',
+									});
+								let r = (s) =>
+									s
+										.replaceAll(
+											`\r
+`,
+											`
+`,
+										)
+										.replace(/([*>_`~\\])/gis, '\\$1')
+										.replace(
+											/\[(.+?)\]/g,
+											(l, c) =>
+												`[${c}](https://www.urbandictionary.com/define.php?term=${encodeURIComponent(
+													c,
+												)} "Define '${c}' on Urban Dictionary")`,
+										)
+										.trim();
+								return void ie(t.channel.id, {
+									embeds: [
+										{
+											type: 'rich',
+											author: {
+												name: `Uploaded by "${i.author}"`,
+												url: `https://www.urbandictionary.com/author.php?author=${encodeURIComponent(
+													i.author,
+												)}`,
+											},
+											title: i.word,
+											url: `https://www.urbandictionary.com/define.php?term=${encodeURIComponent(
+												i.word,
+											)}`,
+											description: r(i.definition),
+											fields: [
+												{
+													name: 'Example',
+													value: r(i.example),
+												},
+												{
+													name: 'Want more definitions?',
+													value: `Check out [more definitions](https://www.urbandictionary.com/define.php?term=${n} "Define "${e[0].value}" on Urban Dictionary") on Urban Dictionary.`,
+												},
+											],
+											color: 16750848,
+											footer: {
+												text: `\u{1F44D} ${i.thumbs_up.toString()} | \u{1F44E} ${i.thumbs_down.toString()}`,
+												icon_url:
+													'https://www.urbandictionary.com/favicon.ico',
+											},
+											timestamp: new Date(
+												i.written_on,
+											).toISOString(),
+										},
+									],
+								});
+							} catch (n) {
+								ie(t.channel.id, {
+									content: `Something went wrong: \`${n}\``,
+								});
+							}
+						},
+					},
+				],
+			});
+		});
+	var xb = m(() => {});
+	var vI,
+		SI,
+		bI,
+		wb,
+		Mb = m(() => {
+			'use strict';
+			a();
+			xb();
+			_();
+			x();
+			(vI = P('selectChannel', 'selectVoiceChannel')),
+				(SI = ce('.lastSection', '.children')),
+				(bI = 1n << 20n),
+				(wb = ({ channel: e, label: t, showHeader: n }) =>
+					o(
+						SI,
+						null,
+						n &&
+							o(
+								y.FormTitle,
+								{ className: 'vc-uvs-header' },
+								'In a voice channel',
+							),
+						o(
+							R,
+							{
+								className: 'vc-uvs-button',
+								color: R.Colors.TRANSPARENT,
+								size: R.Sizes.SMALL,
+								onClick: () => {
+									et.can(bI, e)
+										? vI.selectVoiceChannel(e.id)
+										: Q.show({
+												message:
+													'Insufficient permissions to enter the channel.',
+												id: 'user-voice-show-insufficient-permissions',
+												type: Q.Type.FAILURE,
+												options: {
+													position: Q.Position.BOTTOM,
+												},
+										  });
+								},
+							},
+							t,
+						),
+					));
+		});
+	var TI,
+		xI,
+		Om,
+		Pb,
+		_m,
+		Ib = m(() => {
+			'use strict';
+			a();
+			E();
+			re();
+			w();
+			T();
+			_();
+			x();
+			Mb();
+			(TI = ue('VoiceStateStore')),
+				(xI = P('section', 'lastSection')),
+				(Om = N({
+					showInUserProfileModal: {
+						type: 3,
+						description:
+							"Show a user's voice channel in their profile modal",
+						default: !0,
+					},
+					showVoiceChannelSectionHeader: {
+						type: 3,
+						description:
+							'Whether to show "IN A VOICE CHANNEL" above the join button',
+						default: !0,
+					},
+				})),
+				(Pb = k.wrap(({ user: e }) => {
+					let { channelId: t } = TI.getVoiceStateForUser(e.id) ?? {};
+					if (!t) return null;
+					let n = X.getChannel(t),
+						i = le.getGuild(n.guild_id);
+					if (!i) return null;
+					let r = `${i.name} | ${n.name}`;
+					return o(wb, {
+						channel: n,
+						label: r,
+						showHeader: Om.store.showVoiceChannelSectionHeader,
+					});
+				})),
+				(_m = g({
+					name: 'UserVoiceShow',
+					description:
+						'Shows whether a User is currently in a voice channel somewhere in their profile',
+					authors: [p.LordElias],
+					settings: Om,
+					patchModal({ user: e }) {
+						return Om.store.showInUserProfileModal
+							? o(
+									'div',
+									{ className: 'vc-uvs-modal-margin' },
+									o(Pb, { user: e }),
+							  )
+							: null;
+					},
+					patchPopout: ({ user: e }) => {
+						let t = e.id === U.getCurrentUser().id;
+						return o(
+							'div',
+							{
+								className: t
+									? `vc-uvs-popout-margin ${xI.lastSection}`
+									: '',
+							},
+							o(Pb, { user: e }),
+						);
+					},
+					patches: [
+						{
+							find: '.showCopiableUsername',
+							replacement: {
+								match: /\(0,\w\.jsx\)\(\w{2},{user:\w,setNote/,
+								replace: '$self.patchPopout(arguments[0]),$&',
+							},
+						},
+						{
+							find: '.USER_PROFILE_MODAL',
+							replacement: {
+								match: /\(\)\.body.+?displayProfile:\i}\),/,
+								replace: '$&$self.patchModal(arguments[0]),',
+							},
+						},
+					],
+				}));
+		});
+	var Rb,
+		Cb = m(() => {
+			a();
+			(window.VencordStyles ??= new Map()).set(
+				'src/plugins/usrbg/index.css',
+				{
+					name: 'src/plugins/usrbg/index.css',
+					source: `:is([class*="userProfile"], [class*="userPopout"]) [class*="bannerPremium"] {
+    background: center / cover no-repeat;
+}
+
+[class*="NonPremium"]:has([class*="bannerPremium"]) [class*="avatarPositionNormal"],
+[class*="PremiumWithoutBanner"]:has([class*="bannerPremium"]) [class*="avatarPositionPremiumNoBanner"] {
+    top: 76px;
+}
+
+[style*="background-image"] [class*="background-"] {
+    background-color: transparent !important;
+}
+`,
+					classNames: {},
+					dom: null,
+				},
+			);
+			Rb = 'src/plugins/usrbg/index.css';
+		});
+	var wI,
+		zo,
+		Fa,
+		Fm,
+		Ab = m(() => {
+			'use strict';
+			a();
+			E();
+			je();
+			Wn();
+			w();
+			T();
+			Cb();
+			(wI =
+				'https://raw.githubusercontent.com/AutumnVN/usrbg/main/usrbg.json'),
+				(zo = {}),
+				(Fa = N({
+					nitroFirst: {
+						description:
+							'Banner to use if both Nitro and USRBG banners are present',
+						type: 4,
+						options: [
+							{ label: 'Nitro banner', value: !0, default: !0 },
+							{ label: 'USRBG banner', value: !1 },
+						],
+					},
+					voiceBackground: {
+						description:
+							'Use USRBG banners as voice chat backgrounds',
+						type: 3,
+						default: !0,
+						restartNeeded: !0,
+					},
+				})),
+				(Fm = g({
+					name: 'USRBG',
+					description:
+						'Displays user banners from USRBG, allowing anyone to get a banner without Nitro',
+					authors: [p.AutumnVN, p.pylix, p.TheKodeToad],
+					settings: Fa,
+					patches: [
+						{
+							find: '.NITRO_BANNER,',
+							replacement: [
+								{
+									match: /(\i)\.premiumType/,
+									replace: '$self.premiumHook($1)||$&',
+								},
+								{
+									match: /(\i)\.bannerSrc,/,
+									replace: '$self.useBannerHook($1),',
+								},
+								{
+									match: /\?\(0,\i\.jsx\)\(\i,{type:\i,shown/,
+									replace:
+										'&&$self.shouldShowBadge(arguments[0])$&',
+								},
+							],
+						},
+						{
+							find: '"data-selenium-video-tile":',
+							predicate: () => Fa.store.voiceBackground,
+							replacement: [
+								{
+									match: /(\i)\.style,/,
+									replace: '$self.voiceBackgroundHook($1),',
+								},
+							],
+						},
+					],
+					settingsAboutComponent: () =>
+						o(
+							We,
+							{
+								href: 'https://github.com/AutumnVN/usrbg#how-to-request-your-own-usrbg-banner',
+							},
+							'CLICK HERE TO GET YOUR OWN BANNER',
+						),
+					voiceBackgroundHook({
+						className: e,
+						participantUserId: t,
+					}) {
+						if (e.includes('tile-') && zo[t])
+							return {
+								backgroundImage: `url(${zo[t]})`,
+								backgroundSize: 'cover',
+								backgroundPosition: 'center',
+								backgroundRepeat: 'no-repeat',
+							};
+					},
+					useBannerHook({ displayProfile: e, user: t }) {
+						if (!(e?.banner && Fa.store.nitroFirst) && zo[t.id])
+							return zo[t.id];
+					},
+					premiumHook({ userId: e }) {
+						if (zo[e]) return 2;
+					},
+					shouldShowBadge({ displayProfile: e, user: t }) {
+						return e?.banner && (!zo[t.id] || Fa.store.nitroFirst);
+					},
+					async start() {
+						Je(Rb);
+						let e = await fetch(wI);
+						e.ok && (zo = await e.json());
+					},
+				}));
+		});
+	function II(e) {
 		let t = Math.floor(Math.random() * e.length);
 		return e[t];
 	}
-	function W1(e) {
+	function kb(e) {
 		e = e.toLowerCase();
-		for (let t of j1) e = e.replaceAll(t[0], t[1]);
+		for (let t of PI) e = e.replaceAll(t[0], t[1]);
 		return (
 			(e = e
 				.replaceAll(/([ \t\n])n/g, '$1ny')
@@ -16328,21 +23064,24 @@ ${i}`
 				)
 				.replaceAll(
 					/([^.,!][.,!])([ \t\n])/g,
-					(t, n, i) => `${n} ${z1(H1)}${i}`,
+					(t, n, i) => `${n} ${II(MI)}${i}`,
 				)),
 			e
 		);
 	}
-	var H1,
-		j1,
-		ip,
-		Ah = d(() => {
+	var MI,
+		PI,
+		Nb,
+		Bm,
+		Lb = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
+			gn();
+			E();
+			w();
 			T();
-			v();
-			(H1 = [
+			(MI = [
 				'rawr x3',
 				'OwO',
 				'UwU',
@@ -16376,7 +23115,7 @@ ${i}`
 				'/(^\u2022\u03C9\u2022^)',
 				'(\u273Fo\u03C9o)',
 			]),
-				(j1 = [
+				(PI = [
 					['small', 'smol'],
 					['cute', 'kawaii~'],
 					['fluff', 'floof'],
@@ -16384,84 +23123,202 @@ ${i}`
 					['stupid', 'baka'],
 					['what', 'nani'],
 					['meow', 'nya~'],
-				]);
-			ip = f({
+				]),
+				(Nb = N({
+					uwuEveryMessage: {
+						description: 'Make every single message uwuified',
+						type: 3,
+						default: !1,
+						restartNeeded: !1,
+					},
+				}));
+			Bm = g({
 				name: 'UwUifier',
 				description: 'Simply uwuify commands',
-				authors: [c.echo, c.skyevg],
-				dependencies: ['CommandsAPI'],
+				authors: [p.echo, p.skyevg, p.PandaNinjas],
+				dependencies: ['CommandsAPI', 'MessageEventsAPI'],
+				settings: Nb,
 				commands: [
 					{
 						name: 'uwuify',
 						description: 'uwuifies your messages',
-						options: [vn],
-						execute: (e) => ({ content: W1(ue(e, 'message', '')) }),
+						options: [Do],
+						execute: (e) => ({ content: kb(De(e, 'message', '')) }),
 					},
 				],
+				onSend(e) {
+					Nb.store.uwuEveryMessage && (e.content = kb(e.content));
+				},
+				start() {
+					(this.preSend = rt((e, t) => this.onSend(t))),
+						(this.preEdit = Kn((e, t, n) => this.onSend(n)));
+				},
+				stop() {
+					st(this.preSend), Yn(this.preEdit);
+				},
 			});
 		});
-	var rp,
-		sp,
-		Lh = d(() => {
+	function CI({
+		data: e,
+		UserMention: t,
+		RoleMention: n,
+		parse: i,
+		props: r,
+	}) {
+		let [s, l] = V(e.userId);
+		if (s)
+			return o(t, {
+				className: 'mention',
+				userId: s,
+				channelId: e.channelId,
+				inlinePreview: r.noStyleAndInteraction,
+				key: r.key,
+			});
+		let c = i(e.content, r);
+		return o(
+			n,
+			{ ...e, inlinePreview: r.formatInline },
+			o(
+				'span',
+				{
+					onMouseEnter: () => {
+						let u = c?.[0];
+						if (typeof u != 'string') return;
+						let h = u.match(/<@(\d+)>/)?.[1];
+						if (!h || Ba.has(h)) return;
+						if (U.getUser(h)) return l(h);
+						let f = () => {
+							Ba.add(h),
+								Eb.unshift(() =>
+									RI(h)
+										.then(() => {
+											l(h), Ba.delete(h);
+										})
+										.catch((v) => {
+											v?.status === 429 &&
+												(Eb.unshift(() =>
+													no(1e3).then(f),
+												),
+												Ba.delete(h));
+										})
+										.finally(() => no(300)),
+								);
+						};
+						f();
+					},
+				},
+				c,
+			),
+		);
+	}
+	var Ba,
+		Eb,
+		RI,
+		$m,
+		Db = m(() => {
 			'use strict';
-			s();
-			E();
+			a();
+			re();
+			w();
+			de();
+			Qo();
 			T();
-			v();
-			P();
-			rp = {};
-			ce('VoiceChatDoubleClick', 'vcDoubleClick');
-			sp = f({
-				name: 'VoiceChatDoubleClick',
+			_();
+			x();
+			(Ba = new Set()), (Eb = new dn(5)), (RI = ce('USER('));
+			$m = g({
+				name: 'ValidUser',
 				description:
-					'Join voice chats via double click instead of single click',
-				authors: [c.Ven, c.D3SOX],
+					"Fix mentions for unknown users showing up as '<@343383572805058560>' (hover over a mention to fix it)",
+				authors: [p.Ven],
+				tags: ['MentionCacheFix'],
 				patches: [
 					{
-						find: 'VoiceChannel.renderPopout',
-						replacement: [
-							{
-								match: /onClick:function\(\)\{(e\.handleClick.+?)}/g,
-								replace:
-									'onClick:function(){$self.schedule(()=>{$1},e)}',
-							},
-						],
-					},
-					{
-						find: '.shouldCloseDefaultModals',
+						find: 'className:"mention"',
 						replacement: {
-							match: /onClick:(\i)(?=,.{0,30}className:"channelMention".+?(\i)\.inContent)/,
-							replace: (e, t, n) =>
-								`onClick:(vcDoubleClickEvt)=>$self.shouldRunOnClick(vcDoubleClickEvt,${n})&&${t}()`,
+							match: /react:(?=function\(\i,\i,\i\).{0,50}return null==\i\?\(0,\i\.jsx\)\((\i),.+?jsx\)\((\i),\{className:"mention")/,
+							replace:
+								'react:(...args)=>$self.renderMention($1,$2,...args),originalReact:',
 						},
 					},
 				],
-				shouldRunOnClick(e, { channelId: t }) {
-					let n = G.getChannel(t);
-					return !n || ![2, 13].includes(n.type) ? !0 : e.detail >= 2;
-				},
-				schedule(e, t) {
-					let n = t.props.channel.id;
-					if (re.getVoiceChannelId() === n) {
-						e();
-						return;
-					}
-					let i = (rp[n] ??= { timeout: void 0, i: 0 });
-					clearTimeout(i.timeout),
-						++i.i >= 2
-							? (e(), delete rp[n])
-							: (i.timeout = setTimeout(() => {
-									delete rp[n];
-							  }, 500));
+				renderMention(e, t, n, i, r) {
+					return o(
+						k,
+						{ noop: !0 },
+						o(CI, {
+							RoleMention: e,
+							UserMention: t,
+							data: n,
+							parse: i,
+							props: r,
+						}),
+					);
 				},
 			});
 		});
-	function dr(e, t = k.plugins.VcNarrator) {
+	var Um,
+		Gm,
+		Ob = m(() => {
+			'use strict';
+			a();
+			w();
+			T();
+			x();
+			(Um = {}),
+				(Gm = g({
+					name: 'VoiceChatDoubleClick',
+					description:
+						'Join voice chats via double click instead of single click',
+					authors: [p.Ven, p.D3SOX],
+					patches: [
+						{
+							find: 'VoiceChannel.renderPopout',
+							replacement: [
+								{
+									match: /onClick:function\(\)\{(e\.handleClick.+?)}/g,
+									replace:
+										'onClick:function(){$self.schedule(()=>{$1},e)}',
+								},
+							],
+						},
+						{
+							find: '.shouldCloseDefaultModals',
+							replacement: {
+								match: /onClick:(\i)(?=,.{0,30}className:"channelMention".+?(\i)\.inContent)/,
+								replace: (e, t, n) =>
+									`onClick:(vcDoubleClickEvt)=>$self.shouldRunOnClick(vcDoubleClickEvt,${n})&&${t}()`,
+							},
+						},
+					],
+					shouldRunOnClick(e, { channelId: t }) {
+						let n = X.getChannel(t);
+						return !n || ![2, 13].includes(n.type)
+							? !0
+							: e.detail >= 2;
+					},
+					schedule(e, t) {
+						let n = t.props.channel.id;
+						if (fe.getVoiceChannelId() === n) {
+							e();
+							return;
+						}
+						let i = (Um[n] ??= { timeout: void 0, i: 0 });
+						clearTimeout(i.timeout),
+							++i.i >= 2
+								? (e(), delete Um[n])
+								: (i.timeout = setTimeout(() => {
+										delete Um[n];
+								  }, 500));
+					},
+				}));
+		});
+	function $a(e, t = M.plugins.VcNarrator) {
 		if (!e) return;
 		let n = new SpeechSynthesisUtterance(e),
 			i = speechSynthesis.getVoices().find((r) => r.voiceURI === t.voice);
 		(!i &&
-			(new F('VcNarrator').error(
+			(new Z('VcNarrator').error(
 				`Voice "${t.voice}" not found. Resetting to default.`,
 			),
 			(i = speechSynthesis.getVoices().find((r) => r.default)),
@@ -16472,98 +23329,112 @@ ${i}`
 			(n.rate = t.rate),
 			speechSynthesis.speak(n));
 	}
-	function Eh(e, t) {
-		return (
-			e
-				.normalize('NFKC')
-				.replace(/[^\w ]/g, '')
-				.trim() || t
-		);
+	function Fb(e) {
+		let t = M.plugins.VcNarrator.latinOnly
+			? /[^\p{Script=Latin}\p{Number}\p{Punctuation}\s]/gu
+			: /[^\p{Letter}\p{Number}\p{Punctuation}\s]/gu;
+		return e.normalize('NFKC').replace(t, '').trim();
 	}
-	function mr(e, t, n) {
+	function Ua(e, t, n) {
 		return e
-			.replaceAll('{{USER}}', Eh(t, t ? 'Someone' : ''))
-			.replaceAll('{{CHANNEL}}', Eh(n, 'channel'));
+			.replaceAll('{{USER}}', Fb(t) || (t ? 'Someone' : ''))
+			.replaceAll('{{CHANNEL}}', Fb(n) || 'channel');
 	}
-	function q1({ channelId: e, oldChannelId: t }, n) {
-		if ((n && e !== ap && ((t = ap), (ap = e)), e !== t)) {
+	function AI({ channelId: e, oldChannelId: t }, n) {
+		if ((n && e !== Hm && ((t = Hm), (Hm = e)), e !== t)) {
 			if (e) return [t ? 'move' : 'join', e];
 			if (t) return ['leave', t];
 		}
 		return ['', ''];
 	}
-	function Dh({ voiceStates: e }) {
-		let t = re.getVoiceChannelId(),
-			n = U.getCurrentUser().id;
-		for (let i of e) {
-			let { userId: r, channelId: a, oldChannelId: l } = i,
-				u = r === n;
-			if (!u && (!t || (a !== t && l !== t))) continue;
-			let [m, y] = q1(i, u);
-			if (!m) continue;
-			let h = k.plugins.VcNarrator[m + 'Message'],
-				b = u ? '' : U.getUser(r).username,
-				x = G.getChannel(y).name;
-			dr(mr(h, b, x));
-		}
+	function NI(e, t) {
+		let n = Object.assign({}, M.plugins.VcNarrator, e);
+		$a(Ua(n[t + 'Message'], U.getCurrentUser().username, 'general'), n);
 	}
-	function _h() {
-		let e = re.getVoiceChannelId(),
-			t = Oh.getVoiceStateForChannel(e);
-		if (!t) return;
-		let n = t.mute || t.selfMute ? 'unmute' : 'mute';
-		dr(mr(k.plugins.VcNarrator[n + 'Message'], '', G.getChannel(e).name));
-	}
-	function Fh() {
-		let e = re.getVoiceChannelId(),
-			t = Oh.getVoiceStateForChannel(e);
-		if (!t) return;
-		let n = t.deaf || t.selfDeaf ? 'undeafen' : 'deafen';
-		dr(mr(k.plugins.VcNarrator[n + 'Message'], '', G.getChannel(e).name));
-	}
-	function K1(e, t) {
-		let n = Object.assign({}, k.plugins.VcNarrator, e);
-		dr(mr(n[t + 'Message'], U.getCurrentUser().username, 'general'), n);
-	}
-	var Oh,
-		ap,
-		lp,
-		$h = d(() => {
+	var _b,
+		Hm,
+		zm,
+		Bb = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			po();
+			Ui();
+			w();
+			Se();
+			Xe();
+			ro();
 			T();
-			ge();
-			Be();
-			zo();
-			v();
-			D();
-			P();
-			Oh = C(
+			_();
+			x();
+			_b = P(
 				'getVoiceStatesForChannel',
 				'getCurrentClientVoiceChannelId',
 			);
-			lp = f({
+			zm = g({
 				name: 'VcNarrator',
 				description:
 					'Announces when users join, leave, or move voice channels via narrator',
-				authors: [c.Ven],
+				authors: [p.Ven],
+				flux: {
+					VOICE_STATE_UPDATES({ voiceStates: e }) {
+						let t = fe.getVoiceChannelId(),
+							n = U.getCurrentUser().id;
+						for (let i of e) {
+							let {
+									userId: r,
+									channelId: s,
+									oldChannelId: l,
+								} = i,
+								c = r === n;
+							if (!c && (!t || (s !== t && l !== t))) continue;
+							let [u, h] = AI(i, c);
+							if (!u) continue;
+							let f = M.plugins.VcNarrator[u + 'Message'],
+								v =
+									c && !M.plugins.VcNarrator.sayOwnName
+										? ''
+										: U.getUser(r).username,
+								S = X.getChannel(h).name;
+							$a(Ua(f, v, S));
+						}
+					},
+					AUDIO_TOGGLE_SELF_MUTE() {
+						let e = fe.getVoiceChannelId(),
+							t = _b.getVoiceStateForChannel(e);
+						if (!t) return;
+						let n = t.mute || t.selfMute ? 'unmute' : 'mute';
+						$a(
+							Ua(
+								M.plugins.VcNarrator[n + 'Message'],
+								'',
+								X.getChannel(e).name,
+							),
+						);
+					},
+					AUDIO_TOGGLE_SELF_DEAF() {
+						let e = fe.getVoiceChannelId(),
+							t = _b.getVoiceStateForChannel(e);
+						if (!t) return;
+						let n = t.deaf || t.selfDeaf ? 'undeafen' : 'deafen';
+						$a(
+							Ua(
+								M.plugins.VcNarrator[n + 'Message'],
+								'',
+								X.getChannel(e).name,
+							),
+						);
+					},
+				},
 				start() {
-					if (speechSynthesis.getVoices().length === 0) {
-						new F('VcNarrator').warn(
-							'No Narrator voices found. Thus, this plugin will not work. Check my Settings for more info',
+					if (
+						typeof speechSynthesis > 'u' ||
+						speechSynthesis.getVoices().length === 0
+					) {
+						new Z('VcNarrator').warn(
+							'SpeechSynthesis not supported or no Narrator voices found. Thus, this plugin will not work. Check my Settings for more info',
 						);
 						return;
 					}
-					I.subscribe('VOICE_STATE_UPDATES', Dh),
-						I.subscribe('AUDIO_TOGGLE_SELF_MUTE', _h),
-						I.subscribe('AUDIO_TOGGLE_SELF_DEAF', Fh);
-				},
-				stop() {
-					I.unsubscribe('VOICE_STATE_UPDATES', Dh),
-						I.subscribe('AUDIO_TOGGLE_SELF_MUTE', _h),
-						I.subscribe('AUDIO_TOGGLE_SELF_DEAF', Fh);
 				},
 				optionsCache: null,
 				get options() {
@@ -16571,13 +23442,14 @@ ${i}`
 						voice: {
 							type: 4,
 							description: 'Narrator Voice',
-							options: speechSynthesis
-								.getVoices()
-								.map((e) => ({
-									label: e.name,
-									value: e.voiceURI,
-									default: e.default,
-								})),
+							options:
+								window.speechSynthesis
+									?.getVoices()
+									.map((e) => ({
+										label: e.name,
+										value: e.voiceURI,
+										default: e.default,
+									})) ?? [],
 						},
 						volume: {
 							type: 5,
@@ -16592,6 +23464,17 @@ ${i}`
 							default: 1,
 							markers: [0.1, 0.5, 1, 2, 5, 10],
 							stickToMarkers: !1,
+						},
+						sayOwnName: {
+							description: 'Say own name',
+							type: 3,
+							default: !1,
+						},
+						latinOnly: {
+							description:
+								'Strip non latin characters from names before saying them',
+							type: 3,
+							default: !1,
 						},
 						joinMessage: {
 							type: 0,
@@ -16631,49 +23514,49 @@ ${i}`
 					});
 				},
 				settingsAboutComponent({ tempSettings: e }) {
-					let [t, n] = dn(() => {
-							let a = speechSynthesis.getVoices();
+					let [t, n] = Ut(() => {
+							let s = speechSynthesis.getVoices();
 							return [
-								a.length !== 0,
-								a.some((l) => l.lang.startsWith('en')),
+								s.length !== 0,
+								s.some((l) => l.lang.startsWith('en')),
 							];
 						}, []),
-						i = dn(
+						i = Ut(
 							() =>
 								Object.keys(
 									Vencord.Plugins.plugins.VcNarrator.options,
 								)
-									.filter((a) => a.endsWith('Message'))
-									.map((a) => a.slice(0, -7)),
+									.filter((s) => s.endsWith('Message'))
+									.map((s) => s.slice(0, -7)),
 							[],
 						),
 						r = null;
 					if (t)
 						n ||
 							(r = o(
-								Xt,
+								Hn,
 								null,
 								"You don't have any English voices installed, so the narrator might sound weird",
 							));
 					else {
-						let a = 'No narrator voices found. ';
-						(a += navigator.platform
+						let s = 'No narrator voices found. ';
+						(s += navigator.platform
 							?.toLowerCase()
 							.includes('linux')
 							? 'Install speech-dispatcher or espeak and run Discord with the --enable-speech-dispatcher flag'
 							: 'Try installing some in the Narrator settings of your Operating System'),
-							(r = o(Xt, null, a));
+							(r = o(Hn, null, s));
 					}
 					return o(
-						g.FormSection,
+						y.FormSection,
 						null,
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							'You can customise the spoken messages below. You can disable specific messages by setting them to nothing',
 						),
 						o(
-							g.FormText,
+							y.FormText,
 							null,
 							'The special placeholders ',
 							o('code', null, '{{USER}}'),
@@ -16684,11 +23567,11 @@ ${i}`
 						),
 						n &&
 							o(
-								p,
+								d,
 								null,
 								o(
-									g.FormTitle,
-									{ className: O.top20, tag: 'h3' },
+									y.FormTitle,
+									{ className: G.top20, tag: 'h3' },
 									'Play Example Sounds',
 								),
 								o(
@@ -16702,11 +23585,11 @@ ${i}`
 										},
 										className: 'vc-narrator-buttons',
 									},
-									i.map((a) =>
+									i.map((s) =>
 										o(
-											L,
-											{ key: a, onClick: () => K1(e, a) },
-											Ho([a]),
+											R,
+											{ key: s, onClick: () => NI(e, s) },
+											ko([s]),
 										),
 									),
 								),
@@ -16716,112 +23599,310 @@ ${i}`
 				},
 			});
 		});
-	var Y1,
-		Q1,
-		X1,
-		Bh,
-		cp,
-		Uh = d(() => {
+	var $b = m(() => {});
+	function LI(e) {
+		let t = [];
+		for (let n of Object.values(Vencord.Plugins.plugins))
+			n.toolboxActions &&
+				t.push(
+					o(
+						F.MenuGroup,
+						{ label: n.name, key: `vc-toolbox-${n.name}` },
+						Object.entries(n.toolboxActions).map(([i, r]) => {
+							let s = `vc-toolbox-${n.name}-${i}`;
+							return o(F.MenuItem, {
+								id: s,
+								key: s,
+								label: i,
+								action: r,
+							});
+						}),
+					),
+				);
+		return o(
+			F.Menu,
+			{ navId: 'vc-toolbox', onClose: e },
+			o(F.MenuItem, {
+				id: 'vc-toolbox-notifications',
+				label: 'Open Notification Log',
+				action: us,
+			}),
+			o(F.MenuItem, {
+				id: 'vc-toolbox-quickcss',
+				label: 'Open QuickCSS',
+				action: () => VencordNative.quickCss.openEditor(),
+			}),
+			...t,
+		);
+	}
+	function EI() {
+		return o(
+			'svg',
+			{
+				xmlns: 'http://www.w3.org/2000/svg',
+				viewBox: '0 0 96 96',
+				width: 24,
+				height: 24,
+			},
+			o('path', {
+				fill: 'currentColor',
+				d: 'M53 10h7v1h-1v1h-1v1h-1v1h-1v1h-1v1h5v1h-7v-1h1v-1h1v-1h1v-1h1v-1h1v-1h-5m-43 1v32h2v2h2v2h2v2h2v2h2v2h2v2h2v2h2v2h8v-2h2V46h-2v2h-2v2h-4v-2h-2v-2h-2v-2h-2v-2h-2v-2h-2V12m24 0v27h-2v3h4v-6h2v-2h4V12m13 2h5v1h-1v1h-1v1h-1v1h3v1h-5v-1h1v-1h1v-1h1v-1h-3m8 5h1v5h1v-1h1v1h-1v1h1v-1h1v1h-1v3h-1v1h-2v1h-1v1h1v-1h2v-1h1v2h-1v1h-2v1h-1v-1h-1v1h-6v-1h-1v-1h-1v-2h1v1h2v1h3v1h1v-1h-1v-1h-3v-1h-4v-4h1v-2h1v-1h1v-1h1v2h1v1h1v-1h1v1h-1v1h2v-2h1v-2h1v-1h1m-13 4h2v1h-1v4h1v2h1v1h1v1h1v1h4v1h-6v-1h-6v-1h-1v-5h1v-1h1v-2h2m17 3h1v3h-1v1h-1v1h-1v2h-2v-2h2v-1h1v-1h1m1 0h1v3h-1v1h-2v-1h1v-1h1m-30 2v8h-8v32h8v8h32v-8h8v-8H70v8H54V44h16v8h16v-8h-8v-8h-1v1h-7v-1h-2v1h-8v-1',
+			}),
+		);
+	}
+	function DI() {
+		let [e, t] = V(!1);
+		return o(
+			Ai,
+			{
+				position: 'bottom',
+				align: 'right',
+				animation: Ai.Animation.NONE,
+				shouldShow: e,
+				onRequestClose: () => t(!1),
+				renderPopout: () => LI(() => t(!1)),
+			},
+			(n, { isShown: i }) =>
+				o(kI, {
+					className: 'vc-toolbox-btn',
+					onClick: () => t((r) => !r),
+					tooltip: i ? null : 'Vencord Toolbox',
+					icon: EI,
+					selected: i,
+				}),
+		);
+	}
+	function OI({ children: e }) {
+		return (
+			e.splice(e.length - 1, 0, o(k, { noop: !0 }, o(DI, null))),
+			o(d, null, e)
+		);
+	}
+	var kI,
+		jm,
+		Ub = m(() => {
 			'use strict';
-			s();
+			a();
+			$b();
+			ps();
+			re();
+			w();
+			ye();
 			T();
-			B();
-			Ze();
-			v();
-			D();
-			P();
-			(Y1 = Y(() => we('.MEDIA_MODAL_CLOSE,'))),
-				(Q1 = Y(() =>
-					he((e) => e.type?.toString().includes('MASKED_LINK)')),
+			_();
+			x();
+			kI = oe(() => He('.HEADER_BAR_BADGE,', '.tooltip'));
+			jm = g({
+				name: 'VencordToolbox',
+				description:
+					'Adds a button next to the inbox button in the channel header that houses Vencord quick actions',
+				authors: [p.Ven, p.AutumnVN],
+				patches: [
+					{
+						find: '.mobileToolbar',
+						replacement: {
+							match: /(?<=toolbar:function.{0,100}\()\i.Fragment,/,
+							replace: '$self.ToolboxFragmentWrapper,',
+						},
+					},
+				],
+				ToolboxFragmentWrapper: k.wrap(OI, {
+					fallback: () =>
+						o(
+							'p',
+							{ style: { color: 'red' } },
+							'Failed to render :(',
+						),
+				}),
+			});
+		});
+	function Br(e) {
+		let t = e.startsWith('/') ? 'png' : zb.store.format,
+			n = new URL(e, window.location.href);
+		n.searchParams.set('size', '512'),
+			(n.pathname = n.pathname.replace(/\.(png|jpe?g|webp)$/, `.${t}`)),
+			(e = n.toString()),
+			be((i) =>
+				o(
+					Ie,
+					{ size: 'dynamic', ...i },
+					o(_I, {
+						shouldAnimate: !0,
+						original: e,
+						src: e,
+						renderLinkComponent: FI,
+					}),
+				),
+			);
+	}
+	var _I,
+		FI,
+		Ga,
+		zb,
+		Gb,
+		Hb,
+		Wm,
+		jb = m(() => {
+			'use strict';
+			a();
+			Jt();
+			E();
+			Bo();
+			w();
+			ze();
+			ye();
+			T();
+			_();
+			x();
+			(_I = oe(() => He('.MEDIA_MODAL_CLOSE,'))),
+				(FI = oe(() =>
+					ht((e) => e.type?.toString().includes('MASKED_LINK)')),
 				)),
-				(X1 = C('getGuildBannerURL')),
-				(Bh = 'Vencord.Plugins.plugins.ViewIcons.openImage('),
-				(cp = f({
-					name: 'ViewIcons',
-					authors: [c.Ven],
-					description:
-						'Makes Avatars/Banners in user profiles clickable, and adds Guild Context Menu Entries to View Banner/Icon.',
-					dependencies: ['MenuItemDeobfuscatorAPI'],
-					openImage(e) {
-						let t = new URL(e);
-						t.searchParams.set('size', '512'),
-							(e = t.toString()),
-							De((n) =>
+				(Ga = P('getGuildBannerURL')),
+				(zb = N({
+					format: {
+						type: 4,
+						description:
+							'Choose the image format to use for non animated images. Animated images will always use .gif',
+						options: [
+							{ label: 'webp', value: 'webp', default: !0 },
+							{ label: 'png', value: 'png' },
+							{ label: 'jpg', value: 'jpg' },
+						],
+					},
+				}));
+			(Gb =
+				(e, { user: t, guildId: n }) =>
+				() => {
+					let i = ke.getMember(n, t.id)?.avatar || null;
+					e.splice(
+						-1,
+						0,
+						o(
+							F.MenuGroup,
+							null,
+							o(F.MenuItem, {
+								id: 'view-avatar',
+								label: 'View Avatar',
+								action: () =>
+									Br(Ga.getUserAvatarURL(t, !0, 512)),
+								icon: Fo,
+							}),
+							i &&
+								o(F.MenuItem, {
+									id: 'view-server-avatar',
+									label: 'View Server Avatar',
+									action: () =>
+										Br(
+											Ga.getGuildMemberAvatarURLSimple(
+												{
+													userId: t.id,
+													avatar: i,
+													guildId: n,
+												},
+												!0,
+											),
+										),
+									icon: Fo,
+								}),
+						),
+					);
+				}),
+				(Hb =
+					(e, { guild: { id: t, icon: n, banner: i } }) =>
+					() => {
+						(!i && !n) ||
+							e.splice(
+								-1,
+								0,
 								o(
-									Ee,
-									{ size: 'dynamic', ...n },
-									o(Y1, {
-										shouldAnimate: !0,
-										original: e,
-										src: e,
-										renderLinkComponent: Q1,
-									}),
+									F.MenuGroup,
+									null,
+									n
+										? o(F.MenuItem, {
+												id: 'view-icon',
+												label: 'View Icon',
+												action: () =>
+													Br(
+														Ga.getGuildIconURL({
+															id: t,
+															icon: n,
+															size: 512,
+															canAnimate: !0,
+														}),
+													),
+												icon: Fo,
+										  })
+										: null,
+									i
+										? o(F.MenuItem, {
+												id: 'view-banner',
+												label: 'View Banner',
+												action: () =>
+													Br(
+														Ga.getGuildBannerURL(
+															{
+																id: t,
+																banner: i,
+															},
+															!0,
+														),
+													),
+												icon: Fo,
+										  })
+										: null,
 								),
 							);
+					}),
+				(Wm = g({
+					name: 'ViewIcons',
+					authors: [p.Ven, p.TheKodeToad, p.Nuckyz],
+					description:
+						'Makes avatars and banners in user profiles clickable, and adds View Icon/Banner entries in the user and server context menu',
+					tags: ['ImageUtilities'],
+					settings: zb,
+					openImage: Br,
+					start() {
+						we('user-context', Gb), we('guild-context', Hb);
+					},
+					stop() {
+						Ae('user-context', Gb), Ae('guild-context', Hb);
 					},
 					patches: [
 						{
 							find: 'onAddFriend:',
 							replacement: {
-								match: /\{src:(.{1,2}),avatarDecoration/g,
-								replace: (e, t) =>
-									`{src:${t},onClick:()=>${Bh}${t}),avatarDecoration`,
+								match: /\{src:(\i)(?=,avatarDecoration)/,
+								replace:
+									'{src:$1,onClick:()=>$self.openImage($1)',
 							},
 						},
 						{
-							find: '.popoutNoBannerPremium',
+							find: '.NITRO_BANNER,',
 							replacement: {
-								match: /style:.{0,10}\{\},(.{1,2})\)/,
-								replace: (e, t) =>
-									`onClick:${t}.backgroundImage&&(${t}.cursor="pointer",()=>${Bh}${t}.backgroundImage.replace("url(", ""))),${e}`,
+								match: /style:\{(?=backgroundImage:(\i&&\i)\?"url\("\.concat\((\i),)/,
+								replace:
+									'onClick:()=>$1&&$self.openImage($2),style:{cursor:$1?"pointer":void 0,',
 							},
 						},
 						{
-							find: '"GuildContextMenu:',
-							replacement: [
-								{
-									match: /\w=(\w)\.id/,
-									replace: '_guild=$1,$&',
-								},
-								{
-									match: /(id:"leave-guild".{0,200}),(\(0,.{1,3}\.jsxs?\).{0,200}function)/,
-									replace:
-										'$1,$self.buildGuildContextMenuEntries(_guild),$2',
-								},
-							],
+							find: '().avatarWrapperNonUserBot',
+							replacement: {
+								match: /(?<=avatarPositionPanel.+?)onClick:(\i\|\|\i)\?void 0(?<=,(\i)=\i\.avatarSrc.+?)/,
+								replace:
+									'style:($1)?{cursor:"pointer"}:{},onClick:$1?()=>{$self.openImage($2)}',
+							},
 						},
 					],
-					buildGuildContextMenuEntries(e) {
-						return o(
-							le.MenuGroup,
-							null,
-							e.banner &&
-								o(le.MenuItem, {
-									id: 'view-banner',
-									key: 'view-banner',
-									label: 'View Banner',
-									action: () =>
-										this.openImage(X1.getGuildBannerURL(e)),
-								}),
-							e.icon &&
-								o(le.MenuItem, {
-									id: 'view-icon',
-									key: 'view-icon',
-									label: 'View Icon',
-									action: () =>
-										this.openImage(e.getIconURL(0, !0)),
-								}),
-						);
-					},
 				}));
 		});
-	function Z1(e) {
+	function $I(e) {
 		return Object.fromEntries(
 			Object.entries(e).sort(([t], [n]) => t.localeCompare(n)),
 		);
 	}
-	function V1(e) {
-		let t = Z1(JSON.parse(JSON.stringify(e)));
+	function UI(e) {
+		let t = $I(JSON.parse(JSON.stringify(e)));
 		for (let i in t.author)
 			switch (i) {
 				case 'id':
@@ -16844,71 +23925,71 @@ ${i}`
 			t
 		);
 	}
-	function Gh(e) {
+	function Wb(e) {
 		return o(
 			'div',
 			{ style: { userSelect: 'text' } },
-			Ce.defaultRules.codeBlock.react(e, null, {}),
+			Pe.defaultRules.codeBlock.react(e, null, {}),
 		);
 	}
-	function eT(e) {
-		e = V1(e);
+	function GI(e) {
+		e = UI(e);
 		let t = JSON.stringify(e, null, 4),
-			n = De((i) =>
+			n = be((i) =>
 				o(
-					N,
+					k,
 					null,
 					o(
-						Ee,
+						Ie,
 						{ ...i, size: 'large' },
 						o(
-							He,
+							$e,
 							null,
 							o(
-								z,
+								q,
 								{
 									variant: 'heading-lg/semibold',
 									style: { flexGrow: 1 },
 								},
 								'View Raw',
 							),
-							o(hn, { onClick: () => yn(n) }),
+							o(St, { onClick: () => Gn(n) }),
 						),
 						o(
-							je,
+							Le,
 							null,
 							o(
 								'div',
 								{ style: { padding: '16px 0' } },
 								!!e.content &&
 									o(
-										p,
+										d,
 										null,
 										o(
-											g.FormTitle,
+											y.FormTitle,
 											{ tag: 'h5' },
 											'Content',
 										),
-										o(Gh, { content: e.content, lang: '' }),
-										o(g.FormDivider, {
-											className: O.bottom20,
+										o(Wb, { content: e.content, lang: '' }),
+										o(y.FormDivider, {
+											className: G.bottom20,
 										}),
 									),
-								o(g.FormTitle, { tag: 'h5' }, 'Message Data'),
-								o(Gh, { content: t, lang: 'json' }),
+								o(y.FormTitle, { tag: 'h5' }, 'Message Data'),
+								o(Wb, { content: t, lang: 'json' }),
 							),
 						),
 						o(
-							ut,
+							ot,
 							null,
 							o(
-								pe,
+								ae,
 								{ cellSpacing: 10 },
 								o(
-									L,
+									R,
 									{
 										onClick: () =>
-											gn(
+											ln(
 												t,
 												'Message data copied to clipboard!',
 											),
@@ -16916,10 +23997,10 @@ ${i}`
 									'Copy Message JSON',
 								),
 								o(
-									L,
+									R,
 									{
 										onClick: () =>
-											gn(
+											ln(
 												e.content,
 												'Content copied to clipboard!',
 											),
@@ -16932,21 +24013,21 @@ ${i}`
 				),
 			);
 	}
-	var J1,
-		pp,
-		Hh = d(() => {
+	var BI,
+		qm,
+		qb = m(() => {
 			'use strict';
-			s();
-			Wn();
-			J();
-			ct();
+			a();
+			Oo();
+			re();
+			xt();
+			w();
+			Xe();
+			de();
+			ze();
 			T();
-			Be();
-			B();
-			Ze();
-			v();
-			P();
-			J1 = () =>
+			x();
+			BI = () =>
 				o(
 					'svg',
 					{
@@ -16963,108 +24044,376 @@ ${i}`
 						d: 'M8.42616 4.60245C8.6193 4.40733 8.61898 4.09297 8.42545 3.89824L7.78047 3.24928C7.58466 3.05226 7.26578 3.05261 7.07041 3.25007L0.739669 9.64832C0.5469 9.84314 0.546901 10.1568 0.739669 10.3517L7.07041 16.7499C7.26578 16.9474 7.58465 16.9477 7.78047 16.7507L8.42545 16.1017C8.61898 15.907 8.6193 15.5927 8.42616 15.3975L3.43155 10.3517C3.23869 10.1569 3.23869 9.84309 3.43155 9.64824L8.42616 4.60245Z',
 					}),
 				);
-			pp = f({
+			qm = g({
 				name: 'ViewRaw',
 				description:
 					'Copy and view the raw content/data of any message.',
-				authors: [c.KingFish, c.Ven],
+				authors: [p.KingFish, p.Ven],
 				dependencies: ['MessagePopoverAPI'],
 				start() {
-					Bt('ViewRaw', (e) => ({
+					yn('ViewRaw', (e) => ({
 						label: 'View Raw (Left Click) / Copy Raw (Right Click)',
-						icon: J1,
+						icon: BI,
 						message: e,
-						channel: G.getChannel(e.channel_id),
-						onClick: () => eT(e),
+						channel: X.getChannel(e.channel_id),
+						onClick: () => GI(e),
 						onContextMenu: (t) => {
 							t.preventDefault(),
 								t.stopPropagation(),
-								gn(e.content);
+								ln(e.content);
 						},
 					}));
 				},
 				stop() {
-					Ut('CopyRawMessage');
+					vn('CopyRawMessage');
 				},
 			});
 		});
-	var up,
-		jh = d(() => {
+	async function HI(e) {
+		let t = await fetch(e);
+		if (t.status === 200) return await t.blob();
+	}
+	var zI,
+		xi,
+		Km,
+		Kb = m(() => {
 			'use strict';
-			s();
+			a();
+			E();
+			w();
 			T();
-			v();
-			up = f({
-				name: 'WebContextMenus',
-				description:
-					'Re-adds some of context menu items missing on the web version of Discord, namely Copy/Open Link',
-				authors: [c.Ven],
-				enabledByDefault: !0,
-				patches: [
-					{
-						find: 'open-native-link',
-						replacement: [
-							{
-								match: /if\(!\w\..{1,3}\|\|null==/,
-								replace: 'if(null==',
-							},
-							{
-								match: /\w\.default\.copy/,
-								replace:
-									'Vencord.Webpack.Common.Clipboard.copy',
-							},
-						],
+			Gl();
+			_();
+			x();
+			(zI = Ce((e) => e.emitter?._events?.INSERT_TEXT)),
+				(xi = N({
+					addBack: {
+						type: 3,
+						description:
+							'Add back the Discord context menus for images, links and the chat input bar',
+						default: !1,
+						restartNeeded: !0,
 					},
-				],
-			});
+				})),
+				(Km = g({
+					name: 'WebContextMenus',
+					description:
+						"Re-adds context menus missing in the web version of Discord: Images, ChatInputBar, Links, 'Copy Link', 'Open Link', 'Copy Image', 'Save Image'",
+					authors: [p.Ven],
+					enabledByDefault: !0,
+					settings: xi,
+					start() {
+						if (xi.store.addBack) {
+							let e = an('contextMenuCallbackNative');
+							window.removeEventListener(
+								'contextmenu',
+								e.contextMenuCallbackWeb,
+							),
+								window.addEventListener(
+									'contextmenu',
+									e.contextMenuCallbackNative,
+								),
+								(this.changedListeners = !0);
+						}
+					},
+					stop() {
+						if (this.changedListeners) {
+							let e = an('contextMenuCallbackNative');
+							window.removeEventListener(
+								'contextmenu',
+								e.contextMenuCallbackNative,
+							),
+								window.addEventListener(
+									'contextmenu',
+									e.contextMenuCallbackWeb,
+								);
+						}
+					},
+					patches: [
+						{
+							find: 'open-native-link',
+							replacement: [
+								{
+									match: /if\(!\i\.\i\|\|null==/,
+									replace: 'if(null==',
+								},
+								{
+									match: /\w\.default\.copy/,
+									replace:
+										'Vencord.Webpack.Common.Clipboard.copy',
+								},
+							],
+						},
+						{
+							find: 'id:"copy-image"',
+							replacement: [
+								{
+									match: /if\(!\i\.\i\|\|null==/,
+									replace: 'if(null==',
+								},
+								{
+									match: /return\s*?\[\i\.default\.canCopyImage\(\)/,
+									replace: 'return [true',
+								},
+								{
+									match: /(?<=COPY_IMAGE_MENU_ITEM,)action:/,
+									replace:
+										'action:()=>$self.copyImage(arguments[0]),oldAction:',
+								},
+								{
+									match: /(?<=SAVE_IMAGE_MENU_ITEM,)action:/,
+									replace:
+										'action:()=>$self.saveImage(arguments[0]),oldAction:',
+								},
+							],
+						},
+						{
+							find: 'navId:"image-context"',
+							predicate: () => xi.store.addBack,
+							replacement: {
+								match: /return \i\.\i\?/,
+								replace: 'return true?',
+							},
+						},
+						{
+							find: '"interactionUsernameProfile"',
+							predicate: () => xi.store.addBack,
+							replacement: {
+								match: /if\("A"===\i\.tagName&&""!==\i\.textContent\)/,
+								replace: 'if(false)',
+							},
+						},
+						{
+							find: '"slate-toolbar"',
+							predicate: () => xi.store.addBack,
+							replacement: {
+								match: /(?<=\.handleContextMenu=.+?"bottom";)\i\.\i\?/,
+								replace: 'true?',
+							},
+						},
+						{
+							find: ':"command-suggestions"',
+							predicate: () => xi.store.addBack,
+							replacement: [
+								{
+									match: /\i=.{0,30}text:\i,target:\i,onHeightUpdate:\i\}\),2\),(\i)=\i\[0\],(\i)=\i\[1\]/,
+									replace: '$1=[],$2=[]',
+								},
+								{
+									match: /if\(!\i\.\i\)return null;/,
+									replace: '',
+								},
+								{
+									match: /("submit-button".+?)(\(0,\i\.jsx\)\(\i\.MenuGroup,\{children:\i\}\),){2}/,
+									replace: '$1',
+								},
+								{
+									match: /\b\i\.default\.(copy|cut|paste)/g,
+									replace: '$self.$1',
+								},
+							],
+						},
+					],
+					async copyImage(e) {
+						let t = new Image();
+						(t.onload = () => {
+							let n = document.createElement('canvas');
+							(n.width = t.naturalWidth),
+								(n.height = t.naturalHeight),
+								n.getContext('2d').drawImage(t, 0, 0),
+								n.toBlob((i) => {
+									navigator.clipboard.write([
+										new ClipboardItem({ 'image/png': i }),
+									]);
+								}, 'image/png');
+						}),
+							(t.crossOrigin = 'anonymous'),
+							(t.src = e);
+					},
+					async saveImage(e) {
+						let t = await HI(e);
+						if (!t) return;
+						let n = new URL(e).pathname.split('/').pop(),
+							i = new File([t], n, { type: t.type });
+						hs(i);
+					},
+					copy() {
+						let e = document.getSelection();
+						!e || jt.copy(e.toString());
+					},
+					cut() {
+						this.copy(),
+							zI.dispatch('INSERT_TEXT', { rawText: '' });
+					},
+					async paste() {
+						let e = await navigator.clipboard.readText(),
+							t = new DataTransfer();
+						t.setData('text/plain', e),
+							document.dispatchEvent(
+								new ClipboardEvent('paste', {
+									clipboardData: t,
+								}),
+							);
+					},
+				}));
 		});
-	var dp,
-		zh = d(() => {
-			'use strict';
-			s();
-			T();
-			v();
-			dp = f({
-				name: 'Webhook Tags',
-				description: 'Changes the bot tag to say webhook for webhooks',
-				authors: [c.Cyn],
-				patches: [
-					{
-						find: '.BOT=0]="BOT"',
-						replacement: [
+	function Yb(e, t, n) {
+		let i = Ym.getSendMessageOptionsForReply({
+			channel: e,
+			message: t,
+			shouldMention: !0,
+			showMentionToggle: !0,
+		});
+		if (Ha.store.greetMode === 'Message' || n.length > 1) {
+			i.stickerIds = n;
+			let r = {
+				content: '',
+				tts: !1,
+				invalidEmojis: [],
+				validNonShortcutEmojis: [],
+			};
+			Ym._sendMessage(e.id, r, i);
+		} else Ym.sendGreetMessage(e.id, n[0], i);
+	}
+	function jI({ stickers: e, channel: t, message: n }) {
+		let i = Ha.use(['greetMode', 'multiGreetChoices']),
+			{ greetMode: r, multiGreetChoices: s = [] } = i;
+		return o(
+			F.Menu,
+			{
+				navId: 'greet-sticker-picker',
+				onClose: () => L.dispatch({ type: 'CONTEXT_MENU_CLOSE' }),
+				'aria-label': 'Greet Sticker Picker',
+			},
+			o(
+				F.MenuGroup,
+				{ label: 'Greet Mode' },
+				Object.values(Zb).map((l) =>
+					o(F.MenuRadioItem, {
+						key: l,
+						group: 'greet-mode',
+						id: 'greet-mode-' + l,
+						label: l,
+						checked: l === r,
+						action: () => (i.greetMode = l),
+					}),
+				),
+			),
+			o(F.MenuSeparator, null),
+			o(
+				F.MenuGroup,
+				{ label: 'Greet Stickers' },
+				e.map((l) =>
+					o(F.MenuItem, {
+						key: l.id,
+						id: 'greet-' + l.id,
+						label: l.description.split(' ')[0],
+						action: () => Yb(t, n, [l.id]),
+					}),
+				),
+			),
+			Ha.store.unholyMultiGreetEnabled
+				? o(
+						d,
+						null,
+						o(F.MenuSeparator, null),
+						o(
+							F.MenuItem,
 							{
-								match: /(.)\[.\.BOT=0\]="BOT";/,
-								replace: (e, t) =>
-									`${t}[${t}.WEBHOOK=99]="WEBHOOK";${e}`,
+								label: 'Unholy Multi-Greet',
+								id: 'unholy-multi-greet',
+							},
+							e.map((l) => {
+								let c = s.some((u) => u === l.id);
+								return o(F.MenuCheckboxItem, {
+									key: l.id,
+									id: 'multi-greet-' + l.id,
+									label: l.description.split(' ')[0],
+									checked: c,
+									disabled: !c && s.length >= 3,
+									action: () => {
+										i.multiGreetChoices = c
+											? s.filter((u) => u !== l.id)
+											: [...s, l.id];
+									},
+								});
+							}),
+							o(F.MenuSeparator, null),
+							o(F.MenuItem, {
+								id: 'multi-greet-submit',
+								label: 'Send Greets',
+								action: () => Yb(t, n, s),
+								disabled: s.length === 0,
+							}),
+						),
+				  )
+				: null,
+		);
+	}
+	var Zb,
+		Ha,
+		Ym,
+		Zm,
+		Xb = m(() => {
+			'use strict';
+			a();
+			E();
+			w();
+			T();
+			_();
+			x();
+			(Zb = ((n) => (
+				(n.Greet = 'Greet'), (n.NormalMessage = 'Message'), n
+			))(Zb || {})),
+				(Ha = N({
+					greetMode: {
+						type: 4,
+						options: [
+							{
+								label: 'Greet (you can only greet 3 times)',
+								value: 'Greet',
+								default: !0,
 							},
 							{
-								match: /case (.)\.BOT:default:(.)=/,
-								replace: (e, t, n) =>
-									`case ${t}.WEBHOOK:${n}="WEBHOOK";break;${e}`,
+								label: 'Normal Message (you can greet spam)',
+								value: 'Message',
 							},
 						],
+						description: 'Choose the greet mode',
 					},
+				})),
+				(Ym = P('sendGreetMessage'));
+			Zm = g({
+				name: 'GreetStickerPicker',
+				description:
+					"Allows you to use any greet sticker instead of only the random one by right-clicking the 'Wave to say hi!' button",
+				authors: [p.Ven],
+				settings: Ha,
+				patches: [
 					{
-						find: '.Types.ORIGINAL_POSTER',
+						find: 'Messages.WELCOME_CTA_LABEL',
 						replacement: {
-							match: /return null==(.)\?null:\(0,.{1,3}\.jsxs?\)\((.{1,3}\.\i)/,
-							replace: (e, t, n) =>
-								`if(arguments[0].message.webhookId&&arguments[0].user.isNonUserBot()){${t}=${n}.Types.WEBHOOK}${e}`,
+							match: /innerClassName:\i\(\).welcomeCTAButton,(?<=%\i\.length;return (\i)\[\i\].+?)/,
+							replace:
+								'$&onContextMenu:(e)=>$self.pickSticker(e,$1,arguments[0]),',
 						},
 					},
 				],
+				pickSticker(e, t, n) {
+					n.message.deleted ||
+						Fn.open(e, () => o(jI, { stickers: t, ...n }));
+				},
 			});
 		});
-	function rT(e, t, n) {
+	function ZI(e, t, n) {
 		let i = t.name + (t.id ? `:${t.id}` : '');
-		return ao
-			.get({
-				url: `/channels/${e.channel_id}/messages/${e.id}/reactions/${i}`,
-				query: { limit: 100, type: n },
-				oldFormErrors: !0,
-			})
+		return Yt.get({
+			url: `/channels/${e.channel_id}/messages/${e.id}/reactions/${i}`,
+			query: { limit: 100, type: n },
+			oldFormErrors: !0,
+		})
 			.then((r) =>
-				I.dispatch({
+				L.dispatch({
 					type: 'MESSAGE_REACTION_ADD_USERS',
 					channelId: e.channel_id,
 					messageId: e.id,
@@ -17074,36 +24423,36 @@ ${i}`
 				}),
 			)
 			.catch(console.error)
-			.finally(() => co(250));
+			.finally(() => no(250));
 	}
-	function sT(e, t, n) {
+	function XI(e, t, n) {
 		let i = `${e.id}:${t.name}:${t.id ?? ''}:${n}`,
-			r = (oT.__getLocalVars().reactions[i] ??= {
+			r = (KI.__getLocalVars().reactions[i] ??= {
 				fetched: !1,
 				users: {},
 			});
 		return (
-			r.fetched || (iT.unshift(() => rT(e, t, n)), (r.fetched = !0)),
+			r.fetched || (YI.unshift(() => ZI(e, t, n)), (r.fetched = !0)),
 			r.users
 		);
 	}
-	function aT(e) {
+	function JI(e) {
 		return function (n, i) {
 			return o(
-				Z,
+				W,
 				{
 					text: e
 						.slice(5)
 						.map((r) => r.username)
 						.join(', '),
 				},
-				({ onMouseEnter: r, onMouseLeave: a }) =>
+				({ onMouseEnter: r, onMouseLeave: s }) =>
 					o(
 						'div',
 						{
-							className: nT.moreUsers,
+							className: qI.moreUsers,
 							onMouseEnter: r,
-							onMouseLeave: a,
+							onMouseLeave: s,
 						},
 						'+',
 						e.length - 5,
@@ -17111,36 +24460,40 @@ ${i}`
 			);
 		};
 	}
-	var tT,
-		nT,
-		oT,
-		iT,
-		mp,
-		Wh = d(() => {
+	function QI(e) {
+		e.stopPropagation();
+	}
+	var WI,
+		qI,
+		KI,
+		YI,
+		Xm,
+		Jb = m(() => {
 			'use strict';
-			s();
-			J();
+			a();
+			re();
+			w();
+			de();
+			Qo();
+			ye();
 			T();
-			B();
-			Un();
-			v();
-			D();
-			P();
-			(tT = Y(() =>
-				we('defaultRenderUser', 'showDefaultAvatarsForNullUsers'),
+			_();
+			x();
+			(WI = oe(() =>
+				He('defaultRenderUser', 'showDefaultAvatarsForNullUsers'),
 			)),
-				(nT = C(
+				(qI = P(
 					'moreUsers',
 					'emptyUser',
 					'avatarContainer',
 					'clickableAvatar',
 				)),
-				(oT = C('getReactions')),
-				(iT = new dt());
-			mp = f({
+				(KI = P('getReactions')),
+				(YI = new dn());
+			Xm = g({
 				name: 'WhoReacted',
 				description: 'Renders the Avatars of reactors',
-				authors: [c.Ven],
+				authors: [p.Ven, p.KannaDev],
 				patches: [
 					{
 						find: ',reactionRef:',
@@ -17154,23 +24507,23 @@ ${i}`
 				renderUsers(e) {
 					return e.message.reactions.length > 10
 						? null
-						: o(N, { noop: !0 }, o(this._renderUsers, { ...e }));
+						: o(k, { noop: !0 }, o(this._renderUsers, { ...e }));
 				},
 				_renderUsers({ message: e, emoji: t, type: n }) {
-					let i = wt();
-					w.useEffect(() => {
-						let l = (u) => {
-							u.messageId === e.id && i();
+					let i = Bt();
+					I.useEffect(() => {
+						let l = (c) => {
+							c.messageId === e.id && i();
 						};
 						return (
-							I.subscribe('MESSAGE_REACTION_ADD_USERS', l),
-							() => I.unsubscribe('MESSAGE_REACTION_ADD_USERS', l)
+							L.subscribe('MESSAGE_REACTION_ADD_USERS', l),
+							() => L.unsubscribe('MESSAGE_REACTION_ADD_USERS', l)
 						);
 					}, [e.id]);
-					let r = sT(e, t, n),
-						a = Object.values(r).filter(Boolean);
-					for (let l of a)
-						I.dispatch({ type: 'USER_UPDATE', user: l });
+					let r = XI(e, t, n),
+						s = Object.values(r).filter(Boolean);
+					for (let l of s)
+						L.dispatch({ type: 'USER_UPDATE', user: l });
 					return o(
 						'div',
 						{
@@ -17179,31 +24532,35 @@ ${i}`
 								transform: 'scale(0.9)',
 							},
 						},
-						o(tT, {
-							users: a,
-							guildId: G.getChannel(e.channel_id)?.guild_id,
-							renderIcon: !1,
-							max: 5,
-							showDefaultAvatarsForNullUsers: !0,
-							showUserPopout: !0,
-							renderMoreUsers: aT(a),
-						}),
+						o(
+							'div',
+							{ onClick: QI },
+							o(WI, {
+								users: s,
+								guildId: X.getChannel(e.channel_id)?.guild_id,
+								renderIcon: !1,
+								max: 5,
+								showDefaultAvatarsForNullUsers: !0,
+								showUserPopout: !0,
+								renderMoreUsers: JI(s),
+							}),
+						),
 					);
 				},
 			});
 		});
-	var fp,
-		qh = d(() => {
+	var Jm,
+		Qb = m(() => {
 			'use strict';
-			s();
-			Re();
+			a();
+			wt();
+			w();
 			T();
-			v();
-			fp = f({
+			Jm = g({
 				name: 'Wikisearch',
 				description:
 					'Searches Wikipedia for your requested query. (/wikisearch)',
-				authors: [c.Samu],
+				authors: [p.Samu],
 				dependencies: ['CommandsAPI'],
 				commands: [
 					{
@@ -17219,9 +24576,9 @@ ${i}`
 							},
 						],
 						execute: async (e, t) => {
-							let n = ue(e, 'search', '');
+							let n = De(e, 'search', '');
 							if (!n)
-								return H(t.channel.id, {
+								return ie(t.channel.id, {
 									content: 'No word was defined!',
 								});
 							let i = new URLSearchParams({
@@ -17235,11 +24592,11 @@ ${i}`
 								r = await fetch(
 									'https://en.wikipedia.org/w/api.php?' + i,
 								)
-									.then((m) => m.json())
+									.then((u) => u.json())
 									.catch(
-										(m) => (
-											console.log(m),
-											H(t.channel.id, {
+										(u) => (
+											console.log(u),
+											ie(t.channel.id, {
 												content:
 													'There was an error. Check the console for more info',
 											}),
@@ -17250,28 +24607,28 @@ ${i}`
 							if (!r.query?.search?.length)
 								return (
 									console.log(r),
-									H(t.channel.id, {
+									ie(t.channel.id, {
 										content: 'No results given',
 									})
 								);
-							let a = await fetch(
+							let s = await fetch(
 								`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info%7Cdescription%7Cimages%7Cimageinfo%7Cpageimages&list=&meta=&indexpageids=1&pageids=${r.query.search[0].pageid}&formatversion=2&origin=*`,
 							)
-								.then((m) => m.json())
-								.then((m) => m.query.pages[0])
+								.then((u) => u.json())
+								.then((u) => u.query.pages[0])
 								.catch(
-									(m) => (
-										console.log(m),
-										H(t.channel.id, {
+									(u) => (
+										console.log(u),
+										ie(t.channel.id, {
 											content:
 												'There was an error. Check the console for more info',
 										}),
 										null
 									),
 								);
-							if (!a) return;
-							let l = a.thumbnail,
-								u = l && {
+							if (!s) return;
+							let l = s.thumbnail,
+								c = l && {
 									url: l.source.replace(
 										/(50px-)/gi,
 										'1000px-',
@@ -17279,7 +24636,7 @@ ${i}`
 									height: l.height * 100,
 									width: l.width * 100,
 								};
-							H(t.channel.id, {
+							ie(t.channel.id, {
 								embeds: [
 									{
 										type: 'rich',
@@ -17294,7 +24651,7 @@ ${i}`
 												)
 												.replace(/(&quot;)/gi, '"') +
 											'...',
-										image: u,
+										image: c,
 										footer: {
 											text: 'Powered by the Wikimedia API',
 										},
@@ -17306,485 +24663,460 @@ ${i}`
 				],
 			});
 		});
-	var se,
-		Fn = d(() => {
-			s();
-			Xp();
-			tu();
-			ou();
-			iu();
-			su();
-			au();
-			cu();
-			pu();
-			uu();
-			du();
-			mu();
-			fu();
-			gu();
-			Su();
-			vu();
-			Tu();
-			xu();
-			wu();
-			Pu();
-			ku();
-			Cu();
-			Au();
-			Lu();
-			Eu();
-			Ou();
-			Qu();
-			ed();
-			td();
-			nd();
-			cd();
-			pd();
-			ud();
-			bd();
-			Ad();
-			Ld();
-			Ed();
-			Dd();
-			_d();
-			Fd();
-			Bd();
-			Ud();
-			jd();
-			Ri();
-			Xd();
-			Zd();
-			em();
-			nm();
-			rm();
-			cm();
-			gm();
-			ym();
-			bm();
-			Sm();
-			vm();
-			Tm();
-			xm();
-			wm();
-			Pm();
-			Im();
-			km();
-			Cm();
-			Mm();
-			Nm();
-			Rm();
-			Am();
-			Dm();
-			_m();
-			$m();
-			Ml();
-			Km();
-			of();
-			rf();
-			yf();
-			bf();
-			Tf();
-			xf();
-			kf();
-			Rf();
-			uc();
-			Vg();
-			Lc();
-			lh();
+	var Te,
+		ni = m(() => {
+			a();
+			Gf();
+			Hf();
+			bg();
+			xg();
+			wg();
+			Mg();
+			Pg();
+			Ig();
+			Rg();
+			Cg();
+			Ag();
+			Ng();
+			kg();
+			Lg();
+			_g();
+			Fg();
+			Wg();
+			qg();
+			Kg();
+			Yg();
+			Zg();
+			Jg();
+			Qg();
+			nh();
+			oh();
+			ih();
 			ch();
-			ph();
-			yh();
-			bh();
-			vh();
+			mh();
+			fh();
+			xh();
 			wh();
-			Ih();
-			kh();
 			Mh();
-			Zc();
-			Nh();
-			Rh();
-			Ah();
-			Lh();
-			$h();
-			Uh();
-			Hh();
-			jh();
-			zh();
-			Wh();
-			qh();
-			se = {
-				[Br.name]: Br,
-				[Hr.name]: Hr,
-				[Yr.name]: Yr,
-				[Qr.name]: Qr,
-				[Jr.name]: Jr,
-				[Zr.name]: Zr,
-				[Vr.name]: Vr,
-				[es.name]: es,
-				[ts.name]: ts,
-				[ns.name]: ns,
-				[os.name]: os,
-				[is.name]: is,
-				[rs.name]: rs,
-				[ps.name]: ps,
-				[us.name]: us,
-				[ds.name]: ds,
-				[ms.name]: ms,
-				[fs.name]: fs,
-				[gs.name]: gs,
-				[hs.name]: hs,
-				[ys.name]: ys,
-				[Is.name]: Is,
-				[ks.name]: ks,
-				[Cs.name]: Cs,
-				[Es.name]: Es,
-				[Xs.name]: Xs,
-				[Zs.name]: Zs,
-				[Vs.name]: Vs,
-				[ea.name]: ea,
-				[ia.name]: ia,
-				[aa.name]: aa,
-				[la.name]: la,
-				[da.name]: da,
-				[ga.name]: ga,
-				[ha.name]: ha,
-				[ya.name]: ya,
-				[ba.name]: ba,
-				[Sa.name]: Sa,
-				[va.name]: va,
-				[xa.name]: xa,
-				[wa.name]: wa,
-				[Ia.name]: Ia,
-				[Ma.name]: Ma,
-				[Na.name]: Na,
-				[La.name]: La,
-				[Ea.name]: Ea,
-				[_a.name]: _a,
-				[Oa.name]: Oa,
-				[ja.name]: ja,
-				[Ka.name]: Ka,
-				[Ya.name]: Ya,
-				[Qa.name]: Qa,
-				[Xa.name]: Xa,
-				[Va.name]: Va,
-				[el.name]: el,
-				[tl.name]: tl,
-				[nl.name]: nl,
-				[ol.name]: ol,
-				[il.name]: il,
-				[rl.name]: rl,
-				[sl.name]: sl,
-				[al.name]: al,
-				[ll.name]: ll,
-				[cl.name]: cl,
-				[pl.name]: pl,
-				[ul.name]: ul,
-				[dl.name]: dl,
-				[wl.name]: wl,
-				[Rl.name]: Rl,
-				[Al.name]: Al,
-				[Ll.name]: Ll,
-				[_l.name]: _l,
-				[zl.name]: zl,
-				[Wl.name]: Wl,
-				[Kl.name]: Kl,
+			kh();
+			_h();
+			Jh();
+			Qh();
+			Vh();
+			ey();
+			ty();
+			ry();
+			sy();
+			cy();
+			uy();
+			my();
+			Iu();
+			Bs();
+			Py();
+			Ry();
+			Ay();
+			Ly();
+			Oy();
+			$y();
+			Ky();
+			Zy();
+			Xy();
+			Jy();
+			Vy();
+			ev();
+			tv();
+			nv();
+			ov();
+			iv();
+			rv();
+			sv();
+			av();
+			lv();
+			cv();
+			uv();
+			pv();
+			dv();
+			yv();
+			Js();
+			Dv();
+			qv();
+			Kv();
+			Xv();
+			s1();
+			a1();
+			v1();
+			S1();
+			L1();
+			E1();
+			_1();
+			J1();
+			Q1();
+			nS();
+			rS();
+			uS();
+			kd();
+			S0();
+			b0();
+			I0();
+			Vd();
+			O0();
+			_0();
+			F0();
+			B0();
+			q0();
+			K0();
+			Z0();
+			Q0();
+			eb();
+			ab();
+			lb();
+			hb();
+			vb();
+			Cm();
+			Sb();
+			bb();
+			Tb();
+			Ib();
+			Ab();
+			Lb();
+			Db();
+			Ob();
+			Bb();
+			Ub();
+			jb();
+			qb();
+			Kb();
+			Xb();
+			Jb();
+			Qb();
+			Te = {
+				[Tl.name]: Tl,
+				[xl.name]: xl,
+				[jl.name]: jl,
 				[Yl.name]: Yl,
-				[Ql.name]: Ql,
+				[Zl.name]: Zl,
+				[Xl.name]: Xl,
 				[Jl.name]: Jl,
-				[Xn.name]: Xn,
+				[Ql.name]: Ql,
+				[Vl.name]: Vl,
+				[ec.name]: ec,
+				[tc.name]: tc,
+				[nc.name]: nc,
+				[oc.name]: oc,
+				[ic.name]: ic,
+				[cc.name]: cc,
+				[uc.name]: uc,
+				[mc.name]: mc,
+				[fc.name]: fc,
+				[gc.name]: gc,
+				[hc.name]: hc,
+				[yc.name]: yc,
+				[vc.name]: vc,
+				[Sc.name]: Sc,
 				[Rc.name]: Rc,
-				[Dc.name]: Dc,
+				[Cc.name]: Cc,
+				[Ac.name]: Ac,
+				[Oc.name]: Oc,
 				[_c.name]: _c,
 				[Fc.name]: Fc,
-				[Oc.name]: Oc,
-				[Gc.name]: Gc,
-				[jc.name]: jc,
+				[Hc.name]: Hc,
+				[Wc.name]: Wc,
 				[qc.name]: qc,
-				[Kc.name]: Kc,
-				[Yc.name]: Yc,
-				[Qc.name]: Qc,
-				[ep.name]: ep,
+				[Xc.name]: Xc,
 				[Jc.name]: Jc,
+				[su.name]: su,
+				[au.name]: au,
+				[lu.name]: lu,
+				[cu.name]: cu,
+				[pu.name]: pu,
+				[hu.name]: hu,
+				[yu.name]: yu,
+				[Su.name]: Su,
+				[bu.name]: bu,
+				[xu.name]: xu,
+				[Cu.name]: Cu,
+				[ku.name]: ku,
+				[Lu.name]: Lu,
+				[Ou.name]: Ou,
+				[_u.name]: _u,
+				[Fu.name]: Fu,
+				[$u.name]: $u,
+				[ju.name]: ju,
+				[Ku.name]: Ku,
+				[Yu.name]: Yu,
+				[Zu.name]: Zu,
+				[Xu.name]: Xu,
+				[Qu.name]: Qu,
 				[tp.name]: tp,
 				[op.name]: op,
 				[ip.name]: ip,
+				[rp.name]: rp,
 				[sp.name]: sp,
+				[ap.name]: ap,
 				[lp.name]: lp,
 				[cp.name]: cp,
-				[pp.name]: pp,
 				[up.name]: up,
+				[pp.name]: pp,
 				[dp.name]: dp,
 				[mp.name]: mp,
 				[fp.name]: fp,
+				[gp.name]: gp,
+				[xp.name]: xp,
+				[wp.name]: wp,
+				[Cp.name]: Cp,
+				[Ap.name]: Ap,
+				[Up.name]: Up,
+				[jp.name]: jp,
+				[Wp.name]: Wp,
+				[qp.name]: qp,
+				[Zp.name]: Zp,
+				[id.name]: id,
+				[rd.name]: rd,
+				[sd.name]: sd,
+				[md.name]: md,
+				[fd.name]: fd,
+				[gd.name]: gd,
+				[hd.name]: hd,
+				[Sd.name]: Sd,
+				[Rr.name]: Rr,
+				[Zd.name]: Zd,
+				[Xd.name]: Xd,
+				[Jd.name]: Jd,
+				[tm.name]: tm,
+				[nm.name]: nm,
+				[rm.name]: rm,
+				[sm.name]: sm,
+				[am.name]: am,
+				[pm.name]: pm,
+				[mm.name]: mm,
+				[hm.name]: hm,
+				[ym.name]: ym,
+				[vm.name]: vm,
+				[bm.name]: bm,
+				[Tm.name]: Tm,
+				[Pm.name]: Pm,
+				[Nm.name]: Nm,
+				[Rm.name]: Rm,
+				[km.name]: km,
+				[Em.name]: Em,
+				[Dm.name]: Dm,
+				[_m.name]: _m,
+				[Fm.name]: Fm,
+				[Bm.name]: Bm,
+				[$m.name]: $m,
+				[Gm.name]: Gm,
+				[zm.name]: zm,
+				[jm.name]: jm,
+				[Wm.name]: Wm,
+				[qm.name]: qm,
+				[Km.name]: Km,
+				[Zm.name]: Zm,
+				[Xm.name]: Xm,
+				[Jm.name]: Jm,
 			};
 		});
-	var hp = {};
-	te(hp, {
-		BadgePosition: () => mi,
-		addBadge: () => Pl,
-		inject: () => lT,
-		removeBadge: () => Il,
+	var Vm = {};
+	me(Vm, {
+		BadgePosition: () => Ts,
+		_getBadges: () => VI,
+		addBadge: () => Gp,
+		removeBadge: () => Hp,
 	});
-	function Pl(e) {
-		(e.component &&= N.wrap(e.component, { noop: !0 })), gp.add(e);
+	function Gp(e) {
+		(e.component &&= k.wrap(e.component, { noop: !0 })), Qm.add(e);
 	}
-	function Il(e) {
-		return gp.delete(e);
+	function Hp(e) {
+		return Qm.delete(e);
 	}
-	function lT(e, t) {
-		for (let n of gp)
-			(!n.shouldShow || n.shouldShow(t)) &&
-				(n.position === 0
-					? e.unshift({ ...n, ...t })
-					: e.push({ ...n, ...t }));
-		return se.BadgeAPI.addDonorBadge(e, t.user.id), e;
+	function VI(e) {
+		let t = [];
+		for (let i of Qm)
+			(!i.shouldShow || i.shouldShow(e)) &&
+				(i.position === 0
+					? t.unshift({ ...i, ...e })
+					: t.push({ ...i, ...e }));
+		let n = Te.BadgeAPI.getDonorBadges(e.user.id);
+		return n && t.unshift(...n), t;
 	}
-	var mi,
-		gp,
-		fi = d(() => {
+	var Ts,
+		Qm,
+		xs = m(() => {
 			'use strict';
-			s();
-			J();
-			Fn();
-			(mi = ((n) => (
+			a();
+			re();
+			ni();
+			(Ts = ((n) => (
 				(n[(n.START = 0)] = 'START'), (n[(n.END = 1)] = 'END'), n
-			))(mi || {})),
-				(gp = new Set());
+			))(Ts || {})),
+				(Qm = new Set());
 		});
-	var yp = {};
-	te(yp, {
-		Badges: () => mT,
-		Commands: () => pT,
-		ContextMenu: () => ST,
-		DataStore: () => Ht,
-		MemberListDecorators: () => hT,
-		MessageAccessories: () => uT,
-		MessageDecorations: () => gT,
-		MessageEvents: () => cT,
-		MessagePopover: () => dT,
-		Notices: () => qi,
-		Notifications: () => bT,
-		ServerList: () => fT,
-		Styles: () => yT,
+	var ef = {};
+	me(ef, {
+		Badges: () => iR,
+		Commands: () => tR,
+		ContextMenu: () => dR,
+		DataStore: () => Pt,
+		MemberListDecorators: () => aR,
+		MessageAccessories: () => nR,
+		MessageDecorations: () => sR,
+		MessageEvents: () => eR,
+		MessagePopover: () => oR,
+		Notices: () => ma,
+		Notifications: () => pR,
+		ServerList: () => rR,
+		Settings: () => lR,
+		SettingsStore: () => cR,
+		Styles: () => uR,
 	});
-	var cT,
-		qi,
-		pT,
-		Ht,
-		uT,
-		dT,
-		mT,
-		fT,
-		gT,
-		hT,
-		yT,
-		bT,
-		ST,
-		Xi = d(() => {
+	var eR,
+		ma,
+		tR,
+		Pt,
+		nR,
+		oR,
+		iR,
+		rR,
+		sR,
+		aR,
+		lR,
+		cR,
+		uR,
+		pR,
+		dR,
+		br = m(() => {
 			'use strict';
-			s();
-			fi();
-			Re();
-			zn();
-			Lt();
-			hl();
-			Ua();
-			vl();
-			Ft();
-			Wn();
-			gi();
-			vo();
-			zi();
-			It();
-			(cT = Ps),
-				(qi = cs),
-				(pT = Ls),
-				(Ht = At),
-				(uT = Ba),
-				(dT = Ta),
-				(mT = hp),
-				(fT = Dl),
-				(gT = Sl),
-				(hT = gl),
-				(yT = Os),
-				(bT = Us),
-				(ST = ta);
+			a();
+			xs();
+			wt();
+			Jt();
+			Pn();
+			Ep();
+			Gs();
+			Fp();
+			gn();
+			Oo();
+			ws();
+			so();
+			pa();
+			E();
+			fu();
+			je();
+			(eR = Ic),
+				(ma = lc),
+				(tR = ou),
+				(Pt = Mn),
+				(nR = Gu),
+				(oR = vu),
+				(iR = Vm),
+				(rR = Yp),
+				(sR = _p),
+				(aR = Lp),
+				(lR = zl),
+				(cR = mu),
+				(uR = Il),
+				(pR = Cl),
+				(dR = $c);
 		});
-	function vT(e, t, n) {
-		let i = t;
-		if (t in e) return void n(e[i]);
-		Object.defineProperty(e, t, {
-			set(r) {
-				delete e[i], (e[i] = r), n(r);
-			},
-			configurable: !0,
-			enumerable: !1,
-		});
-	}
-	var Kh = d(() => {
-		'use strict';
-		s();
-	});
-	var bp = {};
-	te(bp, {
-		ChangeList: () => $o,
-		Constants: () => $r,
-		Discord: () => pa,
-		IpcEvents: () => $,
-		LazyComponent: () => Y,
-		Logger: () => F,
-		Margins: () => O,
-		Modals: () => Kr,
-		Queue: () => dt,
-		checkIntersecting: () => Dr,
-		classes: () => me,
-		copyWithToast: () => gn,
-		debounce: () => Nt,
-		formatDuration: () => jo,
-		humanFriendlyJoin: () => ky,
-		identity: () => li,
-		isObject: () => Cy,
-		makeCodeblock: () => Dn,
-		makeLazy: () => xt,
-		mergeDefaults: () => fn,
-		onceDefined: () => vT,
-		parseUrl: () => Er,
-		proxyLazy: () => Ue,
-		sleep: () => co,
-		useAwaiter: () => Me,
-		useForceUpdater: () => wt,
-		wordsFromCamel: () => Qv,
-		wordsFromKebab: () => Jv,
-		wordsFromPascal: () => Cc,
-		wordsFromSnake: () => Xv,
-		wordsFromTitle: () => Zv,
-		wordsToCamel: () => Vv,
-		wordsToKebab: () => t1,
-		wordsToPascal: () => n1,
-		wordsToSnake: () => e1,
-		wordsToTitle: () => Ho,
-	});
-	var Yh = d(() => {
-		'use strict';
-		s();
-		nc();
-		T();
-		Yn();
-		Ii();
-		Ke();
-		ge();
-		Be();
-		B();
-		Ze();
-		Kh();
-		ln();
-		Un();
-		zo();
-	});
-	var vp = {};
-	te(vp, { toggle: () => Sp });
-	async function Sp(e) {
-		kn
-			? (kn.disabled = !e)
+	var nf = {};
+	me(nf, { toggle: () => tf });
+	async function tf(e) {
+		jo
+			? (jo.disabled = !e)
 			: e &&
-			  ((kn = document.createElement('style')),
-			  (kn.id = 'vencord-custom-css'),
-			  document.head.appendChild(kn),
-			  VencordNative.ipc.on(
-					$.QUICK_CSS_UPDATE,
-					(t, n) => (kn.textContent = n),
+			  ((jo = document.createElement('style')),
+			  (jo.id = 'vencord-custom-css'),
+			  document.head.appendChild(jo),
+			  VencordNative.quickCss.addChangeListener(
+					(t) => (jo.textContent = t),
 			  ),
-			  (kn.textContent = await VencordNative.ipc.invoke(
-					$.GET_QUICK_CSS,
-			  )));
+			  (jo.textContent = await VencordNative.quickCss.get()));
 	}
-	async function Qh() {
-		Xo ||
-			((Xo = document.createElement('style')),
-			(Xo.id = 'vencord-themes'),
-			document.head.appendChild(Xo));
-		let { themeLinks: e } = k,
+	async function Vb() {
+		$r ||
+			(($r = document.createElement('style')),
+			($r.id = 'vencord-themes'),
+			document.head.appendChild($r));
+		let { themeLinks: e } = M,
 			t = e.map((n) => `@import url("${n.trim()}");`).join(`
 `);
-		Xo.textContent = t;
+		$r.textContent = t;
 	}
-	var kn,
-		Xo,
-		Tp = d(() => {
+	var jo,
+		$r,
+		of = m(() => {
 			'use strict';
-			s();
+			a();
 			E();
-			Ke();
 			document.addEventListener('DOMContentLoaded', () => {
-				Sp(k.useQuickCss),
-					Gr('useQuickCss', Sp),
-					Qh(),
-					Gr('themeLinks', Qh);
+				tf(M.useQuickCss),
+					Ss('useQuickCss', tf),
+					Vb(),
+					Ss('themeLinks', Vb);
 			});
 		});
-	var xp = {};
-	te(xp, {
-		Common: () => Lr,
-		_initWebpack: () => Pr,
-		_resolveReady: () => ni,
-		addListener: () => Ir,
-		cache: () => Et,
-		extract: () => kr,
-		filters: () => R,
-		find: () => he,
-		findAll: () => Mn,
-		findBulk: () => yy,
-		findByCode: () => we,
-		findByCodeLazy: () => oe,
-		findByProps: () => cn,
-		findByPropsLazy: () => C,
-		findLazy: () => Se,
-		findModuleId: () => Lp,
-		findStore: () => by,
-		findStoreLazy: () => bt,
-		listeners: () => wr,
-		mapMangledModule: () => oi,
-		mapMangledModuleLazy: () => ye,
-		onceReady: () => xr,
-		removeListener: () => ii,
-		search: () => io,
-		subscriptions: () => Ap,
-		waitFor: () => Pe,
-		wreq: () => it,
+	var rf = {};
+	me(rf, {
+		Common: () => ul,
+		_initWebpack: () => Yr,
+		_resolveReady: () => Kr,
+		addListener: () => bT,
+		cache: () => _n,
+		extract: () => tl,
+		filters: () => Y,
+		find: () => ht,
+		findAll: () => Yo,
+		findBulk: () => Ri,
+		findByCode: () => He,
+		findByCodeLazy: () => ce,
+		findByProps: () => an,
+		findByPropsLazy: () => P,
+		findLazy: () => Ce,
+		findModuleId: () => Zr,
+		findStore: () => ST,
+		findStoreLazy: () => ue,
+		listeners: () => Va,
+		mapMangledModule: () => yf,
+		mapMangledModuleLazy: () => Ye,
+		onceReady: () => Qa,
+		removeListener: () => TT,
+		search: () => el,
+		subscriptions: () => hf,
+		waitFor: () => Ze,
+		wreq: () => Ft,
 	});
-	var fr = d(() => {
+	var za = m(() => {
 		'use strict';
-		s();
-		P();
-		D();
+		a();
+		x();
+		_();
 	});
-	function TT() {
+	function tT() {
 		function e(t) {
 			try {
 				let n = t[1],
 					{ subscriptions: i, listeners: r } = Vencord.Webpack,
-					{ patches: a } = Vencord.Plugins;
+					{ patches: s } = Vencord.Plugins;
 				for (let l in n) {
-					let u = n[l],
-						m = u.toString().replaceAll(
+					let c = n[l],
+						u = c.toString().replaceAll(
 							`
 `,
 							'',
 						);
-					m.startsWith('function(') && (m = '0,' + m);
-					let y = u,
-						h = new Set(),
-						b = (n[l] = function (x, S, A) {
+					u.startsWith('function(') && (u = '0,' + u);
+					let h = c,
+						f = new Set(),
+						v = (n[l] = function (S, b, A) {
 							try {
-								u(x, S, A);
-							} catch (j) {
-								if (u === y) throw j;
+								c(S, b, A);
+							} catch (D) {
+								if (c === h) throw D;
 								return (
-									Cn.error('Error in patched chunk', j),
-									void y(x, S, A)
+									wo.error('Error in patched chunk', D),
+									void h(S, b, A)
 								);
 							}
-							if (x.exports === window) {
+							if (S.exports === window) {
 								Object.defineProperty(A.c, l, {
 									value: A.c[l],
 									enumerable: !1,
@@ -17793,211 +25125,299 @@ ${i}`
 								});
 								return;
 							}
-							let M = Number(l);
-							for (let j of r)
+							let C = Number(l);
+							for (let D of r)
 								try {
-									j(S, M);
-								} catch (X) {
-									Cn.error('Error in webpack listener', X);
+									D(b, C);
+								} catch (B) {
+									wo.error('Error in webpack listener', B);
 								}
-							for (let [j, X] of i)
+							for (let [D, B] of i)
 								try {
-									if (j(S)) i.delete(j), X(S, M);
-									else if (typeof S == 'object') {
-										S.default &&
-											j(S.default) &&
-											(i.delete(j), X(S.default, M));
-										for (let _ in S)
-											_.length <= 3 &&
-												S[_] &&
-												j(S[_]) &&
-												(i.delete(j), X(S[_], M));
+									if (D(b)) i.delete(D), B(b, C);
+									else if (typeof b == 'object') {
+										b.default &&
+											D(b.default) &&
+											(i.delete(D), B(b.default, C));
+										for (let O in b)
+											O.length <= 3 &&
+												b[O] &&
+												D(b[O]) &&
+												(i.delete(D), B(b[O], C));
 									}
-								} catch (_) {
-									Cn.error(
+								} catch (O) {
+									wo.error(
 										'Error while firing callback for webpack chunk',
-										_,
+										O,
 									);
 								}
 						});
 					try {
-						(b.toString = () => u.toString()), (b.original = y);
+						(v.toString = () => c.toString()), (v.original = h);
 					} catch {}
-					for (let x = 0; x < a.length; x++) {
-						let S = a[x],
-							A = ot(`patch by ${S.plugin}`, (M, j) =>
-								m.replace(M, j),
+					for (let S = 0; S < s.length; S++) {
+						let b = s[S],
+							A = sn(`patch by ${b.plugin}`, (C, D) =>
+								u.replace(C, D),
 							);
 						if (
-							!(S.predicate && !S.predicate()) &&
-							m.includes(S.find)
+							!(b.predicate && !b.predicate()) &&
+							u.includes(b.find)
 						) {
-							h.add(S.plugin);
-							for (let M of S.replacement) {
-								if (M.predicate && !M.predicate()) continue;
-								let j = u,
-									X = m;
-								Ef(M, S.plugin);
+							f.add(b.plugin);
+							for (let C of b.replacement) {
+								if (C.predicate && !C.predicate()) continue;
+								let D = c,
+									B = u;
+								_i(C, b.plugin);
 								try {
-									let _ = A(M.match, M.replace);
-									_ === m && !S.noWarn
-										? Cn.warn(
-												`Patch by ${S.plugin} had no effect (Module id is ${l}): ${M.match}`,
+									let O = A(C.match, C.replace);
+									O === u && !b.noWarn
+										? wo.warn(
+												`Patch by ${b.plugin} had no effect (Module id is ${l}): ${C.match}`,
 										  )
-										: ((m = _),
-										  (u = (0,
+										: ((u = O),
+										  (c = (0,
 										  eval)(`// Webpack Module ${l} - Patched by ${[
-												...h,
+												...f,
 										  ].join(', ')}
-${_}
+${O}
 //# sourceURL=WebpackModule${l}`)));
-								} catch (_) {
-									Cn.error(
-										`Patch by ${S.plugin} errored (Module id is ${l}): ${M.match}
+								} catch (O) {
+									wo.error(
+										`Patch by ${b.plugin} errored (Module id is ${l}): ${C.match}
 `,
-										_,
+										O,
 									),
-										(m = X),
-										(u = j),
-										h.delete(S.plugin);
+										(u = B),
+										(c = D),
+										f.delete(b.plugin);
 								}
 							}
-							S.all || a.splice(x--, 1);
+							b.all || s.splice(S--, 1);
 						}
 					}
 				}
 			} catch (n) {
-				Cn.error('Error in handlePush', n);
+				wo.error('Error in handlePush', n);
 			}
-			return e.original.call(window[_t], t);
+			return e.original.call(window[zt], t);
 		}
-		(e.original = window[_t].push),
-			Object.defineProperty(window[_t], 'push', {
+		(e.original = window[zt].push),
+			Object.defineProperty(window[zt], 'push', {
 				get: () => e,
 				set: (t) => (e.original = t),
 				configurable: !0,
 			});
 	}
-	var Xh,
-		Cn,
-		Jh = d(() => {
+	var eT,
+		wo,
+		nT = m(() => {
 			'use strict';
-			s();
-			T();
-			ge();
-			Zi();
-			ti();
-			fr();
-			Cn = new F('WebpackInterceptor', '#8caaee');
-			Object.defineProperty(window, _t, {
-				get: () => Xh,
-				set: (e) => {
-					e?.push !== Array.prototype.push &&
-						(Cn.info(`Patching ${_t}.push`),
-						Pr(e),
-						TT(),
-						delete window[_t],
-						(window[_t] = e)),
-						(Xh = e);
-				},
-				configurable: !0,
-			});
+			a();
+			w();
+			Se();
+			Fi();
+			qr();
+			za();
+			wo = new Z('WebpackInterceptor', '#8caaee');
+			window[zt]
+				? (wo.info(
+						`Patching ${zt}.push (was already existant, likely from cache!)`,
+				  ),
+				  Yr(window[zt]),
+				  tT())
+				: Object.defineProperty(window, zt, {
+						get: () => eT,
+						set: (e) => {
+							e?.push !== Array.prototype.push &&
+								(wo.info(`Patching ${zt}.push`),
+								Yr(e),
+								tT(),
+								delete window[zt],
+								(window[zt] = e)),
+								(eT = e);
+						},
+						configurable: !0,
+				  });
 		});
-	var Zh = {};
-	te(Zh, {
-		PatchHelper: () => Df,
-		PluginSettings: () => ir,
-		VencordSettings: () => cc,
-	});
-	var Vh = d(() => {
-		'use strict';
-		s();
-		Zl();
-		lc();
-		pc();
-	});
-	async function xT() {
-		if (
-			(await xr,
-			rc(),
-			(ey = await Promise.resolve().then(() => (Vh(), Zh))),
-			!1)
-		)
+	async function mR() {
+		M.cloud.settingsSync &&
+			M.cloud.authenticated &&
+			(Ao.Vencord_settingsDirty
+				? (await ti(), delete Ao.Vencord_settingsDirty)
+				: (await ys(!1)) &&
+				  ge({
+						title: 'Cloud Settings',
+						body: 'Your settings have been updated! Click here to restart to fully apply changes!',
+						color: 'var(--green-360)',
+						onClick: Ms,
+				  }));
+	}
+	async function fR() {
+		if ((await Qa, Rd(), mR(), !1))
 			try {
 			} catch (e) {}
 	}
-	var ey,
-		$c = d(() => {
-			'use strict';
-			s();
-			Xi();
-			or();
-			Yh();
-			Tp();
-			xn();
-			fr();
-			Tp();
-			Jh();
-			vo();
-			E();
-			or();
-			xn();
-			fr();
-			P();
-			xT();
-		});
-	var wT = {};
-	te(wT, {
-		Api: () => yp,
-		Components: () => ey,
-		PlainSettings: () => eu,
-		Plugins: () => ac,
-		QuickCss: () => vp,
-		Settings: () => k,
-		Updater: () => qs,
-		Util: () => bp,
-		Webpack: () => xp,
+	var lm = m(() => {
+		'use strict';
+		a();
+		br();
+		xa();
+		Sl();
+		of();
+		ii();
+		za();
+		of();
+		nT();
+		so();
+		E();
+		xa();
+		rs();
+		Ji();
+		qi();
+		ii();
+		za();
+		x();
+		fR();
 	});
-	s();
-	s();
-	Lt();
-	Ke();
-	var { localStorage: Cp } = window,
-		vr = {},
-		gy = {
-			[$.GET_REPO]: () => 'https://github.com/Vendicated/Vencord',
-			[$.GET_SETTINGS_DIR]: () => 'LocalStorage',
-			[$.GET_QUICK_CSS]: () => xe('VencordQuickCss').then((e) => e ?? ''),
-			[$.SET_QUICK_CSS]: (e) => {
-				be('VencordQuickCss', e),
-					vr[$.QUICK_CSS_UPDATE]?.forEach((t) => t(null, e));
-			},
-			[$.GET_SETTINGS]: () => Cp.getItem('VencordSettings') || '{}',
-			[$.SET_SETTINGS]: (e) => Cp.setItem('VencordSettings', e),
-			[$.GET_UPDATES]: () => ({ ok: !0, value: [] }),
-			[$.OPEN_EXTERNAL]: (e) => open(e, '_blank'),
-		};
-	function Sr(e, ...t) {
-		let n = gy[e];
-		if (!n) throw new Error(`Event ${e} not implemented.`);
-		return n(...t);
-	}
+	var gR = {};
+	me(gR, {
+		Api: () => ef,
+		PlainSettings: () => Nn,
+		Plugins: () => Ad,
+		QuickCss: () => nf,
+		Settings: () => M,
+		Updater: () => kc,
+		Util: () => vl,
+		Webpack: () => rf,
+	});
+	a();
+	a();
+	a();
+	var pf = `<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Vencord QuickCSS Editor</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.37.1/min/vs/editor/editor.main.min.css"
+            integrity="sha512-wB3xfL98hWg1bpkVYSyL0js/Jx9s7FsDg9aYO6nOMSJTgPuk/PFqxXQJKKSUjteZjeYrfgo9NFBOA1r9HwDuZw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <style>
+            html,
+            body,
+            #container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="container"></div>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.37.1/min/vs/loader.min.js"
+            integrity="sha512-A+6SvPGkIN9Rf0mUXmW4xh7rDvALXf/f0VtOUiHlDUSPknu2kcfz1KzLpOJyL2pO+nZS13hhIjLqVgiQExLJrw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ><\/script>
+
+        <script>
+            require.config({
+                paths: {
+                    vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.37.1/min/vs",
+                },
+            });
+
+            require(["vs/editor/editor.main"], () => {
+                getCurrentCss().then((css) => {
+                    var editor = monaco.editor.create(
+                        document.getElementById("container"),
+                        {
+                            value: css,
+                            language: "css",
+                            theme: getTheme(),
+                        }
+                    );
+                    editor.onDidChangeModelContent(() =>
+                        setCss(editor.getValue())
+                    );
+                    window.addEventListener("resize", () => {
+                        // make monaco re-layout
+                        editor.layout();
+                    });
+                });
+            });
+        <\/script>
+    </body>
+</html>
+`;
+	Pn();
+	Sl();
+	$n();
+	var { localStorage: _f } = window,
+		Ff = new Set();
+	var WT = async () => {},
+		qT = Ct((e) => VencordNative.quickCss.set(e));
 	window.VencordNative = {
-		getVersions: () => ({}),
-		ipc: {
-			send: (e, ...t) => void Sr(e, ...t),
-			sendSync: Sr,
-			on(e, t) {
-				(vr[e] ??= new Set()).add(t);
+		native: {
+			getVersions: () => ({}),
+			openExternal: async (e) => void open(e, '_blank'),
+		},
+		updater: {
+			getRepo: async () => ({
+				ok: !0,
+				value: 'https://github.com/Vendicated/Vencord',
+			}),
+			getUpdates: async () => ({ ok: !0, value: [] }),
+			update: async () => ({ ok: !0, value: !1 }),
+			rebuild: async () => ({ ok: !0, value: !0 }),
+		},
+		quickCss: {
+			get: () => Qe('VencordQuickCss').then((e) => e ?? ''),
+			set: async (e) => {
+				await Ve('VencordQuickCss', e), Ff.forEach((t) => t(e));
 			},
-			off(e, t) {
-				return vr[e]?.delete(t);
+			addChangeListener(e) {
+				Ff.add(e);
 			},
-			invoke: (e, ...t) => Promise.resolve(Sr(e, ...t)),
+			openFile: WT,
+			async openEditor() {
+				let e = `popup,width=${Math.min(
+						window.innerWidth,
+						1e3,
+					)},height=${Math.min(window.innerHeight, 1e3)}`,
+					t = open('about:blank', 'VencordQuickCss', e);
+				if (!t) {
+					alert(
+						'Failed to open QuickCSS popup. Make sure to allow popups!',
+					);
+					return;
+				}
+				(t.setCss = qT),
+					(t.getCurrentCss = () => VencordNative.quickCss.get()),
+					(t.getTheme = () => (Di() === 2 ? 'vs-light' : 'vs-dark')),
+					t.document.write(pf);
+			},
+		},
+		settings: {
+			get: () => _f.getItem('VencordSettings') || '{}',
+			set: async (e) => _f.setItem('VencordSettings', e),
+			getSettingsDir: async () => 'LocalStorage',
 		},
 	};
-	$c();
-	return Zo(wT);
+	lm();
+	return Mo(gR);
 })();
 //# sourceURL=VencordWeb
 /*! For license information please see browser.js.LEGAL.txt */

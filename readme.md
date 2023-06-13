@@ -1,11 +1,12 @@
 # Discord Bot Client
 
-- Discord Build: Stable 185832 (29333f6)
-- Added Vencord (v1.1.4)
+- Discord Build: Stable 204762 (78f82ba)
+- Added Vencord (v1.2.7)
 
 ## All patches
 - Stable 161052 (c7e0778) (v1.x.x)
 - Stable 185832 (29333f6) (v2.1.x)
+- Stable 204762 (78f82ba) (v2.2.x)
 
 ## Download > [Releases](https://github.com/aiko-chan-ai/DiscordBotClient/releases)
  
@@ -43,5 +44,5 @@
 <img src='https://cdn.discordapp.com/attachments/820557032016969751/1093556639845593098/image.png'>
 
 - Discord Build: Stable 185832 (29333f6)
-- Vencord Build: v2.1.4
+- Vencord Build: v1.1.4
 - Discord Bot Client Build: v2.1.0

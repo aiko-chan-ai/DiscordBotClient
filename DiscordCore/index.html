@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=3.0" name="viewport" />
+
+    <!-- section:seometa -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Discord" />
+    <meta property="og:title" content="Discord - A New Way to Chat with Friends & Communities" />
+    <meta property="og:description"
+        content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities." />
+    <meta property="og:image" content="undefined//discord.com/assets/652f40427e1f5186ad54836074898279.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@discord" />
+    <meta name="twitter:creator" content="@discord" />
+    <script>
+        class BitField {
+            constructor(bits = this.constructor.defaultBit) {
+                this.bitfield = this.constructor.resolve(bits);
+            }
+            any(bit) {
+                return (this.bitfield & this.constructor.resolve(bit)) !== this.constructor.defaultBit;
+            }
+            equals(bit) {
+                return this.bitfield === this.constructor.resolve(bit);
+            }
+            has(bit) {
+                bit = this.constructor.resolve(bit);
+                return (this.bitfield & bit) === bit;
+            }
+            missing(bits, ...hasParams) {
+                return new this.constructor(bits).remove(this).toArray(...hasParams);
+            }
+            freeze() {
+                return Object.freeze(this);
+            }
+            add(...bits) {
+                let total = this.constructor.defaultBit;
+                for (const bit of bits) {
+                    total |= this.constructor.resolve(bit);
+                }
+                if (Object.isFrozen(this)) return new this.constructor(this.bitfield | total);
+                this.bitfield |= total;
+                return this;
+            }
+            remove(...bits) {
+                let total = this.constructor.defaultBit;
+                for (const bit of bits) {
+                    total |= this.constructor.resolve(bit);
+                }
+                if (Object.isFrozen(this)) return new this.constructor(this.bitfield & ~total);
+                this.bitfield &= ~total;
+                return this;
+            }
+            serialize(...hasParams) {
+                const serialized = {};
+                for (const [flag, bit] of Object.entries(this.constructor.FLAGS)) serialized[flag] = this.has(bit, ...hasParams);
+                return serialized;
+            }
+            toArray(...hasParams) {
+                return Object.keys(this.constructor.FLAGS).filter(bit => this.has(bit, ...hasParams));
+            }
+            toJSON() {
+                return typeof this.bitfield === 'number' ? this.bitfield : this.bitfield.toString();
+            }
+            valueOf() {
+                return this.bitfield;
+            }
+            *[Symbol.iterator]() {
+                yield* this.toArray();
+            }
+            static resolve(bit) {
+                const { defaultBit } = this;
+                if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
+                if (bit instanceof BitField) return bit.bitfield;
+                if (Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, defaultBit);
+                if (typeof bit === 'string') {
+                    if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
+                    if (!isNaN(bit)) return typeof defaultBit === 'bigint' ? BigInt(bit) : Number(bit);
+                }
+                throw new RangeError('BITFIELD_INVALID', bit);
+            }
+        }
+        BitField.FLAGS = {};
+        BitField.defaultBit = 0;
+    </script>
+    <script>
+        const IntentFlags = {
+            GUILDS: 1 << 0,
+            GUILD_MEMBERS: 1 << 1,
+            GUILD_BANS: 1 << 2,
+            GUILD_EMOJIS_AND_STICKERS: 1 << 3,
+            GUILD_INTEGRATIONS: 1 << 4,
+            GUILD_WEBHOOKS: 1 << 5,
+            GUILD_INVITES: 1 << 6,
+            GUILD_VOICE_STATES: 1 << 7,
+            GUILD_PRESENCES: 1 << 8,
+            GUILD_MESSAGES: 1 << 9,
+            GUILD_MESSAGE_REACTIONS: 1 << 10,
+            GUILD_MESSAGE_TYPING: 1 << 11,
+            DIRECT_MESSAGES: 1 << 12,
+            DIRECT_MESSAGE_REACTIONS: 1 << 13,
+            DIRECT_MESSAGE_TYPING: 1 << 14,
+            MESSAGE_CONTENT: 1 << 15,
+            GUILD_SCHEDULED_EVENTS: 1 << 16,
+            AUTO_MODERATION_CONFIGURATION: 1 << 20,
+            AUTO_MODERATION_EXECUTION: 1 << 21,
+            // https://discord.com/developers/docs/topics/gateway#list-of-intents
+        };
+        class Intents extends BitField { }
+        Intents.FLAGS = IntentFlags;
+        const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
+        function updateIntentsText() {
+            const intents = new Intents(intentBot ?? 0);
+            const input_ = document.getElementsByClassName("label-7akf7- eyebrow-2wJAoF defaultColor-3Olr-9 defaultMarginlabel-26Urq5")[0]
+            if (!input_) return;
+            input_.innerHTML = `Bot Token | Intents: ${intents.toArray().filter(i => ['MESSAGE_CONTENT', 'GUILD_PRESENCES', 'GUILD_MEMBERS'].includes(i)).join(', ')}`;
+            return input_;
+        }
+    </script>
+    <script>
+        var lasestGuildIdVoiceConnect = 0;
+        var intentBot = localStorage.getItem('intents');
+        function recreateNode(el, withChildren) {
+            if (withChildren) {
+                el.parentNode.replaceChild(el.cloneNode(true), el);
+            }
+            else {
+                var newEl = el.cloneNode(false);
+                while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+                el.parentNode.replaceChild(newEl, el);
+            }
+        }
+        var callSetIntents = (reload) => {
+            const privilegedIntents = [];
+            alert("Login with bot requires privileged intent MESSAGE_CONTENT\n\nMake sure you have enabled this intent in the bot settings.");
+            if (!confirm('[Optional] Do you want to use the GUILD_PRESENCES intent?')) {
+                privilegedIntents.push('GUILD_PRESENCES');
+            }
+            if (!confirm('[Optional] Do you want to use the GUILD_MEMBERS intent?')) {
+                privilegedIntents.push('GUILD_MEMBERS');
+            }
+            intentBot = getIntents(...privilegedIntents);
+            localStorage.setItem('intents', intentBot);
+            if (reload) {
+                location.reload();
+            }
+        }
+        function replaceLoginScreen() {
+            let buttonLogin = document.getElementsByClassName(
+                'marginBottom8-emkd0_ button-1cRKG6 button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeLarge-2xP3-w fullWidth-3M-YBR grow-2T4nbg',
+            )[0];
+            if (buttonLogin) {
+                if (!intentBot) {
+                    callSetIntents();
+                } else {
+                    clearInterval(i);
+                }
+                buttonLogin.addEventListener('click', () => {
+                    const input = document.getElementsByClassName(
+                        'inputDefault-Ciwd-S input-3O04eu',
+                    )[0];
+                    Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
+                });
+                const email = document.getElementsByClassName('marginBottom20-315RVT')[0];
+                email.parentElement.removeChild(email);
+                const input_ = updateIntentsText();
+                input_.id = 'token';
+                const QR = document.getElementsByClassName(
+                    'transitionGroup-14WiKS qrLogin-1ejtpI',
+                )[0];
+                QR.parentElement.removeChild(QR);
+                const dot = document.getElementsByClassName('verticalSeparator-2r9gHa')[0];
+                dot.parentElement.removeChild(dot);
+                const need_an_acc =
+                    document.getElementsByClassName('needAccount-MrvMN7')[0];
+                need_an_acc.innerHTML = 'Need a bot?';
+                let reg = document.getElementsByClassName(
+                    'smallRegisterLink-1qEJhz linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                reg.innerHTML = 'Create one here';
+                recreateNode(reg, true);
+                reg = document.getElementsByClassName(
+                    'smallRegisterLink-1qEJhz linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                reg.addEventListener('click', () => {
+                    window.open('https://discord.com/developers/applications');
+                });
+                let forgot_pw = document.getElementsByClassName(
+                    'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                forgot_pw.innerHTML = `Do you want to set new intents? Click here`;
+                recreateNode(forgot_pw, true);
+                forgot_pw = document.getElementsByClassName(
+                    'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
+                )[0];
+                forgot_pw.addEventListener('click', () => {
+                    callSetIntents();
+                    updateIntentsText();
+                });
+                updateIntentsText()
+            }
+        }
+        i = setInterval(() => {
+            if (!window.Vencord) {
+                return;
+            }
+            replaceLoginScreen();
+        }, 250);
+    </script>
+    <script>
+        function getGuildMember(gid, mid) {
+            let token = Vencord.Webpack.findByProps('getToken').getToken();
+            const u = new URL(window.location.href)
+            return new Promise((resolve, reject) => {
+                fetch(`${u.origin}/d/api/v10/guilds/${gid}/members/${mid}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token,
+                    },
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(reject);
+            })
+        }
+        function getThreadMembers(channelId) {
+            let token = Vencord.Webpack.findByProps('getToken').getToken();
+            const u = new URL(window.location.href)
+            return new Promise((resolve, reject) => {
+                // /channels/{channel.id}/thread-members
+                fetch(`${u.origin}/d/api/v10/channels/${channelId}/thread-members?with_member=true`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token,
+                    },
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(() => resolve([]));
+            })
+        }
+    </script>
+    <script>
+        var murmurhashv3;
+        const VIEW_CHANNEL_PERMISSION = 1n << 10n;
+        function checkBitfield(permission) {
+            return (permission & VIEW_CHANNEL_PERMISSION) === VIEW_CHANNEL_PERMISSION;
+        }
+        var i_, getCurrentChannelId, getChannel, getGuild, getCurrentGuildId;
+        i_ = setInterval(() => {
+            if (window.Vencord) {
+                getCurrentChannelId = Vencord.Webpack.findByProps("getLastSelectedChannelId")?.getCurrentlySelectedChannelId;
+                getChannel = Vencord.Webpack.findByProps("getChannel")?.getChannel;
+                getGuild = Vencord.Webpack.findByProps("getGuild", "getGuilds")?.getGuild;
+                getCurrentGuildId = Vencord.Webpack.findByProps("getLastSelectedGuildId")?.getLastSelectedGuildId;
+            }
+            if (getCurrentChannelId) {
+                clearInterval(i_);
+                i_ = null;
+            }
+        }, 250);
+        function getCurrentChannel() {
+            return getChannel(getCurrentChannelId());
+        }
+        function getCurrentGuild() {
+            return getGuild(getCurrentGuildId())
+        }
+        function getGuildMemberListId() {
+            const channel = getCurrentChannel();
+            let array = [];
+            const allow = [];
+            const deny = [];
+            const guild = getCurrentGuild();
+            if (!guild || !channel) return null;
+            const allId = Object.keys(channel.permissionOverwrites);
+            for (const id of allId) {
+                if (checkBitfield(channel.permissionOverwrites[id].allow)) {
+                    allow.push(`${id}`)
+                }
+                if (checkBitfield(channel.permissionOverwrites[id].deny)) {
+                    deny.push(`${id}`)
+                }
+            }
+            allow.sort();
+            deny.sort();
+            const everyonePerms = new Permissions(guild?.roles[guild.id].permissions);
+            if (deny.length) {
+                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+            } else if (!everyonePerms.has('VIEW_CHANNEL')) {
+                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
+            } else {
+                null
+            }
+            // console.log(array);
+            if (typeof murmurhashv3 !== "function") murmurhashv3 = Vencord.Webpack.findByProps('v3').v3;
+            return array.length == 0 ? 'everyone' : murmurhashv3(array.join(','));
+        }
+        function checkUserPermission(guild, channel, user) {
+            const permission = checkPermissionGuild(guild, channel, user);
+            return permission.has('VIEW_CHANNEL');
+        }
+
+        class Permissions extends BitField {
+            missing(bits, checkAdmin = true) {
+                return checkAdmin && this.has(this.constructor.FLAGS.ADMINISTRATOR) ? [] : super.missing(bits);
+            }
+            any(permission, checkAdmin = true) {
+                return (checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) || super.any(permission);
+            }
+            has(permission, checkAdmin = true) {
+                return (checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) || super.has(permission);
+            }
+            toArray() {
+                return super.toArray(false);
+            }
+        }
+        Permissions.FLAGS = {
+            CREATE_INSTANT_INVITE: 1n << 0n,
+            KICK_MEMBERS: 1n << 1n,
+            BAN_MEMBERS: 1n << 2n,
+            ADMINISTRATOR: 1n << 3n,
+            MANAGE_CHANNELS: 1n << 4n,
+            MANAGE_GUILD: 1n << 5n,
+            ADD_REACTIONS: 1n << 6n,
+            VIEW_AUDIT_LOG: 1n << 7n,
+            PRIORITY_SPEAKER: 1n << 8n,
+            STREAM: 1n << 9n,
+            VIEW_CHANNEL: 1n << 10n,
+            SEND_MESSAGES: 1n << 11n,
+            SEND_TTS_MESSAGES: 1n << 12n,
+            MANAGE_MESSAGES: 1n << 13n,
+            EMBED_LINKS: 1n << 14n,
+            ATTACH_FILES: 1n << 15n,
+            READ_MESSAGE_HISTORY: 1n << 16n,
+            MENTION_EVERYONE: 1n << 17n,
+            USE_EXTERNAL_EMOJIS: 1n << 18n,
+            VIEW_GUILD_INSIGHTS: 1n << 19n,
+            CONNECT: 1n << 20n,
+            SPEAK: 1n << 21n,
+            MUTE_MEMBERS: 1n << 22n,
+            DEAFEN_MEMBERS: 1n << 23n,
+            MOVE_MEMBERS: 1n << 24n,
+            USE_VAD: 1n << 25n,
+            CHANGE_NICKNAME: 1n << 26n,
+            MANAGE_NICKNAMES: 1n << 27n,
+            MANAGE_ROLES: 1n << 28n,
+            MANAGE_WEBHOOKS: 1n << 29n,
+            MANAGE_EMOJIS_AND_STICKERS: 1n << 30n,
+            USE_APPLICATION_COMMANDS: 1n << 31n,
+            REQUEST_TO_SPEAK: 1n << 32n,
+            MANAGE_EVENTS: 1n << 33n,
+            MANAGE_THREADS: 1n << 34n,
+            CREATE_PUBLIC_THREADS: 1n << 35n,
+            CREATE_PRIVATE_THREADS: 1n << 36n,
+            SEND_MESSAGES_IN_THREADS: 1n << 38n,
+            START_EMBEDDED_ACTIVITIES: 1n << 39n,
+            MODERATE_MEMBERS: 1n << 40n,
+        };
+        Permissions.ALL = Object.values(Permissions.FLAGS).reduce((all, p) => all | p, 0n);
+        Permissions.DEFAULT = BigInt(104324673);
+        Permissions.STAGE_MODERATOR =
+            Permissions.FLAGS.MANAGE_CHANNELS | Permissions.FLAGS.MUTE_MEMBERS | Permissions.FLAGS.MOVE_MEMBERS;
+        Permissions.defaultBit = BigInt(0);
+        // Discord.js Bitfield
+        function checkPermissionGuild(guild, channel, member) {
+            if (guild.ownerId == (member?.user?.id || member.userId)) return new Permissions(Permissions.ALL).freeze();
+            const roles = Object.keys(guild.roles).filter(r => member.roles.includes(r) || r == guild.id);
+            const permissions = new Permissions(roles.map(role => guild.roles[role].permissions));
+            if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+                return new Permissions(Permissions.ALL).freeze();
+            }
+            const overwrites = overwritesFor(member, roles, channel);
+            return permissions
+                .remove(overwrites.everyone?.deny ?? Permissions.defaultBit)
+                .add(overwrites.everyone?.allow ?? Permissions.defaultBit)
+                .remove(overwrites.roles.length > 0 ? overwrites.roles.map(role => role.deny) : Permissions.defaultBit)
+                .add(overwrites.roles.length > 0 ? overwrites.roles.map(role => role.allow) : Permissions.defaultBit)
+                .remove(overwrites.member?.deny ?? Permissions.defaultBit)
+                .add(overwrites.member?.allow ?? Permissions.defaultBit)
+                .freeze();
+        }
+        function overwritesFor(member, roles, channel) {
+            if (!member) return [];
+            const roleOverwrites = [];
+            let memberOverwrites;
+            let everyoneOverwrites;
+
+            for (const overwrite of Object.values(channel.permissionOverwrites)) {
+                if (overwrite.id === channel.guild_id) {
+                    everyoneOverwrites = overwrite;
+                } else if (roles.includes(overwrite.id)) {
+                    roleOverwrites.push(overwrite);
+                } else if (overwrite.id === (member?.user?.id || member.userId)) {
+                    memberOverwrites = overwrite;
+                }
+            }
+
+            return {
+                everyone: everyoneOverwrites,
+                roles: roleOverwrites,
+                member: memberOverwrites,
+            };
+        }
+    </script>
+    <script>
+        function getUserIdFromToken(token) {
+            if (!token) return null;
+            try {
+                return atob(token.split('.')[0]);
+            } catch (e) {
+                return null;
+            }
+        }
+        function fetchChannel(channelId) {
+            let token = Vencord.Webpack.findByProps('getToken').getToken();
+            const u = new URL(window.location.href);
+            return new Promise((resolve, reject) => {
+                fetch(`${u.origin}/d/api/v10/channels/${channelId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token,
+                    },
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(() => resolve([]));
+            });
+        };
+        (async () => {
+            function checkUpdate() {
+                return new Promise((resolve, reject) => {
+                    fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest")
+                        .then((res) => res.json())
+                        .then(res => resolve(res.tag_name))
+                        .catch((e) => resolve('0.0.0'))
+                });
+            }
+            function getLatestCommit() {
+                return new Promise((resolve, reject) => {
+                    fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/commits")
+                        .then((res) => res.json())
+                        .then(res => resolve(res[0].sha.slice(0, 6).toLowerCase()))
+                        .catch((e) => resolve('000000'))
+                });
+            }
+            const hash = await getLatestCommit();
+            setInterval(() => {
+                if (!window.Vencord) {
+                    return;
+                }
+                if (!hash) return;
+                updateGuildSubs();
+                const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 204762 (78f82ba)');
+                if (!host || document.querySelector('#dbclient-ver')) return;
+                const el = document.createElement('span');
+                el.id = 'dbclient-ver';
+                el.innerHTML = `<br>BotClient v2.2.0 (${hash})`;
+                el.onclick = () => window.open('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
+                host.append(document.createTextNode('\n'), el);
+            }, 2_000);
+        })();
+    </script>
+    <script>
+        var getStatus, getMutableAllGuildsAndMembers, getUsers;
+        function convertGuildMemberDataToRaw(data, allUsers) {
+            const user = allUsers[data.userId] || { id: data.userId };
+            return {
+                user,
+                roles: data.roles,
+                premium_since: data.premiumSince,
+                pending: data.isPending,
+                nick: data.nick,
+                joined_at: data.joinedAt,
+                flags: data.flags,
+                communication_disabled_until: data.communicationDisabledUntil,
+                avatar: data.avatar
+            }
+        }
+        function convertUserToRaw(data) {
+            return {
+                "username": data.username,
+                "id": data.id,
+                "display_name": null,
+                "discriminator": data.discriminator,
+                "bot": data.bot,
+                "avatar": "93d46972bd7707f8466f755dcf7222ec",
+                "publicFlags": data.publicFlags,
+                "avatarDecoration": data.avatarDecoration
+            }
+        }
+        function updateGuildSubs() {
+            const guild = getCurrentGuild();
+            if (!guild) return;
+            const channel = getCurrentChannel();
+            if (!channel || channel.isThread()) return;
+            if (typeof getStatus != 'function') getStatus = Vencord.Webpack.findByProps('getStatus', 'getActivities', 'getState')?.getStatus;
+            if (typeof getMutableAllGuildsAndMembers != 'function') getMutableAllGuildsAndMembers = Vencord.Webpack.findByProps('getMutableAllGuildsAndMembers')?.getMutableAllGuildsAndMembers;
+            if (typeof getUsers != 'function') getUsers = Vencord.Webpack.findByProps('getUser')?.getUsers;
+            const roleSort = Object.values(guild.roles).filter(r => r.hoist).sort((x, y) => y.position - x.position);
+            const allGuildsMembers = getMutableAllGuildsAndMembers();
+            const allUsers = getUsers();
+            const members_patch = Object.values(allGuildsMembers[guild.id])
+                .map(m => convertGuildMemberDataToRaw(m, allUsers))
+                .filter(m => checkUserPermission(guild, channel, m)).map(m => {
+                    m.status = getStatus(m.userId || m.user.id) || 'offline'
+                    const role = roleSort.find(r => m.roles.includes(r.id));
+                    m.hoistRoleId = role?.id
+                    if (!role) m.position = 0;
+                    else m.position = role.position;
+                    return m;
+                });
+            const membersOnline = members_patch.filter(m => m.status !== 'offline').sort((x, y) => y.position - x.position);
+            const membersOffline = members_patch.length > 1000 ? [] : members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
+            // Group
+            function getGroup(arr, off) {
+                let all = []
+                let all2 = []
+                const list_ = {}
+                for (const member of arr) {
+                    list_[member.hoistRoleId || 'online'] = {
+                        group: {
+                            id: member.hoistRoleId || 'online',
+                            count: (list_[member.hoistRoleId || 'online']?.group?.count || 0) + 1
+                        },
+                        members: [member, ...(list_[member.hoistRoleId || 'online']?.members || [])]
+                    }
+                }
+                for (const key in list_) {
+                    list_[key].members.sort((x, y) =>
+                        (x.nick || x.user.username || '').localeCompare(
+                            y.nick || y.user.username || '',
+                        ),
+                    );
+                    all.push({
+                        group: list_[key].group
+                    });
+                    all2.push(list_[key].group);
+                    all = [...all, ...(list_[key].members.map(m => {
+                        return {
+                            member: m
+                        }
+                    }))]
+                }
+                if (off.length > 0) {
+                    let d = {
+                        id: "offline",
+                        count: off.length
+                    }
+                    all.push({
+                        group: d
+                    });
+                    all2.push(d);
+                    all = [...all, ...(off.map(m => {
+                        return {
+                            member: m
+                        }
+                    }))]
+                }
+                return {
+                    ops: all,
+                    group: all2,
+                }
+            }
+            var groups = getGroup(membersOnline, membersOffline)
+            groups.ops.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
+            groups.group.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
+            var ops = [{
+                items: groups.ops,
+                op: "SYNC",
+                range: [0, 99]
+            }];
+            var id_ = getGuildMemberListId()
+            // console.log("force emit GUILD_MEMBER_LIST_UPDATE with", id_);
+            let member_count = Object.values(allGuildsMembers[guild.id]).length;
+            const d__ = {
+                guild_id: guild.id,
+                id: id_,
+                ops,
+                groups: groups.group,
+                member_count,
+                online_count: membersOnline.length,
+                memberCount: member_count,
+                type: 'GUILD_MEMBER_LIST_UPDATE',
+            }
+            window.Wxt?.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__)
+        }
+    </script>
+    <!-- endsection -->
+    <script>
+        window.GLOBAL_ENV = {
+            API_ENDPOINT: '//' + window.location.host + '/d/api',
+            API_VERSION: 9,
+            GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
+            WEBAPP_ENDPOINT: "//" + window.location.host,
+            CDN_HOST: 'cdn.discordapp.com',
+            ASSET_ENDPOINT: "//" + window.location.host,
+            MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
+            WIDGET_ENDPOINT: '//discord.com/widget',
+            INVITE_HOST: 'discord.gg',
+            GUILD_TEMPLATE_HOST: 'discord.new',
+            GIFT_CODE_HOST: 'discord.gift',
+            RELEASE_CHANNEL: 'stable',
+            MARKETING_ENDPOINT: '//discord.com',
+            BRAINTREE_KEY: 'production_ktzp8hfp_49pp2rp4phym7387',
+            STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
+            NETWORKING_ENDPOINT: '//router.discordapp.net',
+            RTC_LATENCY_ENDPOINT: '//latency.discord.media/rtc',
+            ACTIVITY_APPLICATION_HOST: 'discordsays.com',
+            PROJECT_ENV: 'production',
+            REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
+            SENTRY_TAGS: { "buildId": "78f82ba4bb7325d4bc3856b37eae79ac1deb0ee1", "buildType": "normal" },
+            MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
+            MIGRATION_DESTINATION_ORIGIN: window.location.protocol + "//" + window.location.host,
+            HTML_TIMESTAMP: Date.now(),
+            ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
+            PUBLIC_PATH: '/assets/'
+        };
+    </script>
+    <script>!function () { if (null != window.WebSocket) { if (function (n) { try { var e = localStorage.getItem(n); return null == e ? null : JSON.parse(e) } catch (n) { return null } }("token") && !window.__OVERLAY__) { var n = null != window.DiscordNative || null != window.require ? "etf" : "json", e = window.GLOBAL_ENV.GATEWAY_ENDPOINT + "/?encoding=" + n + "&v=" + window.GLOBAL_ENV.API_VERSION + "&compress=zlib-stream"; console.log("[FAST CONNECT] connecting to: " + e); var o = new WebSocket(e); o.binaryType = "arraybuffer"; var t = Date.now(), i = { open: !1, identify: !1, gateway: e, messages: [] }; o.onopen = function () { console.log("[FAST CONNECT] connected in " + (Date.now() - t) + "ms"), i.open = !0 }, o.onclose = o.onerror = function () { window._ws = null }, o.onmessage = function (n) { i.messages.push(n) }, window._ws = { ws: o, state: i } } } }();</script>
+    <link rel="prefetch" as="script" href="/assets/3bdec94becb7320a5949.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/b9523e6e8153da29f4d8.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/2bca5148146ab09a0f77.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/a48ac06ae30799d7d07a.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/00b831dbc2005b9530f5.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/68c45391e9a6c5cce499.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/c58a450ace15698979d5.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/89c6b10bc7dcb8c1313d.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/6ae242f03cfdb7ef841b.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/5f75d77b66745b71d04f.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/7abdeba5b3dc9f17153f.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/c78a56890995200ac89c.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/b0efb03a5d1cd33a1359.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/5fc42c6029b2c818b5f5.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/f9270deeac43b5cec33b.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/1c51b31cb4f16e7937b9.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/da2a6eb7db712adb263d.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/488116a99ba491b5a076.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/a88da0e8eb471bec4b72.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/51177af5fe5f491053f3.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/f00a8554b62238dc64ee.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/44e107795356f0c8bf48.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/aa42b49a1b6026159e32.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/19ada37802688a4429eb.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/6567f388602d506f79b9.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/d811cde22d66ff49a6e8.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/22e4638015d1d0032285.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/ce7654924d18195491b8.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/3a6a179489811c471ed4.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/4fa3d77b811c6fe02502.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/2e263a7147a7d133dbdb.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/767fd57e4a570ee79cd4.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/d1dddaf4de8a256b4f68.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/bd55c9111e59c7ac1b54.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/cabeb88084b5de12f69b.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/d68d46b8b2dbd8de852d.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/5270b1c55857677ab25d.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/d6cd1d800f4e3b45c9c4.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/bcd022a1acb318803335.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/6e8c7748f9b1e033c7a2.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/edfcc7727e39dcfe9402.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/5abeb4b3219796539333.js">
+    </link>
+    <link rel="prefetch" as="script" href="/assets/99416e604e9e996e5482.js">
+    </link>
+    <link rel="stylesheet" href="/assets/40532.1970ab061a94418bb056.css">
+    <link rel="icon" href="/assets/ec2c34cadd4b5f4594415127380a85e6.ico" /> <!-- section:title -->
+    <title>Discord</title>
+    <!-- endsection -->
+</head>
+
+<body>
+    <div id="app-mount"></div>
+    <script>window.__OVERLAY__ = /overlay/.test(location.pathname)</script>
+    <script>window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname)</script>
+    <script src="/assets/508dfafe97858e0b488b.js"></script>
+    <script src="/assets/3bdec94becb7320a5949.js"></script>
+    <script src="/assets/152f2dfbb4d9f08c6d36.js"></script>
+    <script src="/assets/9a287279797be8995feb.js"></script>
+</body>
+
+</html>

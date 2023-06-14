@@ -46,3 +46,13 @@
 - Discord Build: Stable 185832 (29333f6)
 - Vencord Build: v1.1.4
 - Discord Bot Client Build: v2.1.0
+
+---
+
+## How to patch ?
+
+- Step 1: Patch index.html (Get it from discord.com/channels/@me)
+
+- Step 2: Patch script.js (search for keyword `_doIdentify` in the code)
+
+- Step 3: Change like me (see location in template file, search by keyword `// Patch #`)

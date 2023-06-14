@@ -61,7 +61,16 @@ const handlerRequest = (url, req, res) => {
 		}
 	}
 	if (url.includes('channels/1000000000000000000/messages')) {
-		return res.send(SystemMessages);
+		switch (req.method.toLowerCase()) {
+			case 'delete':
+			case 'patch':
+			case 'post': {
+				return res.status(403).send('Forbidden');
+			}
+			default: {
+				return res.send(SystemMessages);
+			}
+		}
 	}
     if (url.includes('voice-channel-effects')) {
 		return res.status(200).send();

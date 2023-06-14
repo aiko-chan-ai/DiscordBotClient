@@ -19,6 +19,11 @@ const text = 'elysia-chan'; // idk :3
 const cacheSettings = new Store(); // <id, settings>
 const emailSettings = new Map(); // <id, settings>
 
+// patch
+BigInt.prototype.toJSON = function () {
+	return this.toString();
+};
+
 const defaultDataEmailSetting = {
 	categories: {
 		social: true,

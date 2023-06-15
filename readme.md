@@ -49,6 +49,12 @@
 
 ---
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=aiko-chan-ai/DiscordBotClient&type=Date)](https://star-history.com/#aiko-chan-ai/DiscordBotClient&Date)
+
+---
+
 ## How to patch ?
 
 - Step 1: Patch index.html (Get it from discord.com/channels/@me)

@@ -46,14 +46,14 @@ module.exports = {
 			id: SnowflakeUtil.generate(),
 			interaction: {
 				id,
-				name: 'embed',
+				name: 'discohook',
 				type: 2,
 				user: {
 					id: botId,
 					username: 'BotClient',
 					avatar: null,
 				},
-				displayName: 'embed',
+				displayName: 'discohook',
 			},
 			timestamp: new Date().toISOString(),
 			type: 20, // Chat Input

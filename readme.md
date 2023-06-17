@@ -1,7 +1,7 @@
 # Discord Bot Client
 
 - Discord Build: Stable 204762 (78f82ba)
-- Vencord (v1.2.7)
+- Vencord (v1.2.8)
 
 ## All patches
 - Stable 161052 (c7e0778) (v1.x.x)

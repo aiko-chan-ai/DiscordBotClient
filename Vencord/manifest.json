@@ -10,9 +10,9 @@
         "128": "icon.png"
     },
     "host_permissions": [
-        "<all_urls>",
         "*://*.discord.com/*",
-        "https://raw.githubusercontent.com/*"
+        "https://raw.githubusercontent.com/*",
+        "<all_urls>"
     ],
     "permissions": [
         "declarativeNetRequest"
@@ -21,6 +21,7 @@
         {
             "run_at": "document_start",
             "matches": [
+                "*://*.discord.com/*",
                 "<all_urls>"
             ],
             "js": [
@@ -36,6 +37,7 @@
                 "dist/Vencord.css"
             ],
             "matches": [
+                "*://*.discord.com/*",
                 "<all_urls>"
             ]
         }
@@ -49,11 +51,5 @@
             }
         ]
     },
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "vencord-firefox@vendicated.dev",
-            "strict_min_version": "109.0"
-        }
-    },
-    "version": "1.2.7"
+    "version": "1.2.8"
 }

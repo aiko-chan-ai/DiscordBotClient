@@ -1,19 +1,30 @@
 const UserFlags = require('./UserFlags');
+const SnowflakeUtil = require('./SnowflakeUtil');
 const Constants = require('./Constants');
+const { version } = require('../package.json');
 
 module.exports = class Util {
-    static ProfilePatch(userData) {
+	static ProfilePatch(userData, forceAllBadges = false) {
 		const flags = new UserFlags(userData.public_flags);
-		const badges = flags.toArray().map((n) => Constants.Badges[n]).filter(o => o);
-		if (userData.bot) badges.push(Constants.Badges.BOT_SLASH, Constants.Badges.BOT_AUTOMOD);
-		if (
-			userData.avatar?.includes('a_') ||
-			userData.banner
-		) {
-			badges.push(Constants.Badges.NITRO, Constants.Badges.GUILD_BOOSTER);
+		const badges = Object.keys(Constants.Badges)
+			.filter((o) => forceAllBadges ? true : flags.toArray().includes(o))
+			.map((o) => Constants.Badges[o]);
+		if (!forceAllBadges) {
+			if (userData.bot)
+				badges.push(
+					Constants.Badges.BOT_SLASH,
+					Constants.Badges.BOT_AUTOMOD,
+				);
+			if (userData.avatar?.includes('a_') || userData.banner) {
+				badges.push(
+					Constants.Badges.NITRO,
+					Constants.Badges.GUILD_BOOSTER,
+				);
+			}
+			if (userData.discriminator === '0')
+				badges.push(Constants.Badges.LEGACY_USERNAME);
 		}
-		if (userData.discriminator === '0') badges.push(Constants.Badges.LEGACY_USERNAME);
-        return {
+		return {
 			user: userData,
 			connected_accounts: [],
 			premium_since: null,
@@ -35,5 +46,20 @@ module.exports = class Util {
 			guild_badges: [],
 			legacy_username: null,
 		};
-    }
-}
+	}
+	static patchCommand(command) {
+		return {
+			...('metadata' in command ? command.metadata : command),
+			id: SnowflakeUtil.generate(),
+			application_id: '1056491867375673424',
+			version: SnowflakeUtil.generate(),
+		};
+	}
+	static getIDFromToken(token) {
+		token = token.replace(/^(Bot|Bearer)\s*/i, '');
+		return Buffer.from(token.split('.')[0], 'base64').toString();
+	}
+	static UserAgent() {
+		return `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
+	}
+};

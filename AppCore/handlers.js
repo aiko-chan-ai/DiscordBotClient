@@ -3,21 +3,30 @@ const axios = require('axios');
 const { PreloadedUserSettings } = require('discord-protos');
 const crypto = require('crypto');
 const Store = require('electron-store');
+const multer = require('multer');
 
 const settingDefault = require('../AppAssets/SettingProto');
-const { version } = require('../package.json');
 
 const NitroData = require('../AppAssets/NitroData');
 const UserPatch = require('../AppAssets/UserPatch');
 const Util = require('../AppAssets/Util');
 const SystemMessages = require('../AppAssets/SystemMessages');
+const Commands = require('../AppAssets/Commands/index');
+const SnowflakeUtil = require('../AppAssets/SnowflakeUtil');
 
-const userAgent = `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
+const userAgent = Util.UserAgent();
 
 const text = 'elysia-chan'; // idk :3
 
 const cacheSettings = new Store(); // <id, settings>
 const emailSettings = new Map(); // <id, settings>
+
+const interactionCache = new Map(); // <any, any>
+
+/**
+ * @type {import('socket.io').Server}
+ */
+let io;
 
 // patch
 BigInt.prototype.toJSON = function () {
@@ -37,21 +46,35 @@ const defaultDataEmailSetting = {
 
 function getDataFromRequest(req, res, callback) {
 	var data = '';
+	// check content-type
+	if (req.headers['content-type'] !== 'application/json') {
+		return multer().any()(req, res, function (err) {
+			if (err) {
+				console.error('Multer Error:', err);
+			}
+			callback(req, res);
+		});
+	}
 	req.on('data', function (chunk) {
 		data += chunk;
 	});
 	req.on('end', function () {
 		req.rawBody = data;
-		if (data && data.indexOf('{') > -1) {
-			req.body = JSON.parse(data);
+		if (data) {
+			try {
+				req.body = JSON.parse(data);
+			} catch (e) {
+				req.body = undefined;
+				console.error('JSON Parse Error:', e);
+			}
+			callback(req, res);
 		}
-		callback(req, res);
 	});
 }
 
 const handlerRequest = (url, req, res) => {
 	// Author:
-    if (/users\/\d{17,19}/.exec(url)) {
+	if (/users\/\d{17,19}/.exec(url)) {
 		const id = url.match(/users\/(\d{17,19})/)[1];
 		const UserData = UserPatch[id];
 		if (url.includes('profile') && UserData) {
@@ -72,13 +95,13 @@ const handlerRequest = (url, req, res) => {
 			}
 		}
 	}
-    if (url.includes('voice-channel-effects')) {
+	if (url.includes('voice-channel-effects')) {
 		return res.status(200).send();
 	}
 	// Store
 	if (url.includes('store/published-listings/skus/')) {
-        const id = url.match(/(\d{17,19})\/subscription-plans/)[1];
-        return res.send(NitroData[id]);
+		const id = url.match(/(\d{17,19})\/subscription-plans/)[1];
+		return res.send(NitroData[id]);
 	}
 	if (
 		url.includes('billing/subscriptions') ||
@@ -130,16 +153,89 @@ const handlerRequest = (url, req, res) => {
 		return res.status(204).send();
 	}
 	if (url.includes('application-commands/search')) {
-		return res.status(200).send({
-			applications: [],
-			application_commands: [],
-			cursor: null,
-		});
+		const Url = new URL(`https://discord.com${url}`);
+		switch (Url.searchParams.get('type')) {
+			// type: Slash commands
+			case '1': {
+				res.status(200).send({
+					application_commands: Array.from(
+						Commands.Slash,
+						([name, value]) => Util.patchCommand(value),
+					),
+					applications: Url.searchParams.has('application_id')
+						? null
+						: [
+								{
+									id: '1056491867375673424',
+									name: 'aiko-chan-ai',
+									icon: '93fb88f6b8c0a2a33c437d0fff4c6625',
+									description: '',
+									summary: '',
+									type: null,
+									bot: UserPatch['1056491867375673424'],
+								},
+						  ],
+					cursor: null,
+				});
+				break;
+			}
+			default: {
+				res.status(200).send({
+					application_commands: [],
+					applications: [],
+					cursor: null,
+				});
+				break;
+			}
+		}
+		return;
 	}
-    if (url.includes('/profile')) {
+	if (url.includes('/interactions')) {
+		if (req.method.toUpperCase() == 'POST') {
+			const callback = (req, res) => {
+				const commandData = JSON.parse(req.body?.payload_json);
+				// console.log(commandData);
+				const idInteraction = SnowflakeUtil.generate();
+				commandData.id = idInteraction;
+				io.emit('dispatch', {
+					session_id: commandData.session_id,
+					t: 'INTERACTION_CREATE',
+					d: {
+						id: idInteraction,
+						nonce: commandData.nonce,
+					},
+				});
+				const command = Commands.Slash.get(commandData.data.name);
+				if (command) {
+					command.run(commandData, req.headers.authorization, io);
+					io.emit('dispatch', {
+						t: 'INTERACTION_SUCCESS',
+						session_id: commandData.session_id,
+						d: {
+							id: idInteraction,
+							nonce: commandData.nonce,
+						},
+					});
+				} else {
+					io.emit('dispatch', {
+						session_id: commandData.session_id,
+						t: 'INTERACTION_FAILURE',
+						d: {
+							id: idInteraction,
+							nonce: commandData.nonce,
+						},
+					});
+				}
+				return res.status(204).send();
+			};
+			return getDataFromRequest(req, res, callback);
+		}
+	}
+	if (url.includes('/profile')) {
 		const BotToken = req.headers.authorization;
 		const url_ = new URL(`https://discord.com${url}`);
 		const id = url_.pathname.match(/\d{17,19}/)[0];
+		const botId = Util.getIDFromToken(BotToken);
 		return axios
 			.get(`https://discord.com/api/v9/users/${id}`, {
 				headers: {
@@ -149,18 +245,19 @@ const handlerRequest = (url, req, res) => {
 				},
 			})
 			.then(({ data }) => {
-				return res.status(200).send(Util.ProfilePatch(data));
+				return res
+					.status(200)
+					.send(Util.ProfilePatch(data, botId == id));
 			})
 			.catch(() => {
 				return res.status(200).send(Util.ProfilePatch({ id }));
 			});
 	}
-    if (
+	if (
 		[
 			'users/@me/mentions',
 			'billing/',
 			'activities/guilds',
-			'interactions',
 			'premium/subscription',
 			'relationships',
 			'store/published-listings/skus',
@@ -168,12 +265,12 @@ const handlerRequest = (url, req, res) => {
 	) {
 		return res.status(200).send([]);
 	}
-    if (url.includes('onboarding')) {
-		return res.status(404).send(
-			'Bot can use this endpoint but it will crash the client :<',
-		);
+	if (url.includes('onboarding')) {
+		return res
+			.status(404)
+			.send('Bot can use this endpoint but it will crash the client :<');
 	}
-    if (url.includes('/onboarding-responses')) {
+	if (url.includes('/onboarding-responses')) {
 		if (req.method.toUpperCase() == 'POST') {
 			const callback = (req, res) => {
 				const guild_id = /\d{17,19}/.exec(url)[0];
@@ -193,7 +290,7 @@ const handlerRequest = (url, req, res) => {
 			return getDataFromRequest(req, res, callback);
 		}
 	}
-    if (url.includes('messages/search')) {
+	if (url.includes('messages/search')) {
 		const salt = Math.random().toString();
 		const hash = crypto
 			.createHash('md5')
@@ -206,7 +303,7 @@ const handlerRequest = (url, req, res) => {
 			messages: [],
 		});
 	}
-    if (url.includes('settings-proto/1')) {
+	if (url.includes('settings-proto/1')) {
 		// parse userid from header
 		const BotToken = req.headers.authorization;
 		const uid = Buffer.from(
@@ -241,16 +338,16 @@ const handlerRequest = (url, req, res) => {
 		};
 		return getDataFromRequest(req, res, callback);
 	}
-    if (url.includes('settings-proto/2')) {
+	if (url.includes('settings-proto/2')) {
 		return res.send({
 			settings: '',
 		});
 	}
-    if (url.includes('users/@me/email-settings')) {
+	if (url.includes('users/@me/email-settings')) {
 		return res.send(defaultDataEmailSetting);
 	}
-    if (url.includes('/threads/search?archived=true')) {
-        // TODO: fix this
+	if (url.includes('/threads/search?archived=true')) {
+		// TODO: fix this
 		const cid = /\d{17,19}/.exec(url)[0];
 		return axios
 			.get(
@@ -277,11 +374,8 @@ const handlerRequest = (url, req, res) => {
 					},
 				});
 			});
-	} 
-    if (
-		url.includes('api/v9/users/@me') &&
-		req.method.toUpperCase() == 'GET'
-	) {
+	}
+	if (url.includes('api/v9/users/@me') && req.method.toUpperCase() == 'GET') {
 		return axios
 			.get(`https://discord.com/api/v9/users/@me`, {
 				headers: {
@@ -307,21 +401,37 @@ const handlerRequest = (url, req, res) => {
 				res.status(404).send();
 			});
 	}
-    if ( url.includes('/ack')) {
+	if (url.includes('/ack')) {
 		return res.status(200).send({ token: null });
 	}
-    if (url.includes('billing/country-code')) {
+	if (url.includes('billing/country-code')) {
 		return res.status(200).send({
 			country_code: 'VN',
 		});
 	}
-    if (url.includes('logout')) {
+	if (url.includes('logout')) {
 		return res.status(200).send();
 	}
-    return req.pipe(request('https://discord.com' + url)).pipe(res);
+	return req.pipe(request('https://discord.com' + url)).pipe(res);
 };
 
+/**
+ * @param {import('socket.io').Server} io
+ */
+function handlerIO(io) {
+	io.on('connection', (socket) => {
+		console.log('A user connected');
+		socket.on('disconnect', () => {
+			console.log('User disconnected');
+		});
+	});
+}
+
 module.exports = function (app, logger, html, patchList, scriptTarget) {
+	io = app.io;
+
+	handlerIO(io);
+
 	app.get('/ping', function (req, res) {
 		res.status(200).send('pong');
 	});

@@ -12,17 +12,17 @@ module.exports = {
 			icon: '3f9748e53446a137a052f3454e2de41e',
 			link: 'https://discord.com/partners',
 		},
+		DISCORD_CERTIFIED_MODERATOR: {
+			id: 'certified_moderator',
+			description: 'Moderator Programs Alumni',
+			icon: 'fee1624003e2fee35cb398e125dc479b',
+			link: 'https://discord.com/safety',
+		},
 		HYPESQUAD_EVENTS: {
 			id: 'hypesquad',
 			description: 'HypeSquad Events',
 			icon: 'bf01d1073931f921909045f3a39fd264',
 			link: 'https://discord.com/hypesquad',
-		},
-		BUGHUNTER_LEVEL_1: {
-			id: 'bug_hunter_level_1',
-			description: 'Discord Bug Hunter',
-			icon: '2717692c7dca7289b35297368a940dd0',
-			link: 'https://support.discord.com/hc/en-us/articles/360046057772-Discord-Bugs',
 		},
 		HOUSE_BRAVERY: {
 			id: 'hypesquad_house_1',
@@ -42,11 +42,11 @@ module.exports = {
 			icon: '3aa41de486fa12454c3761e8e223442e',
 			link: 'https://discord.com/settings/hypesquad-online',
 		},
-		EARLY_SUPPORTER: {
-			id: 'early_supporter',
-			description: 'Early Supporter',
-			icon: '7060786766c9c840eb3019e725d2b358',
-			link: 'https://discord.com/settings/premium',
+		BUGHUNTER_LEVEL_1: {
+			id: 'bug_hunter_level_1',
+			description: 'Discord Bug Hunter',
+			icon: '2717692c7dca7289b35297368a940dd0',
+			link: 'https://support.discord.com/hc/en-us/articles/360046057772-Discord-Bugs',
 		},
 		BUGHUNTER_LEVEL_2: {
 			id: 'bug_hunter_level_2',
@@ -54,23 +54,24 @@ module.exports = {
 			icon: '848f79194d4be5ff5f81505cbd0ce1e6',
 			link: 'https://support.discord.com/hc/en-us/articles/360046057772-Discord-Bugs',
 		},
-		EARLY_VERIFIED_BOT_DEVELOPER: {
-			id: 'verified_developer',
-			description: 'Early Verified Bot Developer',
-			icon: '6df5892e0f35b051f8b61eace34f4967',
-		},
-		DISCORD_CERTIFIED_MODERATOR: {
-			id: 'certified_moderator',
-			description: 'Moderator Programs Alumni',
-			icon: 'fee1624003e2fee35cb398e125dc479b',
-			link: 'https://discord.com/safety',
-		},
 		ACTIVE_DEVELOPER: {
 			id: 'active_developer',
 			description: 'Active Developer',
 			icon: '6bdc42827a38498929a4920da12695d9',
 			link: 'https://support-dev.discord.com/hc/en-us/articles/10113997751447?ref=badge',
 		},
+		EARLY_VERIFIED_BOT_DEVELOPER: {
+			id: 'verified_developer',
+			description: 'Early Verified Bot Developer',
+			icon: '6df5892e0f35b051f8b61eace34f4967',
+		},
+		EARLY_SUPPORTER: {
+			id: 'early_supporter',
+			description: 'Early Supporter',
+			icon: '7060786766c9c840eb3019e725d2b358',
+			link: 'https://discord.com/settings/premium',
+		},
+
 		// added
 		NITRO: {
 			id: 'premium',
@@ -86,7 +87,7 @@ module.exports = {
 		},
 		LEGACY_USERNAME: {
 			id: 'legacy_username',
-			description: 'Originally known as unknown#NaN',
+			description: 'Originally known as undefined#NaN',
 			icon: '6de6d34650760ba5551a79732e98ed60',
 		},
 		BOT_SLASH: {

@@ -5,6 +5,7 @@ const fetch = require('node-fetch');
 const morgan = require('morgan');
 const path = require('path');
 const { dialog, app: ElectronApp } = require('electron');
+const { Server } = require('socket.io');
 const { DiscordBuildVersion } = require('../package.json');
 const APP_NAME = 'DiscordBotClient';
 
@@ -82,6 +83,12 @@ let html = '';
 let scriptTarget = {};
 const patchList = ['9a287279797be8995feb'];
 
+const server = https.createServer(httpsOptions, app);
+
+const io = new Server(server);
+
+app.io = io;
+
 // Catch unhandled promise rejections
 process.on('unhandledRejection', (err) => {
 	(0, logger?.error || console.error)(err);
@@ -139,8 +146,7 @@ async function start(port, log_, win) {
 	}
 	handlerRequest(app, logger, html, patchList, scriptTarget);
 	return new Promise((resolve, reject) => {
-		https
-			.createServer(httpsOptions, app)
+		server
 			.listen(port, () => {
 				resolve(port);
 				(0, logger?.info || console.log)(

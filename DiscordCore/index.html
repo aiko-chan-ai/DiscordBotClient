@@ -15,6 +15,26 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@discord" />
     <meta name="twitter:creator" content="@discord" />
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+        var getSessionId;
+        socket.on('dispatch', function (msg) {
+            if (typeof getSessionId !== 'function') return;
+            if (msg.session_id && msg.session_id !== getSessionId()) return;
+            switch (msg.t) {
+                case 'INTERACTION_CREATE':
+                case 'INTERACTION_SUCCESS':
+                case 'INTERACTION_FAILURE':
+                case 'MESSAGE_CREATE':
+                case 'MESSAGE_UPDATE':
+                case 'MESSAGE_DELETE':
+                    return window.Wxt.emit('dispatch', msg.t, msg.d);
+                default:
+                    return console.log('Event', msg);
+            }
+        });
+    </script>
     <script>
         class BitField {
             constructor(bits = this.constructor.defaultBit) {
@@ -258,6 +278,7 @@
                 getChannel = Vencord.Webpack.findByProps("getChannel")?.getChannel;
                 getGuild = Vencord.Webpack.findByProps("getGuild", "getGuilds")?.getGuild;
                 getCurrentGuildId = Vencord.Webpack.findByProps("getLastSelectedGuildId")?.getLastSelectedGuildId;
+                getSessionId = Vencord.Webpack.findByProps("getSessionId")?.getSessionId;
             }
             if (getCurrentChannelId) {
                 clearInterval(i_);

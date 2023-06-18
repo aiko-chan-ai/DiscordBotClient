@@ -25,7 +25,16 @@ app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 const APP_NAME = 'DiscordBotClient';
 
+const iconPath = path.join(
+	__dirname,
+	'..',
+	'AppAssets',
+	'DiscordBotClient.png',
+);
+
 app.setAppUserModelId(APP_NAME);
+
+log.info('App starting...');
 
 function createNotification(
 	title,
@@ -40,32 +49,22 @@ function createNotification(
 		icon,
 		silent,
 	});
-	n.once(
-		'click',
-		() => {
-			typeof callbackWhenClick == 'function' && callbackWhenClick();
-			n.close();
-		},
-	);
+	n.once('click', () => {
+		typeof callbackWhenClick == 'function' && callbackWhenClick();
+		n.close();
+	});
 	n.show();
 }
 
-log.info('App starting...');
-
-const iconPath = path.join(
-	__dirname,
-	'..',
-	'AppAssets',
-	'DiscordBotClient.png',
-);
-
 /**
- * 
- * @param {BrowserWindow} win 
- * @returns 
+ *
+ * @param {BrowserWindow} win
+ * @returns
  */
 function createTray(win) {
-	const tray = new Tray(nativeImage.createFromPath(iconPath).resize({ width: 16 }));
+	const tray = new Tray(
+		nativeImage.createFromPath(iconPath).resize({ width: 16 }),
+	);
 	tray.setToolTip(APP_NAME);
 	tray.on('click', () => {
 		win.show();
@@ -169,14 +168,14 @@ function checkUpdate() {
 async function createWindow() {
 	let isNotifMinimized = false;
 	checkUpdate();
-	const primaryDisplay = screen.getPrimaryDisplay()
-  const { width, height } = primaryDisplay.workAreaSize
+	const primaryDisplay = screen.getPrimaryDisplay();
+	const { width, height } = primaryDisplay.workAreaSize;
 	// Create the browser window.
 	const win = new BrowserWindow({
-		width: width/1.2,
-		height: height/1.2,
-		minWidth: width/2,
-		minHeight: height/2,
+		width: width*0.9,
+		height: height*0.9,
+		minWidth: 800,
+		minHeight: 600,
 		icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),
 		webPreferences: {
 			webSecurity: false,
@@ -191,7 +190,7 @@ async function createWindow() {
 		// titleBarStyle: "hidden",
 	});
 
-	createTray(win);
+	const tray = createTray(win);
 
 	log.info(`Electron UserData: ${app.getPath('userData')}`);
 
@@ -219,7 +218,7 @@ async function createWindow() {
 	win.loadURL(`https://localhost:${port}`);
 
 	win.webContents.on('did-start-loading', () => {
-		win.setProgressBar(2, { mode: 'indeterminate' }); // second parameter optional
+		win.setProgressBar(2, { mode: 'indeterminate' });
 	});
 
 	win.webContents.on('did-stop-loading', () => {
@@ -249,29 +248,27 @@ async function createWindow() {
 	});
 
 	ipcMain.on('minimize', (event) => {
-		win.minimize()
-		event.sender.send('minicomplete', true)
-	})
+		win.minimize();
+		event.sender.send('minicomplete', true);
+	});
 
 	ipcMain.on('max', (event) => {
-		if(win.isMaximized()) {
+		if (win.isMaximized()) {
 			win.restore();
 		} else {
 			win.maximize();
 		}
-	})
+	});
 
 	ipcMain.on('close', (event) => {
-		win.hide()
+		win.hide();
 		event.sender.send('closecomplete');
 	});
 
 	ipcMain.on('show-dialog-request', (event, arg) => {
-		dialog
-			.showMessageBox(win, arg)
-			.then((result) => {
-				event.sender.send('show-dialog-response', result);
-			});
+		dialog.showMessageBox(win, arg).then((result) => {
+			event.sender.send('show-dialog-response', result);
+		});
 	});
 }
 

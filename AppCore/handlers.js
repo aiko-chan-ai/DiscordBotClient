@@ -130,6 +130,7 @@ const handlerRequest = (url, req, res) => {
 		'users/@me/harvest',
 		'connections/eligibility',
 		'activities/shelf',
+		'interaction-data',
 	].some((path) => url.includes(path));
 	if (blacklist)
 		return res.status(404).send({

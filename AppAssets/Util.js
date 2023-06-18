@@ -62,4 +62,39 @@ module.exports = class Util {
 	static UserAgent() {
 		return `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
 	}
+	static createMessageReplyCommand(
+		content,
+		applicationId,
+		interactionId,
+		channelId,
+		commandName,
+		botId,
+		nonce,
+	) {
+		return {
+			applicationId,
+			author: {
+				id: applicationId,
+			},
+			channel_id: channelId,
+			content,
+			embeds: [],
+			flags: 1 << 6,
+			id: SnowflakeUtil.generate(),
+			interaction: {
+				id: interactionId,
+				name: commandName,
+				type: 2,
+				user: {
+					id: botId,
+					username: 'BotClient',
+					avatar: null,
+				},
+				displayName: commandName,
+			},
+			timestamp: new Date().toISOString(),
+			type: 20, // Chat Input
+			nonce,
+		};
+	}
 };

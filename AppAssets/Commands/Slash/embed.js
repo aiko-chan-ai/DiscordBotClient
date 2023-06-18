@@ -1,5 +1,4 @@
 const Util = require('../../Util');
-const SnowflakeUtil = require('../../SnowflakeUtil');
 const axios = require('axios');
 
 module.exports = {
@@ -37,33 +36,15 @@ module.exports = {
 		const botId = Util.getIDFromToken(token);
 		let color = data.data.options[0].value;
 		const text = data.data.options[1].value;
-		const msg = {
+		const msg = Util.createMessageReplyCommand(
+			'',
 			applicationId,
-			author: {
-				id: applicationId,
-			},
-			channel_id: channelId,
-			content: '',
-			embeds: [],
-			flags: 1 << 6,
-			// Ephemeral | 1 << 6
-			// Normal | 0
-			id: SnowflakeUtil.generate(),
-			interaction: {
-				id,
-				name: 'embed',
-				type: 2,
-				user: {
-					id: botId,
-					username: 'BotClient',
-					avatar: null,
-				},
-				displayName: 'embed',
-			},
-			timestamp: new Date().toISOString(),
-			type: 20, // Chat Input
+			id,
+			channelId,
+			'embed',
+			botId,
 			nonce,
-		};
+		);
 		// Resolve the color to decimal
 		if (color.startsWith('#')) {
 			color = color.slice(1);

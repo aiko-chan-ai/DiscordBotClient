@@ -1,5 +1,4 @@
 const Util = require('../../Util');
-const SnowflakeUtil = require('../../SnowflakeUtil');
 const axios = require('axios');
 
 module.exports = {
@@ -29,33 +28,15 @@ module.exports = {
 		const id = data.id;
 		const botId = Util.getIDFromToken(token);
 		const url = data.data.options[0].value;
-		const msg = {
+		const msg = Util.createMessageReplyCommand(
+			'',
 			applicationId,
-			author: {
-				id: applicationId,
-			},
-			channel_id: channelId,
-			content: '',
-			embeds: [],
-			flags: 1 << 6,
-			// Ephemeral | 1 << 6
-			// Normal | 0
-			id: SnowflakeUtil.generate(),
-			interaction: {
-				id,
-				name: 'discohook',
-				type: 2,
-				user: {
-					id: botId,
-					username: 'BotClient',
-					avatar: null,
-				},
-				displayName: 'discohook',
-			},
-			timestamp: new Date().toISOString(),
-			type: 20, // Chat Input
+			id,
+			channelId,
+			'discohook',
+			botId,
 			nonce,
-		};
+		);
 		let Url;
 		try {
 			let ok = 0;

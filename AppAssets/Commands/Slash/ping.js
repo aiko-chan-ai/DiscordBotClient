@@ -1,4 +1,3 @@
-const SnowflakeUtil = require('../../SnowflakeUtil');
 const Util = require('../../Util');
 
 module.exports = {
@@ -18,33 +17,15 @@ module.exports = {
 		const sessionId = data.session_id;
 		const id = data.id;
         const botId = Util.getIDFromToken(token);
-		const msg = {
+		const msg = Util.createMessageReplyCommand(
+			'Pong!',
 			applicationId,
-			author: {
-				id: applicationId,
-			},
-			channel_id: channelId,
-			content: 'Pong!',
-			embeds: [],
-			flags: 1 << 6,
-			// Ephemeral | 1 << 6
-			// Normal | 0
-			id: SnowflakeUtil.generate(),
-			interaction: {
-				id,
-				name: 'ping',
-				type: 2,
-				user: {
-					id: botId,
-					username: 'BotClient',
-					avatar: null,
-				},
-				displayName: 'ping',
-			},
-			timestamp: new Date().toISOString(),
-			type: 20, // Chat Input
+			id,
+			channelId,
+			'ping',
+			botId,
 			nonce,
-		};
+		);
 		io.emit('dispatch', {
 			t: 'MESSAGE_CREATE',
 			session_id: sessionId,

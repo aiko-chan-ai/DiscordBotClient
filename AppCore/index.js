@@ -5,6 +5,9 @@ const {
 	shell,
 	Notification,
 	session,
+	Tray,
+	Menu,
+	nativeImage,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
@@ -30,7 +33,7 @@ function createNotification(
 	const n = new Notification({
 		title,
 		body: description,
-		icon: iconPath,
+		icon: nativeImage.createFromPath(iconPath),
 		silent,
 	});
 	n.once(
@@ -49,7 +52,74 @@ function createNotification(
 
 log.info('App starting...');
 
-const iconPath = path.join(__dirname, '..', 'AppAssets', 'DiscordBotClient.ico');
+const iconPath = path.join(
+	__dirname,
+	'..',
+	'AppAssets',
+	'DiscordBotClient.png',
+);
+
+/**
+ * 
+ * @param {BrowserWindow} win 
+ * @returns 
+ */
+function createTray(win) {
+	const tray = new Tray(nativeImage.createFromPath(iconPath).resize({ width: 16 }));
+	tray.setToolTip(APP_NAME);
+	tray.on('click', () => {
+		win.show();
+	});
+	const menu = Menu.buildFromTemplate([
+		{
+			label: APP_NAME,
+			icon: nativeImage.createFromPath(iconPath).resize({ width: 16 }),
+			enabled: false,
+		},
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Check for Updates...',
+			type: 'normal',
+			visible: process.platform !== 'darwin',
+			click: checkUpdate,
+		},
+		{
+			label: 'Acknowledgements',
+			type: 'normal',
+			visible: process.platform !== 'darwin',
+			click: () =>
+				shell.openExternal(
+					'https://github.com/aiko-chan-ai/DiscordBotClient',
+				),
+		},
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Reload',
+			click: () => {
+				win.reload();
+			},
+		},
+		{
+			label: 'Toggle Developer Tools',
+			click: () => {
+				win.webContents.toggleDevTools();
+			},
+		},
+		{
+			type: 'separator',
+		},
+		{
+			label: 'Quit',
+			role: 'quit',
+		},
+	]);
+	tray.setContextMenu(menu);
+	return tray;
+}
 
 function checkUpdate() {
 	log.info('Checking for updates...');
@@ -90,17 +160,18 @@ function checkUpdate() {
 					},
 				);
 			})
-            .finally(resolve);
+			.finally(resolve);
 	});
 }
 
 async function createWindow() {
+	let isNotifMinimized = false;
 	checkUpdate();
 	// Create the browser window.
 	const win = new BrowserWindow({
 		width: 1920,
 		height: 1080,
-		icon: iconPath,
+		icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: false,
@@ -110,6 +181,8 @@ async function createWindow() {
 		title: 'DiscordBotClient',
 		// titleBarStyle: "hidden",
 	});
+
+	createTray(win);
 
 	log.info(`Electron UserData: ${app.getPath('userData')}`);
 
@@ -155,6 +228,17 @@ async function createWindow() {
 			callback({ responseHeaders: details.responseHeaders });
 		},
 	);
+
+	win.on('minimize', function (e) {
+		e.preventDefault();
+		win.hide();
+		if (isNotifMinimized) return;
+		isNotifMinimized = true;
+		createNotification(
+			APP_NAME + ' is running in background',
+			'You can close the application in the taskbar',
+		);
+	});
 }
 
 app.whenReady().then(createWindow);

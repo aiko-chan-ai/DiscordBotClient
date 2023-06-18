@@ -27,25 +27,22 @@ app.setAppUserModelId(APP_NAME);
 function createNotification(
 	title,
 	description,
+	icon,
 	silent = false,
-	callbackWhenClick,
+	callbackWhenClick = () => {},
 ) {
 	const n = new Notification({
 		title,
 		body: description,
-		icon: nativeImage.createFromPath(iconPath),
+		icon,
 		silent,
 	});
 	n.once(
 		'click',
-		typeof callbackWhenClick === 'function'
-			? () => {
-					callbackWhenClick();
-					n.close();
-			  }
-			: () => {
-					n.close();
-			  },
+		() => {
+			typeof callbackWhenClick == 'function' && callbackWhenClick();
+			n.close();
+		},
 	);
 	n.show();
 }
@@ -86,7 +83,7 @@ function createTray(win) {
 			click: checkUpdate,
 		},
 		{
-			label: 'Acknowledgements',
+			label: 'Github Repository',
 			type: 'normal',
 			visible: process.platform !== 'darwin',
 			click: () =>
@@ -133,6 +130,7 @@ function checkUpdate() {
 					createNotification(
 						'Update Manager',
 						`New version available: ${res.name}`,
+						null,
 						undefined,
 						() => {
 							shell.openExternal(
@@ -152,6 +150,7 @@ function checkUpdate() {
 				createNotification(
 					'Update Manager',
 					`Unable to check for updates (v${DBCVersion})`,
+					null,
 					undefined,
 					() => {
 						shell.openExternal(

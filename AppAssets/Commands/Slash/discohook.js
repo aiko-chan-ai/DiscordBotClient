@@ -4,9 +4,6 @@ const axios = require('axios');
 
 module.exports = {
 	metadata: {
-		id: '', // skip
-		application_id: '', // skip
-		version: '', // skip
 		default_member_permissions: null,
 		type: 1,
 		nsfw: false,

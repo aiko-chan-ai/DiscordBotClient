@@ -8,6 +8,8 @@ const {
 	Tray,
 	Menu,
 	nativeImage,
+	screen,
+	ipcMain,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
@@ -166,17 +168,24 @@ function checkUpdate() {
 async function createWindow() {
 	let isNotifMinimized = false;
 	checkUpdate();
+	const primaryDisplay = screen.getPrimaryDisplay()
+  const { width, height } = primaryDisplay.workAreaSize
 	// Create the browser window.
 	const win = new BrowserWindow({
-		width: 1920,
-		height: 1080,
+		width: width/1.2,
+		height: height/1.2,
+		minWidth: width/2,
+		minHeight: height/2,
 		icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: false,
 			enableRemoteModule: false,
+			preload: path.join(app.getAppPath(), 'preload.js'),
 			contextIsolation: true,
 		},
+		frame: false,
+		backgroundColor: '#36393f',
 		title: 'DiscordBotClient',
 		// titleBarStyle: "hidden",
 	});
@@ -190,7 +199,7 @@ async function createWindow() {
 
 	createNotification('Proxy Server', `Proxy server started on port ${port}`);
 
-	if (!app.isPackaged) win.webContents.openDevTools();
+	// if (!app.isPackaged) win.webContents.openDevTools();
 
 	if (systemPreferences && systemPreferences.askForMediaAccess)
 		systemPreferences.askForMediaAccess('microphone');
@@ -228,9 +237,8 @@ async function createWindow() {
 		},
 	);
 
-	win.on('minimize', function (e) {
+	win.on('hide', function (e) {
 		e.preventDefault();
-		win.hide();
 		if (isNotifMinimized) return;
 		isNotifMinimized = true;
 		createNotification(
@@ -238,9 +246,35 @@ async function createWindow() {
 			'You can close the application in the taskbar',
 		);
 	});
+
+	ipcMain.on('minimize', (event) => {
+		win.minimize()
+
+		event.sender.send('minicomplete', true)
+	})
+
+	ipcMain.on('max', (event) => {
+		if(win.isMaximized()) {
+			win.restore();
+		} else {
+			win.maximize();
+			
+		}
+
+		
+	})
+
+	ipcMain.on('close', (event) => {
+		win.hide()
+		event.sender.send('closecomplete');
+		
+	})
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+	
+	createWindow();
+});
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {

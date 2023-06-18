@@ -10,6 +10,7 @@ const {
 	nativeImage,
 	screen,
 	ipcMain,
+	dialog,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
@@ -181,7 +182,7 @@ async function createWindow() {
 			webSecurity: false,
 			nodeIntegration: false,
 			enableRemoteModule: false,
-			preload: path.join(app.getAppPath(), 'preload.js'),
+			preload: path.join(__dirname, 'preload.js'),
 			contextIsolation: true,
 		},
 		frame: false,
@@ -199,7 +200,7 @@ async function createWindow() {
 
 	createNotification('Proxy Server', `Proxy server started on port ${port}`);
 
-	// if (!app.isPackaged) win.webContents.openDevTools();
+	if (!app.isPackaged) win.webContents.openDevTools();
 
 	if (systemPreferences && systemPreferences.askForMediaAccess)
 		systemPreferences.askForMediaAccess('microphone');
@@ -249,7 +250,6 @@ async function createWindow() {
 
 	ipcMain.on('minimize', (event) => {
 		win.minimize()
-
 		event.sender.send('minicomplete', true)
 	})
 
@@ -258,21 +258,24 @@ async function createWindow() {
 			win.restore();
 		} else {
 			win.maximize();
-			
 		}
-
-		
 	})
 
 	ipcMain.on('close', (event) => {
 		win.hide()
 		event.sender.send('closecomplete');
-		
-	})
+	});
+
+	ipcMain.on('show-dialog-request', (event, arg) => {
+		dialog
+			.showMessageBox(win, arg)
+			.then((result) => {
+				event.sender.send('show-dialog-response', result);
+			});
+	});
 }
 
 app.whenReady().then(() => {
-	
 	createWindow();
 });
 

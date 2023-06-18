@@ -265,11 +265,6 @@ const handlerRequest = (url, req, res) => {
 	) {
 		return res.status(200).send([]);
 	}
-	if (url.includes('onboarding')) {
-		return res
-			.status(404)
-			.send('Bot can use this endpoint but it will crash the client :<');
-	}
 	if (url.includes('/onboarding-responses')) {
 		if (req.method.toUpperCase() == 'POST') {
 			const callback = (req, res) => {

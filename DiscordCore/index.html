@@ -18,6 +18,8 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
         var socket = io();
+        var loginToken;
+        var transitionToGuild;
         var getSessionId;
         var guilds; // id => data
         socket.on('dispatch', function (msg) {
@@ -35,6 +37,65 @@
                     return console.log('Event', msg);
             }
         });
+        function showToast(
+            message,
+            type,
+            {
+                position,
+                timeout,
+            } = {}
+        ) {
+            Vencord.Webpack.Common.Toasts.show({
+                message,
+                id: (Math.random() || Math.random()).toString(36).slice(2),
+                type,
+                options: {
+                    timeout,
+                    position,
+                },
+            });
+        }
+        function patchModule() {
+            loginToken = Vencord.Webpack.findByProps('loginToken').loginToken;
+            transitionToGuild = function (guildId, channelId, msgId) {
+                Vencord.Webpack.Common.NavigationRouter.transitionToGuild(guildId, channelId, msgId);
+                showToast(
+                    `Switch to GuildId: ${guildId}`,
+                    1,
+                )
+            };
+            console.log('Patching Module');
+            Vencord.Webpack.findByProps('acceptInvite').acceptInvite = function (code, location, extra) {
+                window.Wxt?.emit('dispatch', 'INVITE_ACCEPT_FAILURE', code);
+                showToast(
+                    'Discord Bot Client cannot join guilds',
+                    2,
+                );
+                return Promise.reject("Discord Bot Client cannot join guilds");
+            };
+            Vencord.Webpack.findByProps('loadTemplatesForGuild').loadTemplatesForGuild = function () {
+                return Promise.reject("Discord Bot Client cannot use Guild Templates");
+            };
+            [
+                'acceptFriendRequest',
+                'addRelationship',
+                'cancelFriendRequest',
+                'clearPendingRelationships',
+                'confirmClearPendingRelationships',
+                'fetchRelationships',
+                'removeFriend',
+                'removeRelationship',
+                'sendRequest',
+                'unblockUser',
+                'updateRelationship'
+            ].forEach((a) => (Vencord.Webpack.findByProps('fetchRelationships')[a] = function () {
+                showToast(
+                    'Discord Bot Client cannot use Relationships Module',
+                    2,
+                );
+                return Promise.reject("Discord Bot Client cannot use Relationships Module");
+            }));
+        }
         function awaitEveryGuildLoaded() {
             return new Promise(function (resolve) {
                 var interval = setInterval(function () {
@@ -317,6 +378,7 @@
                     }
                     return member;
                 }
+                patchModule();
             }
         }, 250);
         function getCurrentChannel() {
@@ -544,7 +606,7 @@
                 "display_name": null,
                 "discriminator": data.discriminator,
                 "bot": data.bot,
-                "avatar": "93d46972bd7707f8466f755dcf7222ec",
+                "avatar": data.avatar,
                 "publicFlags": data.publicFlags,
                 "avatarDecoration": data.avatarDecoration
             }
@@ -785,15 +847,19 @@
         .content-1SgpWY {
             padding: 10px 10px 10px 0px;
         }
-        .container-2cd8Mz, .inviteToolbar-2k2nqz {
+
+        .container-2cd8Mz,
+        .inviteToolbar-2k2nqz {
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
         }
+
         .chat-2ZfjoI {
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
 
         }
+
         .titlebar span {
             text-overflow: ellipsis;
         }
@@ -894,18 +960,39 @@
     </main>
 
     <script>
-        
+
         document.getElementById('app-mount').style.paddingTop = `25px`;
         // document.getElementById('app-mount').style.position = 'relative'
         document.getElementById('miniBtn').addEventListener('click', () => {
-            window.title.mini()
-        })
+            try {
+                window.title.mini()
+            } catch (e) {
+                showToast(
+                    'The button can only be used by the app',
+                    2
+                );
+            }
+        });
         document.getElementById('maxBtn').addEventListener('click', () => {
-            window.title.max()
-        })
+            try {
+                window.title.max()
+            } catch (e) {
+                showToast(
+                    'The button can only be used by the app',
+                    2
+                );
+            }
+        });
         document.getElementById('closeBtn').addEventListener('click', () => {
-            window.title.close()
-        })
+            try {
+                window.title.close()
+            } catch (e) {
+                showToast(
+                    'The button can only be used by the app',
+                    2
+                );
+            }
+        });
     </script>
     <script>window.__OVERLAY__ = /overlay/.test(location.pathname)</script>
     <script>window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname)</script>

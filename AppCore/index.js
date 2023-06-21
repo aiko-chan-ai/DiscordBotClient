@@ -147,6 +147,7 @@ function checkLatestVersion(latest, current) {
 
 function checkUpdate() {
 	log.info('Checking for updates...');
+	let isLatest = false;
 	return new Promise((resolve, reject) => {
 		fetch(
 			'https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest',
@@ -162,6 +163,7 @@ function checkUpdate() {
 						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 					);
 				} else {
+					isLatest = true;
 					createNotification(
 						'Update Manager',
 						`You are using the latest version (v${DBCVersion})`,
@@ -178,7 +180,7 @@ function checkUpdate() {
 					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 				);
 			})
-			.finally(resolve);
+			.finally(() => resolve(isLatest));
 	});
 }
 
@@ -281,6 +283,10 @@ async function createWindow() {
 		dialog.showMessageBox(win, arg).then((result) => {
 			event.sender.send('show-dialog-response', result);
 		});
+	});
+
+	ipcMain.on('check-update', async (event) => {
+		event.sender.send('check-update-response', await checkUpdate());
 	});
 }
 

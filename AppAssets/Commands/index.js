@@ -3,5 +3,6 @@ module.exports = {
 		['discohook', require('./Slash/discohook')],
 		['embed', require('./Slash/embed')],
 		['ping', require('./Slash/ping')],
+		['purge', require('./Slash/purge')],
 	]),
 };

@@ -1,3 +1,4 @@
+const { ipcRenderer } = require('electron');
 const request = require('request');
 const axios = require('axios');
 const { PreloadedUserSettings } = require('discord-protos');
@@ -13,6 +14,7 @@ const Util = require('../AppAssets/Util');
 const SystemMessages = require('../AppAssets/SystemMessages');
 const Commands = require('../AppAssets/Commands/index');
 const SnowflakeUtil = require('../AppAssets/SnowflakeUtil');
+const DiscoveryGuilds = require('../AppAssets/DiscoveryGuilds');
 
 const userAgent = Util.UserAgent();
 
@@ -105,7 +107,8 @@ const handlerRequest = (url, req, res) => {
 	}
 	if (
 		url.includes('billing/subscriptions') ||
-		url.includes('entitlements/gifts')
+		url.includes('entitlements/gifts') ||
+		url.includes('library')
 	) {
 		return res.send([]);
 	}
@@ -152,6 +155,15 @@ const handlerRequest = (url, req, res) => {
 	}
 	if (url.includes('hypesquad/online')) {
 		return res.status(204).send();
+	}
+	if (url.includes('discovery/valid-term')) {
+		return res.send({ valid: false });
+	}
+	if (url.includes('discoverable-guilds')) {
+		const Url = new URL(`https://discord.com${url}`);
+		return res.send(
+			DiscoveryGuilds[Url.searchParams.get('categories') || 'default'],
+		);
 	}
 	if (url.includes('application-commands/search')) {
 		const Url = new URL(`https://discord.com${url}`);

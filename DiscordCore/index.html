@@ -58,6 +58,7 @@
             ].forEach((a) => (Vencord.Webpack.findByProps('canBasicChannel').__proto__[a] = () => !0));
         }
     </script>
+    <script>document.querySelector('.listItemWrapper-3d87LP')?.remove()</script>
     <script>
         class BitField {
             constructor(bits = this.constructor.defaultBit) {
@@ -775,6 +776,28 @@
             -webkit-app-region: drag;
         }
 
+        .sidebar-1tnWFu {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+
+        }
+
+        .content-1SgpWY {
+            padding: 10px 10px 10px 0px;
+        }
+        .container-2cd8Mz, .inviteToolbar-2k2nqz {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .chat-2ZfjoI {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+
+        }
+        .titlebar span {
+            text-overflow: ellipsis;
+        }
+
         .titlebar-btn {
             background-color: transparent;
             color: #ededed;
@@ -795,7 +818,7 @@
         }
 
         .titlebar-btn:hover {
-            background-color: #36393fec;
+            background-color: #9199a849;
         }
 
         .closeBtn:hover {
@@ -871,6 +894,7 @@
     </main>
 
     <script>
+        
         document.getElementById('app-mount').style.paddingTop = `25px`;
         // document.getElementById('app-mount').style.position = 'relative'
         document.getElementById('miniBtn').addEventListener('click', () => {

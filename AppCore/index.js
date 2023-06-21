@@ -188,8 +188,8 @@ async function createWindow() {
 	const { width, height } = primaryDisplay.workAreaSize;
 	// Create the browser window.
 	const win = new BrowserWindow({
-		width: width * 0.9,
-		height: height * 0.9,
+		width: width*0.9,
+		height: height*0.9,
 		minWidth: 800,
 		minHeight: 600,
 		icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),

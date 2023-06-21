@@ -260,7 +260,7 @@ const handlerRequest = (url, req, res) => {
 			.then(({ data }) => {
 				return res
 					.status(200)
-					.send(Util.ProfilePatch(data, botId == id));
+					.send(Util.ProfilePatch(data));
 			})
 			.catch(() => {
 				return res.status(200).send(Util.ProfilePatch({ id }));

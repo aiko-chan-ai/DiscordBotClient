@@ -4,26 +4,21 @@ const Constants = require('./Constants');
 const { version } = require('../package.json');
 
 module.exports = class Util {
-	static ProfilePatch(userData, forceAllBadges = false) {
+	static ProfilePatch(userData) {
 		const flags = new UserFlags(userData.public_flags);
 		const badges = Object.keys(Constants.Badges)
-			.filter((o) => forceAllBadges ? true : flags.toArray().includes(o))
+			.filter((o) => flags.toArray().includes(o))
 			.map((o) => Constants.Badges[o]);
-		if (!forceAllBadges) {
-			if (userData.bot)
-				badges.push(
-					Constants.Badges.BOT_SLASH,
-					Constants.Badges.BOT_AUTOMOD,
-				);
-			if (userData.avatar?.includes('a_') || userData.banner) {
-				badges.push(
-					Constants.Badges.NITRO,
-					Constants.Badges.GUILD_BOOSTER,
-				);
-			}
-			if (userData.discriminator === '0')
-				badges.push(Constants.Badges.LEGACY_USERNAME);
+		if (userData.bot)
+			badges.push(
+				Constants.Badges.BOT_SLASH,
+				Constants.Badges.BOT_AUTOMOD,
+			);
+		if (userData.avatar?.includes('a_') || userData.banner) {
+			badges.push(Constants.Badges.NITRO, Constants.Badges.GUILD_BOOSTER);
 		}
+		if (userData.discriminator === '0')
+			badges.push(Constants.Badges.LEGACY_USERNAME);
 		return {
 			user: userData,
 			connected_accounts: [],

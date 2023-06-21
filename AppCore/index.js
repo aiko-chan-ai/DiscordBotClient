@@ -49,7 +49,8 @@ function createNotification(
 		icon,
 		silent,
 	});
-	n.once('click', () => {
+	n.once('click', (e) => {
+		e.preventDefault();
 		typeof callbackWhenClick == 'function' && callbackWhenClick();
 		n.close();
 	});
@@ -61,7 +62,7 @@ function createNotification(
  * @param {BrowserWindow} win
  * @returns
  */
-function createTray(win) {
+function createTray(win, port) {
 	const tray = new Tray(
 		nativeImage.createFromPath(iconPath).resize({ width: 16 }),
 	);
@@ -74,6 +75,13 @@ function createTray(win) {
 			label: APP_NAME,
 			icon: nativeImage.createFromPath(iconPath).resize({ width: 16 }),
 			enabled: false,
+		},
+		{
+			label: `Proxy server started on port ${port}`,
+			type: 'normal',
+			click: () => {
+				shell.openExternal(`https://localhost:${port}`);
+			}
 		},
 		{
 			type: 'separator',
@@ -120,6 +128,23 @@ function createTray(win) {
 	return tray;
 }
 
+function checkLatestVersion(latest, current) {
+	const [latestMajor, latestMinor, latestPatch] = latest.split('.');
+	const [currentMajor, currentMinor, currentPatch] = current.split('.');
+	if (latestMajor > currentMajor) {
+		return true;
+	} else if (latestMajor == currentMajor) {
+		if (latestMinor > currentMinor) {
+			return true;
+		} else if (latestMinor == currentMinor) {
+			if (latestPatch > currentPatch) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 function checkUpdate() {
 	log.info('Checking for updates...');
 	return new Promise((resolve, reject) => {
@@ -128,17 +153,13 @@ function checkUpdate() {
 		)
 			.then((res) => res.json())
 			.then((res) => {
-				if (res.tag_name !== DBCVersion) {
+				if (checkLatestVersion(res.tag_name, DBCVersion)) {
 					createNotification(
 						'Update Manager',
 						`New version available: ${res.name}`,
-						null,
-						undefined,
-						() => {
-							shell.openExternal(
-								'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
-							);
-						},
+					);
+					shell.openExternal(
+						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 					);
 				} else {
 					createNotification(
@@ -152,13 +173,9 @@ function checkUpdate() {
 				createNotification(
 					'Update Manager',
 					`Unable to check for updates (v${DBCVersion})`,
-					null,
-					undefined,
-					() => {
-						shell.openExternal(
-							'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
-						);
-					},
+				);
+				shell.openExternal(
+					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 				);
 			})
 			.finally(resolve);
@@ -166,14 +183,13 @@ function checkUpdate() {
 }
 
 async function createWindow() {
-	let isNotifMinimized = false;
 	checkUpdate();
 	const primaryDisplay = screen.getPrimaryDisplay();
 	const { width, height } = primaryDisplay.workAreaSize;
 	// Create the browser window.
 	const win = new BrowserWindow({
-		width: width/1.2,
-		height: height/1.2,
+		width: width*0.9,
+		height: height*0.9,
 		minWidth: 800,
 		minHeight: 600,
 		icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),
@@ -190,14 +206,12 @@ async function createWindow() {
 		// titleBarStyle: "hidden",
 	});
 
-	const tray = createTray(win);
-
 	log.info(`Electron UserData: ${app.getPath('userData')}`);
 
 	// Create the server
 	const port = await server(2023, log, win);
-
-	createNotification('Proxy Server', `Proxy server started on port ${port}`);
+	// createNotification('Proxy Server', `Proxy server started on port ${port}`);
+	const tray = createTray(win, port);
 
 	if (!app.isPackaged) win.webContents.openDevTools();
 
@@ -239,8 +253,6 @@ async function createWindow() {
 
 	win.on('hide', function (e) {
 		e.preventDefault();
-		if (isNotifMinimized) return;
-		isNotifMinimized = true;
 		createNotification(
 			APP_NAME + ' is running in background',
 			'You can close the application in the taskbar',

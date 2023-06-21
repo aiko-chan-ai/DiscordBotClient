@@ -360,10 +360,10 @@
         i_ = setInterval(() => {
             if (window.Vencord) {
                 getCurrentChannelId = Vencord.Webpack.findByProps("getLastSelectedChannelId")?.getChannelId;
-                getChannel = Vencord.Webpack.findByProps("getChannel")?.getChannel;
+                getChannel = Vencord.Webpack.findByProps("getChannel", "getBasicChannel")?.getChannel;
                 getGuild = Vencord.Webpack.findByProps("getGuild", "getGuilds")?.getGuild;
                 getCurrentGuildId = Vencord.Webpack.findByProps("getLastSelectedGuildId")?.getLastSelectedGuildId;
-                getSessionId = Vencord.Webpack.findByProps("getSessionId")?.getSessionId;
+                getSessionId = Vencord.Webpack.findByProps("getSessionId", "getToken")?.getSessionId;
                 getCurrentUserId = Vencord.Webpack.findByProps('getId')?.getId;
             }
             if (getCurrentChannelId) {

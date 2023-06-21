@@ -17,6 +17,11 @@
     <meta name="twitter:creator" content="@discord" />
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
+        // Lock localStorage
+        Object.defineProperty(window, 'localStorage', {
+            value: window.localStorage,
+            writable: false,
+        });
         var socket = io();
         var loginToken;
         var transitionToGuild;

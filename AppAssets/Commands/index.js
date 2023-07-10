@@ -4,5 +4,6 @@ module.exports = {
 		['embed', require('./Slash/embed')],
 		['ping', require('./Slash/ping')],
 		['purge', require('./Slash/purge')],
+		['switchtoken', require('./Slash/switchtoken')],
 	]),
 };

@@ -18,6 +18,9 @@ const fetch = require('node-fetch');
 const { version: DBCVersion } = require('../package.json');
 const { version: VencordVersion } = require('../Vencord/manifest.json');
 const server = require('./server.js');
+const { Routes } = require('discord-api-types/v9');
+const { UserAgent } = require('../AppAssets/Util');
+const ApplicationFlags = require('../AppAssets/ApplicationFlags');
 
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
@@ -77,11 +80,9 @@ function createTray(win, port) {
 			enabled: false,
 		},
 		{
-			label: `Proxy server started on port ${port}`,
+			label: `SessionID: ${port-2022}`,
 			type: 'normal',
-			click: () => {
-				shell.openExternal(`https://localhost:${port}`);
-			}
+			enabled: false,
 		},
 		{
 			type: 'separator',
@@ -287,6 +288,44 @@ async function createWindow() {
 
 	ipcMain.on('check-update', async (event) => {
 		event.sender.send('check-update-response', await checkUpdate());
+	});
+
+	ipcMain.on('get-intents', async (event, token) => {
+		token = token.replace(/Bot/g, '').trim();
+		fetch(
+			`https://discord.com/api/v9${Routes.oauth2CurrentApplication()}`,
+			{
+				headers: {
+					Authorization: `Bot ${token}`,
+					'User-Agent': UserAgent(),
+				},
+			},
+		).then((res) => {
+			if (!res.ok) throw new Error(res.statusText);
+			return res.json();
+		}).then(data => {
+			const flags = new ApplicationFlags(data.flags).toArray();
+			const skip = [];
+			if (!flags.find((f) => f.includes('GATEWAY_PRESENCE'))) {
+				skip.push('GUILD_PRESENCES');
+			}
+			if (!flags.find((f) => f.includes('GATEWAY_GUILD_MEMBERS'))) {
+				skip.push('GUILD_MEMBERS');
+			}
+			if (!flags.find((f) => f.includes('GATEWAY_MESSAGE_CONTENT'))) {
+				throw new Error('MESSAGE_CONTENT is required');
+			}
+			event.sender.send('get-intents-response', {
+				success: true,
+				message: `Skip intents: ${skip.join(', ')}`,
+				skip,
+			});
+		}).catch(e => {
+			event.sender.send('get-intents-response', {
+				success: false,
+				message: e.message
+			});
+		});
 	});
 }
 

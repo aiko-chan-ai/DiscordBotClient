@@ -32,5 +32,13 @@ contextBridge.exposeInMainWorld('electron', {
 				resolve(response);
 			});
 		});
+	},
+	requestIntents: token => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('get-intents', token);
+			ipcRenderer.once('get-intents-response', (event, response) => {
+				resolve(response);
+			});
+		});
 	}
 });

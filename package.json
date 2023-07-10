@@ -1,11 +1,12 @@
 {
 	"name": "discord-bot-client",
-	"version": "2.3.1",
+	"version": "2.4.0",
 	"DiscordBuildVersion": 204762,
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
 	"dependencies": {
 		"axios": "1.1",
+		"discord-api-types": "^0.37.47",
 		"discord-protos": "^1.0.4",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.1.0",

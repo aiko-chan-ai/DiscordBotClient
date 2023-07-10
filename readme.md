@@ -4,9 +4,9 @@
 - Vencord (v1.2.8)
 
 ## All patches
-- Stable 161052 (c7e0778) (v1.x.x)
-- Stable 185832 (29333f6) (v2.1.x)
-- Stable 204762 (78f82ba) (v2.2.x)
+- Stable 161052 (c7e0778) (v1)
+- Stable 185832 (29333f6) (v2.1)
+- Stable 204762 (78f82ba) (v2.2+)
 
 ## Download > [Releases](https://github.com/aiko-chan-ai/DiscordBotClient/releases)
  

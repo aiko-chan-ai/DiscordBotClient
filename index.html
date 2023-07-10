@@ -23,7 +23,7 @@
             writable: false,
         });
         var socket = io();
-        var loginToken;
+        var loginWithToken;
         var transitionToGuild;
         var getSessionId;
         var guilds; // id => data
@@ -38,6 +38,8 @@
                 case 'MESSAGE_UPDATE':
                 case 'MESSAGE_DELETE':
                     return window.Wxt.emit('dispatch', msg.t, msg.d);
+                case 'SWITCH_TOKEN': // wtf event ?
+                    return Vencord.Webpack.findByProps("switchAccountToken").switchAccountToken(msg.d);
                 default:
                     return console.log('Event', msg);
             }
@@ -61,7 +63,6 @@
             });
         }
         function patchModule() {
-            loginToken = Vencord.Webpack.findByProps('loginToken').loginToken;
             transitionToGuild = function (guildId, channelId, msgId) {
                 Vencord.Webpack.Common.NavigationRouter.transitionToGuild(guildId, channelId, msgId);
                 showToast(
@@ -70,8 +71,19 @@
                 )
             };
             console.log('Patching Module');
+            Vencord.Webpack.findByProps('loginToken').loginToken_ = Vencord.Webpack.findByProps('loginToken').loginToken;
+            Vencord.Webpack.findByProps('loginToken').loginToken = function (...args) {
+                electron.requestIntents(args[0])
+                    .then(r => {
+                        if (r.success) {
+                            intentBot = getIntents(...r.skip);
+                            localStorage.setItem('intents', intentBot);
+                        }
+                        Vencord.Webpack.findByProps('loginToken').loginToken_(...args);
+                    });
+            };
+            loginWithToken = Vencord.Webpack.findByProps('loginToken').loginToken;
             Vencord.Webpack.findByProps('acceptInvite').acceptInvite = function (code, location, extra) {
-                window.Wxt?.emit('dispatch', 'INVITE_ACCEPT_FAILURE', code);
                 showToast(
                     'Discord Bot Client cannot join guilds',
                     2,
@@ -101,15 +113,32 @@
                 return Promise.reject("Discord Bot Client cannot use Relationships Module");
             }));
         }
-        function awaitEveryGuildLoaded() {
+        function awaitEveryGuildLoaded_() {
             return new Promise(function (resolve) {
                 var interval = setInterval(function () {
                     if (!guilds) return;
+                    const avaliableGuilds = Object.values(guilds).filter(g => !g.unavailable);
+                    console.log(`${avaliableGuilds.length}/${Object.values(guilds).length} guilds loaded`);
                     if (Object.values(guilds).every(g => !g.unavailable)) {
                         clearInterval(interval);
                         resolve();
                     }
                 }, 100);
+            });
+        }
+        function awaitEveryGuildLoaded() {
+            return new Promise(function (resolve) {
+                let emitted = false;
+                awaitEveryGuildLoaded_().then(() => {
+                    if (emitted) return;
+                    emitted = true;
+                    resolve();
+                });
+                setTimeout(() => {
+                    if (emitted) return;
+                    emitted = true;
+                    resolve();
+                }, 15_000);
             });
         }
         function toggleGodMode() {
@@ -222,17 +251,9 @@
         class Intents extends BitField { }
         Intents.FLAGS = IntentFlags;
         const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
-        function updateIntentsText() {
-            const intents = new Intents(Number.isNaN(parseInt(intentBot)) ? 0 : intentBot);
-            const input_ = document.getElementsByClassName("label-7akf7- eyebrow-2wJAoF defaultColor-3Olr-9 defaultMarginlabel-26Urq5")[0]
-            if (!input_) return;
-            input_.innerHTML = `Bot Token | Intents: ${intents.toArray().filter(i => ['MESSAGE_CONTENT', 'GUILD_PRESENCES', 'GUILD_MEMBERS'].includes(i)).join(', ')}`;
-            return input_;
-        }
     </script>
     <script>
         var lasestGuildIdVoiceConnect = 0;
-        var intentBot = localStorage.getItem('intents');
         function recreateNode(el, withChildren) {
             if (withChildren) {
                 el.parentNode.replaceChild(el.cloneNode(true), el);
@@ -243,40 +264,24 @@
                 el.parentNode.replaceChild(newEl, el);
             }
         }
-        var callSetIntents = async (reload) => {
-            const privilegedIntents = [];
-            alert("Login with bot requires privileged intent MESSAGE_CONTENT\n\nMake sure you have enabled this intent in the bot settings.");
-            if (!confirm('[Optional] Do you want to use the GUILD_PRESENCES intent?')) {
-                privilegedIntents.push('GUILD_PRESENCES');
-            }
-            if (!confirm('[Optional] Do you want to use the GUILD_MEMBERS intent?')) {
-                privilegedIntents.push('GUILD_MEMBERS');
-            }
-            intentBot = getIntents(...privilegedIntents);
-            localStorage.setItem('intents', intentBot);
-            if (reload) {
-                location.reload();
-            }
-        }
         function replaceLoginScreen() {
             let buttonLogin = document.getElementsByClassName(
                 'marginBottom8-emkd0_ button-1cRKG6 button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeLarge-2xP3-w fullWidth-3M-YBR grow-2T4nbg',
             )[0];
             if (buttonLogin) {
-                if (!intentBot || Number.isNaN(parseInt(intentBot))) {
-                    callSetIntents(true);
-                } else {
-                    clearInterval(i);
-                }
+                clearInterval(i);
+                i = null;
                 buttonLogin.addEventListener('click', () => {
                     const input = document.getElementsByClassName(
                         'inputDefault-Ciwd-S input-3O04eu',
                     )[0];
-                    Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
+                    loginWithToken(input.value);
                 });
                 const email = document.getElementsByClassName('marginBottom20-315RVT')[0];
                 email.parentElement.removeChild(email);
-                const input_ = updateIntentsText();
+                const input_ = document.getElementsByClassName("label-7akf7- eyebrow-2wJAoF defaultColor-3Olr-9 defaultMarginlabel-26Urq5")[0]
+                if (!input_) return;
+                input_.innerHTML = `Bot Token`;
                 input_.id = 'token';
                 const QR = document.getElementsByClassName(
                     'transitionGroup-14WiKS qrLogin-1ejtpI',
@@ -301,16 +306,46 @@
                 let forgot_pw = document.getElementsByClassName(
                     'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
                 )[0];
-                forgot_pw.innerHTML = `Do you want to set new intents? Click here`;
+                forgot_pw.innerHTML = `Get intents (Click here)`;
                 recreateNode(forgot_pw, true);
                 forgot_pw = document.getElementsByClassName(
                     'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
                 )[0];
                 forgot_pw.addEventListener('click', () => {
-                    callSetIntents();
-                    updateIntentsText();
+                    if (!electron) {
+                        localStorage.setItem('intents', getIntents('GUILD_MEMBERS', 'GUILD_PRESENCES'));
+                        return showToast(
+                            'You need to use the desktop client to use this feature',
+                            2,
+                        )
+                    }
+                    const input = document.getElementsByClassName(
+                        'inputDefault-Ciwd-S input-3O04eu',
+                    )[0];
+                    const token = input.value || '';
+                    if (!/(mfa\.[a-z0-9_-]{20,})|([a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.[a-z0-9_-]{27})/i.test(token)) {
+                        return showToast(
+                            'Please enter a valid token',
+                            2,
+                        )
+                    }
+                    electron.requestIntents(token)
+                        .then(r => {
+                            if (r.success) {
+                                intentBot = getIntents(...r.skip);
+                                localStorage.setItem('intents', intentBot);
+                                showToast(
+                                    'Intents: ' + intentBot,
+                                    1,
+                                )
+                            } else {
+                                showToast(
+                                    'Failed to get intents: ' + r.message,
+                                    2,
+                                )
+                            }
+                        });
                 });
-                updateIntentsText()
             }
         }
         i = setInterval(() => {
@@ -697,20 +732,21 @@
                 op: "SYNC",
                 range: [0, 99]
             }];
-            var id_ = getGuildMemberListId()
-            // console.log("force emit GUILD_MEMBER_LIST_UPDATE with", id_);
+            var id_ = getGuildMemberListId();
             let member_count = Object.values(allGuildsMembers[guild.id]).length;
             const d__ = {
+                guildId: guild.id,
                 guild_id: guild.id,
                 id: id_,
                 ops,
                 groups: groups.group,
-                member_count,
                 online_count: membersOnline.length,
                 memberCount: member_count,
+                member_count: member_count,
                 type: 'GUILD_MEMBER_LIST_UPDATE',
             }
-            window.Wxt?.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__)
+            Vencord.Webpack.Common.FluxDispatcher.dispatch(d__);
+            // window.Wxt?.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__);
         }
     </script>
     <!-- endsection -->

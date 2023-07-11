@@ -22,6 +22,12 @@
             value: window.localStorage,
             writable: false,
         });
+        function showGitHubNotice() {
+            Vencord.Api.Notices.showNotice("Discord Bot Client", "GitHub", () => {
+                Vencord.Api.Notices.popNotice()
+                window.open('https://github.com/aiko-chan-ai/DiscordBotClient')
+            })
+        }
         var socket = io();
         var loginWithToken;
         var transitionToGuild;

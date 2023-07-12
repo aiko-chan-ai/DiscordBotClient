@@ -106,9 +106,7 @@ the projects GitHub issue tracker.
 
 # FAQ
 
-In order to find answers to common questions, check out the FAQ in the wiki:
-
-https://github.com/aiko-chan-ai/DiscordBotClient/issues/8
+In order to find answers to common questions, check out the FAQ in the [wiki](https://github.com/aiko-chan-ai/DiscordBotClient/issues/8):
 
 ## Similar projects
 

@@ -22,6 +22,12 @@
             value: window.localStorage,
             writable: false,
         });
+        function showGitHubNotice() {
+            Vencord.Api.Notices.showNotice("Discord Bot Client", "GitHub", () => {
+                Vencord.Api.Notices.popNotice()
+                window.open('https://github.com/aiko-chan-ai/DiscordBotClient')
+            });
+        }
         var socket = io();
         var loginWithToken;
         var transitionToGuild;
@@ -73,14 +79,16 @@
             console.log('Patching Module');
             Vencord.Webpack.findByProps('loginToken').loginToken_ = Vencord.Webpack.findByProps('loginToken').loginToken;
             Vencord.Webpack.findByProps('loginToken').loginToken = function (...args) {
-                electron.requestIntents(args[0])
-                    .then(r => {
-                        if (r.success) {
-                            intentBot = getIntents(...r.skip);
-                            localStorage.setItem('intents', intentBot);
-                        }
-                        Vencord.Webpack.findByProps('loginToken').loginToken_(...args);
-                    });
+                return new Promise(resolve => {
+                    electron.requestIntents(args[0])
+                        .then(r => {
+                            if (r.success) {
+                                intentBot = getIntents(...r.skip);
+                                localStorage.setItem('intents', intentBot);
+                            }
+                            resolve(Vencord.Webpack.findByProps('loginToken').loginToken_(...args));
+                        })
+                });
             };
             loginWithToken = Vencord.Webpack.findByProps('loginToken').loginToken;
             Vencord.Webpack.findByProps('acceptInvite').acceptInvite = function (code, location, extra) {
@@ -271,6 +279,10 @@
             if (buttonLogin) {
                 clearInterval(i);
                 i = null;
+                recreateNode(buttonLogin, true);
+                buttonLogin = document.getElementsByClassName(
+                    'marginBottom8-emkd0_ button-1cRKG6 button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeLarge-2xP3-w fullWidth-3M-YBR grow-2T4nbg',
+                )[0];
                 buttonLogin.addEventListener('click', () => {
                     const input = document.getElementsByClassName(
                         'inputDefault-Ciwd-S input-3O04eu',

@@ -115,6 +115,26 @@ const handlerRequest = (url, req, res) => {
 	if (url.includes('auth/logout')) {
 		return res.status(204).send();
 	}
+	if (url.includes('auth/location-metadata')) {
+		return res.status(200).send({
+			consent_required: false,
+			country_code: 'VN',
+			promotional_email_opt_in: {
+				required: true,
+				pre_checked: false,
+			},
+		});
+	}
+	if (url.includes('experiments') && req.method.toUpperCase() == 'GET') {
+		return request('https://discord.com' + url, (error, response, body) => {
+			if (!error && response.statusCode === 200) {
+				const data = JSON.parse(body);
+				res.send(data);
+			} else {
+				res.status(500).send(error.stack);
+			}
+		});
+	}
 	const blacklist = [
 		'outbound-promotions/codes',
 		'entitlements',
@@ -258,9 +278,7 @@ const handlerRequest = (url, req, res) => {
 				},
 			})
 			.then(({ data }) => {
-				return res
-					.status(200)
-					.send(Util.ProfilePatch(data));
+				return res.status(200).send(Util.ProfilePatch(data));
 			})
 			.catch(() => {
 				return res.status(200).send(Util.ProfilePatch({ id }));

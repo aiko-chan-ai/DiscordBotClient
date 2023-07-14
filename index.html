@@ -68,6 +68,18 @@
                 },
             });
         }
+        function replaceIntents(token) {
+            return new Promise(resolve => {
+                electron.requestIntents(token)
+                    .then(r => {
+                        if (r.success) {
+                            let intentBot = getIntents(...r.skip);
+                            localStorage.setItem('intents', intentBot);
+                        }
+                        resolve(true);
+                    });
+            });
+        }
         function patchModule() {
             transitionToGuild = function (guildId, channelId, msgId) {
                 Vencord.Webpack.Common.NavigationRouter.transitionToGuild(guildId, channelId, msgId);
@@ -80,14 +92,10 @@
             Vencord.Webpack.findByProps('loginToken').loginToken_ = Vencord.Webpack.findByProps('loginToken').loginToken;
             Vencord.Webpack.findByProps('loginToken').loginToken = function (...args) {
                 return new Promise(resolve => {
-                    electron.requestIntents(args[0])
+                    replaceIntents(args[0])
                         .then(r => {
-                            if (r.success) {
-                                intentBot = getIntents(...r.skip);
-                                localStorage.setItem('intents', intentBot);
-                            }
                             resolve(Vencord.Webpack.findByProps('loginToken').loginToken_(...args));
-                        })
+                        });
                 });
             };
             loginWithToken = Vencord.Webpack.findByProps('loginToken').loginToken;

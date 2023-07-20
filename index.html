@@ -33,6 +33,8 @@
         var transitionToGuild;
         var getSessionId;
         var guilds; // id => data
+        var allShards = NaN;
+        var currentShard = NaN;
         socket.on('dispatch', function (msg) {
             if (typeof getSessionId !== 'function') return;
             if (msg.session_id && msg.session_id !== getSessionId()) return;
@@ -46,6 +48,10 @@
                     return window.Wxt.emit('dispatch', msg.t, msg.d);
                 case 'SWITCH_TOKEN': // wtf event ?
                     return Vencord.Webpack.findByProps("switchAccountToken").switchAccountToken(msg.d);
+                case 'SWITCH_SHARD_ID': {
+                    currentShard = msg.d.id;
+                    return Vencord.Webpack.findByProps("loginToken").loginToken(msg.d.token);
+                }
                 default:
                     return console.log('Event', msg);
             }
@@ -68,18 +74,6 @@
                 },
             });
         }
-        function replaceIntents(token) {
-            return new Promise(resolve => {
-                electron.requestIntents(token)
-                    .then(r => {
-                        if (r.success) {
-                            let intentBot = getIntents(...r.skip);
-                            localStorage.setItem('intents', intentBot);
-                        }
-                        resolve(true);
-                    });
-            });
-        }
         function patchModule() {
             transitionToGuild = function (guildId, channelId, msgId) {
                 Vencord.Webpack.Common.NavigationRouter.transitionToGuild(guildId, channelId, msgId);
@@ -87,16 +81,6 @@
                     `Switch to GuildId: ${guildId}`,
                     1,
                 )
-            };
-            console.log('Patching Module');
-            Vencord.Webpack.findByProps('loginToken').loginToken_ = Vencord.Webpack.findByProps('loginToken').loginToken;
-            Vencord.Webpack.findByProps('loginToken').loginToken = function (...args) {
-                return new Promise(resolve => {
-                    replaceIntents(args[0])
-                        .then(r => {
-                            resolve(Vencord.Webpack.findByProps('loginToken').loginToken_(...args));
-                        });
-                });
             };
             loginWithToken = Vencord.Webpack.findByProps('loginToken').loginToken;
             Vencord.Webpack.findByProps('acceptInvite').acceptInvite = function (code, location, extra) {
@@ -326,46 +310,7 @@
                 let forgot_pw = document.getElementsByClassName(
                     'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
                 )[0];
-                forgot_pw.innerHTML = `Get intents (Click here)`;
-                recreateNode(forgot_pw, true);
-                forgot_pw = document.getElementsByClassName(
-                    'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
-                )[0];
-                forgot_pw.addEventListener('click', () => {
-                    if (!electron) {
-                        localStorage.setItem('intents', getIntents('GUILD_MEMBERS', 'GUILD_PRESENCES'));
-                        return showToast(
-                            'You need to use the desktop client to use this feature',
-                            2,
-                        )
-                    }
-                    const input = document.getElementsByClassName(
-                        'inputDefault-Ciwd-S input-3O04eu',
-                    )[0];
-                    const token = input.value || '';
-                    if (!/(mfa\.[a-z0-9_-]{20,})|([a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.[a-z0-9_-]{27})/i.test(token)) {
-                        return showToast(
-                            'Please enter a valid token',
-                            2,
-                        )
-                    }
-                    electron.requestIntents(token)
-                        .then(r => {
-                            if (r.success) {
-                                intentBot = getIntents(...r.skip);
-                                localStorage.setItem('intents', intentBot);
-                                showToast(
-                                    'Intents: ' + intentBot,
-                                    1,
-                                )
-                            } else {
-                                showToast(
-                                    'Failed to get intents: ' + r.message,
-                                    2,
-                                )
-                            }
-                        });
-                });
+                forgot_pw.innerHTML = ``;
             }
         }
         i = setInterval(() => {

@@ -18,7 +18,6 @@ const fetch = require('node-fetch');
 const { version: DBCVersion } = require('../package.json');
 const { version: VencordVersion } = require('../Vencord/manifest.json');
 const server = require('./server.js');
-const { Routes } = require('discord-api-types/v9');
 const { UserAgent } = require('../AppAssets/Util');
 const ApplicationFlags = require('../AppAssets/ApplicationFlags');
 
@@ -77,11 +76,6 @@ function createTray(win, port) {
 		{
 			label: APP_NAME,
 			icon: nativeImage.createFromPath(iconPath).resize({ width: 16 }),
-			enabled: false,
-		},
-		{
-			label: `SessionID: ${port-2022}`,
-			type: 'normal',
 			enabled: false,
 		},
 		{
@@ -191,8 +185,8 @@ async function createWindow() {
 	const { width, height } = primaryDisplay.workAreaSize;
 	// Create the browser window.
 	const win = new BrowserWindow({
-		width: width*0.9,
-		height: height*0.9,
+		width: width * 0.9,
+		height: height * 0.9,
 		minWidth: 800,
 		minHeight: 600,
 		icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),
@@ -225,6 +219,8 @@ async function createWindow() {
 		e.preventDefault();
 		return shell.openExternal(url);
 	});
+
+	win.map = new Map(); // botId - shardCount
 
 	const path_ = path.join(__dirname, '..', 'Vencord');
 
@@ -290,41 +286,52 @@ async function createWindow() {
 		event.sender.send('check-update-response', await checkUpdate());
 	});
 
-	ipcMain.on('get-intents', async (event, token) => {
+	ipcMain.on('get-bot-info', async (event, token) => {
 		token = token.replace(/Bot/g, '').trim();
-		fetch(
-			`https://discord.com/api/v9${Routes.oauth2CurrentApplication()}`,
-			{
-				headers: {
-					Authorization: `Bot ${token}`,
-					'User-Agent': UserAgent(),
-				},
+		fetch(`https://discord.com/api/v9/applications/@me?with_counts=true`, {
+			headers: {
+				Authorization: `Bot ${token}`,
+				'User-Agent': UserAgent(),
 			},
-		).then((res) => {
-			if (!res.ok) throw new Error(res.statusText);
-			return res.json();
-		}).then(data => {
-			const flags = new ApplicationFlags(data.flags).toArray();
-			const skip = [];
-			if (!flags.find((f) => f.includes('GATEWAY_PRESENCE'))) {
-				skip.push('GUILD_PRESENCES');
-			}
-			if (!flags.find((f) => f.includes('GATEWAY_GUILD_MEMBERS'))) {
-				skip.push('GUILD_MEMBERS');
-			}
-			if (!flags.find((f) => f.includes('GATEWAY_MESSAGE_CONTENT'))) {
-				throw new Error('MESSAGE_CONTENT is required');
-			}
-			event.sender.send('get-intents-response', {
-				success: true,
-				message: `Skip intents: ${skip.join(', ')}`,
-				skip,
+		})
+			.then((res) => {
+				if (!res.ok) throw new Error(res.statusText);
+				return res.json();
+			})
+			.then((data) => {
+				win.map.set(
+					data.bot.id,
+					Math.ceil(parseInt(data.approximate_guild_count) / 200) || 1,
+				);
+				event.sender.send('get-bot-info-response', {
+					success: true,
+					data,
+				});
+			})
+			.catch((e) => {
+				event.sender.send('get-bot-info-response', {
+					success: false,
+					message: e.message,
+				});
 			});
-		}).catch(e => {
-			event.sender.send('get-intents-response', {
-				success: false,
-				message: e.message
-			});
+	});
+
+	ipcMain.on('get-intents', (event, flags_) => {
+		const flags = new ApplicationFlags(flags_).toArray();
+		const skip = [];
+		if (!flags.find((f) => f.includes('GATEWAY_PRESENCE'))) {
+			skip.push('GUILD_PRESENCES');
+		}
+		if (!flags.find((f) => f.includes('GATEWAY_GUILD_MEMBERS'))) {
+			skip.push('GUILD_MEMBERS');
+		}
+		if (!flags.find((f) => f.includes('GATEWAY_MESSAGE_CONTENT'))) {
+			throw new Error('MESSAGE_CONTENT is required');
+		}
+		event.sender.send('get-intents-response', {
+			success: true,
+			message: `Skip intents: ${skip.join(', ')}`,
+			skip,
 		});
 	});
 }

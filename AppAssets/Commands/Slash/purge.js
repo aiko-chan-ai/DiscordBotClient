@@ -22,7 +22,7 @@ module.exports = {
 			},
 		],
 	},
-	run: async (data, token, io) => {
+	run: async (data, token, io, win) => {
 		const applicationId = data.application_id;
 		const nonce = data.nonce;
 		const channelId = data.channel_id;

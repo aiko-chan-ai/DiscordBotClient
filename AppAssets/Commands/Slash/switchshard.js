@@ -7,16 +7,17 @@ module.exports = {
 		default_member_permissions: null,
 		type: 1,
 		nsfw: false,
-		name: 'switchtoken',
-		description: 'Login with another token',
+		name: 'switchshard',
+		description: 'Login with another shard ID',
 		dm_permission: true,
 		contexts: null,
 		options: [
 			{
-				type: 3,
-				name: 'token',
-				description: 'Bot token',
+				type: 4,
+				name: 'id',
+				description: 'Shard ID',
 				required: true,
+				min_value: 0,
 			},
 		],
 	},
@@ -28,27 +29,32 @@ module.exports = {
 		const id = data.id;
 		const botId = Util.getIDFromToken(token);
 		const msg = Util.createMessageReplyCommand(
-			regex.test(data.data.options[0].value)
-				? 'Waiting...'
-				: 'Token is invalid',
+			'Waiting...',
 			applicationId,
 			id,
 			channelId,
-			'switchtoken',
+			'switchshard',
 			botId,
 			nonce,
 		);
-		io.emit('dispatch', {
-			t: 'MESSAGE_CREATE',
-			session_id: sessionId,
-			d: msg,
-		});
-		if (regex.test(data.data.options[0].value)) {
-			io.emit('dispatch', {
-				t: 'SWITCH_TOKEN',
+        const allShard = win.map.get(botId) || 1;
+        const shardId = data.data.options[0].value;
+        if (shardId >= allShard) {
+            msg.content = `Invalid shard ID: ${shardId} (Max ID: ${allShard - 1})`;
+            return io.emit('dispatch', {
+				t: 'MESSAGE_CREATE',
 				session_id: sessionId,
-				d: data.data.options[0].value,
+				d: msg,
 			});
-		}
+        } else {
+            return io.emit('dispatch', {
+				t: 'SWITCH_SHARD_ID',
+				session_id: sessionId,
+				d: {
+					id: data.data.options[0].value,
+                    token,
+				},
+			});
+        }
 	},
 };

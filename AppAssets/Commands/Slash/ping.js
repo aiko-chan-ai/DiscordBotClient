@@ -10,7 +10,7 @@ module.exports = {
 		dm_permission: true,
 		contexts: null,
 	},
-	run(data, token, io) {
+	run(data, token, io, win) {
 		const applicationId = data.application_id;
 		const nonce = data.nonce;
 		const channelId = data.channel_id;

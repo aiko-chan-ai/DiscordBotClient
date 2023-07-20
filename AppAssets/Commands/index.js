@@ -5,5 +5,6 @@ module.exports = {
 		['ping', require('./Slash/ping')],
 		['purge', require('./Slash/purge')],
 		['switchtoken', require('./Slash/switchtoken')],
+		['switchshard', require('./Slash/switchshard')]
 	]),
 };

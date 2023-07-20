@@ -6,7 +6,6 @@
 	"main": "./AppCore/index.js",
 	"dependencies": {
 		"axios": "1.1",
-		"discord-api-types": "^0.37.47",
 		"discord-protos": "^1.0.4",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.1.0",

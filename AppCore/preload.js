@@ -33,10 +33,18 @@ contextBridge.exposeInMainWorld('electron', {
 			});
 		});
 	},
-	requestIntents: token => {
+	requestIntents: flags => {
 		return new Promise((resolve, reject) => {
-			ipcRenderer.send('get-intents', token);
+			ipcRenderer.send('get-intents', flags);
 			ipcRenderer.once('get-intents-response', (event, response) => {
+				resolve(response);
+			});
+		});
+	},
+	getBotInfo: token => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('get-bot-info', token);
+			ipcRenderer.once('get-bot-info-response', (event, response) => {
 				resolve(response);
 			});
 		});

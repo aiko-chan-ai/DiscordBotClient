@@ -144,7 +144,7 @@ async function start(port, log_, win) {
 		);
 		process.exit(1);
 	}
-	handlerRequest(app, logger, html, patchList, scriptTarget);
+	handlerRequest(app, logger, html, patchList, scriptTarget, win);
 	return new Promise((resolve, reject) => {
 		server
 			.listen(port, () => {

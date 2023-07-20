@@ -74,7 +74,7 @@ function getDataFromRequest(req, res, callback) {
 	});
 }
 
-const handlerRequest = (url, req, res) => {
+const handlerRequest = (url, req, res, win) => {
 	// Author:
 	if (/users\/\d{17,19}/.exec(url)) {
 		const id = url.match(/users\/(\d{17,19})/)[1];
@@ -240,7 +240,7 @@ const handlerRequest = (url, req, res) => {
 				});
 				const command = Commands.Slash.get(commandData.data.name);
 				if (command) {
-					command.run(commandData, req.headers.authorization, io);
+					command.run(commandData, req.headers.authorization, io, win);
 					io.emit('dispatch', {
 						t: 'INTERACTION_SUCCESS',
 						session_id: commandData.session_id,
@@ -453,7 +453,7 @@ function handlerIO(io) {
 	});
 }
 
-module.exports = function (app, logger, html, patchList, scriptTarget) {
+module.exports = function (app, logger, html, patchList, scriptTarget, win) {
 	io = app.io;
 
 	handlerIO(io);
@@ -489,7 +489,7 @@ module.exports = function (app, logger, html, patchList, scriptTarget) {
 			}
 		});
 		req.headers = headers;
-		handlerRequest(trs, req, res);
+		handlerRequest(trs, req, res, win);
 	});
 
 	app.all('/sticker*', function (req, res) {

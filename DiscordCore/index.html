@@ -84,6 +84,16 @@
                 )
             };
             loginWithToken = Vencord.Webpack.findByProps('loginToken').loginToken;
+            [
+                "joinHypeSquadOnline",
+                "leaveHypeSquadOnline"
+            ].forEach((a) => (Vencord.Webpack.findByProps("joinHypeSquadOnline", "leaveHypeSquadOnline")[a] = function () {
+                showToast(
+                    'Discord Bot Client cannot use HypeSquad Module',
+                    2,
+                );
+                return Promise.reject("Discord Bot Client cannot use HypeSquad Module");
+            }));
             Vencord.Webpack.findByProps('acceptInvite').acceptInvite = function (code, location, extra) {
                 showToast(
                     'Discord Bot Client cannot join guilds',

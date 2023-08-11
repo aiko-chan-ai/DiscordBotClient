@@ -35,6 +35,7 @@
         var guilds; // id => data
         var allShards = NaN;
         var currentShard = NaN;
+        // Vencord.Webpack.findByProps("getSocket").getSocket() => owo what's this ?
         socket.on('dispatch', function (msg) {
             if (typeof getSessionId !== 'function') return;
             if (msg.session_id && msg.session_id !== getSessionId()) return;

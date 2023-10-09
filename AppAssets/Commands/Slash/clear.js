@@ -15,7 +15,7 @@ module.exports = {
 			{
 				type: 4,
 				name: 'amount',
-				description: 'Input the amount of messages to clear',
+				description: 'Input the number of messages to clear,
 				required: true,
 				min_value: 2,
 				max_value: 100,
@@ -55,7 +55,7 @@ module.exports = {
 			if (messages.length === 0) {
 				msg.content = 'No messages to clear.';
 			} else {
-				await bulkDelete(channelId, messages, token);
+				await bulkDelete(channelId, messages, token); //start deleting
 				msg.content = `Cleared ${messages.length} messages.`;
 			}
 		} catch (e) {
@@ -71,11 +71,11 @@ module.exports = {
 };
 
 async function getMessagesToDelete(channelId, amount, token) {
-	const cutoffTimestamp = Date.now() - 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
+	const cutoffTimestamp = Date.now() - 14 * 24 * 60 * 60 * 1000; 
 	const oldId = SnowflakeUtil.generate(cutoffTimestamp);
 	const messages = [];
 
-	// Fetch messages up to the specified amount, but not older than 14 days
+
 	let lastId = null;
 	while (messages.length < amount) {
 		const response = await axios.get(

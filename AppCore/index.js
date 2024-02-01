@@ -106,6 +106,15 @@ function createTray(win, port) {
 			},
 		},
 		{
+			label: 'Clear AppData',
+			click: () => {
+				win.webContents.session
+					.clearCache()
+					.then(() => win.webContents.session.clearStorageData())
+					.then(() => {app.relaunch(); app.quit()});
+			},
+		},
+		{
 			label: 'Toggle Developer Tools',
 			click: () => {
 				win.webContents.toggleDevTools();
@@ -301,7 +310,8 @@ async function createWindow() {
 			.then((data) => {
 				win.map.set(
 					data.bot.id,
-					Math.ceil(parseInt(data.approximate_guild_count) / 200) || 1,
+					Math.ceil(parseInt(data.approximate_guild_count) / 200) ||
+						1,
 				);
 				event.sender.send('get-bot-info-response', {
 					success: true,

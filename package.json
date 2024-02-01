@@ -26,7 +26,7 @@
 		"productName": "DiscordBotClient",
 		"artifactName": "${productName}-${os}-${arch}.${ext}",
 		"electronVersion": "15.5.7",
-		"copyright": "Copyright © 2023 Elysia#1782",
+		"copyright": "Copyright © 2024 @elysia.dev",
 		"mac": {
 			"category": "public.app-category.social-networking",
 			"target": [
@@ -62,7 +62,7 @@
 	},
 	"author": {
 		"name": "aiko-chan-ai",
-		"email": "DiscordBotClient@aiko.com"
+		"email": "Aiko@shiroko.onmicrosoft.com"
 	},
 	"repository": {
 		"url": "https://github.com/aiko-chan-ai/DiscordBotClient/"

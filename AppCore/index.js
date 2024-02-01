@@ -215,7 +215,7 @@ async function createWindow() {
 	log.info(`Electron UserData: ${app.getPath('userData')}`);
 
 	// Create the server
-	const port = await server(2023, log, win);
+	const port = await server(2024, log, win);
 	// createNotification('Proxy Server', `Proxy server started on port ${port}`);
 	const tray = createTray(win, port);
 

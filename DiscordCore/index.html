@@ -2,9 +2,9 @@
 <html>
 
 <head>
-	<script>
+	<script>// Def
 		var allShards;
-	// Lock localStorage
+		// Lock localStorage
 		Object.defineProperty(window, 'localStorage', {
 			value: window.localStorage,
 			writable: false,
@@ -132,6 +132,15 @@
 			el.parentNode.replaceChild(el.cloneNode(true), el);
 			return document.getElementsByClassName(el.className)[0];
 		}
+		function getElementByXpath(path) {
+			return document.evaluate(
+				path,
+				document,
+				null,
+				XPathResult.FIRST_ORDERED_NODE_TYPE,
+				null,
+			).singleNodeValue;
+		}
 		function replaceLoginScreen() {
 			let buttonLogin = document.querySelector(
 				'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom8_f4aae3.button__47891.button_afdfd9.lookFilled__19298.colorBrand_b2253e.sizeLarge__9049d.fullWidth__7c3e8.grow__4c8a4',
@@ -140,7 +149,9 @@
 				clearInterval(i);
 				buttonLogin = recreateNode(buttonLogin);
 				buttonLogin.addEventListener('click', () => {
-					const input = document.querySelector("#uid_8");
+					const input = getElementByXpath(
+						'/html/body/div[2]/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div/div[2]/div[1]/div/input',
+					);
 					Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
 				});
 				const email = document.querySelector(
@@ -183,7 +194,19 @@
 			}
 			replaceLoginScreen();
 		}, 250);
-	</script>
+		// Vencord
+		function showToast(message, type, { position, timeout } = {}) {
+			Vencord.Webpack.Common.Toasts.show({
+				message,
+				id: (Math.random() || Math.random()).toString(36).slice(2),
+				type,
+				options: {
+					timeout,
+					position,
+				},
+			});
+		}
+</script>
 	<meta charset="utf-8">
 	<meta content="width=device-width,initial-scale=1,maximum-scale=3" name="viewport">
 

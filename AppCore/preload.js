@@ -1,5 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const package = require('../package.json');
 
 contextBridge.exposeInMainWorld('title', {
 	mini: () => {
@@ -21,9 +20,6 @@ contextBridge.exposeInMainWorld('electron', {
 				resolve(response);
 			});
 		});
-	},
-	getPackageNode: () => {
-		return package;
 	},
 	requestCheckUpdate: () => {
 		return new Promise((resolve) => {

@@ -2,1011 +2,340 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=3.0" name="viewport" />
+	<script>
+		var allShards;
+	// Lock localStorage
+		Object.defineProperty(window, 'localStorage', {
+			value: window.localStorage,
+			writable: false,
+		});
+		// Bitfield
+		class BitField {
+			constructor(bits = this.constructor.defaultBit) {
+				this.bitfield = this.constructor.resolve(bits);
+			}
+			any(bit) {
+				return (
+					(this.bitfield & this.constructor.resolve(bit)) !==
+					this.constructor.defaultBit
+				);
+			}
+			equals(bit) {
+				return this.bitfield === this.constructor.resolve(bit);
+			}
+			has(bit) {
+				bit = this.constructor.resolve(bit);
+				return (this.bitfield & bit) === bit;
+			}
+			missing(bits, ...hasParams) {
+				return new this.constructor(bits).remove(this).toArray(...hasParams);
+			}
+			freeze() {
+				return Object.freeze(this);
+			}
+			add(...bits) {
+				let total = this.constructor.defaultBit;
+				for (const bit of bits) {
+					total |= this.constructor.resolve(bit);
+				}
+				if (Object.isFrozen(this))
+					return new this.constructor(this.bitfield | total);
+				this.bitfield |= total;
+				return this;
+			}
+			remove(...bits) {
+				let total = this.constructor.defaultBit;
+				for (const bit of bits) {
+					total |= this.constructor.resolve(bit);
+				}
+				if (Object.isFrozen(this))
+					return new this.constructor(this.bitfield & ~total);
+				this.bitfield &= ~total;
+				return this;
+			}
+			serialize(...hasParams) {
+				const serialized = {};
+				for (const [flag, bit] of Object.entries(this.constructor.FLAGS))
+					serialized[flag] = this.has(bit, ...hasParams);
+				return serialized;
+			}
+			toArray(...hasParams) {
+				return Object.keys(this.constructor.FLAGS).filter((bit) =>
+					this.has(bit, ...hasParams),
+				);
+			}
+			toJSON() {
+				return typeof this.bitfield === 'number'
+					? this.bitfield
+					: this.bitfield.toString();
+			}
+			valueOf() {
+				return this.bitfield;
+			}
+			*[Symbol.iterator]() {
+				yield* this.toArray();
+			}
+			static resolve(bit) {
+				const { defaultBit } = this;
+				if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
+				if (bit instanceof BitField) return bit.bitfield;
+				if (Array.isArray(bit))
+					return bit
+						.map((p) => this.resolve(p))
+						.reduce((prev, p) => prev | p, defaultBit);
+				if (typeof bit === 'string') {
+					if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
+					if (!isNaN(bit))
+						return typeof defaultBit === 'bigint'
+							? BigInt(bit)
+							: Number(bit);
+				}
+				throw new RangeError('BITFIELD_INVALID', bit);
+			}
+		}
+		BitField.FLAGS = {};
+		BitField.defaultBit = 0;
+		// Intents
+		const IntentFlags = {
+			GUILDS: 1 << 0,
+			GUILD_MEMBERS: 1 << 1,
+			GUILD_BANS: 1 << 2,
+			GUILD_EMOJIS_AND_STICKERS: 1 << 3,
+			GUILD_INTEGRATIONS: 1 << 4,
+			GUILD_WEBHOOKS: 1 << 5,
+			GUILD_INVITES: 1 << 6,
+			GUILD_VOICE_STATES: 1 << 7,
+			GUILD_PRESENCES: 1 << 8,
+			GUILD_MESSAGES: 1 << 9,
+			GUILD_MESSAGE_REACTIONS: 1 << 10,
+			GUILD_MESSAGE_TYPING: 1 << 11,
+			DIRECT_MESSAGES: 1 << 12,
+			DIRECT_MESSAGE_REACTIONS: 1 << 13,
+			DIRECT_MESSAGE_TYPING: 1 << 14,
+			MESSAGE_CONTENT: 1 << 15,
+			GUILD_SCHEDULED_EVENTS: 1 << 16,
+			AUTO_MODERATION_CONFIGURATION: 1 << 20,
+			AUTO_MODERATION_EXECUTION: 1 << 21,
+			// https://discord.com/developers/docs/topics/gateway#list-of-intents
+		};
+		class Intents extends BitField { }
+		Intents.FLAGS = IntentFlags;
+		const getIntents = (...removeIntents) =>
+			Object.values(IntentFlags).reduce((a, b) => a + b) -
+			(removeIntents
+				.flat(2)
+				.map((name) => IntentFlags[name] || 0)
+				.reduce((a, b) => a + b, 0) || 0);
+		// Replace Login Screen
+		var i;
+		function recreateNode(el) {
+			el.parentNode.replaceChild(el.cloneNode(true), el);
+			return document.getElementsByClassName(el.className)[0];
+		}
+		function replaceLoginScreen() {
+			let buttonLogin = document.querySelector(
+				'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom8_f4aae3.button__47891.button_afdfd9.lookFilled__19298.colorBrand_b2253e.sizeLarge__9049d.fullWidth__7c3e8.grow__4c8a4',
+			);
+			if (buttonLogin) {
+				clearInterval(i);
+				buttonLogin = recreateNode(buttonLogin);
+				buttonLogin.addEventListener('click', () => {
+					const input = document.querySelector("#uid_8");
+					Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
+				});
+				const email = document.querySelector(
+					'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > div.marginBottom20__64605',
+				);
+				email.parentElement.removeChild(email);
+				const input_ = document.querySelector('#\\:r2\\:');
+				if (!input_) return;
+				input_.innerHTML = `Bot Token`;
+				input_.id = 'token';
+				const QR = document.querySelector(
+					'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.transitionGroup__9763d.qrLogin_ce8b2d',
+				);
+				QR.parentElement.removeChild(QR);
+				const dot = document.querySelector(
+					'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.verticalSeparator_af74b3',
+				);
+				dot.parentElement.removeChild(dot);
+				const need_an_acc = document.querySelector(
+					'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > div.marginTop4__3faba > span',
+				);
+				need_an_acc.innerHTML = 'Need a bot?';
+				let reg = document.querySelector(
+					'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > div.marginTop4__3faba > button',
+				);
+				reg.innerHTML = 'Create one here';
+				reg = recreateNode(reg);
+				reg.addEventListener('click', () => {
+					window.open('https://discord.com/developers/applications');
+				});
+				let forgot_pw = document.querySelector(
+					'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom20__64605.marginTop4__3faba.linkButton_ba7970.button_afdfd9.lookLink__93965.lowSaturationUnderline__95e71.colorLink_b651e5.sizeMin__94642.grow__4c8a4',
+				);
+				forgot_pw.innerHTML = '';
+			}
+		}
+		i = setInterval(() => {
+			if (!window.Vencord) {
+				return;
+			}
+			replaceLoginScreen();
+		}, 250);
+	</script>
+	<meta charset="utf-8">
+	<meta content="width=device-width,initial-scale=1,maximum-scale=3" name="viewport">
 
-    <!-- section:seometa -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Discord" />
-    <meta property="og:title" content="Discord - A New Way to Chat with Friends & Communities" />
-    <meta property="og:description"
-        content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities." />
-    <meta property="og:image" content="undefined//discord.com/assets/652f40427e1f5186ad54836074898279.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@discord" />
-    <meta name="twitter:creator" content="@discord" />
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script>
-        // Lock localStorage
-        Object.defineProperty(window, 'localStorage', {
-            value: window.localStorage,
-            writable: false,
-        });
-        function showGitHubNotice() {
-            Vencord.Api.Notices.showNotice("Discord Bot Client", "GitHub", () => {
-                Vencord.Api.Notices.popNotice()
-                window.open('https://github.com/aiko-chan-ai/DiscordBotClient')
-            });
-        }
-        var socket = io();
-        var loginWithToken;
-        var transitionToGuild;
-        var getSessionId;
-        var guilds; // id => data
-        var allShards = NaN;
-        var currentShard = NaN;
-        // Vencord.Webpack.findByProps("getSocket").getSocket() => owo what's this ?
-        socket.on('dispatch', function (msg) {
-            if (typeof getSessionId !== 'function') return;
-            if (msg.session_id && msg.session_id !== getSessionId()) return;
-            switch (msg.t) {
-                case 'INTERACTION_CREATE':
-                case 'INTERACTION_SUCCESS':
-                case 'INTERACTION_FAILURE':
-                case 'MESSAGE_CREATE':
-                case 'MESSAGE_UPDATE':
-                case 'MESSAGE_DELETE':
-                    return window.Wxt.emit('dispatch', msg.t, msg.d);
-                case 'SWITCH_TOKEN': // wtf event ?
-                    return Vencord.Webpack.findByProps("switchAccountToken").switchAccountToken(msg.d);
-                case 'SWITCH_SHARD_ID': {
-                    currentShard = msg.d.id;
-                    return Vencord.Webpack.findByProps("loginToken").loginToken(msg.d.token);
-                }
-                default:
-                    return console.log('Event', msg);
-            }
-        });
-        function showToast(
-            message,
-            type,
-            {
-                position,
-                timeout,
-            } = {}
-        ) {
-            Vencord.Webpack.Common.Toasts.show({
-                message,
-                id: (Math.random() || Math.random()).toString(36).slice(2),
-                type,
-                options: {
-                    timeout,
-                    position,
-                },
-            });
-        }
-        function patchModule() {
-            transitionToGuild = function (guildId, channelId, msgId) {
-                Vencord.Webpack.Common.NavigationRouter.transitionToGuild(guildId, channelId, msgId);
-                showToast(
-                    `Switch to GuildId: ${guildId}`,
-                    1,
-                )
-            };
-            loginWithToken = Vencord.Webpack.findByProps('loginToken').loginToken;
-            Vencord.Webpack.findByProps('acceptInvite').acceptInvite = function (code, location, extra) {
-                showToast(
-                    'Discord Bot Client cannot join guilds',
-                    2,
-                );
-                return Promise.reject("Discord Bot Client cannot join guilds");
-            };
-            Vencord.Webpack.findByProps('loadTemplatesForGuild').loadTemplatesForGuild = function () {
-                return Promise.reject("Discord Bot Client cannot use Guild Templates");
-            };
-            [
-                'acceptFriendRequest',
-                'addRelationship',
-                'cancelFriendRequest',
-                'clearPendingRelationships',
-                'confirmClearPendingRelationships',
-                'fetchRelationships',
-                'removeFriend',
-                'removeRelationship',
-                'sendRequest',
-                'unblockUser',
-                'updateRelationship'
-            ].forEach((a) => (Vencord.Webpack.findByProps('fetchRelationships')[a] = function () {
-                showToast(
-                    'Discord Bot Client cannot use Relationships Module',
-                    2,
-                );
-                return Promise.reject("Discord Bot Client cannot use Relationships Module");
-            }));
-        }
-        function awaitEveryGuildLoaded_() {
-            return new Promise(function (resolve) {
-                var interval = setInterval(function () {
-                    if (!guilds) return;
-                    const avaliableGuilds = Object.values(guilds).filter(g => !g.unavailable);
-                    console.log(`${avaliableGuilds.length}/${Object.values(guilds).length} guilds loaded`);
-                    if (Object.values(guilds).every(g => !g.unavailable)) {
-                        clearInterval(interval);
-                        resolve();
-                    }
-                }, 100);
-            });
-        }
-        function awaitEveryGuildLoaded() {
-            return new Promise(function (resolve) {
-                let emitted = false;
-                awaitEveryGuildLoaded_().then(() => {
-                    if (emitted) return;
-                    emitted = true;
-                    resolve();
-                });
-                setTimeout(() => {
-                    if (emitted) return;
-                    emitted = true;
-                    resolve();
-                }, 15_000);
-            });
-        }
-        function toggleGodMode() {
-            [
-                'can',
-                'canAccessGuildSettings',
-                'canBasicChannel',
-                'canImpersonateRole',
-                'canManageUser',
-                'canWithPartialContext',
-                'isRoleHigher',
-            ].forEach((a) => (Vencord.Webpack.findByProps('canBasicChannel').__proto__[a] = () => !0));
-        }
-    </script>
-    <script>document.querySelector('.listItemWrapper-3d87LP')?.remove()</script>
-    <script>
-        class BitField {
-            constructor(bits = this.constructor.defaultBit) {
-                this.bitfield = this.constructor.resolve(bits);
-            }
-            any(bit) {
-                return (this.bitfield & this.constructor.resolve(bit)) !== this.constructor.defaultBit;
-            }
-            equals(bit) {
-                return this.bitfield === this.constructor.resolve(bit);
-            }
-            has(bit) {
-                bit = this.constructor.resolve(bit);
-                return (this.bitfield & bit) === bit;
-            }
-            missing(bits, ...hasParams) {
-                return new this.constructor(bits).remove(this).toArray(...hasParams);
-            }
-            freeze() {
-                return Object.freeze(this);
-            }
-            add(...bits) {
-                let total = this.constructor.defaultBit;
-                for (const bit of bits) {
-                    total |= this.constructor.resolve(bit);
-                }
-                if (Object.isFrozen(this)) return new this.constructor(this.bitfield | total);
-                this.bitfield |= total;
-                return this;
-            }
-            remove(...bits) {
-                let total = this.constructor.defaultBit;
-                for (const bit of bits) {
-                    total |= this.constructor.resolve(bit);
-                }
-                if (Object.isFrozen(this)) return new this.constructor(this.bitfield & ~total);
-                this.bitfield &= ~total;
-                return this;
-            }
-            serialize(...hasParams) {
-                const serialized = {};
-                for (const [flag, bit] of Object.entries(this.constructor.FLAGS)) serialized[flag] = this.has(bit, ...hasParams);
-                return serialized;
-            }
-            toArray(...hasParams) {
-                return Object.keys(this.constructor.FLAGS).filter(bit => this.has(bit, ...hasParams));
-            }
-            toJSON() {
-                return typeof this.bitfield === 'number' ? this.bitfield : this.bitfield.toString();
-            }
-            valueOf() {
-                return this.bitfield;
-            }
-            *[Symbol.iterator]() {
-                yield* this.toArray();
-            }
-            static resolve(bit) {
-                const { defaultBit } = this;
-                if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
-                if (bit instanceof BitField) return bit.bitfield;
-                if (Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, defaultBit);
-                if (typeof bit === 'string') {
-                    if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
-                    if (!isNaN(bit)) return typeof defaultBit === 'bigint' ? BigInt(bit) : Number(bit);
-                }
-                throw new RangeError('BITFIELD_INVALID', bit);
-            }
-        }
-        BitField.FLAGS = {};
-        BitField.defaultBit = 0;
-    </script>
-    <script>
-        const IntentFlags = {
-            GUILDS: 1 << 0,
-            GUILD_MEMBERS: 1 << 1,
-            GUILD_BANS: 1 << 2,
-            GUILD_EMOJIS_AND_STICKERS: 1 << 3,
-            GUILD_INTEGRATIONS: 1 << 4,
-            GUILD_WEBHOOKS: 1 << 5,
-            GUILD_INVITES: 1 << 6,
-            GUILD_VOICE_STATES: 1 << 7,
-            GUILD_PRESENCES: 1 << 8,
-            GUILD_MESSAGES: 1 << 9,
-            GUILD_MESSAGE_REACTIONS: 1 << 10,
-            GUILD_MESSAGE_TYPING: 1 << 11,
-            DIRECT_MESSAGES: 1 << 12,
-            DIRECT_MESSAGE_REACTIONS: 1 << 13,
-            DIRECT_MESSAGE_TYPING: 1 << 14,
-            MESSAGE_CONTENT: 1 << 15,
-            GUILD_SCHEDULED_EVENTS: 1 << 16,
-            AUTO_MODERATION_CONFIGURATION: 1 << 20,
-            AUTO_MODERATION_EXECUTION: 1 << 21,
-            // https://discord.com/developers/docs/topics/gateway#list-of-intents
-        };
-        class Intents extends BitField { }
-        Intents.FLAGS = IntentFlags;
-        const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
-    </script>
-    <script>
-        var lasestGuildIdVoiceConnect = 0;
-        function recreateNode(el, withChildren) {
-            if (withChildren) {
-                el.parentNode.replaceChild(el.cloneNode(true), el);
-            }
-            else {
-                var newEl = el.cloneNode(false);
-                while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
-                el.parentNode.replaceChild(newEl, el);
-            }
-        }
-        function replaceLoginScreen() {
-            let buttonLogin = document.getElementsByClassName(
-                'marginBottom8-emkd0_ button-1cRKG6 button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeLarge-2xP3-w fullWidth-3M-YBR grow-2T4nbg',
-            )[0];
-            if (buttonLogin) {
-                clearInterval(i);
-                i = null;
-                recreateNode(buttonLogin, true);
-                buttonLogin = document.getElementsByClassName(
-                    'marginBottom8-emkd0_ button-1cRKG6 button-ejjZWC lookFilled-1H2Jvj colorBrand-2M3O3N sizeLarge-2xP3-w fullWidth-3M-YBR grow-2T4nbg',
-                )[0];
-                buttonLogin.addEventListener('click', () => {
-                    const input = document.getElementsByClassName(
-                        'inputDefault-Ciwd-S input-3O04eu',
-                    )[0];
-                    loginWithToken(input.value);
-                });
-                const email = document.getElementsByClassName('marginBottom20-315RVT')[0];
-                email.parentElement.removeChild(email);
-                const input_ = document.getElementsByClassName("label-7akf7- eyebrow-2wJAoF defaultColor-3Olr-9 defaultMarginlabel-26Urq5")[0]
-                if (!input_) return;
-                input_.innerHTML = `Bot Token`;
-                input_.id = 'token';
-                const QR = document.getElementsByClassName(
-                    'transitionGroup-14WiKS qrLogin-1ejtpI',
-                )[0];
-                QR.parentElement.removeChild(QR);
-                const dot = document.getElementsByClassName('verticalSeparator-2r9gHa')[0];
-                dot.parentElement.removeChild(dot);
-                const need_an_acc =
-                    document.getElementsByClassName('needAccount-MrvMN7')[0];
-                need_an_acc.innerHTML = 'Need a bot?';
-                let reg = document.getElementsByClassName(
-                    'smallRegisterLink-1qEJhz linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
-                )[0];
-                reg.innerHTML = 'Create one here';
-                recreateNode(reg, true);
-                reg = document.getElementsByClassName(
-                    'smallRegisterLink-1qEJhz linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
-                )[0];
-                reg.addEventListener('click', () => {
-                    window.open('https://discord.com/developers/applications');
-                });
-                let forgot_pw = document.getElementsByClassName(
-                    'marginBottom20-315RVT marginTop4-2JFJJI linkButton-2ax8wP button-ejjZWC lookLink-13iF2K lowSaturationUnderline-Z6CW6z colorLink-34zig_ sizeMin-3Yqxk5 grow-2T4nbg',
-                )[0];
-                forgot_pw.innerHTML = ``;
-            }
-        }
-        i = setInterval(() => {
-            if (!window.Vencord) {
-                return;
-            }
-            replaceLoginScreen();
-        }, 250);
-    </script>
-    <script>
-        function getGuildMember(gid, mid) {
-            let token = Vencord.Webpack.findByProps('getToken').getToken();
-            const u = new URL(window.location.href)
-            return new Promise((resolve, reject) => {
-                fetch(`${u.origin}/d/api/v10/guilds/${gid}/members/${mid}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token,
-                    },
-                })
-                    .then(res => res.json())
-                    .then(resolve)
-                    .catch(reject);
-            })
-        }
-        function getThreadMembers(channelId) {
-            let token = Vencord.Webpack.findByProps('getToken').getToken();
-            const u = new URL(window.location.href)
-            return new Promise((resolve, reject) => {
-                // /channels/{channel.id}/thread-members
-                fetch(`${u.origin}/d/api/v10/channels/${channelId}/thread-members?with_member=true`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token,
-                    },
-                })
-                    .then(res => res.json())
-                    .then(resolve)
-                    .catch(() => resolve([]));
-            })
-        }
-    </script>
-    <script>
-        var murmurhashv3;
-        const VIEW_CHANNEL_PERMISSION = 1n << 10n;
-        function checkBitfield(permission) {
-            return (permission & VIEW_CHANNEL_PERMISSION) === VIEW_CHANNEL_PERMISSION;
-        }
-        var i_, getCurrentChannelId, getChannel, getGuild, getCurrentGuildId, getCurrentUserId;
-        i_ = setInterval(() => {
-            if (window.Vencord) {
-                getCurrentChannelId = Vencord.Webpack.findByProps("getLastSelectedChannelId")?.getChannelId;
-                getChannel = Vencord.Webpack.findByProps("getChannel", "getBasicChannel")?.getChannel;
-                getGuild = Vencord.Webpack.findByProps("getGuild", "getGuilds")?.getGuild;
-                getCurrentGuildId = Vencord.Webpack.findByProps("getLastSelectedGuildId")?.getLastSelectedGuildId;
-                getSessionId = Vencord.Webpack.findByProps("getSessionId", "getToken")?.getSessionId;
-                getCurrentUserId = Vencord.Webpack.findByProps('getId')?.getId;
-            }
-            if (getCurrentChannelId) {
-                clearInterval(i_);
-                i_ = null;
-                console.log('Patch getMember');
-                Vencord.Webpack.findByProps("getMember").getMember_ = Vencord.Webpack.findByProps("getMember").getMember;
-                Vencord.Webpack.findByProps("getMember").getMember = function (guildId, memberId) {
-                    const member = this.getMember_(guildId, memberId);
-                    if (member && memberId === getCurrentUserId()) {
-                        member.flags = 4 // bypass
-                    }
-                    return member;
-                }
-                patchModule();
-            }
-        }, 250);
-        function getCurrentChannel() {
-            return getChannel(getCurrentChannelId());
-        }
-        function getCurrentGuild() {
-            return getGuild(getCurrentGuildId())
-        }
-        function getGuildMemberListId() {
-            const channel = getCurrentChannel();
-            let array = [];
-            const allow = [];
-            const deny = [];
-            const guild = getCurrentGuild();
-            if (!guild || !channel) return null;
-            const allId = Object.keys(channel.permissionOverwrites);
-            for (const id of allId) {
-                if (checkBitfield(channel.permissionOverwrites[id].allow)) {
-                    allow.push(`${id}`)
-                }
-                if (checkBitfield(channel.permissionOverwrites[id].deny)) {
-                    deny.push(`${id}`)
-                }
-            }
-            allow.sort();
-            deny.sort();
-            const everyonePerms = new Permissions(guild?.roles[guild.id].permissions);
-            if (deny.length) {
-                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
-            } else if (!everyonePerms.has('VIEW_CHANNEL')) {
-                array.push(...(allow.map(i => `allow:${i}`)), ...(deny.map(i => `deny:${i}`)));
-            } else {
-                null
-            }
-            // console.log(array);
-            if (typeof murmurhashv3 !== "function") murmurhashv3 = Vencord.Webpack.findByProps('v3').v3;
-            return array.length == 0 ? 'everyone' : murmurhashv3(array.join(','));
-        }
-        function checkUserPermission(guild, channel, user) {
-            const permission = checkPermissionGuild(guild, channel, user);
-            return permission.has('VIEW_CHANNEL');
-        }
-
-        class Permissions extends BitField {
-            missing(bits, checkAdmin = true) {
-                return checkAdmin && this.has(this.constructor.FLAGS.ADMINISTRATOR) ? [] : super.missing(bits);
-            }
-            any(permission, checkAdmin = true) {
-                return (checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) || super.any(permission);
-            }
-            has(permission, checkAdmin = true) {
-                return (checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) || super.has(permission);
-            }
-            toArray() {
-                return super.toArray(false);
-            }
-        }
-        Permissions.FLAGS = {
-            CREATE_INSTANT_INVITE: 1n << 0n,
-            KICK_MEMBERS: 1n << 1n,
-            BAN_MEMBERS: 1n << 2n,
-            ADMINISTRATOR: 1n << 3n,
-            MANAGE_CHANNELS: 1n << 4n,
-            MANAGE_GUILD: 1n << 5n,
-            ADD_REACTIONS: 1n << 6n,
-            VIEW_AUDIT_LOG: 1n << 7n,
-            PRIORITY_SPEAKER: 1n << 8n,
-            STREAM: 1n << 9n,
-            VIEW_CHANNEL: 1n << 10n,
-            SEND_MESSAGES: 1n << 11n,
-            SEND_TTS_MESSAGES: 1n << 12n,
-            MANAGE_MESSAGES: 1n << 13n,
-            EMBED_LINKS: 1n << 14n,
-            ATTACH_FILES: 1n << 15n,
-            READ_MESSAGE_HISTORY: 1n << 16n,
-            MENTION_EVERYONE: 1n << 17n,
-            USE_EXTERNAL_EMOJIS: 1n << 18n,
-            VIEW_GUILD_INSIGHTS: 1n << 19n,
-            CONNECT: 1n << 20n,
-            SPEAK: 1n << 21n,
-            MUTE_MEMBERS: 1n << 22n,
-            DEAFEN_MEMBERS: 1n << 23n,
-            MOVE_MEMBERS: 1n << 24n,
-            USE_VAD: 1n << 25n,
-            CHANGE_NICKNAME: 1n << 26n,
-            MANAGE_NICKNAMES: 1n << 27n,
-            MANAGE_ROLES: 1n << 28n,
-            MANAGE_WEBHOOKS: 1n << 29n,
-            MANAGE_EMOJIS_AND_STICKERS: 1n << 30n,
-            USE_APPLICATION_COMMANDS: 1n << 31n,
-            REQUEST_TO_SPEAK: 1n << 32n,
-            MANAGE_EVENTS: 1n << 33n,
-            MANAGE_THREADS: 1n << 34n,
-            CREATE_PUBLIC_THREADS: 1n << 35n,
-            CREATE_PRIVATE_THREADS: 1n << 36n,
-            SEND_MESSAGES_IN_THREADS: 1n << 38n,
-            START_EMBEDDED_ACTIVITIES: 1n << 39n,
-            MODERATE_MEMBERS: 1n << 40n,
-        };
-        Permissions.ALL = Object.values(Permissions.FLAGS).reduce((all, p) => all | p, 0n);
-        Permissions.DEFAULT = BigInt(104324673);
-        Permissions.STAGE_MODERATOR =
-            Permissions.FLAGS.MANAGE_CHANNELS | Permissions.FLAGS.MUTE_MEMBERS | Permissions.FLAGS.MOVE_MEMBERS;
-        Permissions.defaultBit = BigInt(0);
-        // Discord.js Bitfield
-        function checkPermissionGuild(guild, channel, member) {
-            if (guild.ownerId == (member?.user?.id || member.userId)) return new Permissions(Permissions.ALL).freeze();
-            const roles = Object.keys(guild.roles).filter(r => member.roles.includes(r) || r == guild.id);
-            const permissions = new Permissions(roles.map(role => guild.roles[role].permissions));
-            if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-                return new Permissions(Permissions.ALL).freeze();
-            }
-            const overwrites = overwritesFor(member, roles, channel);
-            return permissions
-                .remove(overwrites.everyone?.deny ?? Permissions.defaultBit)
-                .add(overwrites.everyone?.allow ?? Permissions.defaultBit)
-                .remove(overwrites.roles.length > 0 ? overwrites.roles.map(role => role.deny) : Permissions.defaultBit)
-                .add(overwrites.roles.length > 0 ? overwrites.roles.map(role => role.allow) : Permissions.defaultBit)
-                .remove(overwrites.member?.deny ?? Permissions.defaultBit)
-                .add(overwrites.member?.allow ?? Permissions.defaultBit)
-                .freeze();
-        }
-        function overwritesFor(member, roles, channel) {
-            if (!member) return [];
-            const roleOverwrites = [];
-            let memberOverwrites;
-            let everyoneOverwrites;
-
-            for (const overwrite of Object.values(channel.permissionOverwrites)) {
-                if (overwrite.id === channel.guild_id) {
-                    everyoneOverwrites = overwrite;
-                } else if (roles.includes(overwrite.id)) {
-                    roleOverwrites.push(overwrite);
-                } else if (overwrite.id === (member?.user?.id || member.userId)) {
-                    memberOverwrites = overwrite;
-                }
-            }
-
-            return {
-                everyone: everyoneOverwrites,
-                roles: roleOverwrites,
-                member: memberOverwrites,
-            };
-        }
-    </script>
-    <script>
-        function getUserIdFromToken(token) {
-            if (!token) return null;
-            try {
-                return atob(token.split('.')[0]);
-            } catch (e) {
-                return null;
-            }
-        }
-        function fetchChannel(channelId) {
-            let token = Vencord.Webpack.findByProps('getToken').getToken();
-            const u = new URL(window.location.href);
-            return new Promise((resolve, reject) => {
-                fetch(`${u.origin}/d/api/v10/channels/${channelId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token,
-                    },
-                })
-                    .then(res => res.json())
-                    .then(resolve)
-                    .catch(() => resolve([]));
-            });
-        };
-        (async () => {
-            function checkUpdate() {
-                return new Promise((resolve, reject) => {
-                    fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest")
-                        .then((res) => res.json())
-                        .then(res => resolve(res.tag_name))
-                        .catch((e) => resolve('0.0.0'))
-                });
-            }
-            function getLatestCommit() {
-                return new Promise((resolve, reject) => {
-                    fetch("https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/commits")
-                        .then((res) => res.json())
-                        .then(res => resolve(res[0].sha.slice(0, 6).toLowerCase()))
-                        .catch((e) => resolve('000000'))
-                });
-            }
-            const hash = await getLatestCommit();
-            setInterval(() => {
-                if (!window.Vencord) {
-                    return;
-                }
-                if (!hash) return;
-                updateGuildSubs();
-                const host = [...document.querySelectorAll('[class*="info-"] [class*="line-"]')].find(x => x.textContent.toLowerCase() == 'stable 204762 (78f82ba)');
-                if (!host || document.querySelector('#dbclient-ver')) return;
-                const el = document.createElement('span');
-                el.id = 'dbclient-ver';
-                el.innerHTML = `<br>BotClient v${electron.getPackageNode().version} (${hash})`;
-                el.onclick = () => window.open('https://github.com/aiko-chan-ai/DiscordBotClient/releases');
-                host.append(document.createTextNode('\n'), el);
-            }, 2_000);
-        })();
-    </script>
-    <script>
-        var getStatus, getMutableAllGuildsAndMembers, getUsers;
-        function convertGuildMemberDataToRaw(data, allUsers) {
-            const user = allUsers[data.userId] || { id: data.userId };
-            return {
-                user,
-                roles: data.roles,
-                premium_since: data.premiumSince,
-                pending: data.isPending,
-                nick: data.nick,
-                joined_at: data.joinedAt,
-                flags: data.flags,
-                communication_disabled_until: data.communicationDisabledUntil,
-                avatar: data.avatar
-            }
-        }
-        function convertUserToRaw(data) {
-            return {
-                "username": data.username,
-                "id": data.id,
-                "display_name": null,
-                "discriminator": data.discriminator,
-                "bot": data.bot,
-                "avatar": data.avatar,
-                "publicFlags": data.publicFlags,
-                "avatarDecoration": data.avatarDecoration
-            }
-        }
-        function updateGuildSubs() {
-            const guild = getCurrentGuild();
-            if (!guild) return;
-            const channel = getCurrentChannel();
-            if (!channel || channel.isThread()) return;
-            if (typeof getStatus != 'function') getStatus = Vencord.Webpack.findByProps('getStatus', 'getActivities', 'getState')?.getStatus;
-            if (typeof getMutableAllGuildsAndMembers != 'function') getMutableAllGuildsAndMembers = Vencord.Webpack.findByProps('getMutableAllGuildsAndMembers')?.getMutableAllGuildsAndMembers;
-            if (typeof getUsers != 'function') getUsers = Vencord.Webpack.findByProps('getUser')?.getUsers;
-            const roleSort = Object.values(guild.roles).filter(r => r.hoist).sort((x, y) => y.position - x.position);
-            const allGuildsMembers = getMutableAllGuildsAndMembers();
-            const allUsers = getUsers();
-            const members_patch = Object.values(allGuildsMembers[guild.id])
-                .map(m => convertGuildMemberDataToRaw(m, allUsers))
-                .filter(m => checkUserPermission(guild, channel, m)).map(m => {
-                    m.status = getStatus(m.userId || m.user.id) || 'offline'
-                    const role = roleSort.find(r => m.roles.includes(r.id));
-                    m.hoistRoleId = role?.id
-                    if (!role) m.position = 0;
-                    else m.position = role.position;
-                    return m;
-                });
-            const membersOnline = members_patch.filter(m => m.status !== 'offline').sort((x, y) => y.position - x.position);
-            const membersOffline = members_patch.length > 1000 ? [] : members_patch.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
-            // Group
-            function getGroup(arr, off) {
-                let all = []
-                let all2 = []
-                const list_ = {}
-                for (const member of arr) {
-                    list_[member.hoistRoleId || 'online'] = {
-                        group: {
-                            id: member.hoistRoleId || 'online',
-                            count: (list_[member.hoistRoleId || 'online']?.group?.count || 0) + 1
-                        },
-                        members: [member, ...(list_[member.hoistRoleId || 'online']?.members || [])]
-                    }
-                }
-                for (const key in list_) {
-                    list_[key].members.sort((x, y) =>
-                        (x.nick || x.user.username || '').localeCompare(
-                            y.nick || y.user.username || '',
-                        ),
-                    );
-                    all.push({
-                        group: list_[key].group
-                    });
-                    all2.push(list_[key].group);
-                    all = [...all, ...(list_[key].members.map(m => {
-                        return {
-                            member: m
-                        }
-                    }))]
-                }
-                if (off.length > 0) {
-                    let d = {
-                        id: "offline",
-                        count: off.length
-                    }
-                    all.push({
-                        group: d
-                    });
-                    all2.push(d);
-                    all = [...all, ...(off.map(m => {
-                        return {
-                            member: m
-                        }
-                    }))]
-                }
-                return {
-                    ops: all,
-                    group: all2,
-                }
-            }
-            var groups = getGroup(membersOnline, membersOffline)
-            groups.ops.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
-            groups.group.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
-            var ops = [{
-                items: groups.ops,
-                op: "SYNC",
-                range: [0, 99]
-            }];
-            var id_ = getGuildMemberListId();
-            let member_count = Object.values(allGuildsMembers[guild.id]).length;
-            const d__ = {
-                guildId: guild.id,
-                guild_id: guild.id,
-                id: id_,
-                ops,
-                groups: groups.group,
-                online_count: membersOnline.length,
-                memberCount: member_count,
-                member_count: member_count,
-                type: 'GUILD_MEMBER_LIST_UPDATE',
-            }
-            Vencord.Webpack.Common.FluxDispatcher.dispatch(d__);
-            // window.Wxt?.emit('dispatch', 'GUILD_MEMBER_LIST_UPDATE', d__);
-        }
-    </script>
-    <!-- endsection -->
-    <script>
-        window.GLOBAL_ENV = {
-            API_ENDPOINT: '//' + window.location.host + '/d/api',
-            API_VERSION: 9,
-            GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
-            WEBAPP_ENDPOINT: "//" + window.location.host,
-            CDN_HOST: 'cdn.discordapp.com',
-            ASSET_ENDPOINT: "//" + window.location.host,
-            MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
-            WIDGET_ENDPOINT: '//discord.com/widget',
-            INVITE_HOST: 'discord.gg',
-            GUILD_TEMPLATE_HOST: 'discord.new',
-            GIFT_CODE_HOST: 'discord.gift',
-            RELEASE_CHANNEL: 'stable',
-            MARKETING_ENDPOINT: '//discord.com',
-            BRAINTREE_KEY: 'production_ktzp8hfp_49pp2rp4phym7387',
-            STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
-            NETWORKING_ENDPOINT: '//router.discordapp.net',
-            RTC_LATENCY_ENDPOINT: '//latency.discord.media/rtc',
-            ACTIVITY_APPLICATION_HOST: 'discordsays.com',
-            PROJECT_ENV: 'production',
-            REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
-            SENTRY_TAGS: { "buildId": "78f82ba4bb7325d4bc3856b37eae79ac1deb0ee1", "buildType": "normal" },
-            MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
-            MIGRATION_DESTINATION_ORIGIN: window.location.protocol + "//" + window.location.host,
-            HTML_TIMESTAMP: Date.now(),
-            ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
-            PUBLIC_PATH: '/assets/'
-        };
-    </script>
-    <script>!function () { if (null != window.WebSocket) { if (function (n) { try { var e = localStorage.getItem(n); return null == e ? null : JSON.parse(e) } catch (n) { return null } }("token") && !window.__OVERLAY__) { var n = null != window.DiscordNative || null != window.require ? "etf" : "json", e = window.GLOBAL_ENV.GATEWAY_ENDPOINT + "/?encoding=" + n + "&v=" + window.GLOBAL_ENV.API_VERSION + "&compress=zlib-stream"; console.log("[FAST CONNECT] connecting to: " + e); var o = new WebSocket(e); o.binaryType = "arraybuffer"; var t = Date.now(), i = { open: !1, identify: !1, gateway: e, messages: [] }; o.onopen = function () { console.log("[FAST CONNECT] connected in " + (Date.now() - t) + "ms"), i.open = !0 }, o.onclose = o.onerror = function () { window._ws = null }, o.onmessage = function (n) { i.messages.push(n) }, window._ws = { ws: o, state: i } } } }();</script>
-    <link rel="prefetch" as="script" href="/assets/3bdec94becb7320a5949.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/b9523e6e8153da29f4d8.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/2bca5148146ab09a0f77.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/a48ac06ae30799d7d07a.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/00b831dbc2005b9530f5.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/68c45391e9a6c5cce499.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/c58a450ace15698979d5.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/89c6b10bc7dcb8c1313d.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/6ae242f03cfdb7ef841b.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/5f75d77b66745b71d04f.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/7abdeba5b3dc9f17153f.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/c78a56890995200ac89c.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/b0efb03a5d1cd33a1359.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/5fc42c6029b2c818b5f5.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/f9270deeac43b5cec33b.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/1c51b31cb4f16e7937b9.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/da2a6eb7db712adb263d.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/488116a99ba491b5a076.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/a88da0e8eb471bec4b72.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/51177af5fe5f491053f3.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/f00a8554b62238dc64ee.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/44e107795356f0c8bf48.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/aa42b49a1b6026159e32.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/19ada37802688a4429eb.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/6567f388602d506f79b9.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/d811cde22d66ff49a6e8.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/22e4638015d1d0032285.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/ce7654924d18195491b8.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/3a6a179489811c471ed4.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/4fa3d77b811c6fe02502.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/2e263a7147a7d133dbdb.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/767fd57e4a570ee79cd4.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/d1dddaf4de8a256b4f68.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/bd55c9111e59c7ac1b54.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/cabeb88084b5de12f69b.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/d68d46b8b2dbd8de852d.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/5270b1c55857677ab25d.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/d6cd1d800f4e3b45c9c4.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/bcd022a1acb318803335.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/6e8c7748f9b1e033c7a2.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/edfcc7727e39dcfe9402.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/5abeb4b3219796539333.js">
-    </link>
-    <link rel="prefetch" as="script" href="/assets/99416e604e9e996e5482.js">
-    </link>
-    <link rel="stylesheet" href="/assets/40532.1970ab061a94418bb056.css">
-    <link rel="icon" href="/assets/ec2c34cadd4b5f4594415127380a85e6.ico" /> <!-- section:title -->
-    <title>Discord</title>
-    <!-- endsection -->
+	<!-- section:seometa -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Discord">
+	<meta property="og:title" content="Discord - A New Way to Chat with Friends &amp; Communities">
+	<meta property="og:description"
+		content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities.">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@discord">
+	<meta name="twitter:creator" content="@discord">
+	<!-- endsection -->
+	<script>window.GLOBAL_ENV = {
+			API_ENDPOINT: '//' + window.location.host + '/bot/api',
+			API_VERSION: 9,
+			GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
+			WEBAPP_ENDPOINT: '//' + window.location.host,
+			CDN_HOST: 'cdn.discordapp.com',
+			ASSET_ENDPOINT: '//' + window.location.host,
+			MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
+			WIDGET_ENDPOINT: '//discord.com/widget',
+			INVITE_HOST: 'discord.gg',
+			GUILD_TEMPLATE_HOST: 'discord.new',
+			GIFT_CODE_HOST: 'discord.gift',
+			RELEASE_CHANNEL: 'stable',
+			DEVELOPERS_ENDPOINT: '//discord.com',
+			MARKETING_ENDPOINT: '//discord.com',
+			BRAINTREE_KEY: 'production_ktzp8hfp_49pp2rp4phym7387',
+			STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
+			ADYEN_KEY: 'live_E3OQ33V6GVGTXOVQZEAFQJ6DJIDVG6SY',
+			NETWORKING_ENDPOINT: '//router.discordapp.net',
+			RTC_LATENCY_ENDPOINT: '//latency.discord.media/rtc',
+			ACTIVITY_APPLICATION_HOST: 'discordsays.com',
+			PROJECT_ENV: 'production',
+			REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
+			SENTRY_TAGS: { "buildId": "031b95a86235bc4b05a9a8319af9ed8c038b34c5", "buildType": "normal" },
+			MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
+			MIGRATION_DESTINATION_ORIGIN: window.location.protocol + '//' + window.location.host,
+			HTML_TIMESTAMP: Date.now(),
+			ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
+			PUBLIC_PATH: '/assets/'
+		};</script>
+	<script>!function () { if (null != window.WebSocket) { if (function (n) { try { var e = localStorage.getItem(n); return null == e ? null : JSON.parse(e) } catch (n) { return null } }("token") && !window.__OVERLAY__) { var n = null != window.DiscordNative || null != window.require ? "etf" : "json", e = window.GLOBAL_ENV.GATEWAY_ENDPOINT + "/?encoding=" + n + "&v=" + window.GLOBAL_ENV.API_VERSION + "&compress=zlib-stream"; console.log("[FAST CONNECT] connecting to: " + e); var o = new WebSocket(e); o.binaryType = "arraybuffer"; var t = Date.now(), i = { open: !1, identify: !1, gateway: e, messages: [] }; o.onopen = function () { console.log("[FAST CONNECT] connected in " + (Date.now() - t) + "ms"), i.open = !0 }, o.onclose = o.onerror = function () { window._ws = null }, o.onmessage = function (n) { i.messages.push(n) }, window._ws = { ws: o, state: i } } } }()</script>
+	<!-- section:title -->
+	<title>Discord</title>
+	<!-- endsection -->
+	<link rel="icon" href="/assets/images/favicon.ico">
 </head>
 
 <body>
-    <style>
-        .titlebar>.title {
-            -webkit-app-region: drag;
-        }
+	<div id="app-mount"></div>
+	<script>window.__OVERLAY__ = /overlay/.test(location.pathname)</script>
+	<script>window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname)</script>
 
-        .sidebar-1tnWFu {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-
-        }
-
-        .content-1SgpWY {
-            padding: 10px 10px 10px 0px;
-        }
-
-        .container-2cd8Mz,
-        .inviteToolbar-2k2nqz {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-
-        .chat-2ZfjoI {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-
-        }
-
-        .titlebar span {
-            text-overflow: ellipsis;
-        }
-
-        .titlebar-btn {
-            background-color: transparent;
-            color: #ededed;
-            font-size: 18px;
-            padding: 0 8.5px;
-        }
-
-        .titleicon {
-            fill: #e0e0e0;
-            width: 10px;
-            height: 10px;
-        }
-
-        .logo {
-            fill: #808080;
-            width: 52px;
-            height: auto;
-        }
-
-        .titlebar-btn:hover {
-            background-color: #9199a849;
-        }
-
-        .closeBtn:hover {
-            background-color: #ff2e2e;
-        }
-
-        #app-mount {
-            box-sizing: border-box;
-        }
-    </style>
-    <main style="display: flex; flex-direction: column; box-sizing: border-box;">
-        <div style="height: 25px;width: 100%; z-index: 99999; display: flex; justify-content: space-between; align-items: center;  box-sizing: border-box;"
-            class="titlebar">
-            <span style="font-weight: 800; color: #bababa; width: 100%;  padding: 8px 0; padding-left: 10px;"
-                class="title"><svg class="logo" version="1.0" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 492.000000 92.000000" preserveAspectRatio="xMidYMid meet">
-
-                    <g transform="translate(0.000000,92.000000) scale(0.100000,-0.100000)" stroke="none">
-                        <path d="M1340 906 c-137 -38 -209 -127 -210 -256 0 -147 98 -251 267 -281 73
-               -13 140 -45 148 -70 31 -96 -138 -120 -250 -35 l-35 27 -70 -62 c-76 -67 -77
-               -71 -23 -120 50 -46 94 -71 155 -90 70 -22 134 -24 203 -5 157 41 245 139 245
-               269 0 158 -79 239 -273 282 -101 22 -142 49 -142 94 0 88 125 98 236 19 14
-               -10 29 -2 87 42 68 51 70 54 55 76 -22 35 -112 91 -172 108 -64 19 -158 19
-               -221 2z" />
-                        <path d="M2090 906 c-103 -29 -181 -92 -219 -176 -19 -41 -21 -65 -21 -270 0
-               -216 1 -227 24 -275 31 -65 86 -117 161 -152 52 -24 72 -28 155 -28 82 0 103
-               4 153 27 59 28 150 111 162 149 4 11 5 22 3 23 -1 2 -43 22 -91 44 l-89 42
-               -32 -34 c-38 -40 -90 -54 -145 -37 -72 21 -76 31 -79 232 -4 195 -1 208 51
-               239 55 34 136 23 187 -25 l25 -23 88 35 c48 19 87 38 87 42 0 21 -69 108 -109
-               137 -81 59 -207 79 -311 50z" />
-                        <path d="M2835 907 c-106 -28 -176 -78 -220 -159 l-30 -53 0 -235 0 -235 31
-               -55 c36 -65 91 -109 171 -141 47 -19 77 -23 163 -23 138 0 201 23 281 103 77
-               78 84 107 84 351 0 244 -7 273 -84 351 -72 71 -142 100 -261 105 -50 2 -106
-               -2 -135 -9z m195 -212 c56 -29 60 -43 60 -236 0 -162 -2 -178 -20 -202 -36
-               -46 -128 -60 -200 -31 -63 26 -70 47 -70 234 0 181 8 211 63 235 43 19 131 19
-               167 0z" />
-                        <path d="M0 722 l0 -190 107 -98 108 -99 3 183 2 182 63 0 c34 0 79 -5 99 -10
-               64 -18 68 -32 68 -231 0 -155 -2 -180 -18 -199 -25 -31 -81 -39 -269 -40
-               l-163 0 0 -106 0 -106 213 4 c236 5 276 13 359 73 32 23 55 52 74 92 l29 58 0
-               220 c0 258 -6 286 -83 358 -84 77 -132 90 -379 95 l-213 4 0 -190z" />
-                        <path d="M800 460 l0 -450 110 0 110 0 0 450 0 450 -110 0 -110 0 0 -450z" />
-                        <path d="M3440 461 l0 -451 110 0 109 0 3 143 c4 189 8 189 146 0 l103 -143
-               135 0 c74 0 134 3 134 8 0 4 -52 72 -115 152 -98 123 -113 146 -99 155 61 37
-               81 54 102 85 62 92 69 255 15 353 -32 56 -97 108 -161 128 -22 7 -131 14 -259
-               16 l-223 5 0 -451z m432 201 c30 -35 36 -74 17 -116 -18 -38 -66 -56 -153 -56
-               l-76 0 0 98 c0 54 3 102 8 106 4 5 45 6 91 4 79 -4 86 -6 113 -36z" />
-                        <path d="M4247 903 c-4 -3 -7 -87 -7 -186 l0 -180 33 -31 c76 -71 185 -166
-               191 -166 3 0 6 82 6 181 l0 182 80 -5 c94 -5 129 -25 143 -78 5 -19 7 -103 5
-               -187 -3 -140 -5 -154 -24 -174 -31 -30 -86 -38 -272 -39 l-163 0 3 -102 3
-               -103 215 1 c200 0 219 2 274 24 77 29 147 98 169 165 23 66 25 426 2 501 -29
-               97 -110 163 -231 189 -71 15 -414 22 -427 8z" />
-                    </g>
-                </svg></span>
-            <div style="display: flex; align-items: center;">
-                <button class="titlebar-btn miniBtn" id="miniBtn"><svg width="16px" height="16px" class="titleicon"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11">
-                        <path d="M11,4.9v1.1H0V4.399h11z" />
-                    </svg></button>
-                <button class="titlebar-btn maxBtn" id="maxBtn"><svg width="16px" height="16px" class="titleicon"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11">
-                        <path
-                            d="M0,1.7v7.6C0,10.2,0.8,11,1.7,11h7.6c0.9,0,1.7-0.8,1.7-1.7V1.7C11,0.8,10.2,0,9.3,0H1.7C0.8,0,0,0.8,0,1.7z M8.8,9.9H2.2c-0.6,0-1.1-0.5-1.1-1.1V2.2c0-0.6,0.5-1.1,1.1-1.1h6.7c0.6,0,1.1,0.5,1.1,1.1v6.7C9.9,9.4,9.4,9.9,8.8,9.9z" />
-                    </svg></button>
-                <button class="titlebar-btn closeBtn" id="closeBtn"><svg width="16px" height="16px" class="titleicon"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11">
-                        <path
-                            d="M6.279 5.5L11 10.221l-.779.779L5.5 6.279.779 11 0 10.221 4.721 5.5 0 .779.779 0 5.5 4.721 10.221 0 11 .779 6.279 5.5z" />
-                    </svg></button>
-
-            </div>
-        </div>
-        <div id="app-mount"></div>
-    </main>
-
-    <script>
-
-        document.getElementById('app-mount').style.paddingTop = `25px`;
-        // document.getElementById('app-mount').style.position = 'relative'
-        document.getElementById('miniBtn').addEventListener('click', () => {
-            try {
-                window.title.mini()
-            } catch (e) {
-                showToast(
-                    'The button can only be used by the app',
-                    2
-                );
-            }
-        });
-        document.getElementById('maxBtn').addEventListener('click', () => {
-            try {
-                window.title.max()
-            } catch (e) {
-                showToast(
-                    'The button can only be used by the app',
-                    2
-                );
-            }
-        });
-        document.getElementById('closeBtn').addEventListener('click', () => {
-            try {
-                window.title.close()
-            } catch (e) {
-                showToast(
-                    'The button can only be used by the app',
-                    2
-                );
-            }
-        });
-    </script>
-    <script>window.__OVERLAY__ = /overlay/.test(location.pathname)</script>
-    <script>window.__BILLING_STANDALONE__ = /^\/billing/.test(location.pathname)</script>
-    <script src="/assets/508dfafe97858e0b488b.js"></script>
-    <script src="/assets/3bdec94becb7320a5949.js"></script>
-    <script src="/assets/152f2dfbb4d9f08c6d36.js"></script>
-    <script src="/assets/9a287279797be8995feb.js"></script>
+	<script src="/assets/shared.c763dfa019643a3ee931.js" defer=""></script>
+	<link href="/assets/shared.d7319aef35e046ad2b69.css" rel="stylesheet">
+	<link href="/assets/app.9fd03a38722759e455fc.css" rel="stylesheet">
+	<script src="/assets/app.e0e3ea99b4df9898384c.js" defer=""></script>
+	<script src="/assets/22918.9f2b9d54bbfc371a4d92.js" defer=""></script>
+	<script src="/assets/21396.259a270b7e3f8803a333.js" defer=""></script>
+	<script src="/assets/13798.6a2a5ac1a86675c94b6c.js" defer=""></script>
+	<script src="/assets/63550.a619020e4c7b3d5be7ac.js" defer=""></script>
+	<script src="/assets/482.6e1c86f88a37a71d42ec.js" defer=""></script>
+	<script src="/assets/19263.fe32553ff71153cb7656.js" defer=""></script>
+	<script src="/assets/10991.d742d0d238c0d99e96ae.js" defer=""></script>
+	<script src="/assets/20117.7c4ea5cd4685b0442b9f.js" defer=""></script>
+	<script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script>
+	<script src="/assets/31897.ec700144df6b20f401cb.js" defer=""></script>
+	<script src="/assets/58902.a4e93aad5720f871e38e.js" defer=""></script>
+	<script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script>
+	<script src="/assets/64999.3c0486790babc24c66a4.js" defer=""></script>
+	<script src="/assets/47470.c4ab7647d25b8ac58ca8.js" defer=""></script>
+	<script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script>
+	<script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script>
+	<script src="/assets/53706.c13e855ace8621f4cbe9.js" defer=""></script>
+	<script src="/assets/25653.f1981721227784f0166e.js" defer=""></script>
+	<script src="/assets/65632.943fa92709b9910cd5e8.js" defer=""></script>
+	<script src="/assets/46318.26a20b3d6c9d947ee7c5.js" defer=""></script>
+	<script src="/assets/14875.ba44eb6f1396bf220735.js" defer=""></script>
+	<script src="/assets/75851.82c9a7f8176d778029e3.js" defer=""></script>
+	<script src="/assets/5486.1bbb0b409999b3345c7d.js" defer=""></script>
+	<script src="/assets/47387.3a8b4da46182111dbaa7.js" defer=""></script>
+	<script src="/assets/31717.a884df1ca00a0876be62.js" defer=""></script>
+	<script src="/assets/30982.a6d605c291ff090be83b.js" defer=""></script>
+	<script src="/assets/34426.9f82349d8cf165e1b07e.js" defer=""></script>
+	<script src="/assets/41831.ad048c0163425aea4d2e.js" defer=""></script>
+	<script src="/assets/43870.0bfb9a80f88725fba82a.js" defer=""></script>
+	<script src="/assets/21251.b9123e8e72b94b26f3d9.js" defer=""></script>
+	<script src="/assets/48590.3c8ba7ec46e5c315c058.js" defer=""></script>
+	<script src="/assets/86480.ebf8826a7f33e22a6aba.js" defer=""></script>
+	<script src="/assets/18407.d0257553d76c1da19de7.js" defer=""></script>
+	<script src="/assets/37580.f4011cf1c76f3c28f15f.js" defer=""></script>
+	<script src="/assets/75676.8481ee3ef6c0d7c670c6.js" defer=""></script>
+	<script src="/assets/99742.217a8e519977f9b5cbf0.js" defer=""></script>
+	<script src="/assets/47146.4dbf723f3a92ecba2ab7.js" defer=""></script>
+	<script src="/assets/8240.6db5943ea811723a8032.js" defer=""></script>
+	<script src="/assets/74970.b670b049ca0476560bfb.js" defer=""></script>
+	<script src="/assets/78193.772653a63109bfb61db9.js" defer=""></script>
+	<script src="/assets/74836.b991877dde75f9619c99.js" defer=""></script>
+	<script src="/assets/32782.8a9cba1e892da9f75f39.js" defer=""></script>
+	<script src="/assets/94816.c28aad3805f00de540f8.js" defer=""></script>
+	<script src="/assets/37102.04489c88475d6b93636f.js" defer=""></script>
+	<script src="/assets/60499.f4345dabc7337938ebde.js" defer=""></script>
+	<script src="/assets/54314.0f71efde7d99ff587fee.js" defer=""></script>
+	<script src="/assets/49191.5b151c54082714d18094.js" defer=""></script>
+	<script src="/assets/22198.18946cfba71a0683afcd.js" defer=""></script>
+	<script src="/assets/5399.67b6fe86854bee062580.js" defer=""></script>
+	<script src="/assets/56145.20696f40367cfe21029e.js" defer=""></script>
+	<script src="/assets/23777.9e9e7da77fb7df223e53.js" defer=""></script>
+	<script src="/assets/77015.f26ac791f31cca010feb.js" defer=""></script>
+	<script src="/assets/4453.8c99e29c34f5d747263f.js" defer=""></script>
+	<script src="/assets/62768.0e1163b1034583fe27ec.js" defer=""></script>
+	<script src="/assets/80083.7fd81fb4889aa662cd19.js" defer=""></script>
+	<script src="/assets/66888.79756ea63981ab2a6341.js" defer=""></script>
+	<script src="/assets/38081.70b6f68983fc3d77fdd3.js" defer=""></script>
+	<script src="/assets/5687.a724fe30cb6ff469c19a.js" defer=""></script>
+	<script src="/assets/89261.02ed5e657cba70087452.js" defer=""></script>
+	<script src="/assets/26737.36ed5a81390b304d18a5.js" defer=""></script>
+	<script src="/assets/81161.4cbf8610aaecd98b5550.js" defer=""></script>
+	<script src="/assets/87140.141917e3b4392f49a9f0.js" defer=""></script>
+	<script src="/assets/47498.38da6b2cf2f487359536.js" defer=""></script>
+	<script src="/assets/70523.8c4a899e1fc2e9b9a86c.js" defer=""></script>
+	<script src="/assets/6086.2af42e57fcf6739db519.js" defer=""></script>
+	<script src="/assets/64612.26d2bf1afbde26a43a76.js" defer=""></script>
+	<script src="/assets/87475.b26c4ae4ee55f900ba8c.js" defer=""></script>
+	<script src="/assets/28413.4812d79703c86a531f70.js" defer=""></script>
+	<script src="/assets/31421.ced40b898074b2c19b15.js" defer=""></script>
+	<script src="/assets/77666.dee19f95c524dd006f98.js" defer=""></script>
+	<script src="/assets/18409.6b9e27e846725a401ea3.js" defer=""></script>
+	<script src="/assets/78891.67edfb2ad5481ac7e469.js" defer=""></script>
+	<script src="/assets/8608.36f3070721d34b25d956.js" defer=""></script>
+	<script src="/assets/92764.dbeb3acca47d72715b52.js" defer=""></script>
+	<script src="/assets/10716.bcccef800d16c68ae0c0.js" defer=""></script>
+	<script src="/assets/12896.628bb944b26597841a9d.js" defer=""></script>
+	<script src="/assets/41875.512b6054d014bd9caa09.js" defer=""></script>
+	<script src="/assets/53509.d075f1bff85f12b95485.js" defer=""></script>
+	<script src="/assets/68236.13baa29c5d54b14331be.js" defer=""></script>
+	<script src="/assets/90856.923d21fae4e3dfbfbc4e.js" defer=""></script>
+	<script src="/assets/7273.accd9c3e446ae1ccfa00.js" defer=""></script>
+	<script src="/assets/82451.afbcbd0aba0a3cf75eca.js" defer=""></script>
+	<script src="/assets/65800.d803fbd4c225782b31d6.js" defer=""></script>
+	<script src="/assets/90486.a1873f7687d3cadf59fe.js" defer=""></script>
+	<script src="/assets/web.841d85d844f8ee7c1798.js" defer=""></script>
+	<script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script>
+	<script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script>
+	<script src="/assets/47470.c4ab7647d25b8ac58ca8.js" defer=""></script>
+	<script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script>
+	<script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script>
+	<script src="/assets/25653.f1981721227784f0166e.js" defer=""></script>
+	<script src="/assets/7273.accd9c3e446ae1ccfa00.js" defer=""></script>
+	<script src="/assets/sentry.38357888c124e6c9ec20.js" defer=""></script>
 </body>
 
 </html>

@@ -1,0 +1,37 @@
+.messagelogger-deleted [class^="buttons"] {
+    display: none;
+}
+
+.messagelogger-deleted
+:is(
+    video,
+    .emoji,
+    [data-type="sticker"],
+    iframe,
+    .messagelogger-deleted-attachment,
+    [class|="inlineMediaEmbed"]
+) {
+    filter: grayscale(1) !important;
+    transition: 150ms filter ease-in-out;
+}
+
+.messagelogger-deleted
+:is(
+    video,
+    .emoji,
+    [data-type="sticker"],
+    iframe,
+    .messagelogger-deleted-attachment,
+    [class|="inlineMediaEmbed"]
+):hover,
+.messagelogger-deleted {
+    filter: grayscale(0) !important;
+}
+
+.theme-dark .messagelogger-edited {
+    filter: brightness(80%);
+}
+
+.theme-light .messagelogger-edited {
+    opacity: 0.5;
+}

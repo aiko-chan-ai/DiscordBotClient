@@ -1,24 +1,10 @@
 const express = require('express');
 const https = require('https');
-const fs = require('fs');
-const fetch = require('node-fetch');
 const morgan = require('morgan');
+const { Server } = require('lambert-server');
+const otherRoute = require('./otherRoute');
+
 const path = require('path');
-const { dialog, app: ElectronApp } = require('electron');
-const { Server } = require('socket.io');
-const { DiscordBuildVersion } = require('../package.json');
-const APP_NAME = 'DiscordBotClient';
-
-const handlerRequest = require('./handlers');
-
-async function getData(url) {
-	try {
-		const html = await fetch(url);
-		return await html.text();
-	} catch {
-		return null;
-	}
-}
 
 const httpsOptions = {
 	key: `-----BEGIN RSA PRIVATE KEY-----
@@ -75,86 +61,47 @@ MXMU3kbLmHTA/2AqctrTPCND+sZRHPZySuxhMmDrGViKfSzvxA6VQTWcziqUWXWX
 };
 
 const app = express();
-// Log all requests
+
 app.use(morgan('dev'));
-// Logger from Electron
-let logger;
-let html = '';
-let scriptTarget = {};
-const patchList = ['9a287279797be8995feb'];
 
 const server = https.createServer(httpsOptions, app);
 
-const io = new Server(server);
+const route = express.Router();
 
-app.io = io;
-
-// Catch unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-	(0, logger?.error || console.error)(err);
+const lambertServer = new Server({
+	app: route,
+	server,
 });
 
-// Catch uncaught exceptions
-process.on('uncaughtException', (err) => {
-	(0, logger?.error || console.error)(err);
-});
+BigInt.prototype.toJSON = function () {
+	return this.toString();
+};
 
-async function start(port, log_, win) {
-	if (!logger) logger = log_;
-	if (!html) {
-		win.setTitle(APP_NAME + ' Loading Discord.html...');
-		if (!ElectronApp.isPackaged) {
-			html = fs.readFileSync(path.resolve(
-                __dirname,
-                '..',
-                'DiscordCore',
-                'index.html',
-            ), 'utf8');
-		} else {
-			html = await getData(
-				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/index.html`,
-			);
-		}
-	}
-	if (!Object.keys(scriptTarget).length) {
-		for (const script of patchList) {
-			win.setTitle(APP_NAME + ` Patch ${script}.js...`);
-			if (!ElectronApp.isPackaged) {
-				scriptTarget[script] = fs.readFileSync(
-					path.resolve(
-                        __dirname,
-                        '..',
-                        'DiscordCore',
-                        'src',
-                        `${script}.js`,
-                    ),
-					'utf8',
-				);
-			} else {
-				scriptTarget[script] = await getData(
-					`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/src/${script}.js`,
-				);
-			}
-		}
-	}
-	if (!html || Object.values(scriptTarget).some((v) => !v)) {
-		dialog.showErrorBox(
-			'Error',
-			'Failed to load the required files. Please try again.',
-		);
-		process.exit(1);
-	}
-	handlerRequest(app, logger, html, patchList, scriptTarget, win);
+async function start(port, win) {
+	// Reg Route
+	lambertServer.registerRoutes(path.resolve(__dirname, `routes`) + path.sep);
+	// re-def
+	lambertServer.app = app;
+	// API v9
+	app.use('/bot/api/v9', route);
+	app.use('/bot/api', route);
+	app.use(route);
+
+	// otherRoute
+	otherRoute(app);
+
 	return new Promise((resolve, reject) => {
 		server
-			.listen(port, () => {
-				resolve(port);
-				(0, logger?.info || console.log)(
-					`Server is running on port ${port}`,
+			.listen(port)
+			.once('listening', () => {
+				const address = server.address();
+				resolve(address.port);
+				console.log(
+					`Server listening on https://localhost:${address.port}`,
 				);
 			})
 			.once('error', (err) => {
-				resolve(start(port + 1, log_));
+				resolve(start(port + 1, win));
 			});
 	});
 }

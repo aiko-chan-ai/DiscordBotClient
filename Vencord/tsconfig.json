@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "esnext",
+            "esnext.array",
+            "esnext.asynciterable",
+            "esnext.symbol"
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "strict": true,
+        "noImplicitAny": false,
+        "target": "ESNEXT",
+        "jsx": "preserve",
+
+        "baseUrl": "./src/",
+        "paths": {
+            "@api/*": ["./api/*"],
+            "@components/*": ["./components/*"],
+            "@utils/*": ["./utils/*"],
+            "@webpack/types": ["./webpack/common/types"],
+            "@webpack/common": ["./webpack/common"],
+            "@webpack": ["./webpack/webpack"]
+        }
+    },
+    "include": ["src/**/*"]
+}

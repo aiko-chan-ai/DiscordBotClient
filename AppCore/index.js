@@ -16,10 +16,10 @@ const log = require('electron-log');
 const path = require('path');
 const fetch = require('node-fetch');
 const { version: DBCVersion } = require('../package.json');
-const { version: VencordVersion } = require('../Vencord/manifest.json');
+const { version: VencordVersion } = require('../VencordExtension/manifest.json');
 const server = require('./server.js');
-const { UserAgent } = require('../AppAssets/Util');
-const ApplicationFlags = require('../AppAssets/ApplicationFlags');
+const { UserAgent } = require('../AppAssets/Util.js');
+const ApplicationFlags = require('../AppAssets/ApplicationFlags.js');
 
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
@@ -106,6 +106,18 @@ function createTray(win, port) {
 			},
 		},
 		{
+			label: 'Clear AppData',
+			click: () => {
+				win.webContents.session
+					.clearCache()
+					.then(() => win.webContents.session.clearStorageData())
+					.then(() => {
+						app.relaunch();
+						app.quit();
+					});
+			},
+		},
+		{
 			label: 'Toggle Developer Tools',
 			click: () => {
 				win.webContents.toggleDevTools();
@@ -180,7 +192,7 @@ function checkUpdate() {
 }
 
 async function createWindow() {
-	checkUpdate();
+	//checkUpdate();
 	const primaryDisplay = screen.getPrimaryDisplay();
 	const { width, height } = primaryDisplay.workAreaSize;
 	// Create the browser window.
@@ -203,12 +215,17 @@ async function createWindow() {
 		// titleBarStyle: "hidden",
 	});
 
+	// Patch UserAgent (Switch Plan B SDP > Unified Plan)
+	win.webContents.setUserAgent(
+		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+	);
+
 	log.info(`Electron UserData: ${app.getPath('userData')}`);
 
 	// Create the server
-	const port = await server(2023, log, win);
+	const port = await server(2024, win);
 	// createNotification('Proxy Server', `Proxy server started on port ${port}`);
-	const tray = createTray(win, port);
+	createTray(win, port);
 
 	if (!app.isPackaged) win.webContents.openDevTools();
 
@@ -222,7 +239,7 @@ async function createWindow() {
 
 	win.map = new Map(); // botId - shardCount
 
-	const path_ = path.join(__dirname, '..', 'Vencord');
+	const path_ = path.join(__dirname, '..', 'VencordExtension');
 
 	win.setTitle(APP_NAME + ' Loading Vencord from ' + path_ + '...');
 	await session.defaultSession.loadExtension(path_);
@@ -301,7 +318,8 @@ async function createWindow() {
 			.then((data) => {
 				win.map.set(
 					data.bot.id,
-					Math.ceil(parseInt(data.approximate_guild_count) / 200) || 1,
+					Math.ceil(parseInt(data.approximate_guild_count) / 200) ||
+						1,
 				);
 				event.sender.send('get-bot-info-response', {
 					success: true,
@@ -352,7 +370,6 @@ app.on('activate', () => {
 	}
 });
 
-// before the app is terminated, clear both timers
 app.on('before-quit', () => {
 	log.info('App closing...');
 });

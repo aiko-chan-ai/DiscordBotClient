@@ -87,16 +87,6 @@ function getDataFromRequest(req, res, callback) {
 }
 
 const handlerRequest = (url, req, res, win) => {
-	// Author:
-	if (/users\/\d{17,19}/.exec(url)) {
-		const id = url.match(/users\/(\d{17,19})/)[1];
-		const UserData = UserPatch[id];
-		if (url.includes('profile') && UserData) {
-			return res.send(Util.ProfilePatch(UserData));
-		} else if (UserData) {
-			return res.send(UserData);
-		}
-	}
 	// Store
 	if (
 		url.includes('oauth2/') &&

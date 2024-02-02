@@ -26,23 +26,17 @@ export default definePlugin({
     enabledByDefault: true,
     patches: [
         {
-            find: "hasTOTPEnabled(){",
+            find: "hasFetchedCredentials(){",
             replacement: [{
-                match: /hasTOTPEnabled\(\){/,
-                replace: "$&return false;"
-            }]
-        }, {
-            find: "hasSMSEnabled(){",
-            replacement: [{
-                match: /hasSMSEnabled\(\){/,
+                match: /hasFetchedCredentials\(\){/,
                 replace: "$&return true;"
             }]
-        },{
-            find: "hasWebAuthnEnabled(){",
+        }, {
+            find: "getCredentials(){return",
             replacement: [{
-                match: /hasWebAuthnEnabled\(\){/,
-                replace: "$&return false;"
+                match: /getCredentials\(\){return/,
+                replace: "$& [];"
             }]
-        }
+        },
     ],
 });

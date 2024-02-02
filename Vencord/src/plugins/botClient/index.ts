@@ -43,8 +43,6 @@ export default definePlugin({
                 match: /hasWebAuthnEnabled\(\){/,
                 replace: "$&return false;"
             }]
-        },{
-            find: "notificationSettings:"
         }
     ],
 });

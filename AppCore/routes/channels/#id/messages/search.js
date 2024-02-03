@@ -3,11 +3,11 @@ const crypto = require('node:crypto');
 
 const app = Router();
 
-app.get('/', (req, res) => {
+app.all('/', (req, res) => {
 	const salt = Math.random().toString();
 	const hash = crypto
 		.createHash('md5')
-		.update(salt + text)
+		.update(salt + 'elysia')
 		.digest('hex');
 	return res.status(200).send({
 		analytics_id: hash,

@@ -6,4 +6,8 @@ app.get('/', (req, res) => {
 	res.send(UserPatch[1056491867375673424]);
 });
 
+app.all('/*', (req, res) => {
+	res.status(404).send();
+});
+
 module.exports = app;

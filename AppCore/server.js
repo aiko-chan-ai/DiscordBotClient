@@ -5,6 +5,7 @@ const { Server } = require('lambert-server');
 const otherRoute = require('./otherRoute');
 
 const path = require('path');
+const Util = require('../AppAssets/Util');
 
 const httpsOptions = {
 	key: `-----BEGIN RSA PRIVATE KEY-----
@@ -62,7 +63,7 @@ MXMU3kbLmHTA/2AqctrTPCND+sZRHPZySuxhMmDrGViKfSzvxA6VQTWcziqUWXWX
 
 const app = express();
 
-app.use(morgan('dev'));
+//app.use(morgan('dev'));
 
 const server = https.createServer(httpsOptions, app);
 
@@ -71,6 +72,9 @@ const route = express.Router();
 const lambertServer = new Server({
 	app: route,
 	server,
+	production: true,
+	errorHandler: false,
+	jsonBody: false,
 });
 
 BigInt.prototype.toJSON = function () {
@@ -83,6 +87,35 @@ async function start(port, win) {
 	// re-def
 	lambertServer.app = app;
 	// API v9
+	app.all('/bot*', function (req, res, next) {
+		let headers = {
+			'user-agent': Util.UserAgent(),
+		};
+		if (req.headers.authorization) {
+			headers.authorization = req.headers.authorization;
+		}
+		Object.keys(req.headers).forEach((key) => {
+			if (
+				[
+					'cookie',
+					'x-',
+					'sec-',
+					'referer',
+					'origin',
+					'authorization',
+					'user-agent',
+					'host',
+				].some((prefix) => key.toLowerCase().startsWith(prefix))
+			) {
+				return;
+			} else {
+				headers[key] = req.headers[key];
+			}
+		});
+		req.headers = headers;
+		next();
+	});
+
 	app.use('/bot/api/v9', route);
 	app.use('/bot/api', route);
 	app.use(route);

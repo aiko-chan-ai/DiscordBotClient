@@ -1,10 +1,5 @@
 // Def
 var allShards;
-// Lock localStorage
-Object.defineProperty(window, 'localStorage', {
-	value: window.localStorage,
-	writable: false,
-});
 // Bitfield
 class BitField {
 	constructor(bits = this.constructor.defaultBit) {

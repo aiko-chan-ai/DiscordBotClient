@@ -93,6 +93,29 @@ export default definePlugin({
                     match: /remoteCommand\(((\w+,?)+)?\){/,
                     replace: "$& return;"
                 },
+                {
+                    match: /voiceStateUpdate\((\w+)\){/,
+                    replace: (str, ...args) => {
+                        const data = args[0];
+                        return str + `
+if (${data}.guildId) {
+  if (${data}.guildId !== lasestGuildIdVoiceConnect) {
+    // Disconnect
+    this.send(4, {
+        guild_id: lasestGuildIdVoiceConnect,
+        channel_id: null,
+        self_mute: ${data}.selfMute,
+        self_deaf: ${data}.selfDeaf,
+    });
+    // Switch Guild
+    lasestGuildIdVoiceConnect = ${data}.guildId;
+  }
+} else {
+  ${data}.guildId = (lasestGuildIdVoiceConnect === 0) ? null : lasestGuildIdVoiceConnect;
+  lasestGuildIdVoiceConnect = 0;
+}`
+                    }
+                },
             ]
         },
         {

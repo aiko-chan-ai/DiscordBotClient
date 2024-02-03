@@ -1,5 +1,5 @@
 // Def
-var allShards;
+var allShards, lasestGuildIdVoiceConnect = 0;
 // Bitfield
 class BitField {
 	constructor(bits = this.constructor.defaultBit) {

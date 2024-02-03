@@ -16,14 +16,67 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { ApplicationCommandInputType, ApplicationCommandOptionType, findOption, OptionalMessageOption, RequiredMessageOption, sendBotMessage } from "@api/Commands";
 import { Devs } from "@utils/constants";
+import { localStorage } from "@utils/localStorage";
 import definePlugin from "@utils/types";
+import { findByPropsLazy } from "@webpack";
+import { RestAPI, UserStore } from "@webpack/common";
+
+const EPOCH = 1_420_070_400_000;
+let INCREMENT = BigInt(0);
+
+const GetToken = findByPropsLazy('getToken');
+const LoginToken = findByPropsLazy('loginToken');
+
+class SnowflakeUtil extends null {
+    static generate(timestamp: Date | number = Date.now()) {
+        if (timestamp instanceof Date) timestamp = timestamp.getTime();
+        if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+            throw new TypeError(
+                `"timestamp" argument must be a number (received ${isNaN(timestamp) ? 'NaN' : typeof timestamp
+                })`,
+            );
+        }
+        if (INCREMENT >= 4095n) INCREMENT = BigInt(0);
+
+        // Assign WorkerId as 1 and ProcessId as 0:
+        return (
+            (BigInt(timestamp - EPOCH) << 22n) |
+            (1n << 17n) |
+            INCREMENT++
+        ).toString();
+    }
+
+    static deconstruct(snowflake) {
+        const bigIntSnowflake = BigInt(snowflake);
+        return {
+            timestamp: Number(bigIntSnowflake >> 22n) + EPOCH,
+            get date() {
+                return new Date(this.timestamp);
+            },
+            workerId: Number((bigIntSnowflake >> 17n) & 0b11111n),
+            processId: Number((bigIntSnowflake >> 12n) & 0b11111n),
+            increment: Number(bigIntSnowflake & 0b111111111111n),
+            binary: bigIntSnowflake.toString(2).padStart(64, '0'),
+        };
+    }
+
+    static timestampFrom(snowflake) {
+        return Number(BigInt(snowflake) >> 22n) + EPOCH;
+    }
+
+    static get EPOCH() {
+        return EPOCH;
+    }
+}
 
 export default definePlugin({
     name: "BotClient",
     description: "Patch the current version of Discord to allow the use of bot accounts",
     authors: [Devs.Ely],
     enabledByDefault: true,
+    dependencies: ["CommandsAPI"],
     patches: [
         {
             find: `{type:"LOGOUT"}`,
@@ -252,16 +305,19 @@ if (!botInfo.success) {
 }
 const intentsData = electron.requestIntents(botInfo.data.flags);
 const intents = getIntents(...intentsData.skip);
-allShards = Math.ceil(parseInt(botInfo.data.approximate_guild_count) / 200) || 1;
+allShards = Math.ceil(parseInt(botInfo.data.approximate_guild_count) / 100) || 1;
+if (currentShard + 1 >= allShards) {
+    currentShard = 0;
+}
 showToast('Bot Intents: ' + intents, 1);
-showToast(\`Shard ID: \${0} (All: \${allShards})\`, 1);
+showToast(\`Shard ID: \${currentShard} (All: \${allShards})\`, 1);
                         `
                     },
                 },
                 {
                     match: /(token:\w+)(,capabilities:)/,
                     replace: function (str, ...args) {
-                        return `${args[0]},intents,shard: [0, allShards]${args[1]}`;
+                        return `${args[0]},intents,shard: [parseInt(currentShard), allShards]${args[1]}`;
                     }
                 }
             ]
@@ -306,6 +362,97 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null
                     }
                 }
             ],
+        },
+        {
+            find: "delete window.localStorage",
+            replacement: [
+                {
+                    match: "delete window.localStorage",
+                    replace: "",
+                }
+            ]
         }
     ],
+    commands: [
+        {
+            name: "ping",
+            description: "Ping pong!",
+            inputType: ApplicationCommandInputType.BOT,
+            execute: (opts, ctx) => {
+                sendBotMessage(ctx.channel.id, { content: 'Pong!' });
+            },
+        }, {
+            name: "purge",
+            description: "Delete messages from the channel",
+            inputType: ApplicationCommandInputType.BOT,
+            options: [{
+                name: 'amount',
+                description: 'Input the amount of messages to delete',
+                required: true,
+                type: ApplicationCommandOptionType.INTEGER,
+            }],
+            execute: async (opts, ctx) => {
+                const amount = findOption<number>(opts, "amount", 2);
+                if (amount < 2 || amount > 100) {
+                    sendBotMessage(ctx.channel.id, { content: `Invalid messages (2<=${amount}<=100)` });
+                } else {
+                    const oldId = SnowflakeUtil.generate(Date.now() - 1209600000);
+                    const { body } = await RestAPI.get({
+                        url: `/channels/${ctx.channel.id}/messages?limit=${amount}`,
+                    });
+                    const messages = body.filter((m) => BigInt(m.id) > BigInt(oldId))
+                        .map((m) => m.id);
+                    try {
+                        await RestAPI.post({
+                            url: `/channels/${ctx.channel.id}/messages/bulk-delete`,
+                            body: {
+                                messages,
+                            }
+                        });
+                        sendBotMessage(ctx.channel.id, { content: `Deleted ${messages.length} messages` });
+                    } catch {
+                        sendBotMessage(ctx.channel.id, { content: 'Failed to delete messages' });
+                    }
+                }
+            },
+        }, {
+            name: "switchshard",
+            description: "Login with another shard ID",
+            inputType: ApplicationCommandInputType.BOT,
+            options: [{
+                name: 'id',
+                description: 'Shard ID',
+                required: true,
+                type: ApplicationCommandOptionType.INTEGER,
+            }],
+            execute: async (opts, ctx) => {
+                const id = findOption<number>(opts, "id", 0);
+                if (id < 0 || id + 1 >= window.allShards) {
+                    sendBotMessage(ctx.channel.id, { content: `Invalid shardId (0<=${id}<=${window.allShards - 1})` });
+                } else {
+                    window.currentShard = id;
+                    LoginToken.loginToken(GetToken.getToken());
+                }
+            },
+        }, {
+            name: "switchtoken",
+            description: "Login with another bot",
+            inputType: ApplicationCommandInputType.BOT,
+            options: [{
+                name: 'token',
+                description: 'Bot token',
+                required: true,
+                type: ApplicationCommandOptionType.STRING,
+            }],
+            execute: async (opts, ctx) => {
+                const token = findOption<string>(opts, "token", "");
+                if (!/(mfa\.[a-z0-9_-]{20,})|([a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.[a-z0-9_-]{27})/i.test(token)) {
+                    sendBotMessage(ctx.channel.id, { content: `Invalid token` });
+                } else {
+                    window.currentShard = 0;
+                    LoginToken.loginToken(GetToken.getToken());
+                }
+            },
+        },
+    ]
 });

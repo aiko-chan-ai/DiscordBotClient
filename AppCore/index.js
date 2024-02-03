@@ -346,11 +346,19 @@ async function createWindow() {
 		if (!flags.find((f) => f.includes('GATEWAY_MESSAGE_CONTENT'))) {
 			throw new Error('MESSAGE_CONTENT is required');
 		}
-		event.sender.send('get-intents-response', {
+		event.returnValue = {
 			success: true,
 			message: `Skip intents: ${skip.join(', ')}`,
 			skip,
-		});
+		};
+	});
+
+	ipcMain.on('getElectronVersion', (event) => {
+		return (event.returnValue = process.versions.electron);
+	});
+
+	ipcMain.on('getBotClientVersion', (event) => {
+		return (event.returnValue = app.getVersion());
 	});
 }
 

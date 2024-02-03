@@ -118,7 +118,23 @@ if (${closeCode} === 4013) {
                     replace: function (str, ...args) {
                         let data = args[1];
                         let eventName = args[3];
+                        let N = args[5];
                         return str + `
+if ("MESSAGE_CREATE" === ${eventName} && !${data}.guild_id && !Vencord.Webpack.findByProps("getChannel", "getBasicChannel")?.getChannel(${data}.channel_id)) {
+    return fetchChannel(${data}.channel_id).then(i => this.dispatcher.receiveDispatch(i, "CHANNEL_CREATE", ${N})).catch((err) => {
+        const i = {
+            type: 1,
+            recipients: [${data}.author ?? ${data}.user ?? {
+                id: ${data}.user_id
+            }],
+            last_message_id: ${data}.id,
+            is_spam: !1,
+            id: ${data}.channel_id,
+            flags: 0
+        };
+        this.dispatcher.receiveDispatch(i, "CHANNEL_CREATE", ${N});
+    }).finally(() => this.dispatcher.receiveDispatch(${data}, ${eventName}, ${N}));
+}
 if ("READY" === ${eventName}) {
 ${data}.users = [
 	...(${data}.users || []),
@@ -211,7 +227,7 @@ if (!botInfo.success) {
 	showToast(botInfo.message, 2);
 	return this._handleClose(!0, 4004, botInfo.message);
 }
-const intentsData = await electron.requestIntents(botInfo.data.flags);
+const intentsData = electron.requestIntents(botInfo.data.flags);
 const intents = getIntents(...intentsData.skip);
 allShards = Math.ceil(parseInt(botInfo.data.approximate_guild_count) / 200) || 1;
 showToast('Bot Intents: ' + intents, 1);

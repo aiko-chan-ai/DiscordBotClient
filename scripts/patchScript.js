@@ -140,9 +140,9 @@ function replaceLoginScreen() {
 		clearInterval(i);
 		buttonLogin = recreateNode(buttonLogin);
 		buttonLogin.addEventListener('click', () => {
-			const input = getElementByXpath(
-				'/html/body/div[2]/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div/div[2]/div[1]/div/input',
-			);
+			const input = document.querySelectorAll(
+				'[class*="inputDefault"]',
+			)[0];
 			Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
 		});
 		const email = document.querySelector(
@@ -195,5 +195,15 @@ function showToast(message, type, { position, timeout } = {}) {
 			timeout,
 			position,
 		},
+	});
+}
+function fetchChannel(channelId) {
+	return new Promise((resolve, reject) => {
+		Vencord.Webpack.findByProps('getAPIBaseURL')
+			.get({
+				url: `/channels/${channelId}`,
+			})
+			.then((d) => resolve(d.body))
+			.catch(() => reject(false));
 	});
 }

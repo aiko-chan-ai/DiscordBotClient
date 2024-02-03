@@ -5,7 +5,6 @@
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
 	"dependencies": {
-		"axios": "^1.6.5",
 		"discord-protos": "^1.0.4",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.1.0",
@@ -14,9 +13,7 @@
 		"morgan": "^1.10.0",
 		"multer": "^1.4.5-lts.1",
 		"node-fetch": "^2.6.7",
-		"request": "^2.88.2",
-		"socket.io": "^4.6.2",
-		"ws": "^8.12.1"
+		"request": "^2.88.2"
 	},
 	"devDependencies": {
 		"electron": "^28.1.4",

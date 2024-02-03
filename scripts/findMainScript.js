@@ -21,11 +21,7 @@ const createWindow = async () => {
 			} else {
 				fs.renameSync(HTMLPath, path.resolve(folder, 'oldIndex.html'));
 			}
-			if (!fs.existsSync(path.resolve(folder, 'index.html'))) {
-				fs.writeFileSync(HTMLPath, text);
-			} else {
-				app.quit();
-			}
+			fs.writeFileSync(HTMLPath, text);
 			require('./patchHTML')();
 			const sentry = text
 				.split('\n')

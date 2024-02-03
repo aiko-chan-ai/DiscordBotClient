@@ -29,20 +29,21 @@ contextBridge.exposeInMainWorld('electron', {
 			});
 		});
 	},
-	requestIntents: flags => {
-		return new Promise((resolve, reject) => {
-			ipcRenderer.send('get-intents', flags);
-			ipcRenderer.once('get-intents-response', (event, response) => {
-				resolve(response);
-			});
-		});
+	requestIntents: (flags) => {
+		return ipcRenderer.sendSync('get-intents', flags);
 	},
-	getBotInfo: token => {
+	getBotInfo: (token) => {
 		return new Promise((resolve, reject) => {
 			ipcRenderer.send('get-bot-info', token);
 			ipcRenderer.once('get-bot-info-response', (event, response) => {
 				resolve(response);
 			});
 		});
-	}
+	},
+	getElectronVersion() {
+		return ipcRenderer.sendSync('getElectronVersion');
+	},
+	getBotClientVersion() {
+		return ipcRenderer.sendSync('getBotClientVersion');
+	},
 });

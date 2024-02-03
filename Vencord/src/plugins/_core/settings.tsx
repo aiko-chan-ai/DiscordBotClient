@@ -152,7 +152,7 @@ export default definePlugin({
     },
 
     get electronVersion() {
-        return VencordNative.native.getVersions().electron || window.armcord?.electron || null;
+        return VencordNative.native.getVersions().electron || window.armcord?.electron || window.electron?.getElectronVersion() || null;
     },
 
     get chromiumVersion() {
@@ -174,12 +174,17 @@ export default definePlugin({
         return "";
     },
 
+    get botClientVersion() {
+        return window.electron?.getBotClientVersion();
+    },
+
     makeInfoElements(Component: React.ComponentType<React.PropsWithChildren>, props: React.PropsWithChildren) {
-        const { electronVersion, chromiumVersion, additionalInfo } = this;
+        const { electronVersion, chromiumVersion, additionalInfo, botClientVersion } = this;
 
         return (
             <>
                 <Component {...props}>Vencord {gitHash}{additionalInfo}</Component>
+                {botClientVersion && <Component {...props}>BotClient {botClientVersion}</Component>}
                 {electronVersion && <Component {...props}>Electron {electronVersion}</Component>}
                 {chromiumVersion && <Component {...props}>Chromium {chromiumVersion}</Component>}
             </>

@@ -20,7 +20,7 @@ import { ApplicationCommandInputType, ApplicationCommandOptionType, findOption, 
 import { Devs } from "@utils/constants";
 import { localStorage } from "@utils/localStorage";
 import definePlugin from "@utils/types";
-import { findByPropsLazy } from "@webpack";
+import { findByProps, findByPropsLazy } from "@webpack";
 import { RestAPI, UserStore } from "@webpack/common";
 
 const EPOCH = 1_420_070_400_000;
@@ -311,6 +311,10 @@ if (currentShard + 1 >= allShards) {
 }
 showToast('Bot Intents: ' + intents, 1);
 showToast(\`Shard ID: \${currentShard} (All: \${allShards})\`, 1);
+Vencord.Api.Notices.showNotice("Discord Bot Client", "GitHub", () => {
+    Vencord.Api.Notices.popNotice()
+    window.open('https://github.com/aiko-chan-ai/DiscordBotClient')
+});
                         `
                     },
                 },
@@ -371,7 +375,26 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null
                     replace: "",
                 }
             ]
-        }
+        },
+        {
+            find: "resolveInvite:",
+            replacement: [
+                {
+                    match: /,acceptInvite\(\w+\){/,
+                    replace: `$& showToast('Discord Bot Client cannot join guilds',2);
+                    return Promise.reject("Discord Bot Client cannot join guilds");`
+                }
+            ]
+        },
+        {
+            find: "loadTemplatesForGuild:",
+            replacement: [
+                {
+                    match: /loadTemplatesForGuild:/,
+                    replace: "$& () => Promise.reject(\"Discord Bot Client cannot use Guild Templates\"), loadTemplatesForGuild_:",
+                }
+            ]
+        },
     ],
     commands: [
         {
@@ -454,5 +477,26 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null
                 }
             },
         },
-    ]
+    ],
+    start() {
+        [
+            'acceptFriendRequest',
+            'addRelationship',
+            'cancelFriendRequest',
+            'clearPendingRelationships',
+            'confirmClearPendingRelationships',
+            'fetchRelationships',
+            'removeFriend',
+            'removeRelationship',
+            'sendRequest',
+            'unblockUser',
+            'updateRelationship'
+        ].forEach((a) => (Vencord.Webpack.findByProps('fetchRelationships')[a] = function () {
+            window.showToast(
+                'Discord Bot Client cannot use Relationships Module',
+                2,
+            );
+            return Promise.reject("Discord Bot Client cannot use Relationships Module");
+        }));
+    }
 });

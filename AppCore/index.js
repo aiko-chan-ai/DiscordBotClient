@@ -3,7 +3,6 @@ const {
 	BrowserWindow,
 	systemPreferences,
 	shell,
-	Notification,
 	session,
 	Tray,
 	Menu,
@@ -15,7 +14,6 @@ const {
 const log = require('electron-log');
 const path = require('path');
 const fetch = require('node-fetch');
-const { version: DBCVersion } = require('../package.json');
 const { version: VencordVersion } = require('../VencordExtension/manifest.json');
 const server = require('./server.js');
 const { UserAgent } = require('../AppAssets/Util.js');
@@ -38,27 +36,6 @@ app.setAppUserModelId(APP_NAME);
 
 log.info('App starting...');
 
-function createNotification(
-	title,
-	description,
-	icon,
-	silent = false,
-	callbackWhenClick = () => {},
-) {
-	const n = new Notification({
-		title,
-		body: description,
-		icon,
-		silent,
-	});
-	n.once('click', (e) => {
-		e.preventDefault();
-		typeof callbackWhenClick == 'function' && callbackWhenClick();
-		n.close();
-	});
-	n.show();
-}
-
 /**
  *
  * @param {BrowserWindow} win
@@ -74,7 +51,7 @@ function createTray(win, port) {
 	});
 	const menu = Menu.buildFromTemplate([
 		{
-			label: APP_NAME,
+			label: `${APP_NAME} v${app.getVersion()} (Port: ${port})`,
 			icon: nativeImage.createFromPath(iconPath).resize({ width: 16 }),
 			enabled: false,
 		},
@@ -161,28 +138,16 @@ function checkUpdate() {
 		)
 			.then((res) => res.json())
 			.then((res) => {
-				if (checkLatestVersion(res.tag_name, DBCVersion)) {
-					createNotification(
-						'Update Manager',
-						`New version available: ${res.name}`,
-					);
+				if (checkLatestVersion(res.tag_name, '')) {
 					shell.openExternal(
 						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 					);
 				} else {
 					isLatest = true;
-					createNotification(
-						'Update Manager',
-						`You are using the latest version (v${DBCVersion})`,
-					);
 				}
 			})
 			.catch((e) => {
 				log.error(e);
-				createNotification(
-					'Update Manager',
-					`Unable to check for updates (v${DBCVersion})`,
-				);
 				shell.openExternal(
 					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 				);
@@ -224,7 +189,7 @@ async function createWindow() {
 
 	// Create the server
 	const port = await server(2024, win);
-	// createNotification('Proxy Server', `Proxy server started on port ${port}`);
+
 	createTray(win, port);
 
 	if (!app.isPackaged) win.webContents.openDevTools();
@@ -236,8 +201,6 @@ async function createWindow() {
 		e.preventDefault();
 		return shell.openExternal(url);
 	});
-
-	win.map = new Map(); // botId - shardCount
 
 	const path_ = path.join(__dirname, '..', 'VencordExtension');
 
@@ -269,10 +232,6 @@ async function createWindow() {
 
 	win.on('hide', function (e) {
 		e.preventDefault();
-		createNotification(
-			APP_NAME + ' is running in background',
-			'You can close the application in the taskbar',
-		);
 	});
 
 	ipcMain.on('minimize', (event) => {
@@ -316,11 +275,6 @@ async function createWindow() {
 				return res.json();
 			})
 			.then((data) => {
-				win.map.set(
-					data.bot.id,
-					Math.ceil(parseInt(data.approximate_guild_count) / 200) ||
-						1,
-				);
 				event.sender.send('get-bot-info-response', {
 					success: true,
 					data,

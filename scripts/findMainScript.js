@@ -13,7 +13,7 @@ const createWindow = async () => {
 	const mainWindow = new BrowserWindow({
 		show: false,
 	});
-	fetch(URL)
+	await fetch(URL)
 		.then((r) => r.text())
 		.then((text) => {
 			if (fs.existsSync(path.resolve(folder, 'oldIndex.html'))) {
@@ -21,7 +21,11 @@ const createWindow = async () => {
 			} else {
 				fs.renameSync(HTMLPath, path.resolve(folder, 'oldIndex.html'));
 			}
-			fs.writeFileSync(HTMLPath, text);
+			if (!fs.existsSync(path.resolve(folder, 'index.html'))) {
+				fs.writeFileSync(HTMLPath, text);
+			} else {
+				app.quit();
+			}
 			require('./patchHTML')();
 			const sentry = text
 				.split('\n')

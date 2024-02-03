@@ -15,6 +15,10 @@ module.exports = () => {
 
 	const scriptTags = document.querySelectorAll('script');
 
+	const oldPatch = document.getElementById('patch-bot-client');
+
+	if (oldPatch) oldPatch.parentNode.removeChild(oldPatch);
+
 	const replaceEnv = {
 		API_ENDPOINT: "'//' + window.location.host + '/bot/api'",
 		WEBAPP_ENDPOINT: "'//' + window.location.host",
@@ -47,6 +51,8 @@ module.exports = () => {
 	});
 
 	const newScript = document.createElement('script');
+
+	newScript.setAttribute('id', 'patch-bot-client');
 
 	newScript.textContent = fs.readFileSync(path.resolve('.', 'scripts', 'patchScript.js')).toString();
 

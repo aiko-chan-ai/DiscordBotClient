@@ -27,7 +27,7 @@ module.exports = class Util {
 			premium_guild_since: null,
 			profile_themes_experiment_bucket: 4,
 			mutual_guilds: [],
-			mutual_friends_count: 10,
+			mutual_friends_count: 0,
 			application_role_connections: [],
 			user_profile: {
 				bio: userData.bio,
@@ -56,40 +56,5 @@ module.exports = class Util {
 	}
 	static UserAgent() {
 		return `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
-	}
-	static createMessageReplyCommand(
-		content,
-		applicationId,
-		interactionId,
-		channelId,
-		commandName,
-		botId,
-		nonce,
-	) {
-		return {
-			applicationId,
-			author: {
-				id: applicationId,
-			},
-			channel_id: channelId,
-			content,
-			embeds: [],
-			flags: 1 << 6,
-			id: SnowflakeUtil.generate(),
-			interaction: {
-				id: interactionId,
-				name: commandName,
-				type: 2,
-				user: {
-					id: botId,
-					username: 'BotClient',
-					avatar: null,
-				},
-				displayName: commandName,
-			},
-			timestamp: new Date().toISOString(),
-			type: 20, // Chat Input
-			nonce,
-		};
 	}
 };

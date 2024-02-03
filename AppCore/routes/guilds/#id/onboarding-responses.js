@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const multer = require('multer');
+const Util = require('../../../../AppAssets/Util');
 
 const app = Router();
 
@@ -34,10 +35,7 @@ function getDataFromRequest(req, res, callback) {
 app.post('/', (req, res) => {
 	const callback = (req, res) => {
 		const BotToken = req.headers.authorization;
-		const uid = Buffer.from(
-			BotToken.replace('Bot ', '').split('.')[0],
-			'base64',
-		).toString();
+		const uid = Util.getIDFromToken(BotToken);
 		let data = {
 			...req.body,
 			guild_id: req.params.id,

@@ -41,22 +41,6 @@ async function getData(url) {
 	}
 }
 
-// patch
-BigInt.prototype.toJSON = function () {
-	return this.toString();
-};
-
-const defaultDataEmailSetting = {
-	categories: {
-		social: true,
-		communication: true,
-		recommendations_and_events: false,
-		tips: false,
-		updates_and_announcements: false,
-	},
-	initialized: true,
-};
-
 const multer = require('multer');
 function getDataFromRequest(req, res, callback) {
 	var data = '';
@@ -96,44 +80,6 @@ const handlerRequest = (url, req, res, win) => {
 		return res.status(404).send({
 			message: "Bot can't use this endpoint (blocked)",
 		});
-	}
-	if (url.includes('application-commands/search')) {
-		const Url = new URL(`https://discord.com${url}`);
-		switch (Url.searchParams.get('type')) {
-			// type: Slash commands
-			case '1': {
-				res.status(200).send({
-					application_commands: Array.from(
-						Commands.Slash,
-						([name, value]) => Util.patchCommand(value),
-					),
-					applications: Url.searchParams.has('application_id')
-						? null
-						: [
-								{
-									id: '1056491867375673424',
-									name: 'aiko-chan-ai',
-									icon: '93fb88f6b8c0a2a33c437d0fff4c6625',
-									description: '',
-									summary: '',
-									type: null,
-									bot: UserPatch['1056491867375673424'],
-								},
-						  ],
-					cursor: null,
-				});
-				break;
-			}
-			default: {
-				res.status(200).send({
-					application_commands: [],
-					applications: [],
-					cursor: null,
-				});
-				break;
-			}
-		}
-		return;
 	}
 	if (url.includes('/interactions')) {
 		if (req.method.toUpperCase() == 'POST') {
@@ -181,26 +127,6 @@ const handlerRequest = (url, req, res, win) => {
 			return getDataFromRequest(req, res, callback);
 		}
 	}
-	if (url.includes('/profile')) {
-		const BotToken = req.headers.authorization;
-		const url_ = new URL(`https://discord.com${url}`);
-		const id = url_.pathname.match(/\d{17,19}/)[0];
-		const botId = Util.getIDFromToken(BotToken);
-		return axios
-			.get(`https://discord.com/api/v9/users/${id}`, {
-				headers: {
-					Authorization: BotToken,
-					'Content-Type': 'application/json',
-					'User-Agent': userAgent,
-				},
-			})
-			.then(({ data }) => {
-				return res.status(200).send(Util.ProfilePatch(data));
-			})
-			.catch(() => {
-				return res.status(200).send(Util.ProfilePatch({ id }));
-			});
-	}
 	if (url.includes('settings-proto/1')) {
 		// parse userid from header
 		const BotToken = req.headers.authorization;
@@ -235,11 +161,6 @@ const handlerRequest = (url, req, res, win) => {
 			});
 		};
 		return getDataFromRequest(req, res, callback);
-	}
-	if (url.includes('settings-proto/2')) {
-		return res.send({
-			settings: '',
-		});
 	}
 	if (url.includes('/threads/search?archived=true')) {
 		// TODO: fix this

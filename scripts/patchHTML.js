@@ -51,12 +51,26 @@ module.exports = () => {
 	});
 
 	const newScript = document.createElement('script');
-
 	newScript.setAttribute('id', 'patch-bot-client');
-
 	newScript.textContent = fs.readFileSync(path.resolve('.', 'scripts', 'patchScript.js')).toString();
-
 	document.head.prepend(newScript);
+
+	const appMount = document.getElementById('app-mount');
+	appMount.parentNode.removeChild(appMount);
+
+	const newStyle = document.createElement('style');
+	newStyle.setAttribute('id', 'css-bot-client');
+	newStyle.textContent = fs
+		.readFileSync(path.resolve('.', 'scripts', 'patchCss.css'))
+		.toString();
+
+	const newMain = document.createElement('main');
+	newMain.innerHTML = fs
+		.readFileSync(path.resolve('.', 'scripts', 'patchMain.html'))
+		.toString();
+
+	document.body.prepend(newMain);
+	document.body.prepend(newStyle);
 
 	const modifiedHtml = dom.serialize();
 

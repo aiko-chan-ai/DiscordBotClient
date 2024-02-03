@@ -63,7 +63,7 @@ MXMU3kbLmHTA/2AqctrTPCND+sZRHPZySuxhMmDrGViKfSzvxA6VQTWcziqUWXWX
 
 const app = express();
 
-//app.use(morgan('dev'));
+app.use(morgan('dev'));
 
 const server = https.createServer(httpsOptions, app);
 

@@ -1,0 +1,58 @@
+.titlebar > .title {
+	-webkit-app-region: drag;
+}
+
+.sidebar-1tnWFu {
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+.content-1SgpWY {
+	padding: 10px 10px 10px 0px;
+}
+
+.container-2cd8Mz,
+.inviteToolbar-2k2nqz {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.chat-2ZfjoI {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.titlebar span {
+	text-overflow: ellipsis;
+}
+
+.titlebar-btn {
+	background-color: transparent;
+	color: #ededed;
+	font-size: 18px;
+	padding: 0 8.5px;
+}
+
+.titleicon {
+	fill: #e0e0e0;
+	width: 10px;
+	height: 10px;
+}
+
+.logo {
+	fill: #808080;
+	width: 52px;
+	height: auto;
+}
+
+.titlebar-btn:hover {
+	background-color: #9199a849;
+}
+
+.closeBtn:hover {
+	background-color: #ff2e2e;
+}
+
+#app-mount {
+	box-sizing: border-box;
+}

@@ -14,28 +14,59 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ */
 
-import { ApplicationCommandInputType, ApplicationCommandOptionType, findOption, OptionalMessageOption, RequiredMessageOption, sendBotMessage } from "@api/Commands";
+import {
+    ApplicationCommandInputType,
+    ApplicationCommandOptionType,
+    findOption,
+    OptionalMessageOption,
+    RequiredMessageOption,
+    sendBotMessage,
+} from "@api/Commands";
+import { definePluginSettings } from "@api/Settings";
+import { Logger } from "@utils/Logger";
 import { Devs } from "@utils/constants";
-import { localStorage } from "@utils/localStorage";
-import definePlugin from "@utils/types";
-import { findByProps, findByPropsLazy } from "@webpack";
-import { RestAPI, UserStore } from "@webpack/common";
+import { getCurrentChannel, getCurrentGuild } from "@utils/discord";
+import definePlugin, { OptionType } from "@utils/types";
+import { findByPropsLazy, findByProps } from "@webpack";
+import {
+    RestAPI,
+    UserStore,
+    ChannelStore,
+    GuildMemberStore,
+    SelectedGuildStore,
+    SelectedChannelStore,
+    PresenceStore,
+    PermissionStore,
+    PermissionsBits,
+    FluxDispatcher,
+} from "@webpack/common";
 
 const EPOCH = 1_420_070_400_000;
 let INCREMENT = BigInt(0);
 
-const GetToken = findByPropsLazy('getToken');
-const LoginToken = findByPropsLazy('loginToken');
+const GetToken = findByPropsLazy("getToken");
+const LoginToken = findByPropsLazy("loginToken");
+const murmurhash = findByPropsLazy("v3");
+
+const BotClientLogger = new Logger('BotClient', '#ff88f3');
+
+// PermissionStore.computePermissions is not the same function and doesn't work here
+const PermissionUtil = findByPropsLazy(
+    "computePermissions",
+    "canEveryoneRole"
+) as {
+    computePermissions({ ...args }): bigint;
+};
 
 class SnowflakeUtil extends null {
     static generate(timestamp: Date | number = Date.now()) {
         if (timestamp instanceof Date) timestamp = timestamp.getTime();
-        if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+        if (typeof timestamp !== "number" || isNaN(timestamp)) {
             throw new TypeError(
-                `"timestamp" argument must be a number (received ${isNaN(timestamp) ? 'NaN' : typeof timestamp
-                })`,
+                `"timestamp" argument must be a number (received ${isNaN(timestamp) ? "NaN" : typeof timestamp
+                })`
             );
         }
         if (INCREMENT >= 4095n) INCREMENT = BigInt(0);
@@ -58,7 +89,7 @@ class SnowflakeUtil extends null {
             workerId: Number((bigIntSnowflake >> 17n) & 0b11111n),
             processId: Number((bigIntSnowflake >> 12n) & 0b11111n),
             increment: Number(bigIntSnowflake & 0b111111111111n),
-            binary: bigIntSnowflake.toString(2).padStart(64, '0'),
+            binary: bigIntSnowflake.toString(2).padStart(64, "0"),
         };
     }
 
@@ -73,84 +104,131 @@ class SnowflakeUtil extends null {
 
 export default definePlugin({
     name: "BotClient",
-    description: "Patch the current version of Discord to allow the use of bot accounts",
+    description:
+        "Patch the current version of Discord to allow the use of bot accounts",
     authors: [Devs.Ely],
     enabledByDefault: true,
     dependencies: ["CommandsAPI"],
+    settings: definePluginSettings({
+        showMemberList: {
+            description: "Allow fetching member list sidebar",
+            type: OptionType.BOOLEAN,
+            default: true,
+            restartNeeded: false,
+        },
+        memberListInterval: {
+            description:
+                "The amount of time the member list sidebar is refreshed (seconds)\nDon't set the time too low if you don't want your client to lag",
+            type: OptionType.NUMBER,
+            default: 5,
+            restartNeeded: false,
+        },
+    }),
     patches: [
         {
             find: `{type:"LOGOUT"}`,
-            replacement: [{
-                match: /if\(\w+\.user\.bot\){/,
-                replace: '$&}else{'
-            }]
+            replacement: [
+                {
+                    // If user account is already logged in, proceed to log out
+                    match: /if\(\w+\.user\.bot\){/,
+                    replace: "$&}else{",
+                },
+            ],
         },
         {
+            // Bot account caused the error
             find: "hasFetchedCredentials(){",
-            replacement: [{
-                match: /hasFetchedCredentials\(\){/,
-                replace: "$&return true;"
-            }, {
-                match: /getCredentials\(\){return/,
-                replace: "$& [];"
-            },]
+            replacement: [
+                {
+                    match: /hasFetchedCredentials\(\){/,
+                    replace: "$&return true;",
+                },
+                {
+                    match: /getCredentials\(\){return/,
+                    replace: "$& [];",
+                },
+            ],
         },
         {
+            // Remove/Patch unused bot ws opcode
             find: "voiceServerPing(){",
             replacement: [
                 {
                     match: /embeddedActivityClose\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
-                    match: /updateGuildSubscriptions\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    match: /updateGuildSubscriptions\((\w+)\){/,
+                    replace: function (str, ...args) {
+                        const data = args[0];
+                        return str + `const threadId = Object.values(${data})?.[0]?.thread_member_lists?.[0];
+if (threadId) {
+    getThreadMembers(threadId).then(r => {
+        if (!r.length) return;
+        let i = {
+            threadId,
+            guildId: Object.keys(${data})?.[0],
+            members: r.map(_ => ({
+                ..._,
+                presence: null,
+            })),
+            type: "THREAD_MEMBER_LIST_UPDATE",
+        };
+        Vencord.Webpack.Common.FluxDispatcher.dispatch(i);
+    });
+}
+return;
+                        `;
+                    },
                 },
                 {
                     match: /callConnect\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /lobbyConnect\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /lobbyDisconnect\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /lobbyVoiceStatesUpdate\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /streamCreate\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /streamWatch\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /streamPing\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /streamDelete\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /streamSetPaused\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
                     match: /remoteCommand\(((\w+,?)+)?\){/,
-                    replace: "$& return;"
+                    replace: "$& return;",
                 },
                 {
+                    // Leave / Switch VoiceChannel
                     match: /voiceStateUpdate\((\w+)\){/,
                     replace: (str, ...args) => {
                         const data = args[0];
-                        return str + `
+                        return (
+                            str +
+                            `
 if (${data}.guildId) {
   if (${data}.guildId !== lasestGuildIdVoiceConnect) {
     // Disconnect
@@ -167,26 +245,32 @@ if (${data}.guildId) {
   ${data}.guildId = (lasestGuildIdVoiceConnect === 0) ? null : lasestGuildIdVoiceConnect;
   lasestGuildIdVoiceConnect = 0;
 }`
-                    }
+                        );
+                    },
                 },
-            ]
+            ],
         },
         {
+            // Patch opcode 2 (identify) and events
             find: "window.GLOBAL_ENV.GATEWAY_ENDPOINT;",
             replacement: [
                 {
-                    // Close code
+                    // Patch Close code
                     match: /(_handleClose\()(\w+)(,)(\w+)(,)(\w+)(\){)/,
                     replace: function (str, ...args) {
                         let closeCode = args[3];
-                        return str + `
+                        return (
+                            str +
+                            `
 if (${closeCode} === 4013) {
     showToast("Invalid intents, Logout...", 2);
     ${closeCode} = 4004;
 } else if (${closeCode} === 4014) {
     showToast("MESSAGE_CONTENT is required, Logout...", 2);
     ${closeCode} = 4004;
-}`},
+}`
+                        );
+                    },
                 },
                 // Event
                 {
@@ -195,7 +279,9 @@ if (${closeCode} === 4013) {
                         let data = args[1];
                         let eventName = args[3];
                         let N = args[5];
-                        return str + `
+                        return (
+                            str +
+                            `
 if ("MESSAGE_CREATE" === ${eventName} && !${data}.guild_id && !Vencord.Webpack.findByProps("getChannel", "getBasicChannel")?.getChannel(${data}.channel_id)) {
     return fetchChannel(${data}.channel_id).then(i => this.dispatcher.receiveDispatch(i, "CHANNEL_CREATE", ${N})).catch((err) => {
         const i = {
@@ -288,6 +374,7 @@ ${data}.consents = {
 };
 }
 `
+                        );
                     },
                 },
                 // _doIdentify
@@ -295,9 +382,12 @@ ${data}.consents = {
                     match: /(this\.token=)(\w+)(,)(\w+)(\.verbose\("\[IDENTIFY\]"\);)/,
                     replace: function (str, ...args) {
                         let varToken = args[1];
-                        return str + `
+                        return (
+                            str +
+                            `
 ${varToken} = ${varToken}.replace(/bot/gi,"").trim();
 const botInfo = await electron.getBotInfo(${varToken});
+this.token = ${varToken};
 console.log(botInfo);
 if (!botInfo.success) {
 	showToast(botInfo.message, 2);
@@ -311,45 +401,47 @@ if (currentShard + 1 >= allShards) {
 }
 showToast('Bot Intents: ' + intents, 1);
 showToast(\`Shard ID: \${currentShard} (All: \${allShards})\`, 1);
-Vencord.Api.Notices.showNotice("Discord Bot Client", "GitHub", () => {
-    Vencord.Api.Notices.popNotice()
-    window.open('https://github.com/aiko-chan-ai/DiscordBotClient')
-});
                         `
+                        );
                     },
                 },
+                // Sharding
                 {
                     match: /(token:\w+)(,capabilities:)/,
                     replace: function (str, ...args) {
                         return `${args[0]},intents,shard: [parseInt(currentShard), allShards]${args[1]}`;
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         },
         {
+            // Bot account caused the error
             find: "users_size:JSON.stringify",
             replacement: [
                 {
                     match: /users_size:JSON.stringify\(\w+\)\.length/,
                     replace: "users_size:0",
-                }, {
+                },
+                {
                     match: /read_states_size:JSON.stringify\(\w+\)\.length/,
                     replace: "read_states_size:0",
                 },
-            ]
+            ],
         },
         {
+            // Bot account caused the error
             find: "notificationSettings:{",
             replacement: [
                 {
                     match: /(notificationSettings:{flags:)([\w\.]+)},/,
                     replace: function (str, ...args) {
-                        return args[0] + '0},';
-                    }
-                }
-            ]
+                        return args[0] + "0},";
+                    },
+                },
+            ],
         },
         {
+            // Patch getToken & setToken function
             find: "this.encryptAndStoreTokens()",
             replacement: [
                 {
@@ -360,40 +452,50 @@ Vencord.Api.Notices.showNotice("Discord Bot Client", "GitHub", () => {
                         let body = `
 this.init();
 let t = ${varToken} ? ${arrayToken}
-return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null
-                        `
+return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null`;
                         return `${args[0]}${args[1]}${args[2]}${body}${args[4]}`;
-                    }
-                }
+                    },
+                },
+                {
+                    match: /,setToken\((\w+),(\w+)\){/,
+                    replace: function(str, ...args) {
+                        const token = args[0];
+                        const id = args[1];
+                        return str + `if(${token}){${token}=${token}.replace(/bot/gi,"").trim()}`;
+                    },
+                },
             ],
         },
         {
+            // Don't delete localStorage
             find: "delete window.localStorage",
             replacement: [
                 {
                     match: "delete window.localStorage",
                     replace: "",
-                }
-            ]
+                },
+            ],
         },
+        // Patch some unusable bot modules/methods
         {
             find: "resolveInvite:",
             replacement: [
                 {
                     match: /,acceptInvite\(\w+\){/,
                     replace: `$& showToast('Discord Bot Client cannot join guilds',2);
-                    return Promise.reject("Discord Bot Client cannot join guilds");`
-                }
-            ]
+                    return Promise.reject("Discord Bot Client cannot join guilds");`,
+                },
+            ],
         },
         {
             find: "loadTemplatesForGuild:",
             replacement: [
                 {
                     match: /loadTemplatesForGuild:/,
-                    replace: "$& () => Promise.reject(\"Discord Bot Client cannot use Guild Templates\"), loadTemplatesForGuild_:",
-                }
-            ]
+                    replace:
+                        '$& () => Promise.reject("Discord Bot Client cannot use Guild Templates"), loadTemplatesForGuild_:',
+                },
+            ],
         },
     ],
     commands: [
@@ -402,101 +504,311 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null
             description: "Ping pong!",
             inputType: ApplicationCommandInputType.BOT,
             execute: (opts, ctx) => {
-                sendBotMessage(ctx.channel.id, { content: 'Pong!' });
+                sendBotMessage(ctx.channel.id, { content: "Pong!" });
             },
-        }, {
+        },
+        {
             name: "purge",
             description: "Delete messages from the channel",
             inputType: ApplicationCommandInputType.BOT,
-            options: [{
-                name: 'amount',
-                description: 'Input the amount of messages to delete',
-                required: true,
-                type: ApplicationCommandOptionType.INTEGER,
-            }],
+            options: [
+                {
+                    name: "amount",
+                    description: "Input the amount of messages to delete",
+                    required: true,
+                    type: ApplicationCommandOptionType.INTEGER,
+                },
+            ],
             execute: async (opts, ctx) => {
                 const amount = findOption<number>(opts, "amount", 2);
                 if (amount < 2 || amount > 100) {
-                    sendBotMessage(ctx.channel.id, { content: `Invalid messages (2<=${amount}<=100)` });
+                    sendBotMessage(ctx.channel.id, {
+                        content: `Invalid messages (2<=${amount}<=100)`,
+                    });
                 } else {
-                    const oldId = SnowflakeUtil.generate(Date.now() - 1209600000);
+                    const oldId = SnowflakeUtil.generate(
+                        Date.now() - 1209600000
+                    );
                     const { body } = await RestAPI.get({
                         url: `/channels/${ctx.channel.id}/messages?limit=${amount}`,
                     });
-                    const messages = body.filter((m) => BigInt(m.id) > BigInt(oldId))
+                    const messages = body
+                        .filter((m) => BigInt(m.id) > BigInt(oldId))
                         .map((m) => m.id);
                     try {
                         await RestAPI.post({
                             url: `/channels/${ctx.channel.id}/messages/bulk-delete`,
                             body: {
                                 messages,
-                            }
+                            },
                         });
-                        sendBotMessage(ctx.channel.id, { content: `Deleted ${messages.length} messages` });
+                        sendBotMessage(ctx.channel.id, {
+                            content: `Deleted ${messages.length} messages`,
+                        });
                     } catch {
-                        sendBotMessage(ctx.channel.id, { content: 'Failed to delete messages' });
+                        sendBotMessage(ctx.channel.id, {
+                            content: "Failed to delete messages",
+                        });
                     }
                 }
             },
-        }, {
+        },
+        {
             name: "switchshard",
             description: "Login with another shard ID",
             inputType: ApplicationCommandInputType.BOT,
-            options: [{
-                name: 'id',
-                description: 'Shard ID',
-                required: true,
-                type: ApplicationCommandOptionType.INTEGER,
-            }],
+            options: [
+                {
+                    name: "id",
+                    description: "Shard ID",
+                    required: true,
+                    type: ApplicationCommandOptionType.INTEGER,
+                },
+            ],
             execute: async (opts, ctx) => {
                 const id = findOption<number>(opts, "id", 0);
                 if (id < 0 || id + 1 >= window.allShards) {
-                    sendBotMessage(ctx.channel.id, { content: `Invalid shardId (0<=${id}<=${window.allShards - 1})` });
+                    sendBotMessage(ctx.channel.id, {
+                        content: `Invalid shardId (0<=${id}<=${window.allShards - 1
+                            })`,
+                    });
                 } else {
                     window.currentShard = id;
                     LoginToken.loginToken(GetToken.getToken());
                 }
             },
-        }, {
+        },
+        {
             name: "switchtoken",
             description: "Login with another bot",
             inputType: ApplicationCommandInputType.BOT,
-            options: [{
-                name: 'token',
-                description: 'Bot token',
-                required: true,
-                type: ApplicationCommandOptionType.STRING,
-            }],
+            options: [
+                {
+                    name: "token",
+                    description: "Bot token",
+                    required: true,
+                    type: ApplicationCommandOptionType.STRING,
+                },
+            ],
             execute: async (opts, ctx) => {
                 const token = findOption<string>(opts, "token", "");
-                if (!/(mfa\.[a-z0-9_-]{20,})|([a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.[a-z0-9_-]{27})/i.test(token)) {
-                    sendBotMessage(ctx.channel.id, { content: `Invalid token` });
+                if (
+                    !/(mfa\.[a-z0-9_-]{20,})|([a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.[a-z0-9_-]{27})/i.test(
+                        token
+                    )
+                ) {
+                    sendBotMessage(ctx.channel.id, {
+                        content: `Invalid token`,
+                    });
                 } else {
                     window.currentShard = 0;
-                    LoginToken.loginToken(GetToken.getToken());
+                    LoginToken.loginToken(token);
                 }
             },
         },
     ],
     start() {
+        // Patch modules
         [
-            'acceptFriendRequest',
-            'addRelationship',
-            'cancelFriendRequest',
-            'clearPendingRelationships',
-            'confirmClearPendingRelationships',
-            'fetchRelationships',
-            'removeFriend',
-            'removeRelationship',
-            'sendRequest',
-            'unblockUser',
-            'updateRelationship'
-        ].forEach((a) => (Vencord.Webpack.findByProps('fetchRelationships')[a] = function () {
-            window.showToast(
-                'Discord Bot Client cannot use Relationships Module',
-                2,
+            "acceptFriendRequest",
+            "addRelationship",
+            "cancelFriendRequest",
+            "clearPendingRelationships",
+            "confirmClearPendingRelationships",
+            "fetchRelationships",
+            "removeFriend",
+            "removeRelationship",
+            "sendRequest",
+            "unblockUser",
+            "updateRelationship",
+        ].forEach(
+            (a) =>
+            (findByProps("fetchRelationships")[a] = function () {
+                window.showToast(
+                    "Discord Bot Client cannot use Relationships Module",
+                    2
+                );
+                return Promise.reject(
+                    "Discord Bot Client cannot use Relationships Module"
+                );
+            })
+        );
+
+        const doRefreshMemberList = () => {
+            BotClientLogger.info('Update MemberList: Interval', this.settings.store.memberListInterval * 1000);
+            setTimeout(() => {
+                doRefreshMemberList();
+            }, this.settings.store.memberListInterval * 1000);
+            if (!this.settings.store.showMemberList) return;
+            const channel = getCurrentChannel();
+            if (
+                !channel ||
+                !channel.guild_id ||
+                channel.isDM() ||
+                channel.isGroupDM() ||
+                channel.isMultiUserDM() ||
+                channel.isGuildVoice() ||
+                channel.isGuildStageVoice() ||
+                channel.isDirectory()
+            ) {
+                BotClientLogger.error('Update MemberList: Invalid Channel', channel);
+                return false;
+            }
+            const guild = getCurrentGuild();
+            if (!guild) return;
+            // MemberListId
+            const allow: string[] = [];
+            const deny: string[] = [];
+            const arrayMemberListId: string[] = [];
+            const allId = Object.keys(channel.permissionOverwrites);
+            for (const id of allId) {
+                if (
+                    window.checkBitfield(channel.permissionOverwrites[id].allow)
+                ) {
+                    allow.push(id);
+                }
+                if (
+                    window.checkBitfield(channel.permissionOverwrites[id].deny)
+                ) {
+                    deny.push(id);
+                }
+            }
+            allow.sort();
+            deny.sort();
+            // @ts-ignore
+            const everyonePerms = new PermissionsDiscord(
+                guild.roles[guild.id].permissions
             );
-            return Promise.reject("Discord Bot Client cannot use Relationships Module");
-        }));
-    }
+            if (deny.length) {
+                arrayMemberListId.push(
+                    ...allow.map((i) => `allow:${i}`),
+                    ...deny.map((i) => `deny:${i}`)
+                );
+            } else if (!everyonePerms.has("VIEW_CHANNEL")) {
+                arrayMemberListId.push(
+                    ...allow.map((i) => `allow:${i}`),
+                    ...deny.map((i) => `deny:${i}`)
+                );
+            }
+            const memberListId =
+                arrayMemberListId.length == 0
+                    ? "everyone"
+                    : murmurhash.v3(arrayMemberListId.join(","));
+            // Sort role
+            const roleSort = Object.values(guild.roles)
+                .filter((r) => r.hoist)
+                .sort((x, y) => y.position - x.position);
+            // GuildMembers Patch
+            const allMembers = Object.values(GuildMemberStore.getMembers(guild.id));
+            let member_count = allMembers.length;
+            const convertMembersToRaw = allMembers
+                .filter(
+                    (m) =>
+                        PermissionUtil.computePermissions({
+                            user: { id: m.userId },
+                            context: guild,
+                            overwrites: channel.permissionOverwrites,
+                            member: m,
+                        }) & PermissionsBits.VIEW_CHANNEL
+                )
+                .map((data) => {
+                    const m: any = {
+                        user: {
+                            id: data.userId,
+                        },
+                        roles: data.roles,
+                        premium_since: data.premiumSince,
+                        pending: data.isPending,
+                        nick: data.nick,
+                        joined_at: data.joinedAt,
+                        flags: (data as any).flags,
+                        communication_disabled_until:
+                            data.communicationDisabledUntil,
+                        avatar: data.avatar,
+                        status: PresenceStore.getStatus(data.userId) || 'offline',
+                    };
+                    const role = roleSort.find(r => m.roles.includes(r.id));
+                    m.hoistRoleId = role?.id
+                    if (!role) m.position = 0;
+                    else m.position = role.position;
+                    return m;
+                });
+            const membersOnline = convertMembersToRaw.filter(m => m.status !== 'offline').sort((x, y) => y.position - x.position);
+            const membersOffline = convertMembersToRaw.length > 1000 ? [] : convertMembersToRaw.filter(m => m.status == 'offline').sort((x, y) => y.position - x.position);
+            // Group
+            function getGroup(arr, off) {
+                let all: any[] = []
+                let all2: any[] = []
+                const list_ = {}
+                for (const member of arr) {
+                    list_[member.hoistRoleId || 'online'] = {
+                        group: {
+                            id: member.hoistRoleId || 'online',
+                            count: (list_[member.hoistRoleId || 'online']?.group?.count || 0) + 1
+                        },
+                        members: [member, ...(list_[member.hoistRoleId || 'online']?.members || [])]
+                    }
+                }
+                for (const key in list_) {
+                    list_[key].members.sort((x, y) =>
+                        (x.nick || x.user.username || '').localeCompare(
+                            y.nick || y.user.username || '',
+                        ),
+                    );
+                    all.push({
+                        group: list_[key].group
+                    });
+                    all2.push(list_[key].group);
+                    all = [...all, ...(list_[key].members.map(m => {
+                        return {
+                            member: m
+                        }
+                    }))]
+                }
+                if (off.length > 0) {
+                    let d = {
+                        id: "offline",
+                        count: off.length
+                    }
+                    all.push({
+                        group: d
+                    });
+                    all2.push(d);
+                    all = [...all, ...(off.map(m => {
+                        return {
+                            member: m
+                        }
+                    }))]
+                }
+                return {
+                    ops: all,
+                    group: all2,
+                }
+            }
+            let groups = getGroup(membersOnline, membersOffline);
+            // WS
+            groups.ops.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
+            groups.group.sort((a, b) => (guild.roles[b.id]?.position || 0) - (guild.roles[a.id]?.position || 0))
+            let ops = [{
+                items: groups.ops,
+                op: "SYNC",
+                range: [0, 99]
+            }];
+            FluxDispatcher.dispatch({
+                guildId: guild.id,
+                id: memberListId,
+                ops,
+                groups: groups.group,
+                onlineCount: membersOnline.length,
+                memberCount: member_count,
+                type: 'GUILD_MEMBER_LIST_UPDATE',
+            });
+        }
+
+        if (this.settings.store.memberListInterval) {
+            setTimeout(() => {
+                doRefreshMemberList();
+            }, this.settings.store.memberListInterval * 1000);
+        }
+    },
 });

@@ -1,8 +1,6 @@
 module.exports = [
 	'outbound-promotions/codes',
-	'entitlements',
 	'science',
-	'affinities',
 	'auth/',
 	'applications/public',
 	'notes',
@@ -16,4 +14,6 @@ module.exports = [
 	'connections/eligibility',
 	'activities/shelf',
 	'interaction-data',
+	'migrate-command-scope',
+	'member-verification',
 ];

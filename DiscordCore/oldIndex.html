@@ -233,6 +233,7 @@
                 .add(overwrites.member?.allow ?? Permissions.defaultBit)
                 .freeze();
         }
+
         function overwritesFor(member, roles, channel) {
             if (!member) return [];
             const roleOverwrites = [];

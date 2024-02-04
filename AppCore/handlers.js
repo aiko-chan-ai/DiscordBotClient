@@ -72,61 +72,6 @@ function getDataFromRequest(req, res, callback) {
 
 const handlerRequest = (url, req, res, win) => {
 	// Store
-	if (
-		url.includes('oauth2/') &&
-		!url.includes('assets') &&
-		!url.includes('rpc')
-	) {
-		return res.status(404).send({
-			message: "Bot can't use this endpoint (blocked)",
-		});
-	}
-	if (url.includes('/interactions')) {
-		if (req.method.toUpperCase() == 'POST') {
-			const callback = (req, res) => {
-				const commandData = JSON.parse(req.body?.payload_json);
-				// console.log(commandData);
-				const idInteraction = SnowflakeUtil.generate();
-				commandData.id = idInteraction;
-				io.emit('dispatch', {
-					session_id: commandData.session_id,
-					t: 'INTERACTION_CREATE',
-					d: {
-						id: idInteraction,
-						nonce: commandData.nonce,
-					},
-				});
-				const command = Commands.Slash.get(commandData.data.name);
-				if (command) {
-					command.run(
-						commandData,
-						req.headers.authorization,
-						io,
-						win,
-					);
-					io.emit('dispatch', {
-						t: 'INTERACTION_SUCCESS',
-						session_id: commandData.session_id,
-						d: {
-							id: idInteraction,
-							nonce: commandData.nonce,
-						},
-					});
-				} else {
-					io.emit('dispatch', {
-						session_id: commandData.session_id,
-						t: 'INTERACTION_FAILURE',
-						d: {
-							id: idInteraction,
-							nonce: commandData.nonce,
-						},
-					});
-				}
-				return res.status(204).send();
-			};
-			return getDataFromRequest(req, res, callback);
-		}
-	}
 	if (url.includes('settings-proto/1')) {
 		// parse userid from header
 		const BotToken = req.headers.authorization;
@@ -162,36 +107,6 @@ const handlerRequest = (url, req, res, win) => {
 		};
 		return getDataFromRequest(req, res, callback);
 	}
-	if (url.includes('/threads/search?archived=true')) {
-		// TODO: fix this
-		const cid = /\d{17,19}/.exec(url)[0];
-		return axios
-			.get(
-				`https://discord.com/api/v9/channels/${cid}/threads/archived/public`,
-				{
-					headers: {
-						authorization: req.headers.authorization,
-						'user-agent': userAgent,
-					},
-				},
-			)
-			.then((response) => {
-				res.status(200).send({
-					...response.data,
-					total_results: response.data.threads?.length || 0,
-				});
-			})
-			.catch((err) => {
-				res.status(404).send({
-					message: err.message,
-					error: err.stack,
-					debug: {
-						channelId: cid,
-					},
-				});
-			});
-	}
-	return req.pipe(request('https://discord.com' + url)).pipe(res);
 };
 
 module.exports = function (app, win) {

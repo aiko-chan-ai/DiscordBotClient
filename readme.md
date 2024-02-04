@@ -95,7 +95,8 @@ Logging in works via the UI on first startup of the application.
 | --- | --- | --- | --- | --- |
 | Stable 161052 | c7e0778 | - | v1 | Deprecated |
 | Stable 185832 | 29333f6 | v1.1.4 | v2.1 | Deprecated |
-| Stable 204762 | 78f82ba | v1.2.8 | v2.2+ | Latest |
+| Stable 204762 | 78f82ba | v1.2.8 | v2.2-v2.4 | Deprecated |
+| Stable  |  |  | v3 | Latest |
 
 ---
 
@@ -128,11 +129,6 @@ Hit me up if you have a similar project, and I'll gladly add it to the list.
 
 ## How to update to the latest Discord version ?
 
-- Step 1: Patch index.html (Get it from discord.com/channels/@me)
-
-- Step 2: Patch script.js (search for keyword `_doIdentify` in the code)
-
-- Step 3: Change like me (see location in template file, search by keyword `// Patch #{number}`)
 
 ## Credits
 

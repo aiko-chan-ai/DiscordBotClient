@@ -11,5 +11,5 @@ jobs:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: aiko-chan-ai.DiscordBotClient
-          version: ${{ github.event.release.name }}
+          version: ${{ github.event.release.tag_name }}
           token: ${{ secrets.WINGET_TOKEN }}

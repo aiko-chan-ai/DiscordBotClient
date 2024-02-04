@@ -44,6 +44,7 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 
 let firstTime = true;
+let shouldQuitApp = false;
 
 log.info('App starting...');
 
@@ -116,7 +117,10 @@ function createTray(win, port) {
 		},
 		{
 			label: 'Quit',
-			role: 'quit',
+			click: () => {
+				shouldQuitApp = true;
+				app.quit();
+			},
 		},
 	]);
 	tray.setContextMenu(menu);
@@ -182,6 +186,13 @@ async function createWindow() {
 	win.webContents.on('did-stop-loading', () => {
 		win.setTitle(APP_NAME);
 		win.setProgressBar(-1);
+	});
+
+	win.on('close', (event) => {
+		if (!shouldQuitApp) {
+			event.preventDefault();
+			win.hide();
+		}
 	});
 
 	session.defaultSession.webRequest.onHeadersReceived(
@@ -300,7 +311,7 @@ app.on('activate', () => {
 	}
 });
 
-app.on('before-quit', () => {
+app.on('before-quit', (event) => {
 	log.info('App closing...');
 });
 

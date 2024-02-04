@@ -25,7 +25,10 @@
 		"files": [
 			"!Vencord",
 			"!scripts",
-			"!DiscordCore"
+			"!DiscordCore",
+			"VencordExtension",
+			"AppAssets",
+			"AppCore"
 		],
 		"appId": "DiscordBotClient",
 		"productName": "DiscordBotClient",

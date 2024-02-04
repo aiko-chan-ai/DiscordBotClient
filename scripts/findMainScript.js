@@ -16,11 +16,6 @@ const createWindow = async () => {
 	await fetch(URL)
 		.then((r) => r.text())
 		.then((text) => {
-			if (fs.existsSync(path.resolve(folder, 'oldIndex.html'))) {
-				console.log('[Discord] Cannot update');
-			} else {
-				fs.renameSync(HTMLPath, path.resolve(folder, 'oldIndex.html'));
-			}
 			fs.writeFileSync(HTMLPath, text);
 			require('./patchHTML')();
 			const sentry = text
@@ -44,15 +39,6 @@ const createWindow = async () => {
 							console.log(
 								'[Discord] Got _doIdentify from',
 								details.url,
-							);
-							const split = details.url.split('/');
-							fs.writeFileSync(
-								path.resolve(
-									folder,
-									'src',
-									split[split.length - 1],
-								),
-								text,
 							);
 							app.quit();
 						}

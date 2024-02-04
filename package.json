@@ -24,7 +24,8 @@
 	"build": {
 		"files": [
 			"!Vencord",
-			"!scripts"
+			"!scripts",
+			"DiscordCore"
 		],
 		"appId": "DiscordBotClient",
 		"productName": "DiscordBotClient",

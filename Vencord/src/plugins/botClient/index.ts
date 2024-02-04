@@ -49,6 +49,7 @@ let INCREMENT = BigInt(0);
 const GetToken = findByPropsLazy("getToken");
 const LoginToken = findByPropsLazy("loginToken");
 const murmurhash = findByPropsLazy("v3");
+const getAPIBaseURL = findByPropsLazy('getAPIBaseURL');
 
 const BotClientLogger = new Logger('BotClient', '#ff88f3');
 
@@ -425,7 +426,7 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null`;
                 },
                 {
                     match: /,setToken\((\w+),(\w+)\){/,
-                    replace: function(str, ...args) {
+                    replace: function (str, ...args) {
                         const token = args[0];
                         const id = args[1];
                         return str + `if(${token}){${token}=${token}.replace(/bot/gi,"").trim()}`;
@@ -573,6 +574,64 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null`;
                 }
             },
         },
+        {
+            name: 'embed',
+            description: 'Creates an embed with the specified color in the specified channel',
+            inputType: ApplicationCommandInputType.BOT,
+            options: [
+                {
+                    type: ApplicationCommandOptionType.STRING,
+                    name: 'text',
+                    description:
+                        'Input text (separate the title from the description with |)',
+                    required: true,
+                },
+                {
+                    type: ApplicationCommandOptionType.STRING,
+                    name: 'color',
+                    description: 'Input color in hex format. Example: #fedbca',
+                    required: false,
+                },
+            ],
+            execute: async (opts, ctx) => {
+                let color = findOption<string>(opts, "color", "#000000");
+                const text = findOption<string>(opts, "text", "");
+                if (color.startsWith('#')) {
+                    color = color.slice(1);
+                }
+                if (color.length > 6 || Number.isNaN(parseInt(color, 16))) {
+                    return sendBotMessage(ctx.channel.id, {
+                        content: `"#${color}" is not a valid color. Please enter a color in the \`#ffffff\` format. (hex)`,
+                    });
+                }
+                let inputColor = parseInt(color, 16);
+                // Resolve the text to title and description
+                let [title, description] = text.split('|');
+                getAPIBaseURL.post({
+                    url: `/channels/${ctx.channel.id}/messages`,
+                    body: {
+                        embeds: [
+                            {
+                                title,
+                                description:
+                                    description && description.trim().length > 0
+                                        ? description
+                                        : undefined,
+                                color: inputColor,
+                            },
+                        ],
+                    },
+                }).then(() => {
+                    return sendBotMessage(ctx.channel.id, {
+                        content: 'Embed sent!',
+                    });
+                }).catch((e) => {
+                    return sendBotMessage(ctx.channel.id, {
+                        content: 'Error sending embed.\n' + e.message,
+                    });
+                });
+            },
+        }
     ],
     start() {
         // Patch modules

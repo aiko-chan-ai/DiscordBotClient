@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "3.0.0",
+	"version": "2.9.0-alpha",
 	"DiscordBuildVersion": 263796,
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
@@ -8,6 +8,7 @@
 		"discord-protos": "^1.0.5",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.1.0",
+		"electron-updater": "^6.1.7",
 		"express": "^4.18.1",
 		"lambert-server": "^1.2.12",
 		"lodash": "^4.17.21",
@@ -19,14 +20,13 @@
 	"devDependencies": {
 		"electron": "^28.1.4",
 		"electron-builder": "^24.9.1",
-		"electron-updater": "^6.1.7",
 		"jsdom": "^24.0.0"
 	},
 	"build": {
 		"files": [
 			"!Vencord",
 			"!scripts",
-			"DiscordCore"
+			"!DiscordCore"
 		],
 		"appId": "DiscordBotClient",
 		"productName": "DiscordBotClient",

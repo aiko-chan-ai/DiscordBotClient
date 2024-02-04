@@ -139,4 +139,13 @@ async function start(port, win) {
 	});
 }
 
+process.on('unhandledRejection', (err) => {
+	console.error(err);
+});
+
+// Catch uncaught exceptions
+process.on('uncaughtException', (err) => {
+	console.error(err);
+});
+
 module.exports = start;

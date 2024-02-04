@@ -4,6 +4,7 @@ const { DiscordBuildVersion } = require('../package.json');
 const { readFileSync } = require('fs');
 const blacklist = require('./blacklist');
 const request = require('request');
+const fetch = require('node-fetch');
 
 module.exports = function (app) {
 	app.all('/developers/*', (req, res) => {
@@ -29,9 +30,11 @@ module.exports = function (app) {
 				),
 			);
 		} else {
-			getData(
+			fetch(
 				`https://raw.githubusercontent.com/aiko-chan-ai/DiscordBotClient/${DiscordBuildVersion}/index.html`,
-			).then((t) => res.send(t));
+			)
+				.then((r) => r.text())
+				.then((r) => res.send(r));
 		}
 	});
 };

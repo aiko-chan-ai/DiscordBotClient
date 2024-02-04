@@ -296,7 +296,7 @@ async function createWindow() {
 
 app.whenReady().then(() => {
 	createWindow();
-	autoUpdater.checkForUpdatesAndNotify();
+	// autoUpdater.checkForUpdatesAndNotify();
 });
 
 app.on('window-all-closed', () => {

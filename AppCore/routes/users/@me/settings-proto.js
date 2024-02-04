@@ -38,20 +38,26 @@ function getDataFromRequest(req, res, callback) {
 app.all('/1', (req, res) => {
 	const uid = Util.getIDFromToken(req.headers.authorization);
 	const userData = store.get(uid);
-	if (req.method.toUpperCase() == 'GET')
+	if (req.method.toUpperCase() == 'GET') {
 		return res.send({
-			settings: PreloadedUserSettings.toBase64(
-				userData.settingProto.data1,
-			),
+			settings: PreloadedUserSettings.toBase64({
+				...userData.settingProto.data1,
+				guildFolders: { folders: [], guildPositions: [] },
+			}),
 		});
+	}
 	const callback = (req, res) => {
 		const decoded = PreloadedUserSettings.fromBase64(req.body.settings);
-		userData.settingProto.data1 = _.merge(userData.settingProto.data1, decoded);
+		userData.settingProto.data1 = _.merge(
+			userData.settingProto.data1,
+			decoded,
+		);
 		store.set(uid, userData);
 		return res.send({
-			settings: PreloadedUserSettings.toBase64(
-				userData.settingProto.data1,
-			),
+			settings: PreloadedUserSettings.toBase64({
+				...userData.settingProto.data1,
+				guildFolders: { folders: [], guildPositions: [] },
+			}),
 		});
 	};
 	return getDataFromRequest(req, res, callback);

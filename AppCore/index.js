@@ -285,9 +285,10 @@ async function createWindow() {
 
 	ipcMain.on('getSettingProto1', (event, uid) => {
 		const userData = store.get(uid);
-		event.returnValue = PreloadedUserSettings.toBase64(
-			userData.settingProto.data1,
-		);
+		event.returnValue = PreloadedUserSettings.toBase64({
+			...userData.settingProto.data1,
+			guildFolders: { folders: [], guildPositions: [] },
+		});
 	});
 
 	ipcMain.on('getUserPatch', (event, uid) => {

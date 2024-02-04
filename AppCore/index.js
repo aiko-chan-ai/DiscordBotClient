@@ -39,7 +39,6 @@ const iconPath = path.join(
 
 app.setAppUserModelId(APP_NAME);
 
-let firstTime = true;
 let shouldQuitApp = false;
 
 log.info('App starting...');
@@ -98,6 +97,7 @@ function createTray(win, port) {
 					.then(() => win.webContents.session.clearStorageData())
 					.then(() => {
 						app.relaunch();
+						shouldQuitApp = true;
 						app.quit();
 					});
 			},
@@ -302,6 +302,7 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
+		shouldQuitApp = true;
 		app.quit();
 	}
 });

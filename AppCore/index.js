@@ -23,6 +23,7 @@ const ApplicationFlags = require('../AppAssets/ApplicationFlags.js');
 const store = require('./ElectronStore.js');
 const { PreloadedUserSettings } = require('discord-protos');
 const UserPatch = require('../AppAssets/UserPatch');
+const Experiments = require('../AppAssets/Experiments.js');
 
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
@@ -293,6 +294,14 @@ async function createWindow() {
 
 	ipcMain.on('getUserPatch', (event, uid) => {
 		event.returnValue = UserPatch[uid];
+	});
+
+	ipcMain.on('getExperiment', (event, type) => {
+		if (type == 'user') {
+			event.returnValue = Experiments.User;
+		} else if (type == 'guild') {
+			event.returnValue = Experiments.Guild;
+		}
 	});
 }
 

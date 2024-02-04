@@ -53,4 +53,10 @@ contextBridge.exposeInMainWorld('electron', {
 			},
 		];
 	},
+	getUserExperiments() {
+		return ipcRenderer.sendSync('getExperiment', 'user');
+	},
+	getGuildExperiments() {
+		return ipcRenderer.sendSync('getExperiment', 'guild');
+	},
 });

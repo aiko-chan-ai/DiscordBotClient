@@ -435,6 +435,15 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null`;
             ],
         },
         {
+            find: "STARTED_ONBOARDING=8",
+            replacement: [
+                {
+                    match: /STARTED_ONBOARDING=8/,
+                    replace: 'STARTED_ONBOARDING=4294967296',
+                }
+            ]
+        },
+        {
             // Don't delete localStorage
             find: "delete window.localStorage",
             replacement: [

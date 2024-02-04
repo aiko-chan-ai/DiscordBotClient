@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"DiscordBuildVersion": 263796,
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
@@ -31,7 +31,6 @@
 		"productName": "DiscordBotClient",
 		"artifactName": "${productName}-${os}-${arch}.${ext}",
 		"copyright": "Copyright © 2024 @elysia.dev",
-		"publish": "github",
 		"mac": {
 			"category": "public.app-category.social-networking",
 			"target": [

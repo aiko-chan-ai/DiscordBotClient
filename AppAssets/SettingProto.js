@@ -1,0 +1,65 @@
+module.exports = {
+	data1: {
+		versions: { clientVersion: 0, serverVersion: 0, dataVersion: 37 },
+		voiceAndVideo: {
+			presetOption: 0,
+			afkTimeout: { value: 600 },
+			streamNotificationsEnabled: { value: true },
+			nativePhoneIntegrationEnabled: { value: true },
+		},
+		textAndImages: {
+			emojiPickerCollapsedSections: [],
+			stickerPickerCollapsedSections: [],
+			soundboardPickerCollapsedSections: [],
+			dmSpamFilterV2: 0,
+			inlineAttachmentMedia: { value: true },
+			inlineEmbedMedia: { value: true },
+			gifAutoPlay: { value: true },
+			renderEmbeds: { value: true },
+			renderReactions: { value: true },
+			animateEmoji: { value: true },
+			animateStickers: { value: 0 },
+			enableTtsCommand: { value: true },
+			messageDisplayCompact: { value: false },
+			explicitContentFilter: { value: 1 },
+			viewNsfwGuilds: { value: true },
+			convertEmoticons: { value: true },
+		},
+		privacy: {
+			restrictedGuildIds: [],
+			defaultGuildsRestricted: false,
+			allowAccessibilityDetection: false,
+			activityRestrictedGuildIds: [],
+			defaultGuildsActivityRestricted: 0,
+			activityJoiningRestrictedGuildIds: [],
+			messageRequestRestrictedGuildIds: [],
+			detectPlatformAccounts: { value: true },
+			passwordless: { value: true },
+			contactSyncEnabled: { value: false },
+			friendSourceFlags: { value: 14 },
+			friendDiscoveryFlags: { value: 0 },
+			hideLegacyUsername: { value: false },
+		},
+		gameLibrary: { disableGamesTab: { value: false } },
+		status: {
+			status: { value: 'online' },
+			showCurrentGame: { value: true },
+		},
+		localization: {
+			locale: { value: 'en-US' },
+			timezoneOffset: { value: -420 },
+		},
+		appearance: {
+			theme: 0,
+			developerMode: true,
+			mobileRedesignDisabled: false,
+		},
+		guildFolders: { folders: [], guildPositions: [] },
+		audioContextSettings: {
+			user: {},
+			stream: {},
+		},
+	},
+	data2: {}, // freq proto
+	data3: {}, // test proto
+};

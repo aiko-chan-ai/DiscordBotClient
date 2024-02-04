@@ -1,0 +1,557 @@
+<!DOCTYPE html><html><head><script id="patch-bot-client">// Def
+var allShards = 0,
+	lasestGuildIdVoiceConnect = 0,
+	currentShard = 0;
+// Bitfield
+class BitField {
+	constructor(bits = this.constructor.defaultBit) {
+		this.bitfield = this.constructor.resolve(bits);
+	}
+	any(bit) {
+		return (
+			(this.bitfield & this.constructor.resolve(bit)) !==
+			this.constructor.defaultBit
+		);
+	}
+	equals(bit) {
+		return this.bitfield === this.constructor.resolve(bit);
+	}
+	has(bit) {
+		bit = this.constructor.resolve(bit);
+		return (this.bitfield & bit) === bit;
+	}
+	missing(bits, ...hasParams) {
+		return new this.constructor(bits).remove(this).toArray(...hasParams);
+	}
+	freeze() {
+		return Object.freeze(this);
+	}
+	add(...bits) {
+		let total = this.constructor.defaultBit;
+		for (const bit of bits) {
+			total |= this.constructor.resolve(bit);
+		}
+		if (Object.isFrozen(this))
+			return new this.constructor(this.bitfield | total);
+		this.bitfield |= total;
+		return this;
+	}
+	remove(...bits) {
+		let total = this.constructor.defaultBit;
+		for (const bit of bits) {
+			total |= this.constructor.resolve(bit);
+		}
+		if (Object.isFrozen(this))
+			return new this.constructor(this.bitfield & ~total);
+		this.bitfield &= ~total;
+		return this;
+	}
+	serialize(...hasParams) {
+		const serialized = {};
+		for (const [flag, bit] of Object.entries(this.constructor.FLAGS))
+			serialized[flag] = this.has(bit, ...hasParams);
+		return serialized;
+	}
+	toArray(...hasParams) {
+		return Object.keys(this.constructor.FLAGS).filter((bit) =>
+			this.has(bit, ...hasParams),
+		);
+	}
+	toJSON() {
+		return typeof this.bitfield === 'number'
+			? this.bitfield
+			: this.bitfield.toString();
+	}
+	valueOf() {
+		return this.bitfield;
+	}
+	*[Symbol.iterator]() {
+		yield* this.toArray();
+	}
+	static resolve(bit) {
+		const { defaultBit } = this;
+		if (typeof defaultBit === typeof bit && bit >= defaultBit) return bit;
+		if (bit instanceof BitField) return bit.bitfield;
+		if (Array.isArray(bit))
+			return bit
+				.map((p) => this.resolve(p))
+				.reduce((prev, p) => prev | p, defaultBit);
+		if (typeof bit === 'string') {
+			if (typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
+			if (!isNaN(bit))
+				return typeof defaultBit === 'bigint'
+					? BigInt(bit)
+					: Number(bit);
+		}
+		throw new RangeError('BITFIELD_INVALID', bit);
+	}
+}
+BitField.FLAGS = {};
+BitField.defaultBit = 0;
+// Intents
+const IntentFlags = {
+	GUILDS: 1 << 0,
+	GUILD_MEMBERS: 1 << 1,
+	GUILD_BANS: 1 << 2,
+	GUILD_EMOJIS_AND_STICKERS: 1 << 3,
+	GUILD_INTEGRATIONS: 1 << 4,
+	GUILD_WEBHOOKS: 1 << 5,
+	GUILD_INVITES: 1 << 6,
+	GUILD_VOICE_STATES: 1 << 7,
+	GUILD_PRESENCES: 1 << 8,
+	GUILD_MESSAGES: 1 << 9,
+	GUILD_MESSAGE_REACTIONS: 1 << 10,
+	GUILD_MESSAGE_TYPING: 1 << 11,
+	DIRECT_MESSAGES: 1 << 12,
+	DIRECT_MESSAGE_REACTIONS: 1 << 13,
+	DIRECT_MESSAGE_TYPING: 1 << 14,
+	MESSAGE_CONTENT: 1 << 15,
+	GUILD_SCHEDULED_EVENTS: 1 << 16,
+	AUTO_MODERATION_CONFIGURATION: 1 << 20,
+	AUTO_MODERATION_EXECUTION: 1 << 21,
+	// https://discord.com/developers/docs/topics/gateway#list-of-intents
+};
+class Intents extends BitField {}
+Intents.FLAGS = IntentFlags;
+const getIntents = (...removeIntents) =>
+	Object.values(IntentFlags).reduce((a, b) => a + b) -
+	(removeIntents
+		.flat(2)
+		.map((name) => IntentFlags[name] || 0)
+		.reduce((a, b) => a + b, 0) || 0);
+// Permissions
+const VIEW_CHANNEL_PERMISSION = 1024n;
+function checkBitfield(permission) {
+	return (permission & VIEW_CHANNEL_PERMISSION) === VIEW_CHANNEL_PERMISSION;
+}
+function checkUserPermission(guild, channel, user) {
+	const permission = checkPermissionGuild(guild, channel, user);
+	return permission.has('VIEW_CHANNEL');
+}
+
+class PermissionsDiscord extends BitField {
+	missing(bits, checkAdmin = true) {
+		return checkAdmin && this.has(this.constructor.FLAGS.ADMINISTRATOR)
+			? []
+			: super.missing(bits);
+	}
+	any(permission, checkAdmin = true) {
+		return (
+			(checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) ||
+			super.any(permission)
+		);
+	}
+	has(permission, checkAdmin = true) {
+		return (
+			(checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) ||
+			super.has(permission)
+		);
+	}
+	toArray() {
+		return super.toArray(false);
+	}
+}
+PermissionsDiscord.FLAGS = {};
+Object.entries({
+	CREATE_INSTANT_INVITE: '1',
+	KICK_MEMBERS: '2',
+	BAN_MEMBERS: '4',
+	ADMINISTRATOR: '8',
+	MANAGE_CHANNELS: '16',
+	MANAGE_GUILD: '32',
+	CHANGE_NICKNAME: '67108864',
+	MANAGE_NICKNAMES: '134217728',
+	MANAGE_ROLES: '268435456',
+	MANAGE_WEBHOOKS: '536870912',
+	MANAGE_GUILD_EXPRESSIONS: '1073741824',
+	CREATE_GUILD_EXPRESSIONS: '8796093022208',
+	VIEW_AUDIT_LOG: '128',
+	VIEW_CHANNEL: '1024',
+	VIEW_GUILD_ANALYTICS: '524288',
+	VIEW_CREATOR_MONETIZATION_ANALYTICS: '2199023255552',
+	MODERATE_MEMBERS: '1099511627776',
+	USE_EMBEDDED_ACTIVITIES: '549755813888',
+	SEND_MESSAGES: '2048',
+	SEND_TTS_MESSAGES: '4096',
+	MANAGE_MESSAGES: '8192',
+	EMBED_LINKS: '16384',
+	ATTACH_FILES: '32768',
+	READ_MESSAGE_HISTORY: '65536',
+	MENTION_EVERYONE: '131072',
+	USE_EXTERNAL_EMOJIS: '262144',
+	ADD_REACTIONS: '64',
+	USE_APPLICATION_COMMANDS: '2147483648',
+	MANAGE_THREADS: '17179869184',
+	CREATE_PUBLIC_THREADS: '34359738368',
+	CREATE_PRIVATE_THREADS: '68719476736',
+	USE_EXTERNAL_STICKERS: '137438953472',
+	SEND_MESSAGES_IN_THREADS: '274877906944',
+	SEND_VOICE_MESSAGES: '70368744177664',
+	USE_CLYDE_AI: '140737488355328',
+	CONNECT: '1048576',
+	SPEAK: '2097152',
+	MUTE_MEMBERS: '4194304',
+	DEAFEN_MEMBERS: '8388608',
+	MOVE_MEMBERS: '16777216',
+	USE_VAD: '33554432',
+	PRIORITY_SPEAKER: '256',
+	STREAM: '512',
+	USE_SOUNDBOARD: '4398046511104',
+	USE_EXTERNAL_SOUNDS: '35184372088832',
+	SET_VOICE_CHANNEL_STATUS: '281474976710656',
+	REQUEST_TO_SPEAK: '4294967296',
+	MANAGE_EVENTS: '8589934592',
+	CREATE_EVENTS: '17592186044416',
+}).forEach(([k, v]) => (PermissionsDiscord.FLAGS[k] = BigInt(v)));
+// Object.entries(Vencord.Webpack.Common.PermissionsBits).forEach(([k,v]) => a[k]=v)
+PermissionsDiscord.ALL = Object.values(PermissionsDiscord.FLAGS).reduce(
+	(all, p) => all | p,
+	0n,
+);
+PermissionsDiscord.DEFAULT = BigInt(104324673);
+PermissionsDiscord.defaultBit = BigInt(0);
+// Discord.js Bitfield
+function checkPermissionGuild(guild, channel, member) {
+	if (guild.ownerId == (member?.user?.id || member.userId))
+		return new PermissionsDiscord(PermissionsDiscord.ALL).freeze();
+	const roles = Object.keys(guild.roles).filter(
+		(r) => member.roles.includes(r) || r == guild.id,
+	);
+	const permissions = new PermissionsDiscord(
+		roles.map((role) => guild.roles[role].permissions),
+	);
+	if (permissions.has(PermissionsDiscord.FLAGS.ADMINISTRATOR)) {
+		return new PermissionsDiscord(PermissionsDiscord.ALL).freeze();
+	}
+	const overwrites = overwritesFor(member, roles, channel);
+	return permissions
+		.remove(overwrites.everyone?.deny ?? PermissionsDiscord.defaultBit)
+		.add(overwrites.everyone?.allow ?? PermissionsDiscord.defaultBit)
+		.remove(
+			overwrites.roles.length > 0
+				? overwrites.roles.map((role) => role.deny)
+				: PermissionsDiscord.defaultBit,
+		)
+		.add(
+			overwrites.roles.length > 0
+				? overwrites.roles.map((role) => role.allow)
+				: PermissionsDiscord.defaultBit,
+		)
+		.remove(overwrites.member?.deny ?? PermissionsDiscord.defaultBit)
+		.add(overwrites.member?.allow ?? PermissionsDiscord.defaultBit)
+		.freeze();
+}
+
+function overwritesFor(member, roles, channel) {
+	if (!member) return [];
+	const roleOverwrites = [];
+	let memberOverwrites;
+	let everyoneOverwrites;
+
+	for (const overwrite of Object.values(channel.permissionOverwrites)) {
+		if (overwrite.id === channel.guild_id) {
+			everyoneOverwrites = overwrite;
+		} else if (roles.includes(overwrite.id)) {
+			roleOverwrites.push(overwrite);
+		} else if (overwrite.id === (member?.user?.id || member.userId)) {
+			memberOverwrites = overwrite;
+		}
+	}
+
+	return {
+		everyone: everyoneOverwrites,
+		roles: roleOverwrites,
+		member: memberOverwrites,
+	};
+}
+// Replace Login Screen
+var i;
+function recreateNode(el) {
+	el.parentNode.replaceChild(el.cloneNode(true), el);
+	return document.getElementsByClassName(el.className)[0];
+}
+function getElementByXpath(path) {
+	return document.evaluate(
+		path,
+		document,
+		null,
+		XPathResult.FIRST_ORDERED_NODE_TYPE,
+		null,
+	).singleNodeValue;
+}
+function replaceLoginScreen() {
+	let buttonLogin = document.querySelector(
+		'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom8_f4aae3.button__47891.button_afdfd9.lookFilled__19298.colorBrand_b2253e.sizeLarge__9049d.fullWidth__7c3e8.grow__4c8a4',
+	);
+	if (buttonLogin) {
+		clearInterval(i);
+		buttonLogin = recreateNode(buttonLogin);
+		buttonLogin.addEventListener('click', () => {
+			const input = document.querySelectorAll(
+				'[class*="inputDefault"]',
+			)[0];
+			Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
+		});
+		const email = document.querySelector(
+			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > div.marginBottom20__64605',
+		);
+		email.parentElement.removeChild(email);
+		const input_ = document.querySelector('#\\:r2\\:');
+		if (!input_) return;
+		input_.innerHTML = `Bot Token`;
+		input_.id = 'token';
+		const QR = document.querySelector(
+			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.transitionGroup__9763d.qrLogin_ce8b2d',
+		);
+		QR.parentElement.removeChild(QR);
+		const dot = document.querySelector(
+			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.verticalSeparator_af74b3',
+		);
+		dot.parentElement.removeChild(dot);
+		const need_an_acc = document.querySelector(
+			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > div.marginTop4__3faba > span',
+		);
+		need_an_acc.innerHTML = 'Need a bot?';
+		let reg = document.querySelector(
+			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > div.marginTop4__3faba > button',
+		);
+		reg.innerHTML = 'Create one here';
+		reg = recreateNode(reg);
+		reg.addEventListener('click', () => {
+			window.open('https://discord.com/developers/applications');
+		});
+		let forgot_pw = document.querySelector(
+			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom20__64605.marginTop4__3faba.linkButton_ba7970.button_afdfd9.lookLink__93965.lowSaturationUnderline__95e71.colorLink_b651e5.sizeMin__94642.grow__4c8a4',
+		);
+		forgot_pw.innerHTML = '';
+	}
+}
+i = setInterval(() => {
+	if (!window.Vencord) {
+		return;
+	}
+	replaceLoginScreen();
+}, 250);
+// Vencord
+function showToast(message, type, { position, timeout } = {}) {
+	Vencord.Webpack.Common.Toasts.show({
+		message,
+		id: (Math.random() || Math.random()).toString(36).slice(2),
+		type,
+		options: {
+			timeout,
+			position,
+		},
+	});
+}
+function fetchChannel(channelId) {
+	return new Promise((resolve, reject) => {
+		Vencord.Webpack.findByProps('getAPIBaseURL')
+			.get({
+				url: `/channels/${channelId}`,
+			})
+			.then((d) => resolve(d.body))
+			.catch(() => reject(false));
+	});
+}
+function getThreadMembers(threadId) {
+	return new Promise((resolve) => {
+		Vencord.Webpack.findByProps('getAPIBaseURL')
+			.get({
+				url: `/channels/${threadId}/thread-members?with_member=true`,
+			})
+			.then((d) => resolve(d.body))
+			.catch(() => resolve([]));
+	});
+}</script>    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=3" name="viewport">
+
+    <!-- section:seometa -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Discord">
+    <meta property="og:title" content="Discord - A New Way to Chat with Friends &amp; Communities">
+    <meta property="og:description" content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities.">    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@discord">
+    <meta name="twitter:creator" content="@discord">
+    <!-- endsection --><script>window.GLOBAL_ENV = {
+      API_ENDPOINT: '//' + window.location.host + '/bot/api',
+      API_VERSION: 9,
+      GATEWAY_ENDPOINT: 'wss://gateway.discord.gg',
+      WEBAPP_ENDPOINT: '//' + window.location.host,
+      CDN_HOST: 'cdn.discordapp.com',
+      ASSET_ENDPOINT: '//discord.com',
+      MEDIA_PROXY_ENDPOINT: '//media.discordapp.net',
+      WIDGET_ENDPOINT: '//discord.com/widget',
+      INVITE_HOST: 'discord.gg',
+      GUILD_TEMPLATE_HOST: 'discord.new',
+      GIFT_CODE_HOST: 'discord.gift',
+      RELEASE_CHANNEL: 'stable',
+      DEVELOPERS_ENDPOINT: '//discord.com',
+      MARKETING_ENDPOINT: '//discord.com',
+      BRAINTREE_KEY: 'production_ktzp8hfp_49pp2rp4phym7387',
+      STRIPE_KEY: 'pk_live_CUQtlpQUF0vufWpnpUmQvcdi',
+      ADYEN_KEY: 'live_E3OQ33V6GVGTXOVQZEAFQJ6DJIDVG6SY',
+      NETWORKING_ENDPOINT: '//router.discordapp.net',
+      RTC_LATENCY_ENDPOINT: '//latency.discord.media/rtc',
+      ACTIVITY_APPLICATION_HOST: 'discordsays.com',
+      PROJECT_ENV: 'production',
+      REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
+      SENTRY_TAGS: {"buildId":"739ec787cb5f68ad2feb79c98a96b9ee4786fc0a","buildType":"normal"},
+      MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
+      MIGRATION_DESTINATION_ORIGIN: window.location.protocol + '//' + window.location.host,
+      HTML_TIMESTAMP: Date.now(),
+      ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
+      PUBLIC_PATH: '/assets/'
+    };</script><script>!function(){if(null!=window.WebSocket){if(function(n){try{var e=localStorage.getItem(n);return null==e?null:JSON.parse(e)}catch(n){return null}}("token")&&!window.__OVERLAY__){var n=null!=window.DiscordNative||null!=window.require?"etf":"json",e=window.GLOBAL_ENV.GATEWAY_ENDPOINT+"/?encoding="+n+"&v="+window.GLOBAL_ENV.API_VERSION+"&compress=zlib-stream";console.log("[FAST CONNECT] connecting to: "+e);var o=new WebSocket(e);o.binaryType="arraybuffer";var t=Date.now(),i={open:!1,identify:!1,gateway:e,messages:[]};o.onopen=function(){console.log("[FAST CONNECT] connected in "+(Date.now()-t)+"ms"),i.open=!0},o.onclose=o.onerror=function(){window._ws=null},o.onmessage=function(n){i.messages.push(n)},window._ws={ws:o,state:i}}}}()</script>    <!-- section:title -->
+    <title>Discord</title>
+    <!-- endsection -->
+  <link rel="icon" href="/assets/images/favicon.ico"></head>
+  <body><style id="css-bot-client">.titlebar > .title {
+	-webkit-app-region: drag;
+}
+
+.sidebar-1tnWFu {
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+.content-1SgpWY {
+	padding: 10px 10px 10px 0px;
+}
+
+.container-2cd8Mz,
+.inviteToolbar-2k2nqz {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.chat-2ZfjoI {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.titlebar span {
+	text-overflow: ellipsis;
+}
+
+.titlebar-btn {
+	background-color: transparent;
+	color: #ededed;
+	font-size: 18px;
+	padding: 0 8.5px;
+}
+
+.titleicon {
+	fill: #e0e0e0;
+	width: 10px;
+	height: 10px;
+}
+
+.logo {
+	fill: #808080;
+	width: 52px;
+	height: auto;
+}
+
+.titlebar-btn:hover {
+	background-color: #9199a849;
+}
+
+.closeBtn:hover {
+	background-color: #ff2e2e;
+}
+
+#app-mount {
+	box-sizing: border-box;
+}
+</style><main><main style="display: flex; flex-direction: column; box-sizing: border-box;">
+    <div style="height: 25px;width: 100%; z-index: 99999; display: flex; justify-content: space-between; align-items: center;  box-sizing: border-box;" class="titlebar">
+        <span style="font-weight: 800; color: #bababa; width: 100%;  padding: 8px 0; padding-left: 10px;" class="title"><svg class="logo" version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.000000 92.000000" preserveAspectRatio="xMidYMid meet">
+
+                <g transform="translate(0.000000,92.000000) scale(0.100000,-0.100000)" stroke="none">
+                    <path d="M1340 906 c-137 -38 -209 -127 -210 -256 0 -147 98 -251 267 -281 73
+               -13 140 -45 148 -70 31 -96 -138 -120 -250 -35 l-35 27 -70 -62 c-76 -67 -77
+               -71 -23 -120 50 -46 94 -71 155 -90 70 -22 134 -24 203 -5 157 41 245 139 245
+               269 0 158 -79 239 -273 282 -101 22 -142 49 -142 94 0 88 125 98 236 19 14
+               -10 29 -2 87 42 68 51 70 54 55 76 -22 35 -112 91 -172 108 -64 19 -158 19
+               -221 2z"></path>
+                    <path d="M2090 906 c-103 -29 -181 -92 -219 -176 -19 -41 -21 -65 -21 -270 0
+               -216 1 -227 24 -275 31 -65 86 -117 161 -152 52 -24 72 -28 155 -28 82 0 103
+               4 153 27 59 28 150 111 162 149 4 11 5 22 3 23 -1 2 -43 22 -91 44 l-89 42
+               -32 -34 c-38 -40 -90 -54 -145 -37 -72 21 -76 31 -79 232 -4 195 -1 208 51
+               239 55 34 136 23 187 -25 l25 -23 88 35 c48 19 87 38 87 42 0 21 -69 108 -109
+               137 -81 59 -207 79 -311 50z"></path>
+                    <path d="M2835 907 c-106 -28 -176 -78 -220 -159 l-30 -53 0 -235 0 -235 31
+               -55 c36 -65 91 -109 171 -141 47 -19 77 -23 163 -23 138 0 201 23 281 103 77
+               78 84 107 84 351 0 244 -7 273 -84 351 -72 71 -142 100 -261 105 -50 2 -106
+               -2 -135 -9z m195 -212 c56 -29 60 -43 60 -236 0 -162 -2 -178 -20 -202 -36
+               -46 -128 -60 -200 -31 -63 26 -70 47 -70 234 0 181 8 211 63 235 43 19 131 19
+               167 0z"></path>
+                    <path d="M0 722 l0 -190 107 -98 108 -99 3 183 2 182 63 0 c34 0 79 -5 99 -10
+               64 -18 68 -32 68 -231 0 -155 -2 -180 -18 -199 -25 -31 -81 -39 -269 -40
+               l-163 0 0 -106 0 -106 213 4 c236 5 276 13 359 73 32 23 55 52 74 92 l29 58 0
+               220 c0 258 -6 286 -83 358 -84 77 -132 90 -379 95 l-213 4 0 -190z"></path>
+                    <path d="M800 460 l0 -450 110 0 110 0 0 450 0 450 -110 0 -110 0 0 -450z"></path>
+                    <path d="M3440 461 l0 -451 110 0 109 0 3 143 c4 189 8 189 146 0 l103 -143
+               135 0 c74 0 134 3 134 8 0 4 -52 72 -115 152 -98 123 -113 146 -99 155 61 37
+               81 54 102 85 62 92 69 255 15 353 -32 56 -97 108 -161 128 -22 7 -131 14 -259
+               16 l-223 5 0 -451z m432 201 c30 -35 36 -74 17 -116 -18 -38 -66 -56 -153 -56
+               l-76 0 0 98 c0 54 3 102 8 106 4 5 45 6 91 4 79 -4 86 -6 113 -36z"></path>
+                    <path d="M4247 903 c-4 -3 -7 -87 -7 -186 l0 -180 33 -31 c76 -71 185 -166
+               191 -166 3 0 6 82 6 181 l0 182 80 -5 c94 -5 129 -25 143 -78 5 -19 7 -103 5
+               -187 -3 -140 -5 -154 -24 -174 -31 -30 -86 -38 -272 -39 l-163 0 3 -102 3
+               -103 215 1 c200 0 219 2 274 24 77 29 147 98 169 165 23 66 25 426 2 501 -29
+               97 -110 163 -231 189 -71 15 -414 22 -427 8z"></path>
+                </g>
+            </svg></span>
+        <div style="display: flex; align-items: center;">
+            <button class="titlebar-btn miniBtn" id="miniBtn"><svg width="16px" height="16px" class="titleicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11">
+                    <path d="M11,4.9v1.1H0V4.399h11z"></path>
+                </svg></button>
+            <button class="titlebar-btn maxBtn" id="maxBtn"><svg width="16px" height="16px" class="titleicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11">
+                    <path d="M0,1.7v7.6C0,10.2,0.8,11,1.7,11h7.6c0.9,0,1.7-0.8,1.7-1.7V1.7C11,0.8,10.2,0,9.3,0H1.7C0.8,0,0,0.8,0,1.7z M8.8,9.9H2.2c-0.6,0-1.1-0.5-1.1-1.1V2.2c0-0.6,0.5-1.1,1.1-1.1h6.7c0.6,0,1.1,0.5,1.1,1.1v6.7C9.9,9.4,9.4,9.9,8.8,9.9z"></path>
+                </svg></button>
+            <button class="titlebar-btn closeBtn" id="closeBtn"><svg width="16px" height="16px" class="titleicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 11">
+                    <path d="M6.279 5.5L11 10.221l-.779.779L5.5 6.279.779 11 0 10.221 4.721 5.5 0 .779.779 0 5.5 4.721 10.221 0 11 .779 6.279 5.5z"></path>
+                </svg></button>
+
+        </div>
+    </div>
+    <div id="app-mount"></div>
+</main>
+<script>
+    document.getElementById('app-mount').style.paddingTop = `25px`;
+    document.getElementById('miniBtn').addEventListener('click', () => {
+        try {
+            window.title.mini()
+        } catch (e) {
+            showToast(
+                'The button can only be used by the app',
+                2
+            );
+        }
+    });
+    document.getElementById('maxBtn').addEventListener('click', () => {
+        try {
+            window.title.max()
+        } catch (e) {
+            showToast(
+                'The button can only be used by the app',
+                2
+            );
+        }
+    });
+    document.getElementById('closeBtn').addEventListener('click', () => {
+        try {
+            window.title.close()
+        } catch (e) {
+            showToast(
+                'The button can only be used by the app',
+                2
+            );
+        }
+    });
+</script></main>
+    <script>window.__OVERLAY__=/overlay/.test(location.pathname)</script><script>window.__BILLING_STANDALONE__=/^\/billing/.test(location.pathname)</script>  
+
+<link href="/assets/shared.029433dcb4ff23527520.css" rel="stylesheet"><script src="/assets/shared.0d0f6214b4c59ff15adf.js" defer=""></script><script src="/assets/app.344d5cd79d35636cdadc.js" defer=""></script><link href="/assets/app.ba80cdb613b4e6752123.css" rel="stylesheet"><script src="/assets/22918.9f2b9d54bbfc371a4d92.js" defer=""></script><script src="/assets/21396.259a270b7e3f8803a333.js" defer=""></script><script src="/assets/13798.6a2a5ac1a86675c94b6c.js" defer=""></script><script src="/assets/63550.a619020e4c7b3d5be7ac.js" defer=""></script><script src="/assets/482.6e1c86f88a37a71d42ec.js" defer=""></script><script src="/assets/19263.fe32553ff71153cb7656.js" defer=""></script><script src="/assets/10991.d742d0d238c0d99e96ae.js" defer=""></script><script src="/assets/20117.7c4ea5cd4685b0442b9f.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/31897.ec700144df6b20f401cb.js" defer=""></script><script src="/assets/3462.b08583489e001a69805d.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/64999.3c0486790babc24c66a4.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/53706.c13e855ace8621f4cbe9.js" defer=""></script><script src="/assets/25653.f1981721227784f0166e.js" defer=""></script><script src="/assets/65632.943fa92709b9910cd5e8.js" defer=""></script><script src="/assets/46318.26a20b3d6c9d947ee7c5.js" defer=""></script><script src="/assets/14875.ba44eb6f1396bf220735.js" defer=""></script><script src="/assets/75851.82c9a7f8176d778029e3.js" defer=""></script><script src="/assets/5486.1bbb0b409999b3345c7d.js" defer=""></script><script src="/assets/47387.3a8b4da46182111dbaa7.js" defer=""></script><script src="/assets/31717.0a0e31f5be65b10ca0d9.js" defer=""></script><script src="/assets/30982.a6d605c291ff090be83b.js" defer=""></script><script src="/assets/34426.589b6139887b40d85a8d.js" defer=""></script><script src="/assets/41831.ad048c0163425aea4d2e.js" defer=""></script><script src="/assets/43870.0bfb9a80f88725fba82a.js" defer=""></script><script src="/assets/21251.53ab0c5528227dd7fe1e.js" defer=""></script><script src="/assets/48590.3c8ba7ec46e5c315c058.js" defer=""></script><script src="/assets/86480.ebf8826a7f33e22a6aba.js" defer=""></script><script src="/assets/18407.d0257553d76c1da19de7.js" defer=""></script><script src="/assets/37580.f4011cf1c76f3c28f15f.js" defer=""></script><script src="/assets/75676.8481ee3ef6c0d7c670c6.js" defer=""></script><script src="/assets/99742.0e4adf3d9577f74ac595.js" defer=""></script><script src="/assets/47146.14b04fbabb2e15d96fb8.js" defer=""></script><script src="/assets/8240.6db5943ea811723a8032.js" defer=""></script><script src="/assets/95185.5e98663c6a751ef7771e.js" defer=""></script><script src="/assets/78193.59c58329071f325c3275.js" defer=""></script><script src="/assets/74836.b991877dde75f9619c99.js" defer=""></script><script src="/assets/32782.5d00908c88b18eb9ed1e.js" defer=""></script><script src="/assets/94816.735d85d3cd81236d29b3.js" defer=""></script><script src="/assets/37102.04489c88475d6b93636f.js" defer=""></script><script src="/assets/60499.f4345dabc7337938ebde.js" defer=""></script><script src="/assets/54314.0f71efde7d99ff587fee.js" defer=""></script><script src="/assets/49191.5b151c54082714d18094.js" defer=""></script><script src="/assets/22198.555a8f2b024a4d55fbe4.js" defer=""></script><script src="/assets/5399.67b6fe86854bee062580.js" defer=""></script><script src="/assets/56145.258cb168d37b45cde821.js" defer=""></script><script src="/assets/23777.9e9e7da77fb7df223e53.js" defer=""></script><script src="/assets/77015.db695861e124dc179b8e.js" defer=""></script><script src="/assets/4453.dca020b41417f9b01ee6.js" defer=""></script><script src="/assets/62768.6bd5173b2497c40223e0.js" defer=""></script><script src="/assets/80083.7fd81fb4889aa662cd19.js" defer=""></script><script src="/assets/66888.79756ea63981ab2a6341.js" defer=""></script><script src="/assets/38081.70b6f68983fc3d77fdd3.js" defer=""></script><script src="/assets/5687.a724fe30cb6ff469c19a.js" defer=""></script><script src="/assets/89261.02ed5e657cba70087452.js" defer=""></script><script src="/assets/26737.36ed5a81390b304d18a5.js" defer=""></script><script src="/assets/81161.4cbf8610aaecd98b5550.js" defer=""></script><script src="/assets/87140.141917e3b4392f49a9f0.js" defer=""></script><script src="/assets/47498.38da6b2cf2f487359536.js" defer=""></script><script src="/assets/42266.ff8d29739f86c99a41bf.js" defer=""></script><script src="/assets/6086.2af42e57fcf6739db519.js" defer=""></script><script src="/assets/64612.26d2bf1afbde26a43a76.js" defer=""></script><script src="/assets/87475.151452774d41b5ee059c.js" defer=""></script><script src="/assets/28413.4812d79703c86a531f70.js" defer=""></script><script src="/assets/31421.ced40b898074b2c19b15.js" defer=""></script><script src="/assets/77666.dee19f95c524dd006f98.js" defer=""></script><script src="/assets/18409.0bfb9f6ae3cad3c48d49.js" defer=""></script><script src="/assets/78891.49d43d53f7ab722777d3.js" defer=""></script><script src="/assets/8608.36f3070721d34b25d956.js" defer=""></script><script src="/assets/98346.ad583a16f2c123df7a30.js" defer=""></script><script src="/assets/10716.bcccef800d16c68ae0c0.js" defer=""></script><script src="/assets/12896.559076ab66dc3ab780b4.js" defer=""></script><script src="/assets/41875.02628618e0c7e88c4368.js" defer=""></script><script src="/assets/53509.d075f1bff85f12b95485.js" defer=""></script><script src="/assets/68236.13baa29c5d54b14331be.js" defer=""></script><script src="/assets/90856.923d21fae4e3dfbfbc4e.js" defer=""></script><script src="/assets/7273.dde6b1f1b476e0f29083.js" defer=""></script><script src="/assets/82451.afbcbd0aba0a3cf75eca.js" defer=""></script><script src="/assets/65800.d803fbd4c225782b31d6.js" defer=""></script><script src="/assets/90486.a8e88ceeda5b4aa5b345.js" defer=""></script><script src="/assets/web.59eeea0f70005d618184.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/25653.f1981721227784f0166e.js" defer=""></script><script src="/assets/7273.dde6b1f1b476e0f29083.js" defer=""></script><script src="/assets/sentry.a74cc99e62171b10eccc.js" defer=""></script></body></html>

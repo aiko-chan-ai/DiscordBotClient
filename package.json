@@ -8,7 +8,6 @@
 		"discord-protos": "^1.0.5",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.1.0",
-		"electron-updater": "^6.1.7",
 		"express": "^4.18.1",
 		"lambert-server": "^1.2.12",
 		"lodash": "^4.17.21",
@@ -32,6 +31,7 @@
 		"productName": "DiscordBotClient",
 		"artifactName": "${productName}-${os}-${arch}.${ext}",
 		"copyright": "Copyright © 2024 @elysia.dev",
+		"publish": "github",
 		"mac": {
 			"category": "public.app-category.social-networking",
 			"target": [

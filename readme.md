@@ -37,7 +37,46 @@ If you don't want to build the application yourself or use some kind of
 package management system, you can get the latest binaries for the three
 major systems in the release overview:
 
-https://github.com/aiko-chan-ai/DiscordBotClient/releases/latest
+### 📦 Downloads
+
+<table>
+  <tr>
+    <th>
+      Platform
+    </th>
+    <th>
+      Binary Type
+    </th>
+    <th>
+      Download Link
+    </th>
+  </tr>
+  <tr> 
+    <td>
+      Windows
+    </td>
+    <td align="center">
+      <code>NSIS installer</code>
+    </td>
+    <td>
+      <a href="https://github.com/aiko-chan-ai/DiscordBotClient/releases/latest/download/DiscordBotClient-win-x64.exe">
+        <img alt="DiscordBotClient-win-x64.exe" src="https://img.shields.io/github/downloads/aiko-chan-ai/DiscordBotClient/latest/DiscordBotClient-win-x64.exe?style=for-the-badge&logo=windows&color=DDB6F2&logoColor=D9E0EE&labelColor=302D41"></a>
+      </a>
+    </td>
+  </tr>
+  <tr> <td>Linux</td>
+    <td align="center"><code>.AppImage</code></td>
+    <td>
+      <a href="https://github.com/aiko-chan-ai/DiscordBotClient/releases/latest/download/DiscordBotClient-linux-x86_64.AppImage"><img alt="DiscordBotClient-linux-x86_64.AppImage" src="https://img.shields.io/github/downloads/aiko-chan-ai/DiscordBotClient/latest/DiscordBotClient-linux-x86_64.AppImage?style=for-the-badge&logo=linux&color=F5C2E7&logoColor=D9E0EE&labelColor=302D41"></a>
+    </td>
+  </tr>
+  <tr>
+    <td>Mac</td>
+    <td align="center"><code>.dmg</code></td>
+    <td>
+      <a href="https://github.com/aiko-chan-ai/DiscordBotClient/releases/latest/download/DiscordBotClient-mac-x64.dmg"><img alt="DiscordBotClient-mac-x64.dmg" src="https://img.shields.io/github/downloads/aiko-chan-ai/DiscordBotClient/latest/DiscordBotClient-mac-x64.dmg?style=for-the-badge&logo=macos&color=E8A2AF&logoColor=D9E0EE&labelColor=302D41"></a>
+    </td>
+  </table>
 
 ### Building from source
 
@@ -114,7 +153,7 @@ In order to find answers to common questions, check out the FAQ in the [wiki](ht
 Here is a list of similar projects:
 
 - [Discord Bot Client](https://github.com/SamuelScheit/discord-bot-client)
-- [BotClient](https://github.com/DarkGuy10/BotClient)
+- [BotClient](https://github.com/aiko-chan-ai/DiscordBotClient)
 - [ChrisEric1.GitHub.io](https://github.com/ChrisEric1/ChrisEric1.GitHub.io)
 - [LiveBot](https://github.com/SebOuellette/LiveBot)
 - [BetterDiscordPanel](https://github.com/SanjaySunil/BetterDiscordPanel)

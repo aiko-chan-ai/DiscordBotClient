@@ -10,11 +10,11 @@ const {
 	screen,
 	ipcMain,
 	dialog,
+	Notification,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
 const fetch = require('node-fetch');
-const { autoUpdater } = require('electron-updater');
 const {
 	version: VencordVersion,
 } = require('../VencordExtension/manifest.json');
@@ -39,9 +39,6 @@ const iconPath = path.join(
 );
 
 app.setAppUserModelId(APP_NAME);
-
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
 
 let firstTime = true;
 let shouldQuitApp = false;
@@ -74,7 +71,7 @@ function createTray(win, port) {
 			label: 'Check for Updates...',
 			type: 'normal',
 			visible: process.platform !== 'darwin',
-			click: () => autoUpdater.checkForUpdatesAndNotify(),
+			click: () => checkUpdate(),
 		},
 		{
 			label: 'Github Repository',
@@ -296,7 +293,7 @@ async function createWindow() {
 
 app.whenReady().then(() => {
 	createWindow();
-	autoUpdater.checkForUpdatesAndNotify();
+	checkUpdate();
 });
 
 app.on('window-all-closed', () => {
@@ -315,48 +312,73 @@ app.on('before-quit', (event) => {
 	log.info('App closing...');
 });
 
-autoUpdater.on('error', (error) => {
-	dialog.showErrorBox(
-		'Error: ',
-		error == null ? 'unknown' : (error.stack || error).toString(),
-	);
-});
-
-autoUpdater.on('update-available', () => {
-	dialog
-		.showMessageBox({
-			type: 'info',
-			title: 'Found Updates',
-			message: 'Found updates, do you want update now?',
-			buttons: ['Sure', 'No'],
-		})
-		.then((buttonIndex) => {
-			if (buttonIndex === 0) {
-				autoUpdater.downloadUpdate();
+function checkLatestVersion(latest, current) {
+	if (latest.startWith('v')) latest = latest.slice(1);
+	const [latestMajor, latestMinor, latestPatch] = latest.split('.');
+	const [currentMajor, currentMinor, currentPatch] = current.split('.');
+	if (latestMajor > currentMajor) {
+		return true;
+	} else if (latestMajor == currentMajor) {
+		if (latestMinor > currentMinor) {
+			return true;
+		} else if (latestMinor == currentMinor) {
+			if (latestPatch > currentPatch) {
+				return true;
 			}
-		});
-});
-
-autoUpdater.on('update-not-available', () => {
-	if (firstTime) {
-		firstTime = false;
-		dialog.showMessageBox({
-			title: 'No Updates',
-			message: 'Current version is up-to-date.',
-		});
-	} else {
-		log.info('Current version is up-to-date.');
+		}
 	}
-});
+	return false;
+}
 
-autoUpdater.on('update-downloaded', () => {
-	dialog
-		.showMessageBox({
-			title: 'Install Updates',
-			message:
-				'Updates downloaded, application will be quit for update...',
-		})
-		.then(() => {
-			setImmediate(() => autoUpdater.quitAndInstall());
-		});
-});
+function createNotification(
+	title,
+	description,
+	icon,
+	silent = false,
+	callbackWhenClick = () => {},
+) {
+	const n = new Notification({
+		title,
+		body: description,
+		icon,
+		silent,
+	});
+	n.once('click', (e) => {
+		e.preventDefault();
+		typeof callbackWhenClick == 'function' && callbackWhenClick();
+		n.close();
+	});
+	n.show();
+}
+
+function checkUpdate() {
+	log.info('Checking for updates...');
+	return new Promise((resolve) => {
+		fetch(
+			'https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest',
+		)
+			.then((res) => res.json())
+			.then((res) => {
+				if (checkLatestVersion(res.tag_name, app.getVersion())) {
+					createNotification(
+						'Update Manager',
+						`New version available: ${res.name}`,
+					);
+					shell.openExternal(
+						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+					);
+				}
+			})
+			.catch((e) => {
+				log.error(e);
+				createNotification(
+					'Update Manager',
+					`Unable to check for updates (v${app.getVersion()})`,
+				);
+				shell.openExternal(
+					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+				);
+			})
+			.finally(() => resolve(true));
+	});
+}

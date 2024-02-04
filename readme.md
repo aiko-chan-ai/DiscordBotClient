@@ -153,7 +153,7 @@ In order to find answers to common questions, check out the FAQ in the [wiki](ht
 Here is a list of similar projects:
 
 - [Discord Bot Client](https://github.com/SamuelScheit/discord-bot-client)
-- [BotClient](https://github.com/aiko-chan-ai/DiscordBotClient)
+- [BotClient](https://github.com/DarkGuy10/BotClient)
 - [ChrisEric1.GitHub.io](https://github.com/ChrisEric1/ChrisEric1.GitHub.io)
 - [LiveBot](https://github.com/SebOuellette/LiveBot)
 - [BetterDiscordPanel](https://github.com/SanjaySunil/BetterDiscordPanel)

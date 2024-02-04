@@ -9,11 +9,15 @@ const {
 	nativeImage,
 	screen,
 	ipcMain,
+	dialog,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
 const fetch = require('node-fetch');
-const { version: VencordVersion } = require('../VencordExtension/manifest.json');
+const { autoUpdater } = require('electron-updater');
+const {
+	version: VencordVersion,
+} = require('../VencordExtension/manifest.json');
 const server = require('./server.js');
 const { UserAgent } = require('../AppAssets/Util.js');
 const ApplicationFlags = require('../AppAssets/ApplicationFlags.js');
@@ -35,6 +39,11 @@ const iconPath = path.join(
 );
 
 app.setAppUserModelId(APP_NAME);
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+
+let firstTime = true;
 
 log.info('App starting...');
 
@@ -64,7 +73,7 @@ function createTray(win, port) {
 			label: 'Check for Updates...',
 			type: 'normal',
 			visible: process.platform !== 'darwin',
-			click: checkUpdate,
+			click: () => autoUpdater.checkForUpdatesAndNotify(),
 		},
 		{
 			label: 'Github Repository',
@@ -112,50 +121,6 @@ function createTray(win, port) {
 	]);
 	tray.setContextMenu(menu);
 	return tray;
-}
-
-function checkLatestVersion(latest, current) {
-	const [latestMajor, latestMinor, latestPatch] = latest.split('.');
-	const [currentMajor, currentMinor, currentPatch] = current.split('.');
-	if (latestMajor > currentMajor) {
-		return true;
-	} else if (latestMajor == currentMajor) {
-		if (latestMinor > currentMinor) {
-			return true;
-		} else if (latestMinor == currentMinor) {
-			if (latestPatch > currentPatch) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-function checkUpdate() {
-	log.info('Checking for updates...');
-	let isLatest = false;
-	return new Promise((resolve, reject) => {
-		fetch(
-			'https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest',
-		)
-			.then((res) => res.json())
-			.then((res) => {
-				if (checkLatestVersion(res.tag_name, '')) {
-					shell.openExternal(
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
-					);
-				} else {
-					isLatest = true;
-				}
-			})
-			.catch((e) => {
-				log.error(e);
-				shell.openExternal(
-					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
-				);
-			})
-			.finally(() => resolve(isLatest));
-	});
 }
 
 async function createWindow() {
@@ -320,6 +285,7 @@ async function createWindow() {
 
 app.whenReady().then(() => {
 	createWindow();
+	autoUpdater.checkForUpdatesAndNotify();
 });
 
 app.on('window-all-closed', () => {
@@ -336,4 +302,50 @@ app.on('activate', () => {
 
 app.on('before-quit', () => {
 	log.info('App closing...');
+});
+
+autoUpdater.on('error', (error) => {
+	dialog.showErrorBox(
+		'Error: ',
+		error == null ? 'unknown' : (error.stack || error).toString(),
+	);
+});
+
+autoUpdater.on('update-available', () => {
+	dialog
+		.showMessageBox({
+			type: 'info',
+			title: 'Found Updates',
+			message: 'Found updates, do you want update now?',
+			buttons: ['Sure', 'No'],
+		})
+		.then((buttonIndex) => {
+			if (buttonIndex === 0) {
+				autoUpdater.downloadUpdate();
+			}
+		});
+});
+
+autoUpdater.on('update-not-available', () => {
+	if (firstTime) {
+		firstTime = false;
+		dialog.showMessageBox({
+			title: 'No Updates',
+			message: 'Current version is up-to-date.',
+		});
+	} else {
+		log.info('Current version is up-to-date.');
+	}
+});
+
+autoUpdater.on('update-downloaded', () => {
+	dialog
+		.showMessageBox({
+			title: 'Install Updates',
+			message:
+				'Updates downloaded, application will be quit for update...',
+		})
+		.then(() => {
+			setImmediate(() => autoUpdater.quitAndInstall());
+		});
 });

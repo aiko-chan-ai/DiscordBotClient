@@ -9,7 +9,6 @@ const {
 	nativeImage,
 	screen,
 	ipcMain,
-	dialog,
 	Notification,
 } = require('electron');
 const log = require('electron-log');
@@ -163,9 +162,14 @@ async function createWindow() {
 	if (systemPreferences && systemPreferences.askForMediaAccess)
 		systemPreferences.askForMediaAccess('microphone');
 
-	win.webContents.on('new-window', function (e, url) {
-		e.preventDefault();
-		return shell.openExternal(url);
+	win.webContents.setWindowOpenHandler(({ url }) => {
+		if (url === `https://localhost:${port}/popout`) {
+			return {
+				action: 'allow',
+			};
+		}
+		shell.openExternal(url);
+		return { action: 'deny' };
 	});
 
 	const path_ = path.join(__dirname, '..', 'VencordExtension');

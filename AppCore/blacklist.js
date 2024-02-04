@@ -16,4 +16,5 @@ module.exports = [
 	'interaction-data',
 	'migrate-command-scope',
 	'member-verification',
+	'cdn-cgi/challenge-platform',
 ];

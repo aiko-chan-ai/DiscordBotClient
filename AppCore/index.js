@@ -312,8 +312,14 @@ app.on('before-quit', (event) => {
 	log.info('App closing...');
 });
 
+/**
+ * 
+ * @param {string} latest 
+ * @param {string} current 
+ * @returns 
+ */
 function checkLatestVersion(latest, current) {
-	if (latest.startWith('v')) latest = latest.slice(1);
+	if (latest.startsWith('v')) latest = latest.slice(1);
 	const [latestMajor, latestMinor, latestPatch] = latest.split('.');
 	const [currentMajor, currentMinor, currentPatch] = current.split('.');
 	if (latestMajor > currentMajor) {

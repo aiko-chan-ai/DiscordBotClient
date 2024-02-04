@@ -62,11 +62,11 @@
 	},
 	"scripts": {
 		"start": "electron AppCore\\index.js",
-		"mac": "electron-builder -m",
-		"win": "electron-builder -w",
-		"linux": "electron-builder -l",
-		"build": "electron-builder",
-		"vencord": "cd vencord && node --require=./scripts/suppressExperimentalWarnings.js scripts/build/buildWeb.mjs && cd ..",
+		"mac": "npm run vencord && electron-builder -m",
+		"win": "npm run vencord && electron-builder -w",
+		"linux": "npm run vencord && electron-builder -l",
+		"build": "npm run vencord && electron-builder",
+		"vencord": "cd vencord && npm i -f && node --require=./scripts/suppressExperimentalWarnings.js scripts/build/buildWeb.mjs && cd ..",
 		"fetch": "electron scripts/findMainScript.js"
 	},
 	"author": {

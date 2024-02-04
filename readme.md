@@ -135,7 +135,7 @@ Logging in works via the UI on first startup of the application.
 | Stable 161052 | c7e0778 | - | v1 | Deprecated |
 | Stable 185832 | 29333f6 | v1.1.4 | v2.1 | Deprecated |
 | Stable 204762 | 78f82ba | v1.2.8 | v2.2-v2.4 | Deprecated |
-| Stable 263796 | 739ec78 | v1.6,7 | v3 | Latest |
+| Stable 263796 | 739ec78 | v1.6.7 | v3 | Latest |
 
 ---
 

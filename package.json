@@ -1,6 +1,6 @@
 {
 	"name": "discord-bot-client",
-	"version": "3.0.3",
+	"version": "3.0.4",
 	"DiscordBuildVersion": 263796,
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
@@ -62,10 +62,10 @@
 	},
 	"scripts": {
 		"start": "electron AppCore\\index.js",
-		"mac": "npm run vencord && electron-builder -m",
-		"win": "npm run vencord && electron-builder -w",
-		"linux": "npm run vencord && electron-builder -l",
-		"build": "npm run vencord && electron-builder",
+		"mac": "electron-builder -m",
+		"win": "electron-builder -w",
+		"linux": "electron-builder -l",
+		"build": "electron-builder",
 		"vencord": "cd vencord && npm i -f && node --require=./scripts/suppressExperimentalWarnings.js scripts/build/buildWeb.mjs && cd ..",
 		"fetch": "electron scripts/findMainScript.js"
 	},

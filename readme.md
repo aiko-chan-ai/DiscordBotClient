@@ -96,7 +96,7 @@ Logging in works via the UI on first startup of the application.
 | Stable 161052 | c7e0778 | - | v1 | Deprecated |
 | Stable 185832 | 29333f6 | v1.1.4 | v2.1 | Deprecated |
 | Stable 204762 | 78f82ba | v1.2.8 | v2.2-v2.4 | Deprecated |
-| Stable  |  |  | v3 | Latest |
+| Stable 263796 | 739ec78 | v1.6,7 | v3 | Latest |
 
 ---
 
@@ -129,6 +129,26 @@ Hit me up if you have a similar project, and I'll gladly add it to the list.
 
 ## How to update to the latest Discord version ?
 
+1. Clone the repository and cd into it.
+
+```sh
+git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
+cd DiscordBotClient
+```
+
+2. Install required dependencies.
+```sh
+npm install
+```
+
+3. Download the latest script from Discord
+```sh
+electron scripts/findMainScript.js
+```
+
+4. Update Vencord (don't change `scripts` and `browser` folder) if necessary
+
+5. Update BotClient plugin in Vencord
 
 ## Credits
 

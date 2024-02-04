@@ -22,7 +22,7 @@ module.exports = () => {
 	const replaceEnv = {
 		API_ENDPOINT: "'//' + window.location.host + '/bot/api'",
 		WEBAPP_ENDPOINT: "'//' + window.location.host",
-		ASSET_ENDPOINT: "'//' + window.location.host",
+		// ASSET_ENDPOINT: "'//' + window.location.host",
 		MIGRATION_DESTINATION_ORIGIN:
 			"window.location.protocol + '//' + window.location.host",
 	};

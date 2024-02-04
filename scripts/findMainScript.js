@@ -23,6 +23,7 @@ const createWindow = async () => {
 				.find((s) => s.trim().startsWith('SENTRY_TAGS'));
 			console.log('[Discord] Build', sentry.trim());
 		});
+	app.quit();
 	mainWindow.loadURL(URL);
 	mainWindow.webContents.session.webRequest.onBeforeRequest(
 		(details, callback) => {

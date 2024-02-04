@@ -2,7 +2,7 @@ const express = require('express');
 const https = require('https');
 const morgan = require('morgan');
 const { Server } = require('lambert-server');
-const otherRoute = require('./otherRoute');
+const otherRoute = require('./OtherRoute');
 
 const path = require('path');
 const Util = require('../AppAssets/Util');

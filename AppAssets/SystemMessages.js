@@ -20,7 +20,7 @@ It really motivates me to work on the project! <:elylove:1065888090549407785>`,
 				color: 16750296,
 				timestamp: '2022-12-31T17:00:00+00:00',
 				author: {
-					name: 'Word From Developer',
+					name: 'Foreword',
 					icon_url:
 						'https://cdn.discordapp.com/attachments/878276279105884210/1071796241765240862/LINE_nachonekodayo_005.png',
 					proxy_icon_url:
@@ -43,7 +43,7 @@ It really motivates me to work on the project! <:elylove:1065888090549407785>`,
 		pinned: false,
 		mention_everyone: false,
 		tts: false,
-		timestamp: '2023-01-01T12:00:00.000000+00:00',
+		timestamp: new Date().toISOString(),
 		edited_timestamp: null,
 		flags: 16,
 		components: [

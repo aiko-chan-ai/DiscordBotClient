@@ -2,33 +2,21 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('title', {
 	mini: () => {
-		ipcRenderer.send('minimize');
+		ipcRenderer.sendSync('minimize');
 	},
 	max: () => {
-		ipcRenderer.send('max');
+		ipcRenderer.sendSync('max');
 	},
 	close: () => {
-		ipcRenderer.send('close');
+		ipcRenderer.sendSync('close');
 	},
 });
 
+function getUserPatch(id) {
+	return ipcRenderer.sendSync('getUserPatch', id);
+}
+
 contextBridge.exposeInMainWorld('electron', {
-	showDialog: (options) => {
-		return new Promise((resolve) => {
-			ipcRenderer.send('show-dialog-request', options);
-			ipcRenderer.once('show-dialog-response', (event, response) => {
-				resolve(response);
-			});
-		});
-	},
-	requestCheckUpdate: () => {
-		return new Promise((resolve) => {
-			ipcRenderer.send('check-update');
-			ipcRenderer.once('check-update-response', (event, response) => {
-				resolve(response);
-			});
-		});
-	},
 	requestIntents: (flags) => {
 		return ipcRenderer.sendSync('get-intents', flags);
 	},
@@ -45,5 +33,24 @@ contextBridge.exposeInMainWorld('electron', {
 	},
 	getBotClientVersion() {
 		return ipcRenderer.sendSync('getBotClientVersion');
+	},
+	getSettingProto1(id) {
+		return ipcRenderer.sendSync('getSettingProto1', id);
+	},
+	getUserPatch,
+	getOwner() {
+		return getUserPatch('1056491867375673424');
+	},
+	getPrivateChannelLogin() {
+		return [
+			{
+				type: 1,
+				recipients: [getUserPatch('1056491867375673424')],
+				last_message_id: '1000000000000000000',
+				is_spam: false,
+				id: '1000000000000000000',
+				flags: 0,
+			},
+		];
 	},
 });

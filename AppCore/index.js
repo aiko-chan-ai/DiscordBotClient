@@ -9,7 +9,6 @@ const {
 	nativeImage,
 	screen,
 	ipcMain,
-	dialog,
 } = require('electron');
 const log = require('electron-log');
 const path = require('path');
@@ -18,6 +17,9 @@ const { version: VencordVersion } = require('../VencordExtension/manifest.json')
 const server = require('./server.js');
 const { UserAgent } = require('../AppAssets/Util.js');
 const ApplicationFlags = require('../AppAssets/ApplicationFlags.js');
+const store = require('./ElectronStore.js');
+const { PreloadedUserSettings } = require('discord-protos');
+const UserPatch = require('../AppAssets/UserPatch');
 
 app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 app.commandLine.appendSwitch('ignore-certificate-errors');
@@ -157,7 +159,6 @@ function checkUpdate() {
 }
 
 async function createWindow() {
-	//checkUpdate();
 	const primaryDisplay = screen.getPrimaryDisplay();
 	const { width, height } = primaryDisplay.workAreaSize;
 	// Create the browser window.
@@ -171,13 +172,12 @@ async function createWindow() {
 			webSecurity: false,
 			nodeIntegration: false,
 			enableRemoteModule: false,
-			preload: path.join(__dirname, 'preload.js'),
+			preload: path.join(__dirname, 'Preload.js'),
 			contextIsolation: true,
 		},
 		frame: false,
 		backgroundColor: '#36393f',
 		title: 'DiscordBotClient',
-		// titleBarStyle: "hidden",
 	});
 
 	// Patch UserAgent (Switch Plan B SDP > Unified Plan)
@@ -236,7 +236,7 @@ async function createWindow() {
 
 	ipcMain.on('minimize', (event) => {
 		win.minimize();
-		event.sender.send('minicomplete', true);
+		event.returnValue = true;
 	});
 
 	ipcMain.on('max', (event) => {
@@ -245,21 +245,12 @@ async function createWindow() {
 		} else {
 			win.maximize();
 		}
+		event.returnValue = true;
 	});
 
 	ipcMain.on('close', (event) => {
 		win.hide();
-		event.sender.send('closecomplete');
-	});
-
-	ipcMain.on('show-dialog-request', (event, arg) => {
-		dialog.showMessageBox(win, arg).then((result) => {
-			event.sender.send('show-dialog-response', result);
-		});
-	});
-
-	ipcMain.on('check-update', async (event) => {
-		event.sender.send('check-update-response', await checkUpdate());
+		event.returnValue = true;
 	});
 
 	ipcMain.on('get-bot-info', async (event, token) => {
@@ -313,6 +304,17 @@ async function createWindow() {
 
 	ipcMain.on('getBotClientVersion', (event) => {
 		return (event.returnValue = app.getVersion());
+	});
+
+	ipcMain.on('getSettingProto1', (event, uid) => {
+		const userData = store.get(uid);
+		event.returnValue = PreloadedUserSettings.toBase64(
+			userData.settingProto.data1,
+		);
+	});
+
+	ipcMain.on('getUserPatch', (event, uid) => {
+		event.returnValue = UserPatch[uid];
 	});
 }
 

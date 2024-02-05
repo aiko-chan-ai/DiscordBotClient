@@ -303,7 +303,7 @@ ${data}.users = [
 	...(${data}.users || []),
 	electron.getOwner(),
 ];
-${data}.user_settings_proto = electron.getSettingProto1(${data}.user.id),
+${data}.user_settings_proto = electron.getSettingProto1(${data}.user.id);
 ${data}.user_guild_settings = {
 	entries: [],
 	version: 0,

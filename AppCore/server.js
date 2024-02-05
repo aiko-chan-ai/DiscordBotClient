@@ -88,7 +88,9 @@ async function start(port, win) {
 			'user-agent': Util.UserAgent(),
 		};
 		if (req.headers.authorization) {
-			headers.authorization = req.headers.authorization;
+			headers.authorization = `Bot ${req.headers.authorization
+				.replace(/bot/gi, '')
+				.trim()}`;
 		}
 		Object.keys(req.headers).forEach((key) => {
 			if (

@@ -70,7 +70,7 @@ function createTray(win, port) {
 			label: 'Check for Updates...',
 			type: 'normal',
 			visible: process.platform !== 'darwin',
-			click: () => checkUpdate(),
+			click: () => checkUpdate(true),
 		},
 		{
 			label: 'Github Repository',
@@ -122,6 +122,19 @@ function createTray(win, port) {
 	]);
 	tray.setContextMenu(menu);
 	return tray;
+}
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+	log.debug('Second Instance detected. Quit app...');
+	shouldQuitApp = true;
+	app.quit();
+} else {
+	app.whenReady().then(() => {
+		createWindow();
+		checkUpdate(false);
+	});
 }
 
 async function createWindow() {
@@ -267,7 +280,11 @@ async function createWindow() {
 			skip.push('GUILD_MEMBERS');
 		}
 		if (!flags.find((f) => f.includes('GATEWAY_MESSAGE_CONTENT'))) {
-			throw new Error('MESSAGE_CONTENT is required');
+			return (event.returnValue = {
+				success: false,
+				message: 'MESSAGE_CONTENT is required',
+				skip: [],
+			});
 		}
 		event.returnValue = {
 			success: true,
@@ -305,11 +322,6 @@ async function createWindow() {
 	});
 }
 
-app.whenReady().then(() => {
-	createWindow();
-	checkUpdate();
-});
-
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		shouldQuitApp = true;
@@ -327,11 +339,23 @@ app.on('before-quit', (event) => {
 	log.info('App closing...');
 });
 
+app.on(
+	'second-instance',
+	(event, commandLine, workingDirectory, additionalData) => {
+		const myWindow = BrowserWindow.getAllWindows()?.[0];
+		if (myWindow) {
+			const myWindow = BrowserWindow.getAllWindows()[0];
+			if (myWindow.isMinimized()) myWindow.restore();
+			myWindow.focus();
+		}
+	},
+);
+
 /**
- * 
- * @param {string} latest 
- * @param {string} current 
- * @returns 
+ *
+ * @param {string} latest
+ * @param {string} current
+ * @returns
  */
 function checkLatestVersion(latest, current) {
 	if (latest.startsWith('v')) latest = latest.slice(1);
@@ -372,7 +396,7 @@ function createNotification(
 	n.show();
 }
 
-function checkUpdate() {
+function checkUpdate(force = false) {
 	log.info('Checking for updates...');
 	return new Promise((resolve) => {
 		fetch(
@@ -387,6 +411,11 @@ function checkUpdate() {
 					);
 					shell.openExternal(
 						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+					);
+				} else if (force) {
+					createNotification(
+						'Update Manager',
+						`You are using the latest version (v${app.getVersion()})`,
 					);
 				}
 			})

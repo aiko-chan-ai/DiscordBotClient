@@ -264,10 +264,10 @@ if (${data}.guildId) {
                             str +
                             `
 if (${closeCode} === 4013) {
-    showToast("Invalid intents, Logout...", 2);
+    showToast("Login Failure: Invalid intent(s), Logout...", 2);
     ${closeCode} = 4004;
 } else if (${closeCode} === 4014) {
-    showToast("MESSAGE_CONTENT is required, Logout...", 2);
+    showToast("Login Failure: Disallowed intent(s), Logout...", 2);
     ${closeCode} = 4004;
 }`
                         );
@@ -358,10 +358,14 @@ const botInfo = await electron.getBotInfo(${varToken});
 this.token = ${varToken};
 console.log(botInfo);
 if (!botInfo.success) {
-	showToast(botInfo.message, 2);
+	showToast("Login Failure: " + botInfo.message, 2);
 	return this._handleClose(!0, 4004, botInfo.message);
 }
 const intentsData = electron.requestIntents(botInfo.data.flags);
+if (!intentsData.success) {
+	showToast("Login Failure: " + intentsData.message, 2);
+	return this._handleClose(!0, 4004, intentsData.message);
+}
 const intents = getIntents(...intentsData.skip);
 allShards = Math.ceil(parseInt(botInfo.data.approximate_guild_count) / 100) || 1;
 if (currentShard + 1 >= allShards) {

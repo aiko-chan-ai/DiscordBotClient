@@ -344,9 +344,7 @@ app.on(
 	(event, commandLine, workingDirectory, additionalData) => {
 		const myWindow = BrowserWindow.getAllWindows()?.[0];
 		if (myWindow) {
-			const myWindow = BrowserWindow.getAllWindows()[0];
-			if (myWindow.isMinimized()) myWindow.restore();
-			myWindow.focus();
+			myWindow.show();
 		}
 	},
 );

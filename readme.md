@@ -5,6 +5,7 @@
 ## Overview
 
 - [How to install it](#installation)
+  - [Windows](#windows)
   - [Using prebuilt binaries](#using-prebuilt-binaries)
   - [Building from source](#building-from-source)
 - [Login](#login)
@@ -30,6 +31,13 @@ Discord Inc.
 ---
 
 ## Installation
+
+### Windows
+
+Discord Bot Client can be installed in Windows via [Winget](https://learn.microsoft.com/en-us/windows/package-manager/):
+```
+winget install aiko-chan-ai.DiscordBotClient
+```
 
 ### Using prebuilt binaries
 

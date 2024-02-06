@@ -298,6 +298,27 @@ if ("MESSAGE_CREATE" === ${eventName} && !${data}.guild_id && !Vencord.Webpack.f
         this.dispatcher.receiveDispatch(i, "CHANNEL_CREATE", ${N});
     }).finally(() => this.dispatcher.receiveDispatch(${data}, ${eventName}, ${N}));
 }
+if ("READY_SUPPLEMENTAL" === ${eventName}) {
+    // Patch Status
+    const status = Vencord.Webpack.Common.StatusSettingsStores.StatusSetting.getSetting() || 'online';
+    const customStatus = Vencord.Webpack.Common.StatusSettingsStores.CustomStatusSetting.getSetting();
+    const activities = [];
+    if (customStatus) {
+        activities.push({
+            "name": "Custom Status",
+            "type": 4,
+            "state": customStatus.text,
+            // Bot cannot use emoji;
+        });
+    }
+    // WS Send;
+    Vencord.Webpack.findByProps('getSocket').getSocket().send(3, {
+        status,
+        since: null,
+        activities,
+        afk: false
+    });
+}
 if ("READY" === ${eventName}) {
 ${data}.users = [
 	...(${data}.users || []),

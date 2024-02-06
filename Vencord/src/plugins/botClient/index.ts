@@ -351,7 +351,7 @@ ${data}.guild_experiments = electron.getGuildExperiments();
 ${data}.friend_suggestion_count = 0;
 ${data}.experiments = electron.getUserExperiments();
 ${data}.connected_accounts = [];
-${data}.auth_session_id_hash = null;
+${data}.auth_session_id_hash = "G0V9YBhBm+PElWFlIJLj9zN5vGAbRD9uKB9iZnl5VEk=";
 ${data}.analytics_token = null;
 ${data}.auth = {
 	authenticator_types: [2, 3],

@@ -2,7 +2,7 @@ const { Router } = require('express');
 
 const app = Router();
 
-app.get('/gifts', (req, res) => {
+app.get('/', (req, res) => {
 	res.send([]);
 });
 

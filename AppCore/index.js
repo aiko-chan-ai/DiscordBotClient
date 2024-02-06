@@ -59,7 +59,7 @@ function createTray(win, port) {
 	});
 	const menu = Menu.buildFromTemplate([
 		{
-			label: `${APP_NAME} v${app.getVersion()} (Port: ${port})`,
+			label: `${APP_NAME} v${app.getVersion()}`,
 			icon: nativeImage.createFromPath(iconPath).resize({ width: 16 }),
 			enabled: false,
 		},

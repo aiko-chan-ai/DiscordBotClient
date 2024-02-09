@@ -7,7 +7,7 @@ app.get('/', (req, res) => {
 	const salt = Math.random().toString();
 	const hash = crypto
 		.createHash('md5')
-		.update(salt + text)
+		.update(salt + "Elysia")
 		.digest('hex');
 	return res.status(200).send({
 		analytics_id: hash,

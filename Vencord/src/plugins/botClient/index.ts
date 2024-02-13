@@ -499,6 +499,22 @@ return t ? \`Bot \${t.replace(/bot/gi,"").trim()}\` : null`;
                 },
             ],
         },
+        // Fix Copy Webhook URL
+        {
+            find: "SUPPORTS_COPY:",
+            replacement: [{
+                match: /(function \w+\()(\w+)(\){)/,
+                replace: function (str, ...args) {
+                    const text = args[1];
+                    return args[0] + args[1] + args[2] + `
+if (URL.canParse(${text})) {
+    ${text} = ${text}.replace(/https:\\/\\/localhost:\\d+/, "https://discord.com");
+    ${text} = ${text}.replace(/\/bot/, '');
+}
+                    `;
+                },
+            }],
+        }
     ],
     commands: [
         {

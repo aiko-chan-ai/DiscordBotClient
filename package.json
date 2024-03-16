@@ -61,7 +61,7 @@
 		"mac": "electron-builder -m",
 		"win": "electron-builder -w",
 		"linux": "electron-builder -l",
-		"build": "electron-builder",
+		"build": "npm run vencord && electron-builder",
 		"requirement": "npm install && npm run npmVencord",
 		"fetchLatestDiscordBuild": "electron scripts/findMainScript.js",
 		"npmVencord": "cd VencordDBC && npm i -f && cd ..",

@@ -91,7 +91,7 @@ out
 .nuxt
 # Dont escape Vencord ...
 /dist
-/VencordDBC
+VencordDBC/
 
 # Gatsby files
 .cache/

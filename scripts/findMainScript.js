@@ -7,6 +7,12 @@ const URL = 'https://discord.com/channels/@me';
 
 const folder = path.resolve('.', 'DiscordCore');
 
+if (!fs.existsSync(folder)) {
+	fs.mkdirSync(folder, {
+		recursive: true,
+	});
+}
+
 const HTMLPath = path.resolve(folder, 'index.html');
 
 const createWindow = async () => {

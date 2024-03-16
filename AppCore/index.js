@@ -378,7 +378,7 @@ function createNotification(
 	description,
 	icon,
 	silent = false,
-	callbackWhenClick = () => {},
+	urlOpenWhenClick,
 ) {
 	const n = new Notification({
 		title,
@@ -386,9 +386,9 @@ function createNotification(
 		icon,
 		silent,
 	});
-	n.once('click', (e) => {
+	n.on('click', (e) => {
 		e.preventDefault();
-		typeof callbackWhenClick == 'function' && callbackWhenClick();
+		if (urlOpenWhenClick) shell.openExternal(urlOpenWhenClick);
 		n.close();
 	});
 	n.show();
@@ -404,16 +404,19 @@ function checkUpdate(force = false) {
 			.then((res) => {
 				if (checkLatestVersion(res.tag_name, app.getVersion())) {
 					createNotification(
-						'Update Manager',
 						`New version available: ${res.name}`,
-					);
-					shell.openExternal(
+						`Click here to open the update page`,
+						undefined,
+						undefined,
 						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 					);
 				} else if (force) {
 					createNotification(
 						'Update Manager',
 						`You are using the latest version (v${app.getVersion()})`,
+						undefined,
+						undefined,
+						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 					);
 				}
 			})
@@ -422,8 +425,8 @@ function checkUpdate(force = false) {
 				createNotification(
 					'Update Manager',
 					`Unable to check for updates (v${app.getVersion()})`,
-				);
-				shell.openExternal(
+					undefined,
+					undefined,
 					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
 				);
 			})

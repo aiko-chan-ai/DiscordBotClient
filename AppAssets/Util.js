@@ -14,16 +14,22 @@ module.exports = class Util {
 				Constants.Badges.BOT_SLASH,
 				Constants.Badges.BOT_AUTOMOD,
 			);
-		if (userData.avatar?.includes('a_') || userData.banner) {
-			badges.push(Constants.Badges.NITRO, Constants.Badges.GUILD_BOOSTER);
+		// Check Nitro Type
+		if (userData.premium_type > 0) {
+			badges.push(Constants.Badges.NITRO);
+			if (userData.premium_type == 2) {
+				badges.push(Constants.Badges.GUILD_BOOSTER);
+			}
 		}
+		// Old username
 		if (userData.discriminator === '0')
 			badges.push(Constants.Badges.LEGACY_USERNAME);
 		return {
 			user: userData,
 			connected_accounts: [],
 			premium_since: null,
-			premium_type: userData.banner ? 2 : null,
+			// Force enable Nitro features (Bot)
+			premium_type: userData.bot ? 2 : userData.premium_type,
 			premium_guild_since: null,
 			profile_themes_experiment_bucket: 4,
 			mutual_guilds: [],
@@ -40,14 +46,6 @@ module.exports = class Util {
 			badges,
 			guild_badges: [],
 			legacy_username: null,
-		};
-	}
-	static patchCommand(command) {
-		return {
-			...('metadata' in command ? command.metadata : command),
-			id: SnowflakeUtil.generate(),
-			application_id: '1056491867375673424',
-			version: SnowflakeUtil.generate(),
 		};
 	}
 	static getIDFromToken(token) {

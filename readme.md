@@ -100,7 +100,8 @@ Open a command line and execute the following commands:
 ```shell
 git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
-npm install
+git clone https://github.com/aiko-chan-ai/VencordDBC.git
+npm run requirement
 npm run build
 ```
 
@@ -140,10 +141,13 @@ Logging in works via the UI on first startup of the application.
 
 | Discord Build | Hash | Vencord | Discord Bot Client | Status |
 | --- | --- | --- | --- | --- |
-| Stable 161052 | c7e0778 | - | v1 | Deprecated |
-| Stable 185832 | 29333f6 | v1.1.4 | v2.1 | Deprecated |
-| Stable 204762 | 78f82ba | v1.2.8 | v2.2-v2.4 | Deprecated |
-| Stable 263796 | 739ec78 | v1.6.7 | v3 | Latest |
+| Stable 275565 | ede2af3 | v1.7.2 | v3.2 | Latest |
+| Stable 263796 | 739ec78 | v1.6.7 | v3.1 | Deprecated |
+| Stable 204762 | 78f82ba | v1.2.8 | v2.4 | EOL |
+| Stable 185832 | 29333f6 | v1.1.4 | v2.1 | EOL |
+| Stable 161052 | c7e0778 | - | v1 | EOL |
+
+
 
 ---
 
@@ -181,21 +185,20 @@ Hit me up if you have a similar project, and I'll gladly add it to the list.
 ```sh
 git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
+git clone https://github.com/aiko-chan-ai/VencordDBC.git
 ```
 
 2. Install required dependencies.
 ```sh
-npm install
+npm run requirement
 ```
 
 3. Download the latest script from Discord
 ```sh
-electron scripts/findMainScript.js
+npm run fetchLatestDiscordBuild
 ```
 
-4. Update Vencord (don't change `scripts` and `browser` folder) if necessary
-
-5. Update BotClient plugin in Vencord
+4. Update BotClient plugin in VencordDBC (and make a PR)
 
 ## Credits
 

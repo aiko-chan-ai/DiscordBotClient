@@ -75,19 +75,19 @@ module.exports = {
 		// added
 		NITRO: {
 			id: 'premium',
-			description: 'Subscriber since NaN',
+			description: 'Subscriber since 1/1/2024',
 			icon: '2ba85e8026a8614b640c2837bcdfe21b',
 			link: 'https://discord.com/settings/premium',
 		},
 		GUILD_BOOSTER: {
 			id: 'guild_booster_lvl9',
-			description: 'Server boosting since NaN',
+			description: 'Server boosting since 1/1/2024',
 			icon: 'ec92202290b48d0879b7413d2dde3bab',
 			link: 'https://discord.com/settings/premium',
 		},
 		LEGACY_USERNAME: {
 			id: 'legacy_username',
-			description: 'Originally known as undefined#NaN',
+			description: 'Originally known as unknown#0000',
 			icon: '6de6d34650760ba5551a79732e98ed60',
 		},
 		BOT_SLASH: {

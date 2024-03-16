@@ -26,7 +26,7 @@ The application only uses the official Discord API and doesn't send data to
 third parties. However, this application is not an official product by
 Discord Inc.
 
-![Demo Screenshot](https://cdn.discordapp.com/attachments/820557032016969751/1128535575281029150/image.png)
+![Demo Screenshot](https://i.imgur.com/LXCQQZC.png)
 
 ---
 
@@ -113,12 +113,12 @@ This will create an executable called `DiscordBotClient` or `DiscordBotClient.ex
 
 Logging in works via the UI on first startup of the application.
 
-![screenshot](https://cdn.discordapp.com/attachments/820557032016969751/1128537663864045608/image.png)
+![screenshot](https://i.imgur.com/jl6dkXa.png)
 
 > **Note**
 > Enable `MessageContent` intent, other intents are optional
 
-![image](https://cdn.discordapp.com/attachments/820557032016969751/1128538612175220906/image.png)
+![image](https://i.imgur.com/VENMB1U.png)
 
 ---
 

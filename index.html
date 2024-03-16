@@ -119,151 +119,6 @@ const getIntents = (...removeIntents) =>
 		.flat(2)
 		.map((name) => IntentFlags[name] || 0)
 		.reduce((a, b) => a + b, 0) || 0);
-// Permissions
-const VIEW_CHANNEL_PERMISSION = 1024n;
-function checkBitfield(permission) {
-	return (permission & VIEW_CHANNEL_PERMISSION) === VIEW_CHANNEL_PERMISSION;
-}
-function checkUserPermission(guild, channel, user) {
-	const permission = checkPermissionGuild(guild, channel, user);
-	return permission.has('VIEW_CHANNEL');
-}
-
-class PermissionsDiscord extends BitField {
-	missing(bits, checkAdmin = true) {
-		return checkAdmin && this.has(this.constructor.FLAGS.ADMINISTRATOR)
-			? []
-			: super.missing(bits);
-	}
-	any(permission, checkAdmin = true) {
-		return (
-			(checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) ||
-			super.any(permission)
-		);
-	}
-	has(permission, checkAdmin = true) {
-		return (
-			(checkAdmin && super.has(this.constructor.FLAGS.ADMINISTRATOR)) ||
-			super.has(permission)
-		);
-	}
-	toArray() {
-		return super.toArray(false);
-	}
-}
-PermissionsDiscord.FLAGS = {};
-Object.entries({
-	CREATE_INSTANT_INVITE: '1',
-	KICK_MEMBERS: '2',
-	BAN_MEMBERS: '4',
-	ADMINISTRATOR: '8',
-	MANAGE_CHANNELS: '16',
-	MANAGE_GUILD: '32',
-	CHANGE_NICKNAME: '67108864',
-	MANAGE_NICKNAMES: '134217728',
-	MANAGE_ROLES: '268435456',
-	MANAGE_WEBHOOKS: '536870912',
-	MANAGE_GUILD_EXPRESSIONS: '1073741824',
-	CREATE_GUILD_EXPRESSIONS: '8796093022208',
-	VIEW_AUDIT_LOG: '128',
-	VIEW_CHANNEL: '1024',
-	VIEW_GUILD_ANALYTICS: '524288',
-	VIEW_CREATOR_MONETIZATION_ANALYTICS: '2199023255552',
-	MODERATE_MEMBERS: '1099511627776',
-	USE_EMBEDDED_ACTIVITIES: '549755813888',
-	SEND_MESSAGES: '2048',
-	SEND_TTS_MESSAGES: '4096',
-	MANAGE_MESSAGES: '8192',
-	EMBED_LINKS: '16384',
-	ATTACH_FILES: '32768',
-	READ_MESSAGE_HISTORY: '65536',
-	MENTION_EVERYONE: '131072',
-	USE_EXTERNAL_EMOJIS: '262144',
-	ADD_REACTIONS: '64',
-	USE_APPLICATION_COMMANDS: '2147483648',
-	MANAGE_THREADS: '17179869184',
-	CREATE_PUBLIC_THREADS: '34359738368',
-	CREATE_PRIVATE_THREADS: '68719476736',
-	USE_EXTERNAL_STICKERS: '137438953472',
-	SEND_MESSAGES_IN_THREADS: '274877906944',
-	SEND_VOICE_MESSAGES: '70368744177664',
-	USE_CLYDE_AI: '140737488355328',
-	CONNECT: '1048576',
-	SPEAK: '2097152',
-	MUTE_MEMBERS: '4194304',
-	DEAFEN_MEMBERS: '8388608',
-	MOVE_MEMBERS: '16777216',
-	USE_VAD: '33554432',
-	PRIORITY_SPEAKER: '256',
-	STREAM: '512',
-	USE_SOUNDBOARD: '4398046511104',
-	USE_EXTERNAL_SOUNDS: '35184372088832',
-	SET_VOICE_CHANNEL_STATUS: '281474976710656',
-	REQUEST_TO_SPEAK: '4294967296',
-	MANAGE_EVENTS: '8589934592',
-	CREATE_EVENTS: '17592186044416',
-}).forEach(([k, v]) => (PermissionsDiscord.FLAGS[k] = BigInt(v)));
-// Object.entries(Vencord.Webpack.Common.PermissionsBits).forEach(([k,v]) => a[k]=v)
-PermissionsDiscord.ALL = Object.values(PermissionsDiscord.FLAGS).reduce(
-	(all, p) => all | p,
-	0n,
-);
-PermissionsDiscord.DEFAULT = BigInt(104324673);
-PermissionsDiscord.defaultBit = BigInt(0);
-// Discord.js Bitfield
-function checkPermissionGuild(guild, channel, member) {
-	if (guild.ownerId == (member?.user?.id || member.userId))
-		return new PermissionsDiscord(PermissionsDiscord.ALL).freeze();
-	const roles = Object.keys(guild.roles).filter(
-		(r) => member.roles.includes(r) || r == guild.id,
-	);
-	const permissions = new PermissionsDiscord(
-		roles.map((role) => guild.roles[role].permissions),
-	);
-	if (permissions.has(PermissionsDiscord.FLAGS.ADMINISTRATOR)) {
-		return new PermissionsDiscord(PermissionsDiscord.ALL).freeze();
-	}
-	const overwrites = overwritesFor(member, roles, channel);
-	return permissions
-		.remove(overwrites.everyone?.deny ?? PermissionsDiscord.defaultBit)
-		.add(overwrites.everyone?.allow ?? PermissionsDiscord.defaultBit)
-		.remove(
-			overwrites.roles.length > 0
-				? overwrites.roles.map((role) => role.deny)
-				: PermissionsDiscord.defaultBit,
-		)
-		.add(
-			overwrites.roles.length > 0
-				? overwrites.roles.map((role) => role.allow)
-				: PermissionsDiscord.defaultBit,
-		)
-		.remove(overwrites.member?.deny ?? PermissionsDiscord.defaultBit)
-		.add(overwrites.member?.allow ?? PermissionsDiscord.defaultBit)
-		.freeze();
-}
-
-function overwritesFor(member, roles, channel) {
-	if (!member) return [];
-	const roleOverwrites = [];
-	let memberOverwrites;
-	let everyoneOverwrites;
-
-	for (const overwrite of Object.values(channel.permissionOverwrites)) {
-		if (overwrite.id === channel.guild_id) {
-			everyoneOverwrites = overwrite;
-		} else if (roles.includes(overwrite.id)) {
-			roleOverwrites.push(overwrite);
-		} else if (overwrite.id === (member?.user?.id || member.userId)) {
-			memberOverwrites = overwrite;
-		}
-	}
-
-	return {
-		everyone: everyoneOverwrites,
-		roles: roleOverwrites,
-		member: memberOverwrites,
-	};
-}
 // Replace Login Screen
 var i;
 function recreateNode(el) {
@@ -396,7 +251,7 @@ function getThreadMembers(threadId) {
       ACTIVITY_APPLICATION_HOST: 'discordsays.com',
       PROJECT_ENV: 'production',
       REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
-      SENTRY_TAGS: {"buildId":"739ec787cb5f68ad2feb79c98a96b9ee4786fc0a","buildType":"normal"},
+      SENTRY_TAGS: {"buildId":"ede2af38790d4d06db86eca0df1233338e14842e","buildType":"normal"},
       MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
       MIGRATION_DESTINATION_ORIGIN: window.location.protocol + '//' + window.location.host,
       HTML_TIMESTAMP: Date.now(),
@@ -554,4 +409,4 @@ function getThreadMembers(threadId) {
 </script></main>
     <script>window.__OVERLAY__=/overlay/.test(location.pathname)</script><script>window.__BILLING_STANDALONE__=/^\/billing/.test(location.pathname)</script>  
 
-<link href="/assets/shared.029433dcb4ff23527520.css" rel="stylesheet"><script src="/assets/shared.0d0f6214b4c59ff15adf.js" defer=""></script><script src="/assets/app.344d5cd79d35636cdadc.js" defer=""></script><link href="/assets/app.ba80cdb613b4e6752123.css" rel="stylesheet"><script src="/assets/22918.9f2b9d54bbfc371a4d92.js" defer=""></script><script src="/assets/21396.259a270b7e3f8803a333.js" defer=""></script><script src="/assets/13798.6a2a5ac1a86675c94b6c.js" defer=""></script><script src="/assets/63550.a619020e4c7b3d5be7ac.js" defer=""></script><script src="/assets/482.6e1c86f88a37a71d42ec.js" defer=""></script><script src="/assets/19263.fe32553ff71153cb7656.js" defer=""></script><script src="/assets/10991.d742d0d238c0d99e96ae.js" defer=""></script><script src="/assets/20117.7c4ea5cd4685b0442b9f.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/31897.ec700144df6b20f401cb.js" defer=""></script><script src="/assets/3462.b08583489e001a69805d.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/64999.3c0486790babc24c66a4.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/53706.c13e855ace8621f4cbe9.js" defer=""></script><script src="/assets/25653.f1981721227784f0166e.js" defer=""></script><script src="/assets/65632.943fa92709b9910cd5e8.js" defer=""></script><script src="/assets/46318.26a20b3d6c9d947ee7c5.js" defer=""></script><script src="/assets/14875.ba44eb6f1396bf220735.js" defer=""></script><script src="/assets/75851.82c9a7f8176d778029e3.js" defer=""></script><script src="/assets/5486.1bbb0b409999b3345c7d.js" defer=""></script><script src="/assets/47387.3a8b4da46182111dbaa7.js" defer=""></script><script src="/assets/31717.0a0e31f5be65b10ca0d9.js" defer=""></script><script src="/assets/30982.a6d605c291ff090be83b.js" defer=""></script><script src="/assets/34426.589b6139887b40d85a8d.js" defer=""></script><script src="/assets/41831.ad048c0163425aea4d2e.js" defer=""></script><script src="/assets/43870.0bfb9a80f88725fba82a.js" defer=""></script><script src="/assets/21251.53ab0c5528227dd7fe1e.js" defer=""></script><script src="/assets/48590.3c8ba7ec46e5c315c058.js" defer=""></script><script src="/assets/86480.ebf8826a7f33e22a6aba.js" defer=""></script><script src="/assets/18407.d0257553d76c1da19de7.js" defer=""></script><script src="/assets/37580.f4011cf1c76f3c28f15f.js" defer=""></script><script src="/assets/75676.8481ee3ef6c0d7c670c6.js" defer=""></script><script src="/assets/99742.0e4adf3d9577f74ac595.js" defer=""></script><script src="/assets/47146.14b04fbabb2e15d96fb8.js" defer=""></script><script src="/assets/8240.6db5943ea811723a8032.js" defer=""></script><script src="/assets/95185.5e98663c6a751ef7771e.js" defer=""></script><script src="/assets/78193.59c58329071f325c3275.js" defer=""></script><script src="/assets/74836.b991877dde75f9619c99.js" defer=""></script><script src="/assets/32782.5d00908c88b18eb9ed1e.js" defer=""></script><script src="/assets/94816.735d85d3cd81236d29b3.js" defer=""></script><script src="/assets/37102.04489c88475d6b93636f.js" defer=""></script><script src="/assets/60499.f4345dabc7337938ebde.js" defer=""></script><script src="/assets/54314.0f71efde7d99ff587fee.js" defer=""></script><script src="/assets/49191.5b151c54082714d18094.js" defer=""></script><script src="/assets/22198.555a8f2b024a4d55fbe4.js" defer=""></script><script src="/assets/5399.67b6fe86854bee062580.js" defer=""></script><script src="/assets/56145.258cb168d37b45cde821.js" defer=""></script><script src="/assets/23777.9e9e7da77fb7df223e53.js" defer=""></script><script src="/assets/77015.db695861e124dc179b8e.js" defer=""></script><script src="/assets/4453.dca020b41417f9b01ee6.js" defer=""></script><script src="/assets/62768.6bd5173b2497c40223e0.js" defer=""></script><script src="/assets/80083.7fd81fb4889aa662cd19.js" defer=""></script><script src="/assets/66888.79756ea63981ab2a6341.js" defer=""></script><script src="/assets/38081.70b6f68983fc3d77fdd3.js" defer=""></script><script src="/assets/5687.a724fe30cb6ff469c19a.js" defer=""></script><script src="/assets/89261.02ed5e657cba70087452.js" defer=""></script><script src="/assets/26737.36ed5a81390b304d18a5.js" defer=""></script><script src="/assets/81161.4cbf8610aaecd98b5550.js" defer=""></script><script src="/assets/87140.141917e3b4392f49a9f0.js" defer=""></script><script src="/assets/47498.38da6b2cf2f487359536.js" defer=""></script><script src="/assets/42266.ff8d29739f86c99a41bf.js" defer=""></script><script src="/assets/6086.2af42e57fcf6739db519.js" defer=""></script><script src="/assets/64612.26d2bf1afbde26a43a76.js" defer=""></script><script src="/assets/87475.151452774d41b5ee059c.js" defer=""></script><script src="/assets/28413.4812d79703c86a531f70.js" defer=""></script><script src="/assets/31421.ced40b898074b2c19b15.js" defer=""></script><script src="/assets/77666.dee19f95c524dd006f98.js" defer=""></script><script src="/assets/18409.0bfb9f6ae3cad3c48d49.js" defer=""></script><script src="/assets/78891.49d43d53f7ab722777d3.js" defer=""></script><script src="/assets/8608.36f3070721d34b25d956.js" defer=""></script><script src="/assets/98346.ad583a16f2c123df7a30.js" defer=""></script><script src="/assets/10716.bcccef800d16c68ae0c0.js" defer=""></script><script src="/assets/12896.559076ab66dc3ab780b4.js" defer=""></script><script src="/assets/41875.02628618e0c7e88c4368.js" defer=""></script><script src="/assets/53509.d075f1bff85f12b95485.js" defer=""></script><script src="/assets/68236.13baa29c5d54b14331be.js" defer=""></script><script src="/assets/90856.923d21fae4e3dfbfbc4e.js" defer=""></script><script src="/assets/7273.dde6b1f1b476e0f29083.js" defer=""></script><script src="/assets/82451.afbcbd0aba0a3cf75eca.js" defer=""></script><script src="/assets/65800.d803fbd4c225782b31d6.js" defer=""></script><script src="/assets/90486.a8e88ceeda5b4aa5b345.js" defer=""></script><script src="/assets/web.59eeea0f70005d618184.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/25653.f1981721227784f0166e.js" defer=""></script><script src="/assets/7273.dde6b1f1b476e0f29083.js" defer=""></script><script src="/assets/sentry.a74cc99e62171b10eccc.js" defer=""></script></body></html>
+<link href="/assets/shared.407347d19adf66fa9e9a.css" rel="stylesheet"><script src="/assets/shared.1d323b75b3dcb90b0448.js" defer=""></script><link href="/assets/app.ddcefae7709a5727f0f1.css" rel="stylesheet"><script src="/assets/app.fdd476b61fe64b37315e.js" defer=""></script><script src="/assets/21396.259a270b7e3f8803a333.js" defer=""></script><script src="/assets/95569.986be2e499cd6f7ea4e7.js" defer=""></script><script src="/assets/80013.fccdb738bf0cecc34db7.js" defer=""></script><script src="/assets/37144.05929cc88bb7d469799d.js" defer=""></script><script src="/assets/42966.e7ea5562227b83bb0ce1.js" defer=""></script><script src="/assets/46224.001f28ac67d0eec68d7b.js" defer=""></script><script src="/assets/22918.9f2b9d54bbfc371a4d92.js" defer=""></script><script src="/assets/20117.7c4ea5cd4685b0442b9f.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/31897.ec700144df6b20f401cb.js" defer=""></script><script src="/assets/63229.046761182704b71c078f.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/92967.53fedfc33eea05f2e0a4.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/53706.c13e855ace8621f4cbe9.js" defer=""></script><script src="/assets/87915.b78550810f51be03a42f.js" defer=""></script><script src="/assets/85035.f38a1a02c45d76d67ea6.js" defer=""></script><script src="/assets/46318.26a20b3d6c9d947ee7c5.js" defer=""></script><script src="/assets/14875.61385e4f0ca6f221ddc8.js" defer=""></script><script src="/assets/21251.8273829d10e610575c69.js" defer=""></script><script src="/assets/34426.13b837c1d54aa323779b.js" defer=""></script><script src="/assets/41831.a3fac9e35abf8bb49eca.js" defer=""></script><script src="/assets/89904.a8efed4a1a4dd8bea112.js" defer=""></script><script src="/assets/72683.7bf97655c399c556f485.js" defer=""></script><script src="/assets/28727.cc9d44af91804b0e786e.js" defer=""></script><script src="/assets/93492.aa355f688d52a2b9a9bf.js" defer=""></script><script src="/assets/43870.4a63d430baa0c834c3f9.js" defer=""></script><script src="/assets/18407.3e22fc53a1eaa3bffb14.js" defer=""></script><script src="/assets/47146.3419ac9df628f3859d87.js" defer=""></script><script src="/assets/61950.5ddcaf03cc4b743b7a77.js" defer=""></script><script src="/assets/23777.7052f9ee0ba5f8b9859c.js" defer=""></script><script src="/assets/31337.3a4e405a603570d1cac3.js" defer=""></script><script src="/assets/98281.f2ff7c47bb45e261d995.js" defer=""></script><script src="/assets/90904.8dddb08ee019ffe41161.js" defer=""></script><script src="/assets/83257.49b66b6b236e1a8153f9.js" defer=""></script><script src="/assets/44504.285045bf277366f5ebd2.js" defer=""></script><script src="/assets/58533.905dede5cdbbedf50fce.js" defer=""></script><script src="/assets/60499.503ab84a0a5310db59fb.js" defer=""></script><script src="/assets/94726.b92e0fb0a16a886d5116.js" defer=""></script><script src="/assets/60053.0ba0d3e85bbed4e9804e.js" defer=""></script><script src="/assets/86416.ff8b0c23f04993e97edd.js" defer=""></script><script src="/assets/60568.7c13f969e150bbf0720b.js" defer=""></script><script src="/assets/30791.3330a7487a797de2909a.js" defer=""></script><script src="/assets/12108.2ffc303b04df908b5b3b.js" defer=""></script><script src="/assets/26737.36ed5a81390b304d18a5.js" defer=""></script><script src="/assets/81161.3f1fbfe502c7a08389e8.js" defer=""></script><script src="/assets/23065.2857908bb1cd95e2b6dd.js" defer=""></script><script src="/assets/45109.0eaaf97b8a8eceb5d421.js" defer=""></script><script src="/assets/6086.57eee01cfa97489d9289.js" defer=""></script><script src="/assets/87475.e9d901ebb87af1e5ab92.js" defer=""></script><script src="/assets/55639.f3cc9ab1f7c81c8b932c.js" defer=""></script><script src="/assets/64612.9a1ddaa5961bd1fdc234.js" defer=""></script><script src="/assets/67925.013a45b8f9e1f05cab39.js" defer=""></script><script src="/assets/77434.08d2278e6605343f3df8.js" defer=""></script><script src="/assets/64228.e68a9bc875d26e9d8d1d.js" defer=""></script><script src="/assets/78891.ce18a4638e53d286858d.js" defer=""></script><script src="/assets/46072.82df3cb3add1165b183e.js" defer=""></script><script src="/assets/10716.16aa8ecd6dd985eae473.js" defer=""></script><script src="/assets/46150.e65877333a0dba826214.js" defer=""></script><script src="/assets/12896.4027a215c98852bd19ca.js" defer=""></script><script src="/assets/53509.d075f1bff85f12b95485.js" defer=""></script><script src="/assets/23360.8499c79d3e9fd31d6f89.js" defer=""></script><script src="/assets/94504.255083514b91956f5696.js" defer=""></script><script src="/assets/7273.bc95d43b83141d62a232.js" defer=""></script><script src="/assets/12973.8b125ca56633acce00bf.js" defer=""></script><script src="/assets/65800.e5783df1b5c507083376.js" defer=""></script><script src="/assets/76039.29b5105bd09bfeabb7a0.js" defer=""></script><script src="/assets/web.8a567bac75b19c01df07.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/87915.b78550810f51be03a42f.js" defer=""></script><script src="/assets/7273.bc95d43b83141d62a232.js" defer=""></script><script src="/assets/sentry.c11da37463c2dfdd6e8f.js" defer=""></script></body></html>

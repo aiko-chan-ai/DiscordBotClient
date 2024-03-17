@@ -21,15 +21,10 @@ It really motivates me to work on the project! <:elylove:1065888090549407785>`,
 				timestamp: '2022-12-31T17:00:00+00:00',
 				author: {
 					name: 'Foreword',
-					icon_url:
-						'https://cdn.discordapp.com/attachments/878276279105884210/1071796241765240862/LINE_nachonekodayo_005.png',
-					proxy_icon_url:
-						'https://media.discordapp.net/attachments/878276279105884210/1071796241765240862/LINE_nachonekodayo_005.png',
+					icon_url: 'https://i.imgur.com/ThXsjjS.png',
 				},
 				thumbnail: {
 					url: 'https://cdn.discordapp.com/avatars/1056491867375673424/93fb88f6b8c0a2a33c437d0fff4c6625.png',
-					proxy_url:
-						'https://images-ext-2.discordapp.net/external/BbiJ0GLoefkW4PlPBsmxh7GfKALUE2XI2Ax7fFLCIo4/https/cdn.discordapp.com/avatars/1056491867375673424/93fb88f6b8c0a2a33c437d0fff4c6625.png',
 					width: 128,
 					height: 128,
 				},

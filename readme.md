@@ -141,11 +141,11 @@ Logging in works via the UI on first startup of the application.
 
 | Discord Build | Hash | Vencord | Discord Bot Client | Status |
 | --- | --- | --- | --- | --- |
-| Stable 275565 | ede2af3 | v1.7.2 | v3.2 | Latest |
-| Stable 263796 | 739ec78 | v1.6.7 | v3.1 | Deprecated |
-| Stable 204762 | 78f82ba | v1.2.8 | v2.4 | EOL |
-| Stable 185832 | 29333f6 | v1.1.4 | v2.1 | EOL |
-| Stable 161052 | c7e0778 | - | v1 | EOL |
+| Stable 275565 | ede2af3 | v1.7.2 | >=v3.2 | Latest |
+| Stable 263796 | 739ec78 | v1.6.7 | >=v3.1 | Deprecated |
+| Stable 204762 | 78f82ba | v1.2.8 | >=v2.4 | EOL |
+| Stable 185832 | 29333f6 | v1.1.4 | >=v2.1 | EOL |
+| Stable 161052 | c7e0778 | - | >=v1 | EOL |
 
 
 

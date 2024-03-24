@@ -14,8 +14,9 @@ module.exports = function (app) {
 	app.use((req, res, next) => {
 		if (req.originalUrl.endsWith('.map')) return res.status(404).send();
 		if (blacklist.some((_) => req.originalUrl.includes(_)))
-			return res.status(404).send({
-				message: "Bot can't use this endpoint (blocked)",
+			return res.status(403).send({
+				message: 'Bots cannot use this endpoint (blocked)',
+				code: 20001
 			});
 		if (req.originalUrl.includes('/bot/api')) {
 			return req

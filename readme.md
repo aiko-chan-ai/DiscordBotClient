@@ -207,3 +207,5 @@ Big thanks to [ChrisEric](https://github.com/CE1CECL) for helping me create a lo
 This project was mainly inspired by [SamuelScheit](https://github.com/SamuelScheit)
 [Discord Bot Client](https://github.com/SamuelScheit/discord-bot-client), which he sadly didn't
 develop any further.
+
+And a big thank to [Vencord](https://github.com/Vendicated/Vencord) developers for making it easier for me to create this app

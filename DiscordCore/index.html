@@ -119,74 +119,6 @@ const getIntents = (...removeIntents) =>
 		.flat(2)
 		.map((name) => IntentFlags[name] || 0)
 		.reduce((a, b) => a + b, 0) || 0);
-// Replace Login Screen
-var i;
-function recreateNode(el) {
-	el.parentNode.replaceChild(el.cloneNode(true), el);
-	return document.getElementsByClassName(el.className)[0];
-}
-function getElementByXpath(path) {
-	return document.evaluate(
-		path,
-		document,
-		null,
-		XPathResult.FIRST_ORDERED_NODE_TYPE,
-		null,
-	).singleNodeValue;
-}
-function replaceLoginScreen() {
-	let buttonLogin = document.querySelector(
-		'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom8_f4aae3.button__47891.button_afdfd9.lookFilled__19298.colorBrand_b2253e.sizeLarge__9049d.fullWidth__7c3e8.grow__4c8a4',
-	);
-	if (buttonLogin) {
-		clearInterval(i);
-		buttonLogin = recreateNode(buttonLogin);
-		buttonLogin.addEventListener('click', () => {
-			const input = document.querySelectorAll(
-				'[class*="inputDefault"]',
-			)[0];
-			Vencord.Webpack.findByProps('loginToken').loginToken(input.value);
-		});
-		const email = document.querySelector(
-			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.mainLoginContainer__58502 > div.block__8bc50.marginTop20_d88ee7 > div.marginBottom20__64605',
-		);
-		email.parentElement.removeChild(email);
-		const input_ = document.querySelector('#\\:r2\\:');
-		if (!input_) return;
-		input_.innerHTML = `Bot Token`;
-		input_.id = 'token';
-		const QR = document.querySelector(
-			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.transitionGroup__9763d.qrLogin_ce8b2d',
-		);
-		QR.parentElement.removeChild(QR);
-		const dot = document.querySelector(
-			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div.verticalSeparator_af74b3',
-		);
-		dot.parentElement.removeChild(dot);
-		const need_an_acc = document.querySelector(
-			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > div.marginTop4__3faba > span',
-		);
-		need_an_acc.innerHTML = 'Need a bot?';
-		let reg = document.querySelector(
-			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > div.marginTop4__3faba > button',
-		);
-		reg.innerHTML = 'Create one here';
-		reg = recreateNode(reg);
-		reg.addEventListener('click', () => {
-			window.open('https://discord.com/developers/applications');
-		});
-		let forgot_pw = document.querySelector(
-			'#app-mount > div.appAsidePanelWrapper__714a6 > div.notAppAsidePanel__9d124 > div.app_b1f720 > div > div > div > div > form > div.centeringWrapper__319b0 > div > div > div.block__8bc50.marginTop20_d88ee7 > button.marginBottom20__64605.marginTop4__3faba.linkButton_ba7970.button_afdfd9.lookLink__93965.lowSaturationUnderline__95e71.colorLink_b651e5.sizeMin__94642.grow__4c8a4',
-		);
-		forgot_pw.innerHTML = '';
-	}
-}
-i = setInterval(() => {
-	if (!window.Vencord) {
-		return;
-	}
-	replaceLoginScreen();
-}, 250);
 // Vencord
 function showToast(message, type, { position, timeout } = {}) {
 	Vencord.Webpack.Common.Toasts.show({
@@ -224,8 +156,10 @@ function getThreadMembers(threadId) {
     <!-- section:seometa -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Discord">
-    <meta property="og:title" content="Discord - A New Way to Chat with Friends &amp; Communities">
-    <meta property="og:description" content="Discord is the easiest way to communicate over voice, video, and text.  Chat, hang out, and stay close with your friends and communities.">    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:title" content="Discord - Group Chat That’s All Fun &amp; Games">
+    <meta property="og:description" content="Discord is great for playing games and chilling with friends, or even building a worldwide community. Customize your own space to talk, play, and hang out.">
+    <meta property="og:image" content="https://cdn.discordapp.com/assets/og_img_discord_home.png">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@discord">
     <meta name="twitter:creator" content="@discord">
     <!-- endsection --><script>window.GLOBAL_ENV = {
@@ -251,16 +185,16 @@ function getThreadMembers(threadId) {
       ACTIVITY_APPLICATION_HOST: 'discordsays.com',
       PROJECT_ENV: 'production',
       REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
-      SENTRY_TAGS: {"buildId":"ede2af38790d4d06db86eca0df1233338e14842e","buildType":"normal"},
+      SENTRY_TAGS: {"buildId":"366c746173a6ca0a801e9f4a4d7b6745e6de45d4","buildType":"normal"},
       MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
       MIGRATION_DESTINATION_ORIGIN: window.location.protocol + '//' + window.location.host,
       HTML_TIMESTAMP: Date.now(),
       ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
       PUBLIC_PATH: '/assets/'
-    };</script><script>!function(){if(null!=window.WebSocket){if(function(n){try{var e=localStorage.getItem(n);return null==e?null:JSON.parse(e)}catch(n){return null}}("token")&&!window.__OVERLAY__){var n=null!=window.DiscordNative||null!=window.require?"etf":"json",e=window.GLOBAL_ENV.GATEWAY_ENDPOINT+"/?encoding="+n+"&v="+window.GLOBAL_ENV.API_VERSION+"&compress=zlib-stream";console.log("[FAST CONNECT] connecting to: "+e);var o=new WebSocket(e);o.binaryType="arraybuffer";var t=Date.now(),i={open:!1,identify:!1,gateway:e,messages:[]};o.onopen=function(){console.log("[FAST CONNECT] connected in "+(Date.now()-t)+"ms"),i.open=!0},o.onclose=o.onerror=function(){window._ws=null},o.onmessage=function(n){i.messages.push(n)},window._ws={ws:o,state:i}}}}()</script>    <!-- section:title -->
+    };</script><script>!function(){if(null==window.WebSocket)return;var n=function(n){try{var o=localStorage.getItem(n);return null==o?null:JSON.parse(o)}catch(n){return null}};if(!n("token")||window.__OVERLAY__)return;var o=null!=window.DiscordNative||null!=window.require?"etf":"json",e=window.GLOBAL_ENV.GATEWAY_ENDPOINT+"/?encoding="+o+"&v="+window.GLOBAL_ENV.API_VERSION;"true"===n("zstd_fast_connect")&&null!=window.DiscordNative&&void 0!==window.Uint8Array&&void 0!==window.TextDecoder?e+="&compress=zstd-stream":void 0!==window.Uint8Array&&(e+="&compress=zlib-stream"),console.log("[FAST CONNECT] "+e+", encoding: "+o+", version: "+window.GLOBAL_ENV.API_VERSION);var i=new WebSocket(e);i.binaryType="arraybuffer";var r=Date.now(),t={open:!1,identify:!1,gateway:e,messages:[]};i.onopen=function(){console.log("[FAST CONNECT] connected in "+(Date.now()-r)+"ms"),t.open=!0},i.onclose=i.onerror=function(){window._ws=null},i.onmessage=function(n){t.messages.push(n)},window._ws={ws:i,state:t}}()</script>    <!-- section:title -->
     <title>Discord</title>
     <!-- endsection -->
-  <link rel="icon" href="/assets/images/favicon.ico"></head>
+  <link rel="icon" href="/assets/images/favicon.ico"><link href="/assets/49237.317db335fa015aa1aa55.css" rel="stylesheet"><link href="/assets/99387.ef985c7ad7fff8e60026.css" rel="stylesheet"></head>
   <body><style id="css-bot-client">.titlebar > .title {
 	-webkit-app-region: drag;
 }
@@ -409,4 +343,4 @@ function getThreadMembers(threadId) {
 </script></main>
     <script>window.__OVERLAY__=/overlay/.test(location.pathname)</script><script>window.__BILLING_STANDALONE__=/^\/billing/.test(location.pathname)</script>  
 
-<link href="/assets/shared.407347d19adf66fa9e9a.css" rel="stylesheet"><script src="/assets/shared.1d323b75b3dcb90b0448.js" defer=""></script><link href="/assets/app.ddcefae7709a5727f0f1.css" rel="stylesheet"><script src="/assets/app.fdd476b61fe64b37315e.js" defer=""></script><script src="/assets/21396.259a270b7e3f8803a333.js" defer=""></script><script src="/assets/95569.986be2e499cd6f7ea4e7.js" defer=""></script><script src="/assets/80013.fccdb738bf0cecc34db7.js" defer=""></script><script src="/assets/37144.05929cc88bb7d469799d.js" defer=""></script><script src="/assets/42966.e7ea5562227b83bb0ce1.js" defer=""></script><script src="/assets/46224.001f28ac67d0eec68d7b.js" defer=""></script><script src="/assets/22918.9f2b9d54bbfc371a4d92.js" defer=""></script><script src="/assets/20117.7c4ea5cd4685b0442b9f.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/31897.ec700144df6b20f401cb.js" defer=""></script><script src="/assets/63229.046761182704b71c078f.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/92967.53fedfc33eea05f2e0a4.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/53706.c13e855ace8621f4cbe9.js" defer=""></script><script src="/assets/87915.b78550810f51be03a42f.js" defer=""></script><script src="/assets/85035.f38a1a02c45d76d67ea6.js" defer=""></script><script src="/assets/46318.26a20b3d6c9d947ee7c5.js" defer=""></script><script src="/assets/14875.61385e4f0ca6f221ddc8.js" defer=""></script><script src="/assets/21251.8273829d10e610575c69.js" defer=""></script><script src="/assets/34426.13b837c1d54aa323779b.js" defer=""></script><script src="/assets/41831.a3fac9e35abf8bb49eca.js" defer=""></script><script src="/assets/89904.a8efed4a1a4dd8bea112.js" defer=""></script><script src="/assets/72683.7bf97655c399c556f485.js" defer=""></script><script src="/assets/28727.cc9d44af91804b0e786e.js" defer=""></script><script src="/assets/93492.aa355f688d52a2b9a9bf.js" defer=""></script><script src="/assets/43870.4a63d430baa0c834c3f9.js" defer=""></script><script src="/assets/18407.3e22fc53a1eaa3bffb14.js" defer=""></script><script src="/assets/47146.3419ac9df628f3859d87.js" defer=""></script><script src="/assets/61950.5ddcaf03cc4b743b7a77.js" defer=""></script><script src="/assets/23777.7052f9ee0ba5f8b9859c.js" defer=""></script><script src="/assets/31337.3a4e405a603570d1cac3.js" defer=""></script><script src="/assets/98281.f2ff7c47bb45e261d995.js" defer=""></script><script src="/assets/90904.8dddb08ee019ffe41161.js" defer=""></script><script src="/assets/83257.49b66b6b236e1a8153f9.js" defer=""></script><script src="/assets/44504.285045bf277366f5ebd2.js" defer=""></script><script src="/assets/58533.905dede5cdbbedf50fce.js" defer=""></script><script src="/assets/60499.503ab84a0a5310db59fb.js" defer=""></script><script src="/assets/94726.b92e0fb0a16a886d5116.js" defer=""></script><script src="/assets/60053.0ba0d3e85bbed4e9804e.js" defer=""></script><script src="/assets/86416.ff8b0c23f04993e97edd.js" defer=""></script><script src="/assets/60568.7c13f969e150bbf0720b.js" defer=""></script><script src="/assets/30791.3330a7487a797de2909a.js" defer=""></script><script src="/assets/12108.2ffc303b04df908b5b3b.js" defer=""></script><script src="/assets/26737.36ed5a81390b304d18a5.js" defer=""></script><script src="/assets/81161.3f1fbfe502c7a08389e8.js" defer=""></script><script src="/assets/23065.2857908bb1cd95e2b6dd.js" defer=""></script><script src="/assets/45109.0eaaf97b8a8eceb5d421.js" defer=""></script><script src="/assets/6086.57eee01cfa97489d9289.js" defer=""></script><script src="/assets/87475.e9d901ebb87af1e5ab92.js" defer=""></script><script src="/assets/55639.f3cc9ab1f7c81c8b932c.js" defer=""></script><script src="/assets/64612.9a1ddaa5961bd1fdc234.js" defer=""></script><script src="/assets/67925.013a45b8f9e1f05cab39.js" defer=""></script><script src="/assets/77434.08d2278e6605343f3df8.js" defer=""></script><script src="/assets/64228.e68a9bc875d26e9d8d1d.js" defer=""></script><script src="/assets/78891.ce18a4638e53d286858d.js" defer=""></script><script src="/assets/46072.82df3cb3add1165b183e.js" defer=""></script><script src="/assets/10716.16aa8ecd6dd985eae473.js" defer=""></script><script src="/assets/46150.e65877333a0dba826214.js" defer=""></script><script src="/assets/12896.4027a215c98852bd19ca.js" defer=""></script><script src="/assets/53509.d075f1bff85f12b95485.js" defer=""></script><script src="/assets/23360.8499c79d3e9fd31d6f89.js" defer=""></script><script src="/assets/94504.255083514b91956f5696.js" defer=""></script><script src="/assets/7273.bc95d43b83141d62a232.js" defer=""></script><script src="/assets/12973.8b125ca56633acce00bf.js" defer=""></script><script src="/assets/65800.e5783df1b5c507083376.js" defer=""></script><script src="/assets/76039.29b5105bd09bfeabb7a0.js" defer=""></script><script src="/assets/web.8a567bac75b19c01df07.js" defer=""></script><script src="/assets/58409.1811376ebb7f14b0be53.js" defer=""></script><script src="/assets/3341.1a1f8595a0c8fc9f99cf.js" defer=""></script><script src="/assets/47470.91c2d89ebc10ef7a8bdd.js" defer=""></script><script src="/assets/22843.1bda3edd4dd152273661.js" defer=""></script><script src="/assets/94288.dbd73ecb6b1482a870b7.js" defer=""></script><script src="/assets/87915.b78550810f51be03a42f.js" defer=""></script><script src="/assets/7273.bc95d43b83141d62a232.js" defer=""></script><script src="/assets/sentry.c11da37463c2dfdd6e8f.js" defer=""></script></body></html>
+<script src="/assets/shared.91f5e5212cf913aba4b1.js" defer=""></script><script src="/assets/app.26c4f18bbe469e33e7fe.js" defer=""></script><script src="/assets/24217.fbecbc1d6a974fbc777e.js" defer=""></script><script src="/assets/62734.1842567f24c7a0ab79a3.js" defer=""></script><script src="/assets/42482.ebf02118101938cf19bb.js" defer=""></script><script src="/assets/43455.25f3dd89fa027ef12b67.js" defer=""></script><script src="/assets/64787.359c4aba4bf61ba67cc0.js" defer=""></script><script src="/assets/2797.a012718ee3dfd4179128.js" defer=""></script><script src="/assets/31058.10ea61b8e142bfffc0a6.js" defer=""></script><script src="/assets/32948.13a95aa215868708b012.js" defer=""></script><script src="/assets/84471.710b2b031ffb244cf14a.js" defer=""></script><script src="/assets/70397.226bb847204914e85d62.js" defer=""></script><script src="/assets/42458.8c6a508704e312abdb17.js" defer=""></script><script src="/assets/54807.02a495f2957ff8e9a573.js" defer=""></script><script src="/assets/web.e0f9385beb7d6469cd71.js" defer=""></script><script src="/assets/24217.fbecbc1d6a974fbc777e.js" defer=""></script><script src="/assets/62734.1842567f24c7a0ab79a3.js" defer=""></script><script src="/assets/43455.25f3dd89fa027ef12b67.js" defer=""></script><script src="/assets/84471.710b2b031ffb244cf14a.js" defer=""></script><script src="/assets/sentry.292dc3ec160597fcfa85.js" defer=""></script></body></html>

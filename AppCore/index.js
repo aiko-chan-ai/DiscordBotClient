@@ -181,6 +181,18 @@ async function createWindow() {
 		if (url === `https://localhost:${port}/popout`) {
 			return {
 				action: 'allow',
+				overrideBrowserWindowOptions: {
+					parent: win,
+					modal: true,
+					icon: nativeImage
+						.createFromPath(iconPath)
+						.resize({ width: 128 }),
+					autoHideMenuBar: true,
+					width: 800,
+					height: 600,
+					minWidth: 800,
+					minHeight: 600,
+				},
 			};
 		}
 		shell.openExternal(url);

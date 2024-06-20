@@ -1,10 +1,10 @@
 const { Router } = require('express');
-const request = require('request');
+const fetch = require('node-fetch');
 
 const app = Router();
 
 app.get('/*', (req, res) => {
-	return req.pipe(request('https://discord.com' + req.originalUrl)).pipe(res);
+	fetch('https://discord.com/popout').then(r => r.text()).then(t => res.send(t));
 });
 
 module.exports = app;

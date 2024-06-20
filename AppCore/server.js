@@ -78,6 +78,7 @@ BigInt.prototype.toJSON = function () {
 };
 
 async function start(port, win) {
+	if (require('../package.json').testVencord) return 2024;
 	// Reg Route
 	lambertServer.registerRoutes(path.resolve(__dirname, `routes`) + path.sep);
 	// re-def
@@ -122,16 +123,18 @@ async function start(port, win) {
 	otherRoute(app);
 
 	return new Promise((resolve, reject) => {
+		const callback = () => {
+			const address = server.address();
+			resolve(address.port);
+			console.log(
+				`Server listening on https://localhost:${address.port}`,
+			);
+		};
 		server
 			.listen(port)
-			.once('listening', () => {
-				const address = server.address();
-				resolve(address.port);
-				console.log(
-					`Server listening on https://localhost:${address.port}`,
-				);
-			})
+			.once('listening', callback)
 			.once('error', (err) => {
+				server.removeListener("listening", callback);
 				resolve(start(port + 1, win));
 			});
 	});

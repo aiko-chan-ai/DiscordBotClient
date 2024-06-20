@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const fetch = require('node-fetch');
 const path = require('path');
 const fs = require('fs');
+const package = require("../package.json");
 
 const URL = 'https://discord.com/channels/@me';
 
@@ -23,7 +24,7 @@ const createWindow = async () => {
 		.then((r) => r.text())
 		.then((text) => {
 			fs.writeFileSync(HTMLPath, text);
-			require('./patchHTML')();
+			if (!package.testVencord) require('./patchHTML')();
 			const sentry = text
 				.split('\n')
 				.find((s) => s.trim().startsWith('SENTRY_TAGS'));

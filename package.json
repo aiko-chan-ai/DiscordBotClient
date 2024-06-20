@@ -4,6 +4,7 @@
 	"DiscordBuildVersion": 275565,
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
+	"testVencord": false,
 	"dependencies": {
 		"discord-protos": "^1.0.5",
 		"electron-log": "^4.4.8",
@@ -66,7 +67,8 @@
 		"fetchLatestDiscordBuild": "electron scripts/findMainScript.js",
 		"npmVencord": "cd VencordDBC && npm i -f && cd ..",
 		"vencord": "cd VencordDBC && node --require=./scripts/suppressExperimentalWarnings.js scripts/build/buildWeb.mjs && cd ..",
-		"cerf": "openssl req -nodes -new -x509 -keyout server.key -out server.cert -days 3650 -subj \"/CN=localhost\""
+		"cerf": "openssl req -nodes -new -x509 -keyout server.key -out server.cert -days 3650 -subj \"/CN=localhost\"",
+		"test": "npm run vencord & npm run start"
 	},
 	"author": {
 		"name": "aiko-chan-ai",

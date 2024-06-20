@@ -14,6 +14,7 @@ const {
 const log = require('electron-log');
 const path = require('path');
 const fetch = require('node-fetch');
+const os = require('os');
 const {
 	version: VencordVersion,
 } = require('../VencordExtension/manifest.json');
@@ -192,7 +193,11 @@ async function createWindow() {
 	await session.defaultSession.loadExtension(path_);
 	log.info('Vencord-Web Extension loaded, version: ' + VencordVersion);
 
-	win.loadURL(`https://localhost:${port}`);
+	win.loadURL(
+		require('../package.json').testVencord
+			? 'https://canary.discord.com/channels/@me'
+			: `https://localhost:${port}`,
+	);
 
 	win.webContents.on('did-start-loading', () => {
 		win.setProgressBar(2, { mode: 'indeterminate' });
@@ -402,7 +407,15 @@ function checkUpdate(force = false) {
 		)
 			.then((res) => res.json())
 			.then((res) => {
-				if (checkLatestVersion(res.tag_name, app.getVersion())) {
+				if (!app.isPackaged) {
+					createNotification(
+						`Test mode`,
+						`Electron v${app.getVersion()} - ${os.platform()}`,
+						undefined,
+						undefined,
+						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+					);
+				} else if (checkLatestVersion(res.tag_name, app.getVersion())) {
 					createNotification(
 						`New version available: ${res.name}`,
 						`Click here to open the update page`,

@@ -1,6 +1,7 @@
 module.exports = {
 	data1: {
-		versions: { clientVersion: 0, serverVersion: 0, dataVersion: 37 },
+		versions: { clientVersion: 20, serverVersion: 0, dataVersion: 56 },
+		inbox: { currentTab: 0, viewedTutorial: false },
 		voiceAndVideo: {
 			presetOption: 0,
 			afkTimeout: { value: 600 },
@@ -11,7 +12,7 @@ module.exports = {
 			emojiPickerCollapsedSections: [],
 			stickerPickerCollapsedSections: [],
 			soundboardPickerCollapsedSections: [],
-			dmSpamFilterV2: 0,
+			dmSpamFilterV2: 1,
 			inlineAttachmentMedia: { value: true },
 			inlineEmbedMedia: { value: true },
 			gifAutoPlay: { value: true },
@@ -24,7 +25,9 @@ module.exports = {
 			explicitContentFilter: { value: 1 },
 			viewNsfwGuilds: { value: true },
 			convertEmoticons: { value: true },
+			viewNsfwCommands: { value: true },
 		},
+		notifications: { notificationCenterAckedBeforeId: 0n },
 		privacy: {
 			restrictedGuildIds: [],
 			defaultGuildsRestricted: false,
@@ -40,6 +43,7 @@ module.exports = {
 			friendDiscoveryFlags: { value: 0 },
 			hideLegacyUsername: { value: false },
 		},
+		debug: {},
 		gameLibrary: { disableGamesTab: { value: false } },
 		status: {
 			status: { value: 'online' },
@@ -50,7 +54,7 @@ module.exports = {
 			timezoneOffset: { value: -420 },
 		},
 		appearance: {
-			theme: 0,
+			theme: 1,
 			developerMode: true,
 			mobileRedesignDisabled: false,
 		},

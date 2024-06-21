@@ -5,10 +5,10 @@ const app = Router();
 app.get('/', (req, res) => {
 	res.send({
 		personalization: {
-			consented: true,
+			consented: false,
 		},
 		usage_statistics: {
-			consented: true,
+			consented: false,
 		},
 	});
 });

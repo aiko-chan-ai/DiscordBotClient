@@ -18,7 +18,7 @@ And I kid you not, I've never had these many users before!? <a:aqua:857071030689
 <a:mikupaylak:863287070407786516> If you had fun, please leave a star on the [repo](https://github.com/aiko-chan-ai/DiscordBotClient) <:github:889092230063734795>
 It really motivates me to work on the project! <:elylove:1065888090549407785>`,
 				color: 16750296,
-				timestamp: '2022-12-31T17:00:00+00:00',
+				timestamp: '2022-11-29T16:56:00.000Z',
 				author: {
 					name: 'Foreword',
 					icon_url: 'https://i.imgur.com/ThXsjjS.png',

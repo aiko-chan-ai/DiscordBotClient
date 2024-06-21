@@ -16,7 +16,8 @@
 - [Similar projects](#similar-projects)
 - [Credits](#credits)
 
-**WARNING: Third party clients are discouraged and against the Discord TOS.**
+> [!WARNING]
+> **Third party clients are discouraged and against the Discord TOS.**
 
 Discord Bot Client is a custom [Discord](https://discord.com/app) client that aims to
 support bot accounts and be aimed at power-users.
@@ -93,10 +94,12 @@ higher. You can find nodejs packages at https://nodejs.org/en.
 On top of that, you need to have **git** installed. It can be fund at
 https://git-scm.com/downloads.
 
+
 **UPDATES HAVE TO BE INSTALLED MANUALLY**
 
 Open a command line and execute the following commands:
-
+> [!IMPORTANT]
+> Currently the client is using Vencord version 1.8.9, don't update the index.html file to avoid breaking
 ```shell
 git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
@@ -113,10 +116,13 @@ This will create an executable called `DiscordBotClient` or `DiscordBotClient.ex
 
 Logging in works via the UI on first startup of the application.
 
-![screenshot](https://i.imgur.com/jl6dkXa.png)
+![screenshot](https://i.imgur.com/ZGLE2Z8.png)
 
-> **Note**
-> Enable `MessageContent` intent, other intents are optional
+> [!NOTE]
+> Enable `MessageContent` intent, other intents are optional.
+
+> [!TIP]
+> If you want a list of members and status, enable all intents.
 
 ![image](https://i.imgur.com/VENMB1U.png)
 
@@ -139,13 +145,14 @@ Logging in works via the UI on first startup of the application.
 
 ## Version
 
-| Discord Build | Hash | Vencord | Discord Bot Client | Status |
+| Discord Build | Hash | Vencord | Client version | Status |
 | --- | --- | --- | --- | --- |
-| Stable 275565 | ede2af3 | v1.7.2 | >=v3.2 | Latest |
-| Stable 263796 | 739ec78 | v1.6.7 | >=v3.1 | Deprecated |
-| Stable 204762 | 78f82ba | v1.2.8 | >=v2.4 | EOL |
-| Stable 185832 | 29333f6 | v1.1.4 | >=v2.1 | EOL |
-| Stable 161052 | c7e0778 | - | >=v1 | EOL |
+| Stable 302556 | 366c746 | v1.8.9 | v3.3.0 - * | Latest |
+| Stable 275565 | ede2af3 | v1.7.2 | v3.2.0 - v3.2.1 | Deprecated |
+| Stable 263796 | 739ec78 | v1.6.7 | v3.0.0 - v3.1.3 | Deprecated |
+| Stable 204762 | 78f82ba | v1.2.8 | v2.4.0 - v2.4.2 | EOL |
+| Stable 185832 | 29333f6 | v1.1.4 | v2.1.0 - v2.3.1 | EOL |
+| Stable 161052 | c7e0778 | ❌ | v1.0.0 - v2.0.1 | EOL |
 
 
 
@@ -194,6 +201,8 @@ npm run requirement
 ```
 
 3. Download the latest script from Discord
+> [!CAUTION]
+> From Stable version 302556 and above, Discord has changed the Webpack module structure, updating the index.html file will break the client.
 ```sh
 npm run fetchLatestDiscordBuild
 ```
@@ -202,7 +211,7 @@ npm run fetchLatestDiscordBuild
 
 ## Credits
 
-Big thanks to [ChrisEric](https://github.com/CE1CECL) for helping me create a local proxy server! (code)
+Thanks to [ChrisEric](https://github.com/CE1CECL) for helping me create a local proxy server! (code)
 
 This project was mainly inspired by [SamuelScheit](https://github.com/SamuelScheit)
 [Discord Bot Client](https://github.com/SamuelScheit/discord-bot-client), which he sadly didn't

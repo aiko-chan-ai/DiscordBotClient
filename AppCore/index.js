@@ -220,6 +220,18 @@ async function createWindow() {
 		win.setProgressBar(-1);
 	});
 
+	win.webContents.on('console-message', (ev, level, message, line, file) => {
+		if (
+			level == 3 &&
+			message.includes(
+				"Cannot set properties of undefined (setting 'Vencord_settingsDirty')",
+			)
+		) {
+			log.info("Vencord error, reload...");
+			win.reload();
+		}
+	});
+
 	win.on('close', (event) => {
 		if (!shouldQuitApp) {
 			event.preventDefault();

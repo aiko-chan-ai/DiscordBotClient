@@ -36,6 +36,24 @@ class ElectronDatabase {
 	 * Get db (or create)
 	 */
 	get(uid) {
+		const data = this.#get(uid);
+		// Check all props
+		function readProps(object) {
+			const keys = Object.keys(object);
+			for (const key of keys) {
+				if (typeof object[key] === "object") {
+					if ('type' in object[key] && object[key].type == 'Buffer' && 'data' in object[key]) {
+						object[key] = Buffer.from(object[key].data);
+					} else {
+						readProps(object[key]);
+					}
+				}
+			}
+		}
+		readProps(data);
+		return data;
+	}
+	#get(uid) {
 		if (this.#db.has(uid)) {
 			return this.#db.get(uid);
 		} else {
@@ -49,7 +67,7 @@ class ElectronDatabase {
 	 * Set Partial<data>
 	 */
 	set(uid, data) {
-		const oldData = this.get(uid);
+		const oldData = this.#get(uid);
 		const merge = _.merge(oldData, data);
 		this.#db.set(uid, merge);
 		return this.get(uid);

@@ -41,7 +41,9 @@ class ElectronDatabase {
 		function readProps(object) {
 			const keys = Object.keys(object);
 			for (const key of keys) {
-				if (typeof object[key] === "object") {
+				if (key == 'guildFolders') {
+					object[key] = { folders: [], guildPositions: [] };
+				} else if (typeof object[key] === "object") {
 					if ('type' in object[key] && object[key].type == 'Buffer' && 'data' in object[key]) {
 						object[key] = Buffer.from(object[key].data);
 					} else {

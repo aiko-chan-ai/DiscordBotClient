@@ -47,17 +47,10 @@ app.all('/1', (req, res) => {
 		});
 	}
 	const callback = (req, res) => {
-		const decoded = PreloadedUserSettings.fromBase64(req.body.settings);
-		userData.settingProto.data1 = _.merge(
-			userData.settingProto.data1,
-			decoded,
-		);
-		store.set(uid, userData);
+		const decoded = PreloadedUserSettings.fromBase64(req.body?.settings);
+		store.set(uid, decoded);
 		return res.send({
-			settings: PreloadedUserSettings.toBase64({
-				...userData.settingProto.data1,
-				guildFolders: { folders: [], guildPositions: [] },
-			}),
+			settings: PreloadedUserSettings.toBase64(store.get(uid).settingProto.data1),
 		});
 	};
 	return getDataFromRequest(req, res, callback);

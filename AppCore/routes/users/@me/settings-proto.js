@@ -48,7 +48,11 @@ app.all('/1', (req, res) => {
 	}
 	const callback = (req, res) => {
 		const decoded = PreloadedUserSettings.fromBase64(req.body?.settings);
-		store.set(uid, decoded);
+		store.set(uid, {
+			settingProto: {
+				data1: decoded,
+			},
+		});
 		return res.send({
 			settings: PreloadedUserSettings.toBase64(store.get(uid).settingProto.data1),
 		});

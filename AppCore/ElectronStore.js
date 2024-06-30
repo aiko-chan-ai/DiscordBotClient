@@ -62,7 +62,6 @@ class ElectronDatabase {
 	 * Set Partial<data>
 	 */
 	set(uid, data) {
-		if (data.userContent) return this.get(uid);
 		const oldData = this.get(uid);
 		const merge = _.merge(oldData, data);
 		this.#db.set(uid, merge);

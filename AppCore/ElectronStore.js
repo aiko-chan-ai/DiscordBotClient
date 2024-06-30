@@ -2,6 +2,7 @@ const Store = require('electron-store');
 const defaultSetting = require('../AppAssets/SettingProto');
 const _ = require('lodash');
 const { app } = require('electron');
+const SettingProto = require('../AppAssets/SettingProto');
 const store = new Store();
 
 const LatestStorageUpdate = 1711260000000;
@@ -37,22 +38,14 @@ class ElectronDatabase {
 	 */
 	get(uid) {
 		const data = this.#get(uid);
-		// Check all props
-		function readProps(object) {
-			const keys = Object.keys(object);
-			for (const key of keys) {
-				if (key == 'guildFolders') {
-					object[key] = { folders: [], guildPositions: [] };
-				} else if (typeof object[key] === "object") {
-					if ('type' in object[key] && object[key].type == 'Buffer' && 'data' in object[key]) {
-						object[key] = Buffer.from(object[key].data);
-					} else {
-						readProps(object[key]);
-					}
-				}
-			}
+		if (data?.settingProto?.data1) {
+			data.settingProto.data1.guildFolders = {
+				folders: [],
+				guildPositions: [],
+			};
+			data.settingProto.data1.userContent =
+				SettingProto.data1.userContent;
 		}
-		readProps(data);
 		return data;
 	}
 	#get(uid) {
@@ -69,7 +62,8 @@ class ElectronDatabase {
 	 * Set Partial<data>
 	 */
 	set(uid, data) {
-		const oldData = this.#get(uid);
+		if (data.userContent) return this.get(uid);
+		const oldData = this.get(uid);
 		const merge = _.merge(oldData, data);
 		this.#db.set(uid, merge);
 		return this.get(uid);

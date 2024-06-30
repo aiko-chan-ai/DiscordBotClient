@@ -63,6 +63,23 @@ module.exports = {
 			user: {},
 			stream: {},
 		},
+		userContent: {
+			premiumTier0ModalDismissedAt: {
+				seconds: 1668423189n,
+				nanos: 761000000,
+			},
+			guildOnboardingUpsellDismissedAt: {
+				seconds: 1680799930n,
+				nanos: 719000000,
+			},
+			lastDismissedOutboundPromotionStartDate: {
+				value: '2024-06-17T17:00:00.180000+00:00',
+			},
+			dismissedContents: Buffer.from(
+				'ffdbffbffad7b783cea377f2ff50f9fa7c3f8c27feeefff73e60fffffb7df8fc83c7fd7ff7426e3360c3977e4cfbffffffffffff01',
+				'hex',
+			),
+		},
 	},
 	data2: {}, // freq proto
 	data3: {}, // test proto

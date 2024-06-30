@@ -5,7 +5,7 @@ const { app } = require('electron');
 const SettingProto = require('../AppAssets/SettingProto');
 const store = new Store();
 
-const LatestStorageUpdate = 1711260000000;
+const LatestStorageUpdate = 1719725273000;
 
 // Validated
 if (

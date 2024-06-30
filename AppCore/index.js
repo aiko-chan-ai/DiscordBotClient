@@ -225,7 +225,8 @@ async function createWindow() {
 			level == 3 &&
 			message.includes(
 				"Cannot set properties of undefined (setting 'Vencord_settingsDirty')",
-			)
+			) &&
+			app.isPackaged
 		) {
 			log.info("Vencord error, reload...");
 			win.reload();

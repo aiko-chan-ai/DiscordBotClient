@@ -10,40 +10,40 @@ const {
 	screen,
 	ipcMain,
 	Notification,
-} = require('electron');
-const log = require('electron-log');
-const path = require('path');
-const fetch = require('node-fetch');
-const os = require('os');
+} = require("electron");
+const log = require("electron-log");
+const path = require("path");
+const fetch = require("node-fetch");
+const os = require("os");
 const {
 	version: VencordVersion,
-} = require('../VencordExtension/manifest.json');
-const server = require('./server.js');
-const { UserAgent } = require('../AppAssets/Util.js');
-const ApplicationFlags = require('../AppAssets/ApplicationFlags.js');
-const store = require('./ElectronStore.js');
-const { PreloadedUserSettings } = require('discord-protos');
-const UserPatch = require('../AppAssets/UserPatch');
-const Experiments = require('../AppAssets/Experiments.js');
+} = require("../VencordExtension/manifest.json");
+const server = require("./server.js");
+const { UserAgent } = require("../AppAssets/Util.js");
+const ApplicationFlags = require("../AppAssets/ApplicationFlags.js");
+const store = require("./ElectronStore.js");
+const { PreloadedUserSettings } = require("discord-protos");
+const UserPatch = require("../AppAssets/UserPatch");
+const Experiments = require("../AppAssets/Experiments.js");
 
-app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
-app.commandLine.appendSwitch('ignore-certificate-errors');
-app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+app.commandLine.appendSwitch("allow-insecure-localhost", "true");
+app.commandLine.appendSwitch("ignore-certificate-errors");
+app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
-const APP_NAME = 'DiscordBotClient';
+const APP_NAME = "DiscordBotClient";
 
 const iconPath = path.join(
 	__dirname,
-	'..',
-	'AppAssets',
-	'DiscordBotClient.png',
+	"..",
+	"AppAssets",
+	"DiscordBotClient.png"
 );
 
 app.setAppUserModelId(APP_NAME);
 
 let shouldQuitApp = false;
 
-log.info('App starting...');
+log.info("App starting...");
 
 /**
  *
@@ -52,10 +52,10 @@ log.info('App starting...');
  */
 function createTray(win, port) {
 	const tray = new Tray(
-		nativeImage.createFromPath(iconPath).resize({ width: 16 }),
+		nativeImage.createFromPath(iconPath).resize({ width: 16 })
 	);
 	tray.setToolTip(APP_NAME);
-	tray.on('click', () => {
+	tray.on("click", () => {
 		win.show();
 	});
 	const menu = Menu.buildFromTemplate([
@@ -65,34 +65,32 @@ function createTray(win, port) {
 			enabled: false,
 		},
 		{
-			type: 'separator',
+			type: "separator",
 		},
 		{
-			label: 'Check for Updates...',
-			type: 'normal',
-			visible: process.platform !== 'darwin',
+			label: "Check for Updates...",
+			type: "normal",
+			visible: process.platform !== "darwin",
 			click: () => checkUpdate(true),
 		},
 		{
-			label: 'Github Repository',
-			type: 'normal',
-			visible: process.platform !== 'darwin',
+			label: "Github Repository",
+			type: "normal",
+			visible: process.platform !== "darwin",
 			click: () =>
-				shell.openExternal(
-					'https://github.com/aiko-chan-ai/DiscordBotClient',
-				),
+				shell.openExternal("https://github.com/aiko-chan-ai/DiscordBotClient"),
 		},
 		{
-			type: 'separator',
+			type: "separator",
 		},
 		{
-			label: 'Reload',
+			label: "Reload",
 			click: () => {
 				win.reload();
 			},
 		},
 		{
-			label: 'Clear AppData',
+			label: "Clear AppData",
 			click: () => {
 				win.webContents.session
 					.clearCache()
@@ -105,16 +103,16 @@ function createTray(win, port) {
 			},
 		},
 		{
-			label: 'Toggle Developer Tools',
+			label: "Toggle Developer Tools",
 			click: () => {
 				win.webContents.toggleDevTools();
 			},
 		},
 		{
-			type: 'separator',
+			type: "separator",
 		},
 		{
-			label: 'Quit',
+			label: "Quit",
 			click: () => {
 				shouldQuitApp = true;
 				app.quit();
@@ -128,7 +126,7 @@ function createTray(win, port) {
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
-	log.debug('Second Instance detected. Quit app...');
+	log.debug("Second Instance detected. Quit app...");
 	shouldQuitApp = true;
 	app.quit();
 } else {
@@ -152,20 +150,20 @@ async function createWindow() {
 			webSecurity: false,
 			nodeIntegration: false,
 			enableRemoteModule: false,
-			preload: path.join(__dirname, 'preload.js'),
+			preload: path.join(__dirname, "preload.js"),
 			contextIsolation: true,
 		},
 		frame: false,
-		backgroundColor: '#36393f',
-		title: 'DiscordBotClient',
+		backgroundColor: "#36393f",
+		title: "DiscordBotClient",
 	});
 
 	// Patch UserAgent (Switch Plan B SDP > Unified Plan)
 	win.webContents.setUserAgent(
-		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 	);
 
-	log.info(`Electron UserData: ${app.getPath('userData')}`);
+	log.info(`Electron UserData: ${app.getPath("userData")}`);
 
 	// Create the server
 	const port = await server(2024, win);
@@ -175,18 +173,16 @@ async function createWindow() {
 	if (!app.isPackaged) win.webContents.openDevTools();
 
 	if (systemPreferences && systemPreferences.askForMediaAccess)
-		systemPreferences.askForMediaAccess('microphone');
+		systemPreferences.askForMediaAccess("microphone");
 
 	win.webContents.setWindowOpenHandler(({ url }) => {
 		if (url === `https://localhost:${port}/popout`) {
 			return {
-				action: 'allow',
+				action: "allow",
 				overrideBrowserWindowOptions: {
 					parent: win,
 					modal: true,
-					icon: nativeImage
-						.createFromPath(iconPath)
-						.resize({ width: 128 }),
+					icon: nativeImage.createFromPath(iconPath).resize({ width: 128 }),
 					autoHideMenuBar: true,
 					width: 800,
 					height: 600,
@@ -196,35 +192,35 @@ async function createWindow() {
 			};
 		}
 		shell.openExternal(url);
-		return { action: 'deny' };
+		return { action: "deny" };
 	});
 
-	const path_ = path.join(__dirname, '..', 'VencordExtension');
+	const path_ = path.join(__dirname, "..", "VencordExtension");
 
-	win.setTitle(APP_NAME + ' Loading Vencord from ' + path_ + '...');
+	win.setTitle(APP_NAME + " Loading Vencord from " + path_ + "...");
 	await session.defaultSession.loadExtension(path_);
-	log.info('Vencord-Web Extension loaded, version: ' + VencordVersion);
+	log.info("Vencord-Web Extension loaded, version: " + VencordVersion);
 
 	win.loadURL(
-		require('../package.json').testVencord
-			? 'https://canary.discord.com/channels/@me'
-			: `https://localhost:${port}`,
+		require("../package.json").testVencord
+			? "https://canary.discord.com/channels/@me"
+			: `https://localhost:${port}`
 	);
 
-	win.webContents.on('did-start-loading', () => {
-		win.setProgressBar(2, { mode: 'indeterminate' });
+	win.webContents.on("did-start-loading", () => {
+		win.setProgressBar(2, { mode: "indeterminate" });
 	});
 
-	win.webContents.on('did-stop-loading', () => {
+	win.webContents.on("did-stop-loading", () => {
 		win.setTitle(APP_NAME);
 		win.setProgressBar(-1);
 	});
 
-	win.webContents.on('console-message', (ev, level, message, line, file) => {
+	win.webContents.on("console-message", (ev, level, message, line, file) => {
 		if (
 			level == 3 &&
 			message.includes(
-				"Cannot set properties of undefined (setting 'Vencord_settingsDirty')",
+				"Cannot set properties of undefined (setting 'Vencord_settingsDirty')"
 			) &&
 			app.isPackaged
 		) {
@@ -233,7 +229,7 @@ async function createWindow() {
 		}
 	});
 
-	win.on('close', (event) => {
+	win.on("close", (event) => {
 		if (!shouldQuitApp) {
 			event.preventDefault();
 			win.hide();
@@ -242,25 +238,25 @@ async function createWindow() {
 
 	session.defaultSession.webRequest.onHeadersReceived(
 		{
-			urls: ['https://raw.githubusercontent.com/*'],
+			urls: ["https://raw.githubusercontent.com/*"],
 		},
 		(details, callback) => {
 			// set content-type header to text/css
-			details.responseHeaders['content-type'] = 'text/css';
+			details.responseHeaders["content-type"] = "text/css";
 			callback({ responseHeaders: details.responseHeaders });
-		},
+		}
 	);
 
-	win.on('hide', function (e) {
+	win.on("hide", function (e) {
 		e.preventDefault();
 	});
 
-	ipcMain.on('minimize', (event) => {
+	ipcMain.on("minimize", (event) => {
 		win.minimize();
 		event.returnValue = true;
 	});
 
-	ipcMain.on('max', (event) => {
+	ipcMain.on("max", (event) => {
 		if (win.isMaximized()) {
 			win.restore();
 		} else {
@@ -269,17 +265,17 @@ async function createWindow() {
 		event.returnValue = true;
 	});
 
-	ipcMain.on('close', (event) => {
+	ipcMain.on("close", (event) => {
 		win.hide();
 		event.returnValue = true;
 	});
 
-	ipcMain.on('get-bot-info', async (event, token) => {
-		token = token.replace(/Bot/g, '').trim();
+	ipcMain.on("get-bot-info", async (event, token) => {
+		token = token.replace(/Bot/g, "").trim();
 		fetch(`https://discord.com/api/v9/applications/@me?with_counts=true`, {
 			headers: {
 				Authorization: `Bot ${token}`,
-				'User-Agent': UserAgent(),
+				"User-Agent": UserAgent(),
 			},
 		})
 			.then((res) => {
@@ -287,51 +283,51 @@ async function createWindow() {
 				return res.json();
 			})
 			.then((data) => {
-				event.sender.send('get-bot-info-response', {
+				event.sender.send("get-bot-info-response", {
 					success: true,
 					data,
 				});
 			})
 			.catch((e) => {
-				event.sender.send('get-bot-info-response', {
+				event.sender.send("get-bot-info-response", {
 					success: false,
 					message: e.message,
 				});
 			});
 	});
 
-	ipcMain.on('get-intents', (event, flags_) => {
+	ipcMain.on("get-intents", (event, flags_) => {
 		const flags = new ApplicationFlags(flags_).toArray();
 		const skip = [];
-		if (!flags.find((f) => f.includes('GATEWAY_PRESENCE'))) {
-			skip.push('GUILD_PRESENCES');
+		if (!flags.find((f) => f.includes("GATEWAY_PRESENCE"))) {
+			skip.push("GUILD_PRESENCES");
 		}
-		if (!flags.find((f) => f.includes('GATEWAY_GUILD_MEMBERS'))) {
-			skip.push('GUILD_MEMBERS');
+		if (!flags.find((f) => f.includes("GATEWAY_GUILD_MEMBERS"))) {
+			skip.push("GUILD_MEMBERS");
 		}
-		if (!flags.find((f) => f.includes('GATEWAY_MESSAGE_CONTENT'))) {
+		if (!flags.find((f) => f.includes("GATEWAY_MESSAGE_CONTENT"))) {
 			return (event.returnValue = {
 				success: false,
-				message: 'MESSAGE_CONTENT is required',
+				message: "MESSAGE_CONTENT is required",
 				skip: [],
 			});
 		}
 		event.returnValue = {
 			success: true,
-			message: `Skip intents: ${skip.join(', ')}`,
+			message: `Skip intents: ${skip.join(", ")}`,
 			skip,
 		};
 	});
 
-	ipcMain.on('getElectronVersion', (event) => {
+	ipcMain.on("getElectronVersion", (event) => {
 		return (event.returnValue = process.versions.electron);
 	});
 
-	ipcMain.on('getBotClientVersion', (event) => {
+	ipcMain.on("getBotClientVersion", (event) => {
 		return (event.returnValue = app.getVersion());
 	});
 
-	ipcMain.on('getSettingProto1', (event, uid) => {
+	ipcMain.on("getSettingProto1", (event, uid) => {
 		const userData = store.get(uid);
 		event.returnValue = PreloadedUserSettings.toBase64({
 			...userData.settingProto.data1,
@@ -339,44 +335,76 @@ async function createWindow() {
 		});
 	});
 
-	ipcMain.on('getUserPatch', (event, uid) => {
+	ipcMain.on("getUserPatch", (event, uid) => {
 		event.returnValue = UserPatch[uid];
 	});
 
-	ipcMain.on('getExperiment', (event, type) => {
-		if (type == 'user') {
+	ipcMain.on("getExperiment", (event, type) => {
+		if (type == "user") {
 			event.returnValue = Experiments.User;
-		} else if (type == 'guild') {
+		} else if (type == "guild") {
 			event.returnValue = Experiments.Guild;
 		}
 	});
+
+	ipcMain.on(
+		"handlePrivateChannel",
+		(event, type, botId, channelId, userId) => {
+			if (type == "add") {
+				const userData = store.get(botId);
+				userData.privateChannel[channelId] = {
+					type: 1,
+					recipients: [
+						{
+							id: userId,
+						},
+					],
+					last_message_id: null,
+					is_spam: false,
+					id: channelId,
+					flags: 0,
+				};
+				store.set(botId, userData, true);
+			} else if (type == "remove") {
+				const userData = store.get(botId);
+				delete userData.privateChannel[channelId];
+				store.set(botId, userData, true);
+			}
+			event.returnValue = true;
+		}
+	);
+
+	ipcMain.on("getPrivateChannel", (event, uid) => {
+		const userData = store.get(uid);
+		event.returnValue = userData.privateChannel;
+	});
 }
 
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+	if (process.platform !== "darwin") {
 		shouldQuitApp = true;
 		app.quit();
 	}
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
 	if (BrowserWindow.getAllWindows().length === 0) {
 		createWindow();
 	}
 });
 
-app.on('before-quit', (event) => {
-	log.info('App closing...');
+app.on("before-quit", (event) => {
+	log.info("App closing...");
 });
 
 app.on(
-	'second-instance',
+	"second-instance",
 	(event, commandLine, workingDirectory, additionalData) => {
 		const myWindow = BrowserWindow.getAllWindows()?.[0];
 		if (myWindow) {
 			myWindow.show();
 		}
-	},
+	}
 );
 
 /**
@@ -386,9 +414,9 @@ app.on(
  * @returns
  */
 function checkLatestVersion(latest, current) {
-	if (latest.startsWith('v')) latest = latest.slice(1);
-	const [latestMajor, latestMinor, latestPatch] = latest.split('.');
-	const [currentMajor, currentMinor, currentPatch] = current.split('.');
+	if (latest.startsWith("v")) latest = latest.slice(1);
+	const [latestMajor, latestMinor, latestPatch] = latest.split(".");
+	const [currentMajor, currentMinor, currentPatch] = current.split(".");
 	if (latestMajor > currentMajor) {
 		return true;
 	} else if (latestMajor == currentMajor) {
@@ -408,7 +436,7 @@ function createNotification(
 	description,
 	icon,
 	silent = false,
-	urlOpenWhenClick,
+	urlOpenWhenClick
 ) {
 	const n = new Notification({
 		title,
@@ -416,7 +444,7 @@ function createNotification(
 		icon,
 		silent,
 	});
-	n.on('click', (e) => {
+	n.on("click", (e) => {
 		e.preventDefault();
 		if (urlOpenWhenClick) shell.openExternal(urlOpenWhenClick);
 		n.close();
@@ -425,10 +453,10 @@ function createNotification(
 }
 
 function checkUpdate(force = false) {
-	log.info('Checking for updates...');
+	log.info("Checking for updates...");
 	return new Promise((resolve) => {
 		fetch(
-			'https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest',
+			"https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest"
 		)
 			.then((res) => res.json())
 			.then((res) => {
@@ -438,7 +466,7 @@ function checkUpdate(force = false) {
 						`Electron v${app.getVersion()} - ${os.platform()}`,
 						undefined,
 						undefined,
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+						"https://github.com/aiko-chan-ai/DiscordBotClient/releases"
 					);
 				} else if (checkLatestVersion(res.tag_name, app.getVersion())) {
 					createNotification(
@@ -446,26 +474,26 @@ function checkUpdate(force = false) {
 						`Click here to open the update page`,
 						undefined,
 						undefined,
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+						"https://github.com/aiko-chan-ai/DiscordBotClient/releases"
 					);
 				} else if (force) {
 					createNotification(
-						'Update Manager',
+						"Update Manager",
 						`You are using the latest version (v${app.getVersion()})`,
 						undefined,
 						undefined,
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+						"https://github.com/aiko-chan-ai/DiscordBotClient/releases"
 					);
 				}
 			})
 			.catch((e) => {
 				log.error(e);
 				createNotification(
-					'Update Manager',
+					"Update Manager",
 					`Unable to check for updates (v${app.getVersion()})`,
 					undefined,
 					undefined,
-					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+					"https://github.com/aiko-chan-ai/DiscordBotClient/releases"
 				);
 			})
 			.finally(() => resolve(true));

@@ -26,6 +26,11 @@ value: {
         data2,
         data3,
     },
+	privateChannel: {
+		id: {
+			// data
+		}
+	}
     ... some value
 }
 */
@@ -46,6 +51,9 @@ class ElectronDatabase {
 			data.settingProto.data1.userContent =
 				SettingProto.data1.userContent;
 		}
+		if (!data.privateChannel) {
+			data.privateChannel = {};
+		}
 		return data;
 	}
 	#get(uid) {
@@ -54,6 +62,7 @@ class ElectronDatabase {
 		} else {
 			this.#db.set(uid, {
 				settingProto: defaultSetting,
+				privateChannel: {},
 			});
 			return this.#db.get(uid);
 		}
@@ -61,10 +70,14 @@ class ElectronDatabase {
 	/**
 	 * Set Partial<data>
 	 */
-	set(uid, data) {
-		const oldData = this.get(uid);
-		const merge = _.merge(oldData, data);
-		this.#db.set(uid, merge);
+	set(uid, data, force = false) {
+		if (force) {
+			this.#db.set(uid, data);
+		} else {
+			const oldData = this.get(uid);
+			const merge = _.merge(oldData, data);
+			this.#db.set(uid, merge);
+		}
 		return this.get(uid);
 	}
 	/**

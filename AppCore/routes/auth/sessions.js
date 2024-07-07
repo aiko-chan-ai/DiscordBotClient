@@ -6,7 +6,7 @@ app.get('/', (req, res) => {
 	res.send({
 		user_sessions: [
 			{
-				id_hash: 'G0V9YBhBm+PElWFlIJLj9zN5vGAbRD9uKB9iZnl5VEk=',
+				id_hash: 'VjFaa2MyTnRTalZOVjNCb1VqQmFNVlJHWkVkalFUMDk=', // aiko-chan-ai => base64
 				approx_last_used_time: new Date().toISOString(),
 				client_info: {
 					os: 'Windows',

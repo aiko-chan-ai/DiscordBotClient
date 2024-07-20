@@ -38,14 +38,23 @@ contextBridge.exposeInMainWorld('electron', {
 		return ipcRenderer.sendSync('getSettingProto1', id);
 	},
 	getUserPatch,
-	getPrivateChannelLogin(botId) {
+	getPrivateChannelLogin(botId, pluginSaveDMsEnable) {
+		if (!pluginSaveDMsEnable)
+			return [
+				{
+					type: 1,
+					recipients: [getUserPatch('1056491867375673424')],
+					last_message_id: '1000000000000000000',
+					is_spam: false,
+					id: '1000000000000000000',
+					flags: 0,
+				},
+			];
 		const privateChannel = ipcRenderer.sendSync('getPrivateChannel', botId);
 		const allChannel = Object.values(privateChannel);
 		allChannel.unshift({
 			type: 1,
-			recipients: [
-				getUserPatch('1056491867375673424'),
-			],
+			recipients: [getUserPatch('1056491867375673424')],
 			last_message_id: '1000000000000000000',
 			is_spam: false,
 			id: '1000000000000000000',
@@ -60,9 +69,27 @@ contextBridge.exposeInMainWorld('electron', {
 		return ipcRenderer.sendSync('getExperiment', 'guild');
 	},
 	handleOpenPrivateChannel(botId, userId, channelId) {
-		return ipcRenderer.sendSync('handlePrivateChannel', 'add', botId, channelId, userId);
+		return ipcRenderer.sendSync(
+			'handlePrivateChannel',
+			'add',
+			botId,
+			channelId,
+			userId,
+		);
 	},
 	handleClosePrivateChannel(botId, channelId) {
-		return ipcRenderer.sendSync('handlePrivateChannel', 'remove', botId, channelId);
-	}
+		return ipcRenderer.sendSync(
+			'handlePrivateChannel',
+			'remove',
+			botId,
+			channelId,
+		);
+	},
+	clearDMsCache(botId) {
+		return ipcRenderer.sendSync(
+			'handlePrivateChannel',
+			'clear',
+			botId,
+		);
+	},
 });

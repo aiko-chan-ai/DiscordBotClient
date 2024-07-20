@@ -65,32 +65,34 @@ function createTray(win, port) {
 			enabled: false,
 		},
 		{
-			type: "separator",
+			type: 'separator',
 		},
 		{
-			label: "Check for Updates...",
-			type: "normal",
-			visible: process.platform !== "darwin",
+			label: 'Check for Updates...',
+			type: 'normal',
 			click: () => checkUpdate(true),
 		},
 		{
-			label: "Github Repository",
-			type: "normal",
-			visible: process.platform !== "darwin",
+			label: 'Github Repository',
+			type: 'normal',
 			click: () =>
-				shell.openExternal("https://github.com/aiko-chan-ai/DiscordBotClient"),
+				shell.openExternal(
+					'https://github.com/aiko-chan-ai/DiscordBotClient',
+				),
 		},
 		{
-			type: "separator",
+			type: 'separator',
 		},
 		{
-			label: "Reload",
+			label: 'Reload App (Force)',
 			click: () => {
-				win.reload();
+				app.relaunch();
+				shouldQuitApp = true;
+				app.quit();
 			},
 		},
 		{
-			label: "Clear AppData",
+			label: 'Clear AppData (Web Cache)',
 			click: () => {
 				win.webContents.session
 					.clearCache()
@@ -103,16 +105,22 @@ function createTray(win, port) {
 			},
 		},
 		{
-			label: "Toggle Developer Tools",
+			label: 'Clear Database (Local)',
+			click: () => {
+				store.deleteAll()
+			},
+		},
+		{
+			label: 'Toggle Developer Tools',
 			click: () => {
 				win.webContents.toggleDevTools();
 			},
 		},
 		{
-			type: "separator",
+			type: 'separator',
 		},
 		{
-			label: "Quit",
+			label: 'Quit',
 			click: () => {
 				shouldQuitApp = true;
 				app.quit();
@@ -225,7 +233,7 @@ async function createWindow() {
 			app.isPackaged
 		) {
 			log.info("Vencord error, reload...");
-			win.reload();
+			setTimeout(() => win.reload(), 2000).unref();
 		}
 	});
 
@@ -350,6 +358,7 @@ async function createWindow() {
 	ipcMain.on(
 		"handlePrivateChannel",
 		(event, type, botId, channelId, userId) => {
+			log.log('handlePrivateChannel', type, botId, channelId, userId);
 			if (type == "add") {
 				const userData = store.get(botId);
 				userData.privateChannel[channelId] = {
@@ -369,6 +378,8 @@ async function createWindow() {
 				const userData = store.get(botId);
 				delete userData.privateChannel[channelId];
 				store.set(botId, userData, true);
+			} else if (type == "clear") {
+				store.deleteDMs(botId);
 			}
 			event.returnValue = true;
 		}

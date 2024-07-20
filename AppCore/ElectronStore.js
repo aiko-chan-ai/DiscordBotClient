@@ -3,7 +3,9 @@ const defaultSetting = require('../AppAssets/SettingProto');
 const _ = require('lodash');
 const { app } = require('electron');
 const SettingProto = require('../AppAssets/SettingProto');
-const store = new Store();
+const store = new Store({
+	encryptionKey: "elysia-discord-bot-client",
+});
 
 const LatestStorageUpdate = 1719725273000;
 
@@ -64,7 +66,7 @@ class ElectronDatabase {
 				settingProto: defaultSetting,
 				privateChannel: {},
 			});
-			return this.#db.get(uid);
+			return this.#get(uid);
 		}
 	}
 	/**
@@ -85,6 +87,19 @@ class ElectronDatabase {
 	 */
 	delete(uid) {
 		this.#db.delete(uid);
+	}
+	deleteAll() {
+		for (let [k, v] of this.#db) {
+			if (/\d{17,19}/.test(k)) {
+				this.delete(k);
+			}
+		}
+	}
+	deleteDMs(uid) {
+		const user = this.get(uid);
+		delete user.privateChannel;
+		user.privateChannel = {};
+		this.set(uid, user, true);
 	}
 	get database() {
 		return this.#db;

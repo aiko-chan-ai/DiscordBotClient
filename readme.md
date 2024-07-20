@@ -89,7 +89,7 @@ major systems in the release overview:
     <td>Mac x64 (Intel)</td>
     <td align="center"><code>.dmg</code></td>
     <td>
-      It seems I can only choose one MacOS version in Github Actions, so I chose arm64 (Apple Silicon) 😭
+      It seems I can only choose one MacOS version in Github Actions, so I choose arm64 (Apple Silicon) 😭
       <br>
       But you can build from source 🎉
     </td>

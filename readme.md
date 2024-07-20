@@ -89,7 +89,9 @@ major systems in the release overview:
     <td>Mac arm64 (Apple Silicon)</td>
     <td align="center"><code>.dmg</code></td>
     <td>
-      <a href="https://github.com/aiko-chan-ai/DiscordBotClient/releases/latest/download/DiscordBotClient-mac-arm64.dmg"><img alt="DiscordBotClient-mac-arm64.dmg" src="https://img.shields.io/github/downloads/aiko-chan-ai/DiscordBotClient/latest/DiscordBotClient-mac-arm64.dmg?style=for-the-badge&logo=macos&color=E8A2AF&logoColor=D9E0EE&labelColor=302D41"></a>
+      It seems I can only choose one MacOS version in Github Actions, so I chose x64 Intel 😭
+      <br>
+      But you can build from source 🎉
     </td>
   </table>
 

@@ -109,6 +109,8 @@ const IntentFlags = {
 	GUILD_SCHEDULED_EVENTS: 1 << 16,
 	AUTO_MODERATION_CONFIGURATION: 1 << 20,
 	AUTO_MODERATION_EXECUTION: 1 << 21,
+	GUILD_MESSAGE_POLLS: 1 << 24,
+	DIRECT_MESSAGE_POLLS: 1 << 25,
 	// https://discord.com/developers/docs/topics/gateway#list-of-intents
 };
 class Intents extends BitField {}

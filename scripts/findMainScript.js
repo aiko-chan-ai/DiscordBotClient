@@ -24,7 +24,10 @@ const createWindow = async () => {
 		.then((r) => r.text())
 		.then((text) => {
 			fs.writeFileSync(HTMLPath, text);
-			if (!package.testVencord) require('./patchHTML')();
+			if (!package.testVencord) {
+				console.log("[Discord] Patching HTML + CSS + JS");
+				require('./patchHTML')();
+			}
 			const sentry = text
 				.split('\n')
 				.find((s) => s.trim().startsWith('SENTRY_TAGS'));

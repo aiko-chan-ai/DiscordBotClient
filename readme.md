@@ -164,6 +164,10 @@ Logging in works via the UI on first startup of the application.
 | Stable 161052 | c7e0778 | ❌ | v1.0.0 - v2.0.1 | EOL |
 
 
+Latest version that support Windows 7/8/8.1 is 2.4.2
+
+***Maybe it`s time to update your Windows?***
+
 
 ---
 

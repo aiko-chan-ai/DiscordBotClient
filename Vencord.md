@@ -78,8 +78,10 @@ This is the readme file for the repo [VencordDBC](https://github.com/aiko-chan-a
 - **Summary:** Ensures that the extension works properly.
 - **Changes:**
     ```js
-    if ((stack?.includes("discord.com") || stack?.includes("discordapp.com") || stack?.includes("localhost")) && String(this.e).includes("Promise.all")) ...
     if ((stack?.includes("discord.com") || stack?.includes("discordapp.com") || stack?.includes("localhost")) && !Array.isArray(v)) ...
     ```
 
 The above is a summary of the changes to help contributors identify what has been modified compared to the original Vencord repository.
+
+## After applying the Vencord patch
+- You should check the features according to the following list: https://github.com/aiko-chan-ai/DiscordBotClient/issues/183.

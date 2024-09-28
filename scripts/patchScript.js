@@ -1,7 +1,8 @@
 // Def
 var allShards = 0,
 	lasestGuildIdVoiceConnect = 0,
-	currentShard = 0;
+	currentShard = 0,
+	applicationEmojis = [];
 // Bitfield
 class BitField {
 	constructor(bits = this.constructor.defaultBit) {
@@ -133,23 +134,15 @@ function showToast(message, type, { position, timeout } = {}) {
 		},
 	});
 }
-function fetchChannel(channelId) {
-	return new Promise((resolve, reject) => {
-		Vencord.Webpack.findByProps('getAPIBaseURL')
-			.get({
-				url: `/channels/${channelId}`,
-			})
-			.then((d) => resolve(d.body))
-			.catch(() => reject(false));
-	});
-}
-function getThreadMembers(threadId) {
+function getApplicationEmojis() {
 	return new Promise((resolve) => {
-		Vencord.Webpack.findByProps('getAPIBaseURL')
-			.get({
-				url: `/channels/${threadId}/thread-members?with_member=true`,
+		Vencord.Webpack.Common.RestAPI.get({
+			url: `/users/@me/emojis`, // Custom API
+		})
+			.then((d) => {
+				applicationEmojis = d.body;
+				resolve(d.body);
 			})
-			.then((d) => resolve(d.body))
 			.catch(() => resolve([]));
 	});
 }

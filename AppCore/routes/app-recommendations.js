@@ -1,10 +1,10 @@
 const { Router } = require('express');
-const DiscordShopItems = require('../../AppAssets/DiscordShop');
+const { app: Electron } = require('electron');
 
 const app = Router();
 
 app.get('/', (req, res) => {
-	res.send(DiscordShopItems);
+	res.send([]);
 });
 
 module.exports = app;

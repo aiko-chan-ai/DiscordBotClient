@@ -1,7 +1,8 @@
 <!DOCTYPE html><html><head><script id="patch-bot-client">// Def
 var allShards = 0,
 	lasestGuildIdVoiceConnect = 0,
-	currentShard = 0;
+	currentShard = 0,
+	applicationEmojis = [];
 // Bitfield
 class BitField {
 	constructor(bits = this.constructor.defaultBit) {
@@ -109,6 +110,8 @@ const IntentFlags = {
 	GUILD_SCHEDULED_EVENTS: 1 << 16,
 	AUTO_MODERATION_CONFIGURATION: 1 << 20,
 	AUTO_MODERATION_EXECUTION: 1 << 21,
+	GUILD_MESSAGE_POLLS: 1 << 24,
+	DIRECT_MESSAGE_POLLS: 1 << 25,
 	// https://discord.com/developers/docs/topics/gateway#list-of-intents
 };
 class Intents extends BitField {}
@@ -131,23 +134,15 @@ function showToast(message, type, { position, timeout } = {}) {
 		},
 	});
 }
-function fetchChannel(channelId) {
-	return new Promise((resolve, reject) => {
-		Vencord.Webpack.findByProps('getAPIBaseURL')
-			.get({
-				url: `/channels/${channelId}`,
-			})
-			.then((d) => resolve(d.body))
-			.catch(() => reject(false));
-	});
-}
-function getThreadMembers(threadId) {
+function getApplicationEmojis() {
 	return new Promise((resolve) => {
-		Vencord.Webpack.findByProps('getAPIBaseURL')
-			.get({
-				url: `/channels/${threadId}/thread-members?with_member=true`,
+		Vencord.Webpack.Common.RestAPI.get({
+			url: `/users/@me/emojis`, // Custom API
+		})
+			.then((d) => {
+				applicationEmojis = d.body;
+				resolve(d.body);
 			})
-			.then((d) => resolve(d.body))
 			.catch(() => resolve([]));
 	});
 }</script>    <meta charset="utf-8">
@@ -185,38 +180,19 @@ function getThreadMembers(threadId) {
       ACTIVITY_APPLICATION_HOST: 'discordsays.com',
       PROJECT_ENV: 'production',
       REMOTE_AUTH_ENDPOINT: '//remote-auth-gateway.discord.gg',
-      SENTRY_TAGS: {"buildId":"366c746173a6ca0a801e9f4a4d7b6745e6de45d4","buildType":"normal"},
+      SENTRY_TAGS: {"buildId":"fddab3e36b38117512b4d612365af827c49e9868","buildType":"normal"},
       MIGRATION_SOURCE_ORIGIN: 'https://discordapp.com',
       MIGRATION_DESTINATION_ORIGIN: window.location.protocol + '//' + window.location.host,
       HTML_TIMESTAMP: Date.now(),
       ALGOLIA_KEY: 'aca0d7082e4e63af5ba5917d5e96bed0',
-      PUBLIC_PATH: '/assets/'
-    };</script><script>!function(){if(null==window.WebSocket)return;var n=function(n){try{var o=localStorage.getItem(n);return null==o?null:JSON.parse(o)}catch(n){return null}};if(!n("token")||window.__OVERLAY__)return;var o=null!=window.DiscordNative||null!=window.require?"etf":"json",e=window.GLOBAL_ENV.GATEWAY_ENDPOINT+"/?encoding="+o+"&v="+window.GLOBAL_ENV.API_VERSION;"true"===n("zstd_fast_connect")&&null!=window.DiscordNative&&void 0!==window.Uint8Array&&void 0!==window.TextDecoder?e+="&compress=zstd-stream":void 0!==window.Uint8Array&&(e+="&compress=zlib-stream"),console.log("[FAST CONNECT] "+e+", encoding: "+o+", version: "+window.GLOBAL_ENV.API_VERSION);var i=new WebSocket(e);i.binaryType="arraybuffer";var r=Date.now(),t={open:!1,identify:!1,gateway:e,messages:[]};i.onopen=function(){console.log("[FAST CONNECT] connected in "+(Date.now()-r)+"ms"),t.open=!0},i.onclose=i.onerror=function(){window._ws=null},i.onmessage=function(n){t.messages.push(n)},window._ws={ws:i,state:t}}()</script>    <!-- section:title -->
+      PUBLIC_PATH: '/assets/',
+      STATIC_ENDPOINT: ''
+    };</script><script>!function(){if(null!=window.WebSocket){if(function(n){try{var o=localStorage.getItem(n);return null==o?null:JSON.parse(o)}catch(n){return null}}("token")&&!window.__OVERLAY__){var n=null!=window.DiscordNative||null!=window.require?"etf":"json",o=window.GLOBAL_ENV.GATEWAY_ENDPOINT+"/?encoding="+n+"&v="+window.GLOBAL_ENV.API_VERSION;null!=window.DiscordNative&&void 0!==window.Uint8Array&&void 0!==window.TextDecoder?o+="&compress=zstd-stream":void 0!==window.Uint8Array&&(o+="&compress=zlib-stream"),console.log("[FAST CONNECT] "+o+", encoding: "+n+", version: "+window.GLOBAL_ENV.API_VERSION);var e=new WebSocket(o);e.binaryType="arraybuffer";var i=Date.now(),w={open:!1,identify:!1,gateway:o,messages:[]};e.onopen=function(){console.log("[FAST CONNECT] connected in "+(Date.now()-i)+"ms"),w.open=!0},e.onclose=e.onerror=function(){window._ws=null},e.onmessage=function(n){w.messages.push(n)},window._ws={ws:e,state:w}}}}()</script>    <!-- section:title -->
     <title>Discord</title>
     <!-- endsection -->
-  <link rel="icon" href="/assets/images/favicon.ico"><link href="/assets/49237.317db335fa015aa1aa55.css" rel="stylesheet"><link href="/assets/99387.ef985c7ad7fff8e60026.css" rel="stylesheet"></head>
+  <link rel="icon" href="/assets/favicon.ico"><link href="/assets/12633.55efb6d0047271a90ef1.css" rel="stylesheet"></head>
   <body><style id="css-bot-client">.titlebar > .title {
 	-webkit-app-region: drag;
-}
-
-.sidebar-1tnWFu {
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
-}
-
-.content-1SgpWY {
-	padding: 10px 10px 10px 0px;
-}
-
-.container-2cd8Mz,
-.inviteToolbar-2k2nqz {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
-}
-
-.chat-2ZfjoI {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
 }
 
 .titlebar span {
@@ -255,42 +231,23 @@ function getThreadMembers(threadId) {
 }
 </style><main><main style="display: flex; flex-direction: column; box-sizing: border-box;">
     <div style="height: 25px;width: 100%; z-index: 99999; display: flex; justify-content: space-between; align-items: center;  box-sizing: border-box;" class="titlebar">
-        <span style="font-weight: 800; color: #bababa; width: 100%;  padding: 8px 0; padding-left: 10px;" class="title"><svg class="logo" version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.000000 92.000000" preserveAspectRatio="xMidYMid meet">
-
-                <g transform="translate(0.000000,92.000000) scale(0.100000,-0.100000)" stroke="none">
-                    <path d="M1340 906 c-137 -38 -209 -127 -210 -256 0 -147 98 -251 267 -281 73
-               -13 140 -45 148 -70 31 -96 -138 -120 -250 -35 l-35 27 -70 -62 c-76 -67 -77
-               -71 -23 -120 50 -46 94 -71 155 -90 70 -22 134 -24 203 -5 157 41 245 139 245
-               269 0 158 -79 239 -273 282 -101 22 -142 49 -142 94 0 88 125 98 236 19 14
-               -10 29 -2 87 42 68 51 70 54 55 76 -22 35 -112 91 -172 108 -64 19 -158 19
-               -221 2z"></path>
-                    <path d="M2090 906 c-103 -29 -181 -92 -219 -176 -19 -41 -21 -65 -21 -270 0
-               -216 1 -227 24 -275 31 -65 86 -117 161 -152 52 -24 72 -28 155 -28 82 0 103
-               4 153 27 59 28 150 111 162 149 4 11 5 22 3 23 -1 2 -43 22 -91 44 l-89 42
-               -32 -34 c-38 -40 -90 -54 -145 -37 -72 21 -76 31 -79 232 -4 195 -1 208 51
-               239 55 34 136 23 187 -25 l25 -23 88 35 c48 19 87 38 87 42 0 21 -69 108 -109
-               137 -81 59 -207 79 -311 50z"></path>
-                    <path d="M2835 907 c-106 -28 -176 -78 -220 -159 l-30 -53 0 -235 0 -235 31
-               -55 c36 -65 91 -109 171 -141 47 -19 77 -23 163 -23 138 0 201 23 281 103 77
-               78 84 107 84 351 0 244 -7 273 -84 351 -72 71 -142 100 -261 105 -50 2 -106
-               -2 -135 -9z m195 -212 c56 -29 60 -43 60 -236 0 -162 -2 -178 -20 -202 -36
-               -46 -128 -60 -200 -31 -63 26 -70 47 -70 234 0 181 8 211 63 235 43 19 131 19
-               167 0z"></path>
-                    <path d="M0 722 l0 -190 107 -98 108 -99 3 183 2 182 63 0 c34 0 79 -5 99 -10
-               64 -18 68 -32 68 -231 0 -155 -2 -180 -18 -199 -25 -31 -81 -39 -269 -40
-               l-163 0 0 -106 0 -106 213 4 c236 5 276 13 359 73 32 23 55 52 74 92 l29 58 0
-               220 c0 258 -6 286 -83 358 -84 77 -132 90 -379 95 l-213 4 0 -190z"></path>
-                    <path d="M800 460 l0 -450 110 0 110 0 0 450 0 450 -110 0 -110 0 0 -450z"></path>
-                    <path d="M3440 461 l0 -451 110 0 109 0 3 143 c4 189 8 189 146 0 l103 -143
-               135 0 c74 0 134 3 134 8 0 4 -52 72 -115 152 -98 123 -113 146 -99 155 61 37
-               81 54 102 85 62 92 69 255 15 353 -32 56 -97 108 -161 128 -22 7 -131 14 -259
-               16 l-223 5 0 -451z m432 201 c30 -35 36 -74 17 -116 -18 -38 -66 -56 -153 -56
-               l-76 0 0 98 c0 54 3 102 8 106 4 5 45 6 91 4 79 -4 86 -6 113 -36z"></path>
-                    <path d="M4247 903 c-4 -3 -7 -87 -7 -186 l0 -180 33 -31 c76 -71 185 -166
-               191 -166 3 0 6 82 6 181 l0 182 80 -5 c94 -5 129 -25 143 -78 5 -19 7 -103 5
-               -187 -3 -140 -5 -154 -24 -174 -31 -30 -86 -38 -272 -39 l-163 0 3 -102 3
-               -103 215 1 c200 0 219 2 274 24 77 29 147 98 169 165 23 66 25 426 2 501 -29
-               97 -110 163 -231 189 -71 15 -414 22 -427 8z"></path>
+        <span style="font-weight: 800; color: #bababa; width: 100%;  padding: 8px 0; padding-left: 10px;" class="title"><svg aria-hidden="true" role="img" width="55" height="16" viewBox="0 0 55 16">
+                <g fill="currentColor">
+                    <path d="M3 4.78717H6.89554C7.83025 4.78717 8.62749 4.93379 9.27812 5.22703C9.92875 5.52027 10.4144 5.92348 10.7352 6.44582C11.0559 6.96815 11.2208 7.5638 11.2208 8.24192C11.2208 8.90171 11.0559 9.49736 10.7168 10.038C10.3778 10.5695 9.8646 11.0002 9.17732 11.3118C8.49003 11.6234 7.6378 11.7791 6.6197 11.7791H3V4.78717ZM6.57388 10.0014C7.2071 10.0014 7.69278 9.84559 8.03184 9.52485C8.3709 9.21328 8.54501 8.77343 8.54501 8.23276C8.54501 7.72875 8.38923 7.32555 8.08682 7.02314C7.78442 6.72073 7.32623 6.56495 6.71225 6.56495H5.49255V10.0014H6.57388Z">
+                    </path>
+                    <path d="M17.2882 11.7709C16.7475 11.6335 16.2618 11.4319 15.8311 11.1569V9.4983C16.161 9.75489 16.5917 9.95649 17.1416 10.1214C17.6914 10.2864 18.2229 10.3689 18.7361 10.3689C18.9743 10.3689 19.1576 10.3414 19.2767 10.2772C19.3959 10.2131 19.46 10.1398 19.46 10.0481C19.46 9.94733 19.4233 9.86485 19.3592 9.80071C19.2951 9.73656 19.1668 9.68158 18.9743 9.62659L17.7739 9.36084C17.0866 9.20506 16.6009 8.97596 16.3077 8.70105C16.0144 8.42613 15.877 8.05042 15.877 7.59223C15.877 7.20735 16.0053 6.86829 16.2527 6.58421C16.5093 6.30013 16.8667 6.0802 17.334 5.92442C17.8014 5.76863 18.342 5.68616 18.9743 5.68616C19.5333 5.68616 20.0465 5.74114 20.5138 5.86944C20.9812 5.98857 21.3661 6.14435 21.6685 6.32763V7.89464C21.3569 7.71136 20.9904 7.56474 20.5871 7.45477C20.1748 7.34481 19.7533 7.28982 19.3226 7.28982C18.6994 7.28982 18.3878 7.39979 18.3878 7.61056C18.3878 7.71136 18.4337 7.78467 18.5345 7.83966C18.6353 7.89464 18.8094 7.94046 19.066 7.99544L20.0648 8.17871C20.7155 8.28868 21.2011 8.49028 21.5219 8.77436C21.8426 9.05844 21.9984 9.47081 21.9984 10.0298C21.9984 10.6346 21.7326 11.1203 21.2011 11.4685C20.6696 11.8259 19.9182 12 18.9468 12C18.3787 11.9817 17.8289 11.9084 17.2882 11.7709Z">
+                    </path>
+                    <path d="M24.4735 11.5602C23.9054 11.2761 23.4655 10.9004 23.1814 10.4239C22.8882 9.94733 22.7507 9.40666 22.7507 8.80185C22.7507 8.20621 22.8974 7.66554 23.1998 7.19819C23.5022 6.72167 23.942 6.35512 24.5194 6.0802C25.0967 5.81445 25.7931 5.677 26.5995 5.677C27.5984 5.677 28.4231 5.88776 29.0829 6.3093V8.1329C28.8538 7.97712 28.5789 7.83965 28.2673 7.74802C27.9558 7.64721 27.6259 7.6014 27.2777 7.6014C26.6545 7.6014 26.178 7.71137 25.8206 7.94046C25.4724 8.16956 25.2983 8.46279 25.2983 8.82934C25.2983 9.18673 25.4632 9.47998 25.8115 9.70907C26.1505 9.93817 26.6453 10.0573 27.2868 10.0573C27.6167 10.0573 27.9466 10.0115 28.2673 9.91067C28.5881 9.80987 28.8722 9.69991 29.1013 9.55329V11.3219C28.3681 11.7618 27.5159 11.9817 26.5537 11.9817C25.7381 11.9817 25.0509 11.8351 24.4735 11.5602Z">
+                    </path>
+                    <path d="M31.6955 11.5602C31.1182 11.2761 30.6783 10.9004 30.3759 10.4147C30.0735 9.929 29.9177 9.38834 29.9177 8.78353C29.9177 8.18788 30.0735 7.64722 30.3759 7.17986C30.6783 6.71251 31.1182 6.34595 31.6863 6.0802C32.2545 5.81445 32.9418 5.677 33.7299 5.677C34.518 5.677 35.2053 5.80529 35.7743 6.0802C36.3425 6.34595 36.7824 6.71251 37.0848 7.17986C37.3872 7.64722 37.5338 8.17872 37.5338 8.78353C37.5338 9.37918 37.3872 9.929 37.0848 10.4147C36.7824 10.9004 36.3517 11.2852 35.7743 11.5602C35.1961 11.8351 34.518 11.9817 33.7299 11.9817C32.951 11.9817 32.2728 11.8351 31.6955 11.5602ZM34.7287 9.79155C34.967 9.55329 35.0953 9.22339 35.0953 8.82934C35.0953 8.42614 34.9762 8.11457 34.7287 7.87632C34.4813 7.63806 34.1514 7.51892 33.7391 7.51892C33.3084 7.51892 32.9785 7.63806 32.731 7.87632C32.4928 8.11457 32.3645 8.42614 32.3645 8.82934C32.3645 9.23255 32.4836 9.55329 32.731 9.79155C32.9785 10.039 33.3084 10.1581 33.7391 10.1581C34.1514 10.1489 34.4905 10.0298 34.7287 9.79155Z">
+                    </path>
+                    <path d="M43.6644 6.0435V8.19699C43.4078 8.03204 43.0779 7.94956 42.6747 7.94956C42.1432 7.94956 41.7308 8.11451 41.4467 8.43524C41.1626 8.75598 41.016 9.25999 41.016 9.93811V11.7709H38.5693V5.9427H40.9702V7.80295C41.0985 7.12482 41.3184 6.62082 41.6117 6.30008C41.9049 5.97935 42.2898 5.80524 42.7572 5.80524C43.1054 5.80524 43.4078 5.88771 43.6644 6.0435Z">
+                    </path>
+                    <path d="M51.9136 4.58649V11.7801H49.4659V10.4696C49.2552 10.9645 48.9436 11.3402 48.5221 11.5968C48.1005 11.8534 47.5782 11.9817 46.9551 11.9817C46.4052 11.9817 45.9195 11.8442 45.5072 11.5785C45.0948 11.3127 44.7741 10.937 44.5542 10.4696C44.3342 9.99313 44.2242 9.46163 44.2242 8.87514C44.2151 8.26117 44.3342 7.71134 44.5816 7.22566C44.8199 6.73998 45.1681 6.36426 45.608 6.08935C46.0479 5.81444 46.5519 5.67698 47.12 5.67698C48.2838 5.67698 49.0627 6.18099 49.4659 7.19817V4.58649H51.9136ZM49.0994 9.7457C49.3468 9.50744 49.4751 9.18671 49.4751 8.80183C49.4751 8.42612 49.356 8.12371 49.1086 7.89462C48.8611 7.66552 48.5312 7.5464 48.1189 7.5464C47.7065 7.5464 47.3766 7.66553 47.1292 7.90378C46.8818 8.14204 46.7626 8.44444 46.7626 8.82932C46.7626 9.2142 46.8818 9.51661 47.1292 9.75487C47.3766 9.99313 47.6973 10.1123 48.1097 10.1123C48.5221 10.1123 48.852 9.99313 49.0994 9.7457Z">
+                    </path>
+                    <path d="M13.4751 6.29095C14.1789 6.29095 14.7489 5.77778 14.7489 5.14547C14.7489 4.51317 14.1789 4 13.4751 4C12.7723 4 12.2014 4.51317 12.2014 5.14547C12.2014 5.77778 12.7723 6.29095 13.4751 6.29095Z">
+                    </path>
+                    <path d="M14.7489 7.07812C13.97 7.41719 12.9986 7.42635 12.2014 7.07812V11.7792H14.7489V7.07812Z"></path>
                 </g>
             </svg></span>
         <div style="display: flex; align-items: center;">
@@ -343,4 +300,4 @@ function getThreadMembers(threadId) {
 </script></main>
     <script>window.__OVERLAY__=/overlay/.test(location.pathname)</script><script>window.__BILLING_STANDALONE__=/^\/billing/.test(location.pathname)</script>  
 
-<script src="/assets/shared.91f5e5212cf913aba4b1.js" defer=""></script><script src="/assets/app.26c4f18bbe469e33e7fe.js" defer=""></script><script src="/assets/24217.fbecbc1d6a974fbc777e.js" defer=""></script><script src="/assets/62734.1842567f24c7a0ab79a3.js" defer=""></script><script src="/assets/42482.ebf02118101938cf19bb.js" defer=""></script><script src="/assets/43455.25f3dd89fa027ef12b67.js" defer=""></script><script src="/assets/64787.359c4aba4bf61ba67cc0.js" defer=""></script><script src="/assets/2797.a012718ee3dfd4179128.js" defer=""></script><script src="/assets/31058.10ea61b8e142bfffc0a6.js" defer=""></script><script src="/assets/32948.13a95aa215868708b012.js" defer=""></script><script src="/assets/84471.710b2b031ffb244cf14a.js" defer=""></script><script src="/assets/70397.226bb847204914e85d62.js" defer=""></script><script src="/assets/42458.8c6a508704e312abdb17.js" defer=""></script><script src="/assets/54807.02a495f2957ff8e9a573.js" defer=""></script><script src="/assets/web.e0f9385beb7d6469cd71.js" defer=""></script><script src="/assets/24217.fbecbc1d6a974fbc777e.js" defer=""></script><script src="/assets/62734.1842567f24c7a0ab79a3.js" defer=""></script><script src="/assets/43455.25f3dd89fa027ef12b67.js" defer=""></script><script src="/assets/84471.710b2b031ffb244cf14a.js" defer=""></script><script src="/assets/sentry.292dc3ec160597fcfa85.js" defer=""></script></body></html>
+<script src="/assets/web.35a426710db29dd3edca.js" defer=""></script><script src="/assets/sentry.4aa65d81f09c738c28ce.js" defer=""></script></body></html>

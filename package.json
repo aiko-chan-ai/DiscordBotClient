@@ -1,16 +1,17 @@
 {
 	"name": "discord-bot-client",
-	"version": "3.4.1",
-	"DiscordBuildVersion": 302556,
+	"version": "3.5.0",
+	"DiscordBuildVersion": 331146,
 	"description": "Discord Bot Client - login into discord with a bot token",
 	"main": "./AppCore/index.js",
 	"testVencord": false,
 	"cacheAssets": false,
 	"dependencies": {
 		"discord-protos": "^1.0.5",
+		"electron-context-menu": "3.6.1",
 		"electron-log": "^4.4.8",
 		"electron-store": "^8.2.0",
-		"express": "^4.19.1",
+		"express": "^4.21.0",
 		"lambert-server": "^1.2.12",
 		"lodash": "^4.17.21",
 		"morgan": "^1.10.0",
@@ -19,9 +20,9 @@
 		"request": "^2.88.2"
 	},
 	"devDependencies": {
-		"electron": "^28.1.4",
-		"electron-builder": "^24.9.1",
-		"jsdom": "^24.0.0"
+		"electron": "^32.1.2",
+		"electron-builder": "^25.0.5",
+		"jsdom": "^25.0.1"
 	},
 	"build": {
 		"files": [
@@ -65,7 +66,7 @@
 		"linux": "electron-builder -l",
 		"build": "electron-builder",
 		"requirement": "npm install && npm run npmVencord",
-		"fetchLatestDiscordBuild": "electron scripts/findMainScript.js",
+		"fetchLatestDiscordBuild": "node scripts/patchAll.js",
 		"npmVencord": "cd VencordDBC && npm i -f && cd ..",
 		"vencord": "cd VencordDBC && node --require=./scripts/suppressExperimentalWarnings.js scripts/build/buildWeb.mjs && cd ..",
 		"cerf": "openssl req -nodes -new -x509 -keyout server.key -out server.cert -days 3650 -subj \"/CN=localhost\"",

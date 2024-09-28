@@ -2,26 +2,6 @@
 	-webkit-app-region: drag;
 }
 
-.sidebar-1tnWFu {
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
-}
-
-.content-1SgpWY {
-	padding: 10px 10px 10px 0px;
-}
-
-.container-2cd8Mz,
-.inviteToolbar-2k2nqz {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
-}
-
-.chat-2ZfjoI {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
-}
-
 .titlebar span {
 	text-overflow: ellipsis;
 }

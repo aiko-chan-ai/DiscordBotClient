@@ -81,6 +81,29 @@ module.exports = {
 			),
 		},
 	},
-	data2: {}, // freq proto
+	data2: {
+		versions: {
+			clientVersion: 10,
+			serverVersion: 0,
+			dataVersion: 2059,
+		},
+		favoriteGifs: {
+			gifs: {},
+			hideTooltip: true,
+		},
+		stickerFrecency: {
+			stickers: {},
+		},
+		favoriteEmojis: { emojis: ['sparkles'] }, // Sparkle => Hanabi (Honkai Star Rail Character) ~\(≧▽≦)/~
+		emojiFrecency: {
+			emojis: {},
+		},
+		applicationCommandFrecency: {
+			applicationCommands: {},
+		},
+		favoriteSoundboardSounds: {
+			soundIds: [],
+		},
+	},
 	data3: {}, // test proto
 };

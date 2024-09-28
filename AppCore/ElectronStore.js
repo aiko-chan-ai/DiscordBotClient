@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { app } = require('electron');
 const SettingProto = require('../AppAssets/SettingProto');
 const store = new Store({
-	encryptionKey: "elysia-discord-bot-client",
+	encryptionKey: 'elysia-discord-bot-client',
 });
 
 const LatestStorageUpdate = 1719725273000;
@@ -71,13 +71,31 @@ class ElectronDatabase {
 	}
 	/**
 	 * Set Partial<data>
+	 * @param {string} uid Discord User ID
+	 * @param {object} data Partial Data
+	 * @param {boolean} force Force overwrite
+	 * @param {'concat' | 'overwrite'} overwriteArrayOrConcat concat or overwrite
 	 */
-	set(uid, data, force = false) {
+	set(uid, data, force = false, overwriteArrayOrConcat = 'concat') {
 		if (force) {
 			this.#db.set(uid, data);
 		} else {
 			const oldData = this.get(uid);
-			const merge = _.merge(oldData, data);
+			const customizer = (objValue, srcValue) => {
+				if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+					return srcValue;
+				}
+			};
+			let merge;
+			if (overwriteArrayOrConcat === 'concat') {
+				merge = _.merge(oldData, data);
+			} else if (overwriteArrayOrConcat === 'overwrite') {
+				merge = _.mergeWith(oldData, data, customizer);
+			} else {
+				throw new Error(
+					'Invalid param overwriteArrayOrConcat: Must be concat or overwrite',
+				);
+			}
 			this.#db.set(uid, merge);
 		}
 		return this.get(uid);

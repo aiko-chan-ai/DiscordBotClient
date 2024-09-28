@@ -14,6 +14,7 @@
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
 - [Similar projects](#similar-projects)
+- [Update Discord Version](#how-to-update-to-the-latest-discord-version-)
 - [Credits](#credits)
 
 > [!WARNING]
@@ -107,8 +108,6 @@ https://git-scm.com/downloads.
 **UPDATES HAVE TO BE INSTALLED MANUALLY**
 
 Open a command line and execute the following commands:
-> [!IMPORTANT]
-> Currently the client is using Vencord version 1.8.9, don't update the index.html file to avoid breaking
 ```shell
 git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
@@ -140,34 +139,33 @@ Logging in works via the UI on first startup of the application.
 ## Features
 
 - **View Guilds** *(Lazy load them)*
-- **Manage Guilds** (Name, Image, Audit log, Emoji, Webhooks, Invites, Bans, Widget, Moderation, Roles)
-- **Manage Channels** (Add, Delete, Name, Permissions, Invites, Webhooks, Slowmode, NSFW, Topic, Forums, Threads)
-- **Messages** (Send, View History, Embeds, View Reactions, Add/Remove Reactions, Delete, Edit, Pin)
-- **Create a Guild** (if the bot has fewer than 10 Servers)
-- **Voice Support** (Text-in-Voice and watch the user using the camera)
-- **Use Emojis from other servers** (Nitro)
-- **GIF Search**
-- **Send Files**
-- **DM's** (DM's will show up, after a user dms the bot)
+- **Manage Guilds, Channels** 
+- **Messages** (Send, View History, Embeds, Reactions, Manage)
+- **Create a Guild**[^1]
+- **Voice**[^2]
+- **Nitro**[^3]
+- **Direct Message**[^4]
+
+[^1]: If your bot is in fewer than 10 servers.
+[^2]: Except for features related to streams.
+[^3]: Nitro features are reduced: Unable to use stickers everywhere, cannot send files larger than 25MB, and cannot set avatar decorations.
+[^4]: Implemented with restrictions on the client.
 
 ---
 
 ## Version
 
-| Discord Build | Hash | Vencord | Client version | Status |
-| --- | --- | --- | --- | --- |
-| Stable 302556 | 366c746 | v1.8.9 | v3.3.0 - * | Latest |
-| Stable 275565 | ede2af3 | v1.7.2 | v3.2.0 - v3.2.1 | Deprecated |
-| Stable 263796 | 739ec78 | v1.6.7 | v3.0.0 - v3.1.3 | Deprecated |
-| Stable 204762 | 78f82ba | v1.2.8 | v2.4.0 - v2.4.2 | EOL |
-| Stable 185832 | 29333f6 | v1.1.4 | v2.1.0 - v2.3.1 | EOL |
-| Stable 161052 | c7e0778 | ❌ | v1.0.0 - v2.0.1 | EOL |
+| Discord Build | Hash     | Vencord | Client version           | Status  |
+|---------------|----------|---------|--------------------------|---------|
+| Stable 331146  | fddab3e | v1.10.3 | v3.5.0 - *               | Latest  |
+| Stable 302556  | 366c746 | v1.8.9  | v3.3.0 - v3.4.1          | Deprecated  |
+| Stable 275565  | ede2af3 | v1.7.2  | v3.2.0 - v3.2.1          | EOL |
+| Stable 263796  | 739ec78 | v1.6.7  | v3.0.0 - v3.1.3          | EOL |
+| Stable 204762  | 78f82ba | v1.2.8  | v2.4.0 - v2.4.2          | EOL[^5] |
+| Stable 185832  | 29333f6 | v1.1.4  | v2.1.0 - v2.3.1          | EOL     |
+| Stable 161052  | c7e0778 | ❌      | v1.0.0 - v2.0.1          | EOL     |
 
-
-Latest version that support Windows 7/8/8.1 is 2.4.2
-
-***Maybe it`s time to update your Windows?***
-
+[^5]: _Latest version that supports Windows 7/8/8.1 is 2.4.2._
 
 ---
 
@@ -205,7 +203,10 @@ Hit me up if you have a similar project, and I'll gladly add it to the list.
 ```sh
 git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
-git clone https://github.com/aiko-chan-ai/VencordDBC.git
+git clone https://github.com/Vendicated/Vencord.git
+// Rename from Vencord to VencordDBC
+// Ex: Windows PowerShell
+Rename-Item -Path Vencord -NewName VencordDBC
 ```
 
 2. Install required dependencies.
@@ -214,13 +215,12 @@ npm run requirement
 ```
 
 3. Download the latest script from Discord
-> [!CAUTION]
-> From Stable version 302556 and above, Discord has changed the Webpack module structure, updating the index.html file will break the client.
 ```sh
 npm run fetchLatestDiscordBuild
 ```
 
-4. Update BotClient plugin in VencordDBC (and make a PR)
+4. Copy BotClient plugin from [my repo](https://github.com/aiko-chan-ai/VencordDBC)
+> Guide: [Vencord.md](https://github.com/aiko-chan-ai/DiscordBotClient/blob/electron-v3/readme.md)
 
 ## Credits
 

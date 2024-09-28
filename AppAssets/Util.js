@@ -51,7 +51,8 @@ module.exports = class Util {
 			legacy_username: null,
 		};
 	}
-	static getIDFromToken(token) {
+	static getIDFromToken(token = '') {
+		if (!token) return null;
 		token = token.replace(/^(Bot|Bearer)\s*/i, '');
 		return Buffer.from(token.split('.')[0], 'base64').toString();
 	}

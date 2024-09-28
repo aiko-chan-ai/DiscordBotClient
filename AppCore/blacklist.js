@@ -15,4 +15,6 @@ module.exports = [
 	'interaction-data',
 	'member-verification',
 	'cdn-cgi/challenge-platform',
+	'explicit-media',
+	'premium/subscriptions',
 ];

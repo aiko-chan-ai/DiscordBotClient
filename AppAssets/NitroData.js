@@ -7,13 +7,13 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '590663762298667008',
-			discount_price: 79386,
-			fallback_price: 499,
+			discount_price: 0,
+			fallback_price: 0,
 			fallback_currency: 'usd',
-			fallback_discount_price: 349,
+			fallback_discount_price: 0,
 			fallback_discount_currency: 'usd',
 			currency: 'vnd',
-			price: 113409,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -22,13 +22,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113409,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -40,13 +40,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 79386,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 349,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -58,13 +58,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 79386,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 349,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -76,13 +76,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113409,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -97,13 +97,13 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '590663762298667008',
-			discount_price: 795295,
-			fallback_price: 4999,
+			discount_price: 0,
+			fallback_price: 0,
 			fallback_currency: 'usd',
-			fallback_discount_price: 3499,
+			fallback_discount_price: 0,
 			fallback_discount_currency: 'usd',
 			currency: 'vnd',
-			price: 1136136,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -112,13 +112,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1136136,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -130,13 +130,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 795295,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 3499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -148,13 +148,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 795295,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 3499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -166,13 +166,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1136136,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -187,9 +187,9 @@ module.exports = {
 			interval_count: 3,
 			tax_inclusive: true,
 			sku_id: '590663762298667008',
-			discount_price: 999,
+			discount_price: 0,
 			currency: 'usd',
-			price: 1427,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -198,8 +198,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 1427,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -211,8 +211,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -224,8 +224,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -237,8 +237,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 1427,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -253,9 +253,9 @@ module.exports = {
 			interval_count: 6,
 			tax_inclusive: true,
 			sku_id: '590663762298667008',
-			discount_price: 1925,
+			discount_price: 0,
 			currency: 'usd',
-			price: 2750,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -264,8 +264,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2750,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -277,8 +277,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 1925,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -290,8 +290,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 1925,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -303,8 +303,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2750,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -322,7 +322,7 @@ module.exports = {
 			tax_inclusive: true,
 			sku_id: '521847234246082599',
 			currency: 'usd',
-			price: 2849,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -331,8 +331,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2849,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -344,8 +344,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2849,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -357,8 +357,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2849,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -370,8 +370,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2849,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -383,8 +383,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2849,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -399,10 +399,10 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '521847234246082599',
-			fallback_price: 999,
+			fallback_price: 0,
 			fallback_currency: 'usd',
 			currency: 'vnd',
-			price: 113000,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -411,13 +411,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 497,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -429,13 +429,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 227045,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -447,13 +447,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 497,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -465,13 +465,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 497,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -483,13 +483,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 497,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -504,10 +504,10 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '521847234246082599',
-			fallback_price: 9999,
+			fallback_price: 0,
 			fallback_currency: 'usd',
 			currency: 'vnd',
-			price: 1130000,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -516,13 +516,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1130000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4972,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -534,13 +534,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 2272500,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 9999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -552,13 +552,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1130000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4972,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -570,13 +570,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1130000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4972,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -588,13 +588,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1130000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4972,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -610,7 +610,7 @@ module.exports = {
 			tax_inclusive: true,
 			sku_id: '521847234246082599',
 			currency: 'usd',
-			price: 5499,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -619,8 +619,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 5499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -632,8 +632,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 5499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -645,8 +645,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 5499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -658,8 +658,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 5499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -671,8 +671,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 5499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -689,10 +689,10 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '521846918637420545',
-			fallback_price: 4999,
+			fallback_price: 0,
 			fallback_currency: 'usd',
 			currency: 'vnd',
-			price: 560000,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -701,13 +701,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 560000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 2464,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -719,13 +719,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 1136136,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 4999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -737,13 +737,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 560000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 2464,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -755,13 +755,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 560000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 2464,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -773,13 +773,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 560000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 2464,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -794,10 +794,10 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '521846918637420545',
-			fallback_price: 499,
+			fallback_price: 0,
 			fallback_currency: 'usd',
 			currency: 'vnd',
-			price: 56000,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -806,13 +806,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 56000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 246,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -824,13 +824,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 113409,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -842,13 +842,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 56000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 246,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -860,13 +860,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 56000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 246,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -878,13 +878,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 56000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 246,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -902,7 +902,7 @@ module.exports = {
 			tax_inclusive: true,
 			sku_id: '521842865731534868',
 			currency: 'usd',
-			price: 4999,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -911,8 +911,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 4999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -924,8 +924,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 4999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -937,8 +937,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 4999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -954,7 +954,7 @@ module.exports = {
 			tax_inclusive: true,
 			sku_id: '521842865731534868',
 			currency: 'usd',
-			price: 499,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -963,8 +963,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -976,8 +976,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -989,8 +989,8 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 499,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1007,11 +1007,11 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '978380684370378762',
-			discount_price: 299,
-			fallback_price: 299,
+			discount_price: 0,
+			fallback_price: 0,
 			fallback_currency: 'usd',
 			currency: 'vnd',
-			price: 42000,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -1020,13 +1020,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 42000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 184,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1038,13 +1038,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 67954,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 299,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1056,13 +1056,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 42000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 184,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1074,13 +1074,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 42000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 184,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1092,13 +1092,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 42000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 184,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1113,11 +1113,11 @@ module.exports = {
 			interval_count: 1,
 			tax_inclusive: true,
 			sku_id: '978380684370378762',
-			discount_price: 2999,
-			fallback_price: 2999,
+			discount_price: 0,
+			fallback_price: 0,
 			fallback_currency: 'usd',
 			currency: 'vnd',
-			price: 419000,
+			price: 0,
 			price_tier: null,
 			prices: {
 				0: {
@@ -1126,13 +1126,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 419000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 1760,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1144,12 +1144,12 @@ module.exports = {
 						prices: [
 							{
 								currency: 'usd',
-								amount: 2999,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 							{
 								currency: 'vnd',
-								amount: 679540,
+								amount: 0,
 								exponent: 0,
 							},
 						],
@@ -1162,13 +1162,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 419000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 1760,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1180,13 +1180,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 419000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 1760,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},
@@ -1198,13 +1198,13 @@ module.exports = {
 						prices: [
 							{
 								currency: 'vnd',
-								amount: 419000,
+								amount: 0,
 								exponent: 0,
 							},
 							{
 								currency: 'usd',
-								amount: 1760,
-								exponent: 2,
+								amount: 0,
+								exponent: 0,
 							},
 						],
 					},

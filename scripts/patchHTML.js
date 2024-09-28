@@ -17,7 +17,10 @@ module.exports = () => {
 
 	const oldPatch = document.getElementById('patch-bot-client');
 
-	if (oldPatch) oldPatch.parentNode.removeChild(oldPatch);
+	if (oldPatch) {
+		console.log('[Discord] Removing old patch');
+		oldPatch.parentNode.removeChild(oldPatch);
+	}
 
 	const replaceEnv = {
 		API_ENDPOINT: "'//' + window.location.host + '/bot/api'",
@@ -47,6 +50,7 @@ module.exports = () => {
 					}
 				})
 				.join('\n');
+			console.log('[Discord] Patch GLOBAL_ENV');
 		}
 	});
 
@@ -54,6 +58,7 @@ module.exports = () => {
 	newScript.setAttribute('id', 'patch-bot-client');
 	newScript.textContent = fs.readFileSync(path.resolve('.', 'scripts', 'patchScript.js')).toString();
 	document.head.prepend(newScript);
+	console.log('[Discord] Add custom JS');
 
 	const appMount = document.getElementById('app-mount');
 	appMount.parentNode.removeChild(appMount);
@@ -71,6 +76,8 @@ module.exports = () => {
 
 	document.body.prepend(newMain);
 	document.body.prepend(newStyle);
+
+	console.log('[Discord] Patch UI + CSS');
 
 	const modifiedHtml = dom.serialize();
 

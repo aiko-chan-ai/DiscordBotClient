@@ -1,10 +1,12 @@
 const { Router } = require('express');
-const DiscordShopItems = require('../../AppAssets/DiscordShop');
 
 const app = Router();
 
 app.get('/', (req, res) => {
-	res.send(DiscordShopItems);
+	res.send({
+		users: [],
+		next_index: 0,
+	});
 });
 
 module.exports = app;

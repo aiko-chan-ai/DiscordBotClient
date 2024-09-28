@@ -220,7 +220,7 @@ npm run fetchLatestDiscordBuild
 ```
 
 4. Copy BotClient plugin from [my repo](https://github.com/aiko-chan-ai/VencordDBC)
-> Guide: [Vencord.md](https://github.com/aiko-chan-ai/DiscordBotClient/blob/electron-v3/vencord.md)
+> Guide: [Vencord.md](https://github.com/aiko-chan-ai/DiscordBotClient/blob/electron-v3/Vencord.md)
 
 ## Credits
 

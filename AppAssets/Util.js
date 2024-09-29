@@ -1,3 +1,4 @@
+const multer = require('multer');
 const UserFlags = require('./UserFlags');
 const SnowflakeUtil = require('./SnowflakeUtil');
 const Constants = require('./Constants');
@@ -58,5 +59,32 @@ module.exports = class Util {
 	}
 	static UserAgent() {
 		return `DiscordBot (https://github.com/aiko-chan-ai/DiscordBotClient, v${version})`;
+	}
+	static getDataFromRequest(req, res, callback) {
+		var data = '';
+		// check content-type
+		if (req.headers['content-type'] !== 'application/json') {
+			return multer().any()(req, res, function (err) {
+				if (err) {
+					console.error('Multer Error:', err);
+				}
+				callback(req, res);
+			});
+		}
+		req.on('data', function (chunk) {
+			data += chunk;
+		});
+		req.on('end', function () {
+			req.rawBody = data;
+			if (data) {
+				try {
+					req.body = JSON.parse(data);
+				} catch (e) {
+					req.body = undefined;
+					console.error('JSON Parse Error:', e);
+				}
+				callback(req, res);
+			}
+		});
 	}
 };

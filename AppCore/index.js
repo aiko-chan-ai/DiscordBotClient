@@ -286,6 +286,10 @@ async function createWindow() {
 		e.preventDefault();
 	});
 
+	ipcMain.on('show-notification', (event, title, description) => {
+		createNotification(title, description);
+	});
+
 	ipcMain.on('minimize', (event) => {
 		win.minimize();
 		event.returnValue = true;

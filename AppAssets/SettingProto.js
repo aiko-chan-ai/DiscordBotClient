@@ -75,10 +75,13 @@ module.exports = {
 			lastDismissedOutboundPromotionStartDate: {
 				value: '2024-06-17T17:00:00.180000+00:00',
 			},
-			dismissedContents: Buffer.from(
-				'ffdbffbffad7b783cea377f2ff50f9fa7c3f8c27feeefff73e60fffffb7df8fc83c7fd7ff7426e3360c3977e4cfbffffffffffff01',
-				'hex',
-			),
+			dismissedContents: Buffer.from([
+				255, 219, 255, 191, 250, 215, 183, 131, 206, 163, 119, 242, 255,
+				80, 249, 250, 116, 63, 140, 39, 254, 238, 255, 247, 62, 96, 255,
+				255, 251, 125, 248, 252, 131, 199, 253, 127, 247, 66, 110, 51,
+				96, 193, 151, 126, 76, 251, 255, 255, 255, 255, 255, 223, 243,
+				251, 255, 255, 15,
+			]),
 		},
 	},
 	data2: {

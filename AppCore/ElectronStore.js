@@ -1,13 +1,13 @@
 const Store = require('electron-store');
 const defaultSetting = require('../AppAssets/SettingProto');
 const _ = require('lodash');
-const { app } = require('electron');
+const { app, ipcRenderer } = require('electron');
 const SettingProto = require('../AppAssets/SettingProto');
 const store = new Store({
 	encryptionKey: 'elysia-discord-bot-client',
 });
 
-const LatestStorageUpdate = 1719725273000;
+const LatestStorageUpdate = 1719725273000; // Breaking change
 
 // Validated
 if (
@@ -37,6 +37,29 @@ value: {
 }
 */
 
+// Credit: ChatGPT 4o
+function deepConvertToBuffer(obj) {
+	if (obj && typeof obj === 'object') {
+		if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+			return Buffer.from(obj.data);
+		}
+
+		if (Array.isArray(obj)) {
+			return obj.map(deepConvertToBuffer);
+		}
+
+		const newObj = {};
+		for (const key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				newObj[key] = deepConvertToBuffer(obj[key]);
+			}
+		}
+		return newObj;
+	}
+
+	return obj;
+}
+
 class ElectronDatabase {
 	#db = store;
 	constructor() {}
@@ -46,12 +69,12 @@ class ElectronDatabase {
 	get(uid) {
 		const data = this.#get(uid);
 		if (data?.settingProto?.data1) {
-			data.settingProto.data1.guildFolders = {
-				folders: [],
-				guildPositions: [],
-			};
-			data.settingProto.data1.userContent =
-				SettingProto.data1.userContent;
+			if (!data.settingProto.data1.userContent?.dismissedContents) {
+				data.settingProto.data1.userContent =
+					SettingProto.data1.userContent;
+			} else {
+				data.settingProto = deepConvertToBuffer(data.settingProto);
+			}
 		}
 		if (!data.privateChannel) {
 			data.privateChannel = {};
@@ -82,20 +105,24 @@ class ElectronDatabase {
 		} else {
 			const oldData = this.get(uid);
 			const customizer = (objValue, srcValue) => {
-				if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-					return srcValue;
+				if (
+					(Array.isArray(objValue) && Array.isArray(srcValue)) ||
+					(Buffer.isBuffer(objValue) && Buffer.isBuffer(srcValue)) ||
+					(ArrayBuffer.isView(objValue) &&
+						ArrayBuffer.isView(srcValue))
+				) {
+					if (overwriteArrayOrConcat === 'concat') {
+						return objValue.concat(srcValue);
+					} else if (overwriteArrayOrConcat === 'overwrite') {
+						return srcValue;
+					} else {
+						throw new Error(
+							'Invalid param overwriteArrayOrConcat: Must be concat or overwrite',
+						);
+					}
 				}
 			};
-			let merge;
-			if (overwriteArrayOrConcat === 'concat') {
-				merge = _.merge(oldData, data);
-			} else if (overwriteArrayOrConcat === 'overwrite') {
-				merge = _.mergeWith(oldData, data, customizer);
-			} else {
-				throw new Error(
-					'Invalid param overwriteArrayOrConcat: Must be concat or overwrite',
-				);
-			}
+			const merge = _.mergeWith(oldData, data, customizer);
 			this.#db.set(uid, merge);
 		}
 		return this.get(uid);

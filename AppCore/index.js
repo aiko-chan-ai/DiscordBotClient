@@ -35,7 +35,7 @@ app.commandLine.appendSwitch('ignore-certificate-errors');
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 // App Metadata
-const APP_NAME = 'DiscordBotClient';
+const APP_NAME = 'StormCord';
 
 const iconPath = path.join(
 	__dirname,
@@ -170,7 +170,7 @@ async function createWindow() {
 		},
 		frame: false,
 		backgroundColor: '#36393f',
-		title: 'DiscordBotClient',
+		title: 'StormCord',
 	});
 
 	// Patch UserAgent (Switch Plan B SDP > Unified Plan)
@@ -498,7 +498,7 @@ function checkUpdate(force = false) {
 	log.info('Checking for updates...');
 	return new Promise((resolve) => {
 		fetch(
-			'https://api.github.com/repos/aiko-chan-ai/DiscordBotClient/releases/latest',
+			'https://api.github.com/repos/gru2007/StormCord/releases/latest',
 		)
 			.then((res) => res.json())
 			.then((res) => {
@@ -508,7 +508,7 @@ function checkUpdate(force = false) {
 						`Electron v${app.getVersion()} - ${os.platform()}`,
 						undefined,
 						undefined,
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+						'https://github.com/gru2007/StormCord/releases',
 					);
 				} else if (checkLatestVersion(res.tag_name, app.getVersion())) {
 					createNotification(
@@ -516,7 +516,7 @@ function checkUpdate(force = false) {
 						`Click here to open the update page`,
 						undefined,
 						undefined,
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+						'https://github.com/gru2007/StormCord/releases',
 					);
 				} else if (force) {
 					createNotification(
@@ -524,7 +524,7 @@ function checkUpdate(force = false) {
 						`You are using the latest version (v${app.getVersion()})`,
 						undefined,
 						undefined,
-						'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+						'https://github.com/gru2007/StormCord/releases',
 					);
 				}
 			})
@@ -535,7 +535,7 @@ function checkUpdate(force = false) {
 					`Unable to check for updates (v${app.getVersion()})`,
 					undefined,
 					undefined,
-					'https://github.com/aiko-chan-ai/DiscordBotClient/releases',
+					'https://github.com/gru2007/StormCord/releases',
 				);
 			})
 			.finally(() => resolve(true));

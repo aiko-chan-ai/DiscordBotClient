@@ -29,8 +29,8 @@
 			"!scripts",
 			"!DiscordCore"
 		],
-		"appId": "DiscordBotClient",
-		"productName": "DiscordBotClient",
+		"appId": "StormCord",
+		"productName": "StormCord",
 		"artifactName": "${productName}-${os}-${arch}.${ext}",
 		"copyright": "Copyright © 2024 @elysia.dev",
 		"mac": {
@@ -66,7 +66,7 @@
 		"asar": false
 	},
 	"scripts": {
-		"start": "electron AppCore\\index.js",
+		"start": "electron AppCore/index.js",
 		"mac": "electron-builder -m",
 		"win": "electron-builder -w",
 		"linux": "electron-builder -l",
@@ -79,12 +79,12 @@
 		"test": "npm run vencord & npm run start"
 	},
 	"author": {
-		"name": "aiko-chan-ai",
-		"email": "Aiko@shiroko.onmicrosoft.com"
+		"name": "StormTeam",
+		"email": "team@stormgalaxy.com"
 	},
 	"repository": {
-		"url": "https://github.com/aiko-chan-ai/DiscordBotClient/"
+		"url": "https://github.com/gru2007/StormCord/"
 	},
 	"license": "ISC",
-	"productName": "Discord Bot Client"
+	"productName": "StormCord"
 }

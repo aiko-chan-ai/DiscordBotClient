@@ -23,11 +23,11 @@ module.exports = () => {
 	}
 
 	const replaceEnv = {
-		API_ENDPOINT: "'//' + window.location.host + '/bot/api'",
-		WEBAPP_ENDPOINT: "'//' + window.location.host",
-		// ASSET_ENDPOINT: "'//' + window.location.host",
+		API_ENDPOINT: "'//' + 'discord.stormgalaxy.com' + '/api'",
+		WEBAPP_ENDPOINT: "'//' + 'discord.stormgalaxy.com'",
+		ASSET_ENDPOINT: "'//' + 'discord.stormgalaxy.com'",
 		MIGRATION_DESTINATION_ORIGIN:
-			"window.location.protocol + '//' + window.location.host",
+			"window.location.protocol + '//' + 'discord.stormgalaxy.com'",
 	};
 
 	scriptTags.forEach((scriptTag, index) => {

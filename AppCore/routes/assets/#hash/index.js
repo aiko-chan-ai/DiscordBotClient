@@ -26,7 +26,7 @@ app.get('/', async (req, res) => {
 				fs.readFileSync(path.resolve(staticFolder, fileName), 'utf8'),
 			);
 		} else {
-			const f = await fetch('https://discord.com/assets/' + fileName);
+			const f = await fetch('https://dis-proxy.stormgalaxy.com/assets/' + fileName);
 			const content = await f.text();
 			fs.writeFileSync(path.resolve(staticFolder, fileName), content);
 			res.type('.js');
@@ -40,16 +40,30 @@ app.get('/', async (req, res) => {
 				fs.readFileSync(path.resolve(staticFolder, fileName), 'utf8'),
 			);
 		} else {
-			const f = await fetch('https://discord.com/assets/' + fileName);
+			const f = await fetch('https://dis-proxy.stormgalaxy.com/assets/' + fileName);
 			const content = await f.text();
 			fs.writeFileSync(path.resolve(staticFolder, fileName), content);
 			res.type('.css');
 			res.send(content);
 		}
+	} else if (fileName.endsWith('.svg') && package.cacheAssets) {
+		// Readdir
+		if (fs.readdirSync(staticFolder).includes(fileName)) {
+			res.type('.svg');
+			res.send(
+				fs.readFileSync(path.resolve(staticFolder, fileName), 'utf8'),
+			);
+		} else {
+			const f = await fetch('https://dis-proxy.stormgalaxy.com/assets/' + fileName);
+			const content = await f.text();
+			fs.writeFileSync(path.resolve(staticFolder, fileName), content);
+			res.type('.svg');
+			res.send(content);
+		}
 	}
 	else {
 		return req
-			.pipe(request('https://discord.com/assets/' + fileName))
+			.pipe(request('https://dis-proxy.stormgalaxy.com/assets/' + fileName))
 			.pipe(res);
 	}
 });

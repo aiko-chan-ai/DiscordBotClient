@@ -101,7 +101,7 @@ major systems in the release overview:
 
 In order to execute the following commands, you need to install **NodeJS v16 or**
 higher. You can find nodejs packages at https://nodejs.org/en.
-On top of that, you need to have **git** installed. It can be fund at
+On top of that, you need to have **git** installed. It can be found at
 https://git-scm.com/downloads.
 
 

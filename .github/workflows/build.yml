@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Install Python 3.13.2
         uses: actions/setup-python@v5

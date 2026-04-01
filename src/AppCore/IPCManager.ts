@@ -33,7 +33,6 @@ export function setupIPCEvents(mainApp: DiscordBotClient) {
         })
         .on(IPCEvent.Focus, (event, frameName) => {
             const win = getWindow(frameName);
-            // this.win.focus();
             win.show();
             win.setSkipTaskbar(false);
         })
@@ -45,6 +44,50 @@ export function setupIPCEvents(mainApp: DiscordBotClient) {
             const win = BrowserWindow.fromWebContents(event.sender);
             win?.close();
         });
+
+    mainApp.ipcMain.handle("multibot:get-all", () => mainApp.multiBotManager.getAllBots());
+    mainApp.ipcMain.handle("multibot:get-active", () => mainApp.multiBotManager.getActiveBot());
+    mainApp.ipcMain.handle("multibot:add", (_, name: string, token: string, avatar?: string) =>
+        mainApp.multiBotManager.addBot(name, token, avatar),
+    );
+    mainApp.ipcMain.handle("multibot:switch", (_, id: string) => mainApp.multiBotManager.switchBot(id));
+    mainApp.ipcMain.handle("multibot:remove", (_, id: string) => mainApp.multiBotManager.removeBot(id));
+
+    mainApp.ipcMain.handle("templates:get-all", () => mainApp.templateManager.getAllTemplates());
+    mainApp.ipcMain.handle("templates:create", (_, name: string, content?: string, embeds?: unknown[]) =>
+        mainApp.templateManager.createTemplate(name, content, embeds as never),
+    );
+    mainApp.ipcMain.handle("templates:update", (_, id: string, updates: unknown) =>
+        mainApp.templateManager.updateTemplate(id, updates as never),
+    );
+    mainApp.ipcMain.handle("templates:delete", (_, id: string) => mainApp.templateManager.deleteTemplate(id));
+    mainApp.ipcMain.handle("templates:search", (_, query: string) => mainApp.templateManager.searchTemplates(query));
+
+    mainApp.ipcMain.handle("scheduled:get-pending", () => mainApp.scheduledMessages.getPendingMessages());
+    mainApp.ipcMain.handle("scheduled:cancel", (_, id: string) => mainApp.scheduledMessages.cancel(id));
+
+    mainApp.ipcMain.handle("themes:get-all", () => mainApp.themeManager.getAllThemes());
+    mainApp.ipcMain.handle("themes:get-active", () => mainApp.themeManager.getActiveTheme());
+    mainApp.ipcMain.handle("themes:create", (_, name: string, css: string) =>
+        mainApp.themeManager.createTheme(name, css),
+    );
+    mainApp.ipcMain.handle("themes:activate", (_, id: string) => mainApp.themeManager.activateTheme(id));
+    mainApp.ipcMain.handle("themes:deactivate", () => mainApp.themeManager.deactivateTheme());
+    mainApp.ipcMain.handle("themes:get-css", () => mainApp.themeManager.getCombinedCSS());
+
+    mainApp.ipcMain.handle("shortcuts:list", () => mainApp.keyboardShortcuts.getAllShortcuts());
+    mainApp.ipcMain.handle("shortcuts:trigger", (_, id: string) => mainApp.keyboardShortcuts.trigger(id));
+
+    mainApp.ipcMain.handle("notifications:get-filters", () => mainApp.notificationFilters.getAllFilters());
+    mainApp.ipcMain.handle("notifications:set-dnd", (_, enabled: boolean) =>
+        mainApp.notificationFilters.setDoNotDisturb(enabled),
+    );
+
+    mainApp.ipcMain.handle("secure:save", (_, key: string, value: string) =>
+        mainApp.secureStorage.saveSecureData(key, value),
+    );
+    mainApp.ipcMain.handle("secure:load", (_, key: string) => mainApp.secureStorage.loadSecureData(key));
+    mainApp.ipcMain.handle("secure:delete", (_, key: string) => mainApp.secureStorage.deleteSecureData(key));
     mainApp.ipcMain.handle(IPCEvent.GetBotInfo, (event, token) => {
         token = token.replace(/Bot/g, "").trim();
         return mainApp.session

@@ -30,6 +30,18 @@ import { IPCEvent } from "./IPCEvents";
 import { setupIPCEvents } from "./IPCManager";
 import messageEditor from "./MessageEditorServer";
 
+import MultiBotManager from "./MultiBotManager";
+import MessageTemplateManager from "./MessageTemplateManager";
+import ScheduledMessageManager from "./ScheduledMessageManager";
+import KeyboardShortcutManager from "./KeyboardShortcutManager";
+import ThemeManager from "./ThemeManager";
+import ConsoleAPIManager from "./ConsoleAPIManager";
+import GatewayInspector from "./GatewayInspector";
+import SecureStorage from "./SecureStorage";
+import NotificationFilterManager from "./NotificationFilterManager";
+import SplitViewManager from "./SplitViewManager";
+import DragDropManager from "./DragDropManager";
+
 export class DiscordBotClient extends EventEmitter {
     logger = scope(Constants.AppName);
     #shouldQuitApp = false;
@@ -41,6 +53,18 @@ export class DiscordBotClient extends EventEmitter {
     editorWindow?: BrowserWindow;
     config = GlobalConfig;
     ipcMain = ipcMain;
+
+    multiBotManager = MultiBotManager;
+    templateManager = MessageTemplateManager;
+    scheduledMessages = ScheduledMessageManager;
+    keyboardShortcuts = KeyboardShortcutManager;
+    themeManager = ThemeManager;
+    consoleAPI = ConsoleAPIManager;
+    gatewayInspector = GatewayInspector;
+    secureStorage = SecureStorage;
+    notificationFilters = NotificationFilterManager;
+    splitViewManager = SplitViewManager;
+    dragDropManager = DragDropManager;
 
     // Beta Features
     messageEditorPort!: number;
@@ -100,6 +124,71 @@ export class DiscordBotClient extends EventEmitter {
                 click: () => {
                     this.openConfigEditorWindow();
                 },
+            },
+            {
+                type: "separator",
+            },
+            {
+                label: "Bot Manager",
+                submenu: [
+                    {
+                        label: "Switch Bot",
+                        click: () => this.emit("open-bot-switcher"),
+                    },
+                    {
+                        label: "Add New Bot",
+                        click: () => this.emit("open-add-bot"),
+                    },
+                    {
+                        label: "Manage Bots",
+                        click: () => this.emit("open-bot-manager"),
+                    },
+                ],
+            },
+            {
+                label: "Message Templates",
+                click: () => this.emit("open-template-manager"),
+            },
+            {
+                label: "Scheduled Messages",
+                click: () => this.emit("open-scheduled-messages"),
+            },
+            {
+                label: "Tools",
+                submenu: [
+                    {
+                        label: "API Console",
+                        click: () => this.emit("open-api-console"),
+                    },
+                    {
+                        label: "Gateway Inspector",
+                        click: () => this.emit("open-gateway-inspector"),
+                    },
+                    {
+                        label: "Theme Manager",
+                        click: () => this.emit("open-theme-manager"),
+                    },
+                    {
+                        label: "Keyboard Shortcuts",
+                        click: () => this.emit("open-shortcuts"),
+                    },
+                ],
+            },
+            {
+                label: "Split View",
+                submenu: [
+                    {
+                        label: "Create Split View",
+                        click: () => this.emit("create-split-view"),
+                    },
+                    {
+                        label: "Close All Split Views",
+                        click: () => this.splitViewManager.closeAllSplitViews(),
+                    },
+                ],
+            },
+            {
+                type: "separator",
             },
             {
                 label: "Delete all application data and relaunch",
@@ -479,6 +568,38 @@ export class DiscordBotClient extends EventEmitter {
             });
 
         this.win.loadURL(`https://${Constants.CustomDiscordDomain}`);
+
+        this.win.webContents.on("dom-ready", () => {
+            this.injectThemeCSS();
+            this.setupKeyboardShortcuts();
+        });
+
+        this.themeManager.on("css-updated", css => {
+            this.win?.webContents.send("theme:css-updated", css);
+        });
+
+        this.keyboardShortcuts.on("quick-switch", () => {
+            this.win?.webContents.send("shortcut:quick-switch");
+        });
+
+        this.keyboardShortcuts.on("search", () => {
+            this.win?.webContents.send("shortcut:search");
+        });
+    }
+    injectThemeCSS () {
+        const css = this.themeManager.getCombinedCSS();
+        if (css && this.win) {
+            this.win.webContents.insertCSS(css).catch(err => {
+                this.logger.error("Failed to inject theme CSS:", err);
+            });
+        }
+    }
+    setupKeyboardShortcuts () {
+        this.keyboardShortcuts.getAllShortcuts().forEach(shortcut => {
+            if (shortcut.scope === "local") {
+                this.win?.webContents.send("shortcut:register", shortcut);
+            }
+        });
     }
     showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);

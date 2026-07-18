@@ -186,6 +186,7 @@ const callbackEditCurrentMember = (
     resCallback: Response,
 ) => {
     const guildId = reqCallback.params.id;
+    const botId = Util.getIDFromToken(reqCallback.headers.authorization);
     const body: Record<string, unknown> = {};
     if ("nick" in reqCallback.body) body.nick = reqCallback.body.nick;
     if ("avatar" in reqCallback.body) body.avatar = reqCallback.body.avatar;
@@ -202,7 +203,7 @@ const callbackEditCurrentMember = (
     })
         .then(r => r.json() as Promise<APIGuildMember>)
         .then(d => {
-            if ("bio" in body) Util.setGuildMemberBio(guildId, (body.bio as string) || "");
+            if ("bio" in body && botId) Util.setGuildMemberBio(botId, guildId, (body.bio as string) || "");
             return resCallback.send({
                 guild_id: guildId,
                 pronouns: "",

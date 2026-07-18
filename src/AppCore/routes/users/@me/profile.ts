@@ -64,7 +64,7 @@ app.get(
             } as Record<string, string>,
         })
             .then(r => r.json() as Promise<APIUser>)
-            .then(d => res.send(Util.ProfilePatch(d, guild_member, guild_id, applicationBio)))
+            .then(d => res.send(Util.ProfilePatch(d, guild_member, guild_id, applicationBio, id)))
             .catch(err => {
                 console.error("Error fetching user profile (@me):", err);
                 if (!res.headersSent) res.status(500).send({ message: "Internal Server Error" });

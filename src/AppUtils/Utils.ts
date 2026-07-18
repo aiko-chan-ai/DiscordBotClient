@@ -14,8 +14,8 @@ import { BadgesBasedUserDataAndExtends as UserBadges } from "./UserBadges";
 export default class Util {
     static guildMemberBios = new Map<string, string>();
 
-    static setGuildMemberBio (guildId: string, bio: string) {
-        Util.guildMemberBios.set(guildId, bio);
+    static setGuildMemberBio (botId: string, guildId: string, bio: string) {
+        Util.guildMemberBios.set(`${botId}:${guildId}`, bio);
     }
 
     static ProfilePatch (
@@ -23,6 +23,7 @@ export default class Util {
         guildMember: APIGuildMember | null = null,
         guildId: string | null = null,
         bio: string | null = null,
+        botId: string | null = null,
     ) {
         const flags = new UserFlagsBitField(userData.flags);
         const badges: object[] = [];
@@ -73,7 +74,7 @@ export default class Util {
             guild_member_profile: guildMember && {
                 guild_id: guildId,
                 pronouns: "",
-                bio: (guildId && Util.guildMemberBios.get(guildId)) || "",
+                bio: (botId && guildId && Util.guildMemberBios.get(`${botId}:${guildId}`)) || "",
                 banner: guildMember.banner,
                 accent_color: null,
                 theme_colors: null,

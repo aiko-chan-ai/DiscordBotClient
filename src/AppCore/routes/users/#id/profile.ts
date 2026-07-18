@@ -28,7 +28,8 @@ app.get("/", async (req: Request<{ id: string }>, res) => {
             .catch(() => null);
     }
     let bio = null;
-    if (req.params.id === Util.getIDFromToken(req.headers.authorization)) {
+    const botId = Util.getIDFromToken(req.headers.authorization);
+    if (req.params.id === botId) {
         // Using bio from applications/@me
         const applicationData = await net.fetch(
             "https://canary.discord.com/api/v9/applications/@me",
@@ -51,7 +52,7 @@ app.get("/", async (req: Request<{ id: string }>, res) => {
     })
         .then(r => r.json() as Promise<APIUser>)
         .then(d =>
-            res.send(Util.ProfilePatch(d, guild_member, (guild_id as string) ?? null, bio)),
+            res.send(Util.ProfilePatch(d, guild_member, (guild_id as string) ?? null, bio, botId)),
         )
         .catch(err => {
             console.error("Error fetching user profile (/:id):", err);

@@ -201,8 +201,9 @@ const callbackEditCurrentMember = (
         body: JSON.stringify(body),
     })
         .then(r => r.json() as Promise<APIGuildMember>)
-        .then(d =>
-            resCallback.send({
+        .then(d => {
+            if ("bio" in body) Util.setGuildMemberBio(guildId, (body.bio as string) || "");
+            return resCallback.send({
                 guild_id: guildId,
                 pronouns: "",
                 bio: body.bio || "",
@@ -212,8 +213,8 @@ const callbackEditCurrentMember = (
                 popout_animation_particle_type: null,
                 emoji: null,
                 profile_effect: null,
-            }),
-        )
+            });
+        })
         .catch(err => {
             console.error("Error in /guilds/:id/profile PATCH (member):", err);
             if (!resCallback.headersSent) resCallback.status(500).send({ message: "Internal Server Error", code: 500 });

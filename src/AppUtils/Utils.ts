@@ -12,6 +12,12 @@ import { UserFlagsBitField } from "./DiscordBitField";
 import { BadgesBasedUserDataAndExtends as UserBadges } from "./UserBadges";
 
 export default class Util {
+    static guildMemberBios = new Map<string, string>();
+
+    static setGuildMemberBio (guildId: string, bio: string) {
+        Util.guildMemberBios.set(guildId, bio);
+    }
+
     static ProfilePatch (
         userData: APIUser,
         guildMember: APIGuildMember | null = null,
@@ -67,7 +73,7 @@ export default class Util {
             guild_member_profile: guildMember && {
                 guild_id: guildId,
                 pronouns: "",
-                bio: "",
+                bio: (guildId && Util.guildMemberBios.get(guildId)) || "",
                 banner: guildMember.banner,
                 accent_color: null,
                 theme_colors: null,

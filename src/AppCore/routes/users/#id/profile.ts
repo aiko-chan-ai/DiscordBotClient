@@ -43,20 +43,24 @@ app.get("/", async (req: Request<{ id: string }>, res) => {
                 .catch(() => null);
         }
     }
-    let bio = null;
+    let bio: string | null = null;
     if (isCurrentUser) {
         // Using bio from applications/@me
-        const applicationData = await net
-            .fetch("https://canary.discord.com/api/v9/applications/@me", {
-                headers: {
-                    Authorization: req.headers.authorization,
-                    "User-Agent": Constants.UserAgentDiscordBot,
-                } as Record<string, string>,
-            })
-            .then(resF => {
-                return resF.json() as Promise<APIApplication>;
-            });
-        bio = applicationData.description;
+        try {
+            const applicationData = await net
+                .fetch("https://canary.discord.com/api/v9/applications/@me", {
+                    headers: {
+                        Authorization: req.headers.authorization,
+                        "User-Agent": Constants.UserAgentDiscordBot,
+                    } as Record<string, string>,
+                })
+                .then(resF => {
+                    return resF.json() as Promise<APIApplication>;
+                });
+            bio = applicationData.description;
+        } catch (err) {
+            console.error("Error fetching application data:", err);
+        }
     }
     net.fetch("https://canary.discord.com/api/v9/users/" + req.params.id, {
         headers: {

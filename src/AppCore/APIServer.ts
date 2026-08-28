@@ -93,7 +93,7 @@ export default async function startAppServer (): Promise<number> {
             resolve(address.port);
             logger.log(`API Server listening on https://localhost:${address.port}`);
         };
-        server.listen(0).once("listening", callback);
+        server.listen(0, "127.0.0.1").once("listening", callback);
         server.on("error", reject);
     });
 }

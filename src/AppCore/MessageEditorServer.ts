@@ -26,7 +26,7 @@ app.use(express.static(Constants.EditorHTMLFolderPath));
 
 export default async function startEditor (): Promise<number> {
     return new Promise((resolve, reject) => {
-        const server = app.listen(0, () => {
+        const server = app.listen(0, "127.0.0.1", () => {
             const { port } = server.address() as AddressInfo;
             resolve(port);
             logger.log(`API Server listening on http://localhost:${port}`);

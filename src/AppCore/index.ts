@@ -21,6 +21,7 @@ import contextMenu from "electron-context-menu";
 import { scope } from "electron-log";
 import { autoUpdater } from "electron-updater";
 import EventEmitter from "events";
+import fs from "fs";
 import path from "path";
 
 import server from "./APIServer";
@@ -333,8 +334,16 @@ export class DiscordBotClient extends EventEmitter {
             },
         );
         // Load Vencord-Web Extension
-        const extension = await this.session.extensions.loadExtension(Constants.VencordExtensionPath);
-        this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
+        if (fs.existsSync(Constants.VencordExtensionPath)) {
+            try {
+                const extension = await this.session.extensions.loadExtension(Constants.VencordExtensionPath);
+                this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
+            } catch (err) {
+                this.logger.error("Failed to load Vencord extension:", err);
+            }
+        } else {
+            this.logger.warn(`Vencord extension not found at ${Constants.VencordExtensionPath}, running without extension.`);
+        }
     }
     async createWindow () {
         this.setupTray();
@@ -461,6 +470,22 @@ export class DiscordBotClient extends EventEmitter {
         });
         // WebContents Event
         this.win.webContents
+            .on("will-navigate", (event, navigationUrl) => {
+                try {
+                    const parsed = new URL(navigationUrl);
+                    const isAllowedHost =
+                        parsed.hostname === Constants.CustomDiscordDomain ||
+                        parsed.hostname === "localhost" ||
+                        parsed.hostname === "127.0.0.1";
+                    const isAllowedProtocol = parsed.protocol === "https:" || (parsed.protocol === "http:" && parsed.hostname !== Constants.CustomDiscordDomain);
+                    if (!isAllowedHost || !isAllowedProtocol) {
+                        event.preventDefault();
+                        shell.openExternal(navigationUrl);
+                    }
+                } catch {
+                    event.preventDefault();
+                }
+            })
             .on("did-create-window", (window, details) => {
                 window.show();
                 window.on("closed", () => {

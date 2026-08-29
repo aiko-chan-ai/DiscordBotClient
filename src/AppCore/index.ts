@@ -21,6 +21,7 @@ import contextMenu from "electron-context-menu";
 import { scope } from "electron-log";
 import { autoUpdater } from "electron-updater";
 import EventEmitter from "events";
+import fs from "fs";
 import path from "path";
 
 import server from "./APIServer";
@@ -169,7 +170,6 @@ export class DiscordBotClient extends EventEmitter {
         const disabledFeatures = new Set(app.commandLine.getSwitchValue("disable-features").split(","));
         // Allow Localhost SSL
         app.commandLine.appendSwitch("allow-insecure-localhost", "true");
-        app.commandLine.appendSwitch("ignore-certificate-errors");
         app.commandLine.appendSwitch("host-rules", `MAP ${Constants.CustomDiscordDomain} 127.0.0.1:${this.port}`);
         // Vesktop
         // Disable renderer backgrounding to prevent the app from unloading when in the background
@@ -242,6 +242,20 @@ export class DiscordBotClient extends EventEmitter {
             ]);
             app.whenReady().then(async () => {
                 this.logger.info("Creating session...");
+                app.on("certificate-error", (event, webContents, url, error, certificate, callback) => {
+                    try {
+                        const { hostname } = new URL(url);
+                        if (
+                            hostname === Constants.CustomDiscordDomain ||
+                            hostname === "localhost" ||
+                            hostname === "127.0.0.1"
+                        ) {
+                            event.preventDefault();
+                            return callback(true);
+                        }
+                    } catch {}
+                    callback(false);
+                });
                 this.customSession = session.fromPartition("persist:elysia_dbc");
                 // Enable DoH (Cloudflare)
                 app.configureHostResolver({
@@ -333,8 +347,16 @@ export class DiscordBotClient extends EventEmitter {
             },
         );
         // Load Vencord-Web Extension
-        const extension = await this.session.extensions.loadExtension(Constants.VencordExtensionPath);
-        this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
+        if (fs.existsSync(Constants.VencordExtensionPath)) {
+            try {
+                const extension = await this.session.extensions.loadExtension(Constants.VencordExtensionPath);
+                this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
+            } catch (err) {
+                this.logger.error("Failed to load Vencord extension:", err);
+            }
+        } else {
+            this.logger.warn(`Vencord extension not found at ${Constants.VencordExtensionPath}, running without extension.`);
+        }
     }
     async createWindow () {
         this.setupTray();

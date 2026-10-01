@@ -37,7 +37,8 @@
     "test:settings": "npm run build:ts && npm run test:settings:types && npm run test:settings:store && node scripts/testSettingsWindow.cjs",
     "test:settings:types": "tsc --noEmit --strict --skipLibCheck --target es2024 --module commonjs --moduleResolution node scripts/testSettingsTypes.ts",
     "test:message-editor": "npm run discohook && npm run build:ts && node scripts/testMessageEditor.cjs",
-    "test:network": "npm run build:ts && node scripts/testAppServer.cjs"
+    "test:network": "npm run build:ts && node scripts/testAppServer.cjs",
+    "test:security": "npm run build:ts && node scripts/testMainWindowSecurity.cjs"
   },
   "keywords": [],
   "devDependencies": {

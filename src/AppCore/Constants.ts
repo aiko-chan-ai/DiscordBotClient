@@ -68,7 +68,6 @@ export default class Constants extends null {
     static enableFeatures = [];
     static disableFeatures = [
         "CalculateNativeWinOcclusion",
-        "OutOfBlinkCors",
         "WinRetrieveSuggestionsOnlyOnDemand",
         "HardwareMediaKeyHandling",
         "MediaSessionService",

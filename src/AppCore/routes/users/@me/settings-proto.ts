@@ -4,6 +4,7 @@ import { FrecencyUserSettings, PreloadedUserSettings } from "discord-protos";
 import { IpcMainEvent } from "electron";
 import { Request, Response, Router } from "express";
 import { IPCEvent } from "src/AppCore/IPCEvents";
+import { isTrustedAppFrame } from "src/AppCore/IPCManager";
 import Util from "src/AppUtils/Utils";
 
 const app = Router({ mergeParams: true });
@@ -21,7 +22,7 @@ function waitForSettingsEvent (
 ): Promise<[IpcMainEvent, string, string]> {
     return new Promise((resolve, reject) => {
         const onEvent = (event: IpcMainEvent, botId: string, settings: string) => {
-            if (botId !== uid) return; // Not our response, ignore
+            if (botId !== uid || !isTrustedAppFrame(event, globalThis.botClient.discordWebContents)) return;
             clearTimeout(timer);
             emitter.removeListener(eventName, onEvent);
             resolve([event, botId, settings]);

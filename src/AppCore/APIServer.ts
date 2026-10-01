@@ -1,5 +1,6 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
+import { X509Certificate } from "crypto";
 import { scope } from "electron-log";
 import express from "express";
 import { readFileSync } from "fs";
@@ -27,6 +28,16 @@ if (Constants.VerboseAPIServerLogging) {
 }
 
 const HttpsOptions = Util.generateSelfSignedCertificate();
+const localCertificate = new X509Certificate(HttpsOptions.cert);
+
+/** Trust only the certificate generated for this process, never other invalid HTTPS certificates. */
+export function isLocalServerCertificate (data: string): boolean {
+    try {
+        return localCertificate.raw.equals(new X509Certificate(data).raw);
+    } catch {
+        return false;
+    }
+}
 
 const server = https.createServer(
     {

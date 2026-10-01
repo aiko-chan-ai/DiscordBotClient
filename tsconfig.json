@@ -11,7 +11,7 @@
     "resolveJsonModule": false,
     "strict": true,
     "alwaysStrict": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "target": "es2024",
     "baseUrl": ".",
     "allowSyntheticDefaultImports": true,

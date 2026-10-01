@@ -2,12 +2,14 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 
-// Keep the sandboxed preload self-contained; the editor only receives its dedicated port.
+import { IPCEvent } from "../IPCEvents";
+
+// The const enum inlines IPC channel names, keeping this sandboxed preload self-contained.
 contextBridge.exposeInMainWorld("electronAPI", {
-    reactReady: () => ipcRenderer.send("app:message_editor_ready"), // IPCEvent.MessageEditorReactReady
-    closeWindow: () => ipcRenderer.send("app:message_editor_close"), // IPCEvent.RequestCloseWindow
+    reactReady: () => ipcRenderer.send(IPCEvent.MessageEditorReactReady),
+    closeWindow: () => ipcRenderer.send(IPCEvent.MessageEditorClose),
 });
 
-ipcRenderer.once("app:message_editor_receive_port", event => {
+ipcRenderer.once(IPCEvent.MessageEditorReceivePort, event => {
     window.postMessage("forward-editor-port", "*", [event.ports[0]]);
 });

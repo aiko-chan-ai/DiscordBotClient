@@ -20,10 +20,10 @@ import { autoUpdater } from "electron-updater";
 import EventEmitter from "events";
 import path from "path";
 
-import server from "./APIServer";
+import server, { isLocalServerCertificate } from "./APIServer";
 import GlobalConfig from "./Config";
 import Constants from "./Constants";
-import { setupIPCEvents } from "./IPCManager";
+import { isAllowedPopoutURL, setupIPCEvents } from "./IPCManager";
 import { MessageEditorWindow } from "./Windows/MessageEditorWindow";
 import { SettingsWindow } from "./Windows/SettingsWindow";
 import { StartupWindow } from "./Windows/StartupWindow";
@@ -164,9 +164,6 @@ export class DiscordBotClient extends EventEmitter {
         app.setAppUserModelId(Constants.AppID);
         const enabledFeatures = new Set(app.commandLine.getSwitchValue("enable-features").split(","));
         const disabledFeatures = new Set(app.commandLine.getSwitchValue("disable-features").split(","));
-        // Allow Localhost SSL
-        app.commandLine.appendSwitch("allow-insecure-localhost", "true");
-        app.commandLine.appendSwitch("ignore-certificate-errors");
         app.commandLine.appendSwitch("host-rules", `MAP ${Constants.CustomDiscordDomain} 127.0.0.1:${this.port}`);
         // Vesktop
         // Disable renderer backgrounding to prevent the app from unloading when in the background
@@ -230,6 +227,12 @@ export class DiscordBotClient extends EventEmitter {
                     );
                     this.logger.info("Creating session...");
                     this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
+                    this.customDiscordSession.setCertificateVerifyProc(({ hostname, certificate }, callback) => {
+                        // Never load the real remote site into DBC if a system proxy bypasses host-rules.
+                        if (hostname === Constants.CustomDiscordDomain) return callback(isLocalServerCertificate(certificate.data) ? 0 : -2);
+                        if (hostname === "localhost" && isLocalServerCertificate(certificate.data)) return callback(0);
+                        callback(-3);
+                    });
                     const dnsProvider = this.config.config.doh_provider;
                     const dohServers: Partial<Record<typeof dnsProvider, string>> = {
                         cloudflare: "https://cloudflare-dns.com/dns-query",
@@ -342,8 +345,10 @@ export class DiscordBotClient extends EventEmitter {
             minHeight: 500,
             icon: Constants.icon128,
             webPreferences: {
-                webSecurity: false,
-                sandbox: false,
+                webSecurity: true,
+                sandbox: true,
+                contextIsolation: true,
+                nodeIntegration: false,
                 preload: path.join(__dirname, "Preloads", "ElectronPreload.js"),
                 session: this.discordSession,
             },
@@ -378,21 +383,41 @@ export class DiscordBotClient extends EventEmitter {
         await this.sessionPatch();
 
         this.logger.info(`Electron UserData: ${app.getPath("userData")}`);
-        // Microphone
-        if (process.platform === "darwin") {
-            this.discordSession.setPermissionRequestHandler(async (_webContents, permission, callback, details) => {
-                let granted = true;
-                if ("mediaTypes" in details) {
-                    if (details.mediaTypes?.includes("audio")) {
-                        granted &&= await systemPreferences.askForMediaAccess("microphone");
-                    }
-                    if (details.mediaTypes?.includes("video")) {
-                        granted = false;
-                    }
-                }
-                callback(granted);
-            });
-        }
+        const mainOrigin = `https://${Constants.CustomDiscordDomain}`;
+        const isMainOrigin = (url: string) => {
+            try {
+                return new URL(url).origin === mainOrigin;
+            } catch {
+                return false;
+            }
+        };
+        this.discordSession.setPermissionRequestHandler((requester, permission, callback, details) => {
+            if (requester !== contents || !("requestingUrl" in details) || !isMainOrigin(details.requestingUrl)) {
+                return callback(false);
+            }
+            if (["notifications", "fullscreen", "clipboard-sanitized-write", "loopback-network"].includes(permission)) {
+                return callback(true);
+            }
+            if (permission !== "media" || !("mediaTypes" in details) ||
+                !details.mediaTypes?.includes("audio") || details.mediaTypes.includes("video")) {
+                return callback(false);
+            }
+            if (process.platform === "darwin") {
+                void systemPreferences.askForMediaAccess("microphone").then(callback, () => callback(false));
+            } else {
+                callback(true);
+            }
+        });
+        this.discordSession.setPermissionCheckHandler((requester, permission, origin, details) => {
+            if (origin !== mainOrigin) return false;
+            if (permission === "notifications") return true;
+            if (requester !== contents || !details.isMainFrame) return false;
+            // Media checks must reach the request handler, where camera is rejected.
+            return ["fullscreen", "clipboard-sanitized-write", "loopback-network"].includes(permission);
+        });
+        contents.on("will-navigate", (event, url) => {
+            if (!isMainOrigin(url)) event.preventDefault();
+        });
         // Discord popout
         this.discordWebContents.setWindowOpenHandler(({ url }) => {
             this.logger.log("WindowOpenHandler", url);
@@ -407,7 +432,10 @@ export class DiscordBotClient extends EventEmitter {
                             width: 1080,
                             height: 720,
                             webPreferences: {
-                                webSecurity: false,
+                                webSecurity: true,
+                                sandbox: true,
+                                contextIsolation: true,
+                                nodeIntegration: false,
                             },
                         },
                     };
@@ -425,7 +453,10 @@ export class DiscordBotClient extends EventEmitter {
                             height: 720,
                             // titleBarStyle: "hidden",
                             webPreferences: {
-                                webSecurity: false,
+                                webSecurity: true,
+                                sandbox: true,
+                                contextIsolation: true,
+                                nodeIntegration: false,
                             },
                         },
                     };
@@ -466,6 +497,9 @@ export class DiscordBotClient extends EventEmitter {
         this.discordWebContents
             .on("did-create-window", (window, details) => {
                 window.show();
+                window.webContents.on("will-navigate", (event, url) => {
+                    if (!isAllowedPopoutURL(url, this.port)) event.preventDefault();
+                });
                 window.on("closed", () => {
                     this.childWindows.delete(details.frameName);
                 });

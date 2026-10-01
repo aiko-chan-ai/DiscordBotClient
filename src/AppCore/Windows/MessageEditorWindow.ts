@@ -82,7 +82,7 @@ export class MessageEditorWindow {
             recipient.postMessage(IPCEvent.MainAppReceiveEditorPort, null, [port1]);
         };
         contents.ipc.on(IPCEvent.MessageEditorReactReady, ready);
-        contents.ipc.on("app:message_editor_close", event => {
+        contents.ipc.on(IPCEvent.MessageEditorClose, event => {
             if (isOwner(event)) this.window.close();
         });
         contents.setWindowOpenHandler(() => ({ action: "deny" }));

@@ -285,7 +285,7 @@ export default class Util {
             extensions: [
                 {
                     name: "basicConstraints",
-                    cA: true,
+                    cA: false,
                 },
                 {
                     name: "subjectAltName",

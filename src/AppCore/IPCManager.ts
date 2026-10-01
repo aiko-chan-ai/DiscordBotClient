@@ -1,24 +1,55 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
 import { APIApplication, ApplicationFlags, GatewayIntentBits } from "discord-api-types/v10";
-import { app, BrowserWindow, dialog } from "electron";
+import { app, BrowserWindow, dialog, IpcMainEvent, IpcMainInvokeEvent, WebContents } from "electron";
 import { ApplicationFlagsBitField, IntentsBitField } from "src/AppUtils/DiscordBitField";
 import { ApexExperiment, GuildExperiment, UserExperiment } from "src/AppUtils/Experiments";
 
-import { DiscordBotClient } from ".";
+import type { DiscordBotClient } from ".";
 import Constants from "./Constants";
 import { IPCEvent } from "./IPCEvents";
 
+export function isTrustedAppFrame (event: IpcMainEvent | IpcMainInvokeEvent, contents: WebContents | undefined): boolean {
+    if (!contents || event.sender !== contents || event.senderFrame !== contents.mainFrame) return false;
+    try {
+        return new URL(event.senderFrame.url).origin === `https://${Constants.CustomDiscordDomain}`;
+    } catch {
+        return false;
+    }
+}
+
+export function isAllowedPopoutURL (url: string, port: number): boolean {
+    if (url === "about:blank") return true;
+    try {
+        const parsed = new URL(url);
+        return parsed.pathname === "/popout" && [
+            "https://discord.com",
+            "https://ptb.discord.com",
+            "https://canary.discord.com",
+            `https://localhost:${port}`,
+        ].includes(parsed.origin);
+    } catch {
+        return false;
+    }
+}
+
 export function setupIPCEvents (mainApp: DiscordBotClient) {
-    const getWindow = (framename: string) => {
-        return mainApp.childWindows.get(framename) ?? mainApp.appWindow;
+    const getWindow = (event: IpcMainEvent, frameName?: string): BrowserWindow | undefined => {
+        if (!event.senderFrame || event.senderFrame !== event.sender.mainFrame) return;
+        if (isTrustedAppFrame(event, mainApp.discordWebContents)) {
+            return frameName ? mainApp.childWindows.get(frameName) : mainApp.appWindow;
+        }
+        const senderWindow = BrowserWindow.fromWebContents(event.sender);
+        if (!senderWindow || ![...mainApp.childWindows.values()].includes(senderWindow)) return;
+        if (isAllowedPopoutURL(event.senderFrame.url, mainApp.port)) return senderWindow;
     };
     mainApp.ipcMain
         .on(IPCEvent.Minimize, (event, frameName) => {
-            getWindow(frameName).minimize();
+            getWindow(event, frameName)?.minimize();
         })
         .on(IPCEvent.Maximize, (event, frameName) => {
-            const win = getWindow(frameName);
+            const win = getWindow(event, frameName);
+            if (!win) return;
             if (win.isMaximized()) {
                 win.restore();
             } else {
@@ -26,28 +57,30 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             }
         })
         .on(IPCEvent.Close, (event, frameName) => {
-            if (frameName) {
-                return mainApp.childWindows.get(frameName)?.close();
-            }
-            mainApp.appWindow.hide();
+            const win = getWindow(event, frameName);
+            if (!win) return;
+            if (win === mainApp.appWindow) win.hide();
+            else win.close();
         })
         .on(IPCEvent.Focus, (event, frameName) => {
-            if (!frameName) return mainApp.showApp();
-            const win = getWindow(frameName);
+            const win = getWindow(event, frameName);
+            if (!win) return;
+            if (win === mainApp.appWindow && !frameName) return mainApp.showApp();
             // this.appWindow.focus();
             win.show();
             win.setSkipTaskbar(false);
         })
         .on(IPCEvent.FlashFrame, (event, flag: boolean) => {
-            if (!mainApp.appWindow || mainApp.appWindow.isDestroyed() || (flag && mainApp.appWindow.isFocused()))
+            if (!getWindow(event) || !mainApp.appWindow || mainApp.appWindow.isDestroyed() || (flag && mainApp.appWindow.isFocused()))
             { return; }
             mainApp.appWindow.flashFrame(flag);
         })
         .on(IPCEvent.RequestCloseWindow, event => {
-            const win = BrowserWindow.fromWebContents(event.sender);
-            win?.close();
+            getWindow(event)?.close();
         });
     mainApp.ipcMain.handle(IPCEvent.GetBotInfo, (event, token) => {
+        if (!isTrustedAppFrame(event, mainApp.discordWebContents)) throw new Error("Unauthorized IPC sender.");
+        if (typeof token !== "string" || token.length > 512) throw new Error("Invalid bot token.");
         token = token.replace(/Bot /gi, "").trim();
         return mainApp.discordSession
             .fetch("https://canary.discord.com/api/v9/applications/@me?with_counts=true", {
@@ -121,26 +154,31 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
                 };
             });
     });
-    mainApp.ipcMain.handle(IPCEvent.RequestOpenMessageEditorWindow, () => {
+    mainApp.ipcMain.handle(IPCEvent.RequestOpenMessageEditorWindow, event => {
+        if (!isTrustedAppFrame(event, mainApp.discordWebContents)) throw new Error("Unauthorized IPC sender.");
         return mainApp.openDiscordMessageEditorWindow();
     });
     mainApp.ipcMain
         .on(IPCEvent.GetVersion, event => {
-            return (event.returnValue = app.getVersion());
+            event.returnValue = isTrustedAppFrame(event, mainApp.discordWebContents) ? app.getVersion() : null;
         })
         .on(IPCEvent.GetName, event => {
-            return (event.returnValue = app.getName());
+            event.returnValue = isTrustedAppFrame(event, mainApp.discordWebContents) ? app.getName() : null;
         })
         .on(IPCEvent.GetExperiment, (event, type, botId, allData) => {
-            if (type === "user") {
+            if (!isTrustedAppFrame(event, mainApp.discordWebContents)) {
+                event.returnValue = null;
+            } else if (type === "user") {
                 event.returnValue = UserExperiment(allData, botId);
             } else if (type === "guild") {
                 event.returnValue = GuildExperiment();
             } else if (type === "apex") {
                 event.returnValue = ApexExperiment(botId);
+            } else {
+                event.returnValue = null;
             }
         })
         .on(IPCEvent.GetDefaultUserPatch, event => {
-            event.returnValue = Constants.UserDefaultPatch;
+            event.returnValue = isTrustedAppFrame(event, mainApp.discordWebContents) ? Constants.UserDefaultPatch : null;
         });
 }

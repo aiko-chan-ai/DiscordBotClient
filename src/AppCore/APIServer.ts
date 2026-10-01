@@ -91,9 +91,9 @@ export default async function startAppServer (): Promise<number> {
         const callback = () => {
             const address = server.address() as AddressInfo;
             resolve(address.port);
-            logger.log(`API Server listening on https://localhost:${address.port}`);
+            logger.log(`API Server listening on https://127.0.0.1:${address.port}`);
         };
-        server.listen(0).once("listening", callback);
+        server.listen(0, "127.0.0.1").once("listening", callback);
         server.on("error", reject);
     });
 }

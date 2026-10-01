@@ -8,6 +8,10 @@ settings.generate_fake_profile = false;
 settings.guilds_per_shard = 250;
 settings.settings_theme = "dark";
 settings.settings_theme = "light";
+settings.doh_provider = "google";
+settings.auto_check_updates = false;
+// @ts-expect-error Provider must be a supported option.
+settings.doh_provider = "custom";
 // @ts-expect-error Definitions determine supported setting keys.
 settings.nonexistent = true;
 // @ts-expect-error Boolean defaults widen to boolean, not string.

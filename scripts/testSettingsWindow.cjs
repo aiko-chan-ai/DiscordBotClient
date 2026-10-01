@@ -81,7 +81,9 @@ if (!process.versions.electron) {
         check('Local renderer runs sandboxed without Node access');
         const snapshot = await evaluate('window.settingsAPI.get()');
         assert.deepEqual(snapshot, config.snapshot());
-        const saved = { ...snapshot.settings, guilds_per_shard: 42, settings_theme: 'dark' };
+        assert.equal(snapshot.settings.doh_provider, 'off');
+        assert.equal(snapshot.settings.auto_check_updates, true);
+        const saved = { ...snapshot.settings, guilds_per_shard: 42, settings_theme: 'dark', doh_provider: 'google', auto_check_updates: false };
         assert.deepEqual((await evaluate(`window.settingsAPI.save(${JSON.stringify(saved)})`)).settings, saved);
         assert.deepEqual(new GlobalConfig(profile).config, saved);
         check('Typed IPC get/save persists real JSON');
@@ -95,6 +97,7 @@ if (!process.versions.electron) {
         await once(current.webContents, 'did-finish-load');
         await waitFor(() => evaluate('!!document.querySelector("button")'), 'reload');
         assert.deepEqual((await evaluate('window.settingsAPI.get()')).settings, saved);
+        await waitFor(() => evaluate('document.querySelector("[data-setting=doh_provider] select")?.value === "google" && document.querySelector("[data-setting=auto_check_updates] input")?.checked === false'), 'new settings controls');
         check('Reload retains persisted settings');
         const attacker = new BrowserWindow({ show: false, webPreferences: { preload: path.join(root, 'build/AppCore/Preloads/SettingsPreload.js'), sandbox: true, contextIsolation: true, nodeIntegration: false, partition: 'settings' } });
         await attacker.loadFile(path.join(root, 'build/Renderer/Settings/index.html'));
@@ -135,7 +138,7 @@ if (!process.versions.electron) {
         fs.writeFileSync(path.join(corruptDirectory, 'config.json'), '{broken');
         await open(new GlobalConfig(corruptDirectory));
         await waitFor(() => evaluate('document.body.innerText.includes("read-only")'), 'read-only warning');
-        assert.equal(await evaluate('(() => { const controls = [...document.querySelectorAll(".setting-row input, .setting-row select")]; return controls.length === 4 && controls.every(input => input.disabled); })()'), true);
+        assert.equal(await evaluate('(() => { const controls = [...document.querySelectorAll(".setting-row input, .setting-row select")]; return controls.length > 0 && controls.length === document.querySelectorAll(".setting-row").length && controls.every(input => input.disabled); })()'), true);
         assert.equal(await evaluate('document.querySelector("input[type=search]").disabled'), false);
         assert.equal(await evaluate('[...document.querySelectorAll("button")].find(b => b.textContent === "Save changes").disabled'), true);
         assert.equal(fs.readFileSync(path.join(corruptDirectory, 'config.json'), 'utf8'), '{broken');

@@ -230,15 +230,20 @@ export class DiscordBotClient extends EventEmitter {
                     );
                     this.logger.info("Creating session...");
                     this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
-                    // Enable DoH (Cloudflare)
+                    const dnsProvider = this.config.config.doh_provider;
+                    const dohServers: Partial<Record<typeof dnsProvider, string>> = {
+                        cloudflare: "https://cloudflare-dns.com/dns-query",
+                        google: "https://dns.google/dns-query",
+                        quad9: "https://dns.quad9.net/dns-query",
+                    };
+                    const dohServer = dohServers[dnsProvider];
                     app.configureHostResolver({
-                        enableBuiltInResolver: true,
-                        secureDnsMode: "secure",
+                        enableBuiltInResolver: dnsProvider !== "off",
+                        secureDnsMode: dnsProvider === "off" ? "off" : "automatic",
                         enableHappyEyeballs: true,
-                        enableAdditionalDnsQueryTypes: true,
-                        secureDnsServers: ["https://cloudflare-dns.com/dns-query"],
+                        ...(dohServer ? { secureDnsServers: [dohServer] } : {}),
                     });
-                    this.checkingForUpdates(false);
+                    if (this.config.config.auto_check_updates) void this.checkingForUpdates(false);
                     await this.createWindow();
                     app.on("activate", () => {
                         if (BrowserWindow.getAllWindows().length === 0) {

@@ -58,9 +58,19 @@ button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
     padding: 0;
     color: #b5bac1;
     background: transparent;
-    font-size: 23px;
-    line-height: 1;
 }
+.close::before,
+.close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 2px;
+    background: currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.close::after { transform: translate(-50%, -50%) rotate(-45deg); }
 .close:hover { color: white; background: #da373c; }
 .actions { display: flex; gap: 8px; margin-top: 16px; }
 .actions[hidden] { display: none; }

@@ -1,32 +1,17 @@
-/* Run after npm run build:ts: node scripts/testMainWindowSecurity.cjs */
 const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 
-if (!process.versions.electron) {
-    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dbc-security-test-'));
-    const env = { ...process.env, DBC_SECURITY_TEST_PROFILE: profile };
-    delete env.ELECTRON_RUN_AS_NODE;
-    const child = spawn(require('electron'), [__filename], { cwd: root, env, windowsHide: true, stdio: 'inherit' });
-    child.on('error', error => { console.error(error); process.exitCode = 1; });
-    child.on('close', code => {
-        assert.equal(path.dirname(profile), os.tmpdir());
-        assert.match(path.basename(profile), /^dbc-security-test-/);
-        fs.rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
-        process.exitCode = code ?? 1;
-    });
-} else {
+{
     const { app, BrowserWindow } = require('electron');
     const profile = process.env.DBC_SECURITY_TEST_PROFILE;
     assert.ok(profile && path.basename(profile).startsWith('dbc-security-test-'));
     app.setPath('userData', profile);
     app.setAppPath(root);
     app.commandLine.appendSwitch('use-fake-device-for-media-stream');
-    require('../build/AppCore/Constants.js').default.VerboseAPIServerLogging = false;
-    const { DiscordBotClient } = require('../build/AppCore/index.js');
+    require('../../build/AppCore/Constants.js').default.VerboseAPIServerLogging = false;
+    const { DiscordBotClient } = require('../../build/AppCore/index.js');
     const client = new DiscordBotClient();
     globalThis.botClient = client;
     let attacker;

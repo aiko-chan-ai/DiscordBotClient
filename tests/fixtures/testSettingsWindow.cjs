@@ -1,24 +1,11 @@
-/* Run after npm run build:ts: node scripts/testSettingsWindow.cjs */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const { once } = require('node:events');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 const output = path.join(root, 'plans', '261001-settings');
 
-if (!process.versions.electron) {
-    const { spawn } = require('node:child_process');
-    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dbc-settings-test-'));
-    const env = { ...process.env, DBC_SETTINGS_TEST_PROFILE: profile };
-    delete env.ELECTRON_RUN_AS_NODE;
-    const child = spawn(require('electron'), [__filename], { cwd: root, env, windowsHide: true, stdio: 'inherit' });
-    child.on('error', error => { console.error(error); process.exitCode = 1; });
-    child.on('close', code => {
-        fs.rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
-        process.exitCode = code ?? 1;
-    });
-} else {
+{
     const { app, BrowserWindow, session } = require('electron');
     const profile = process.env.DBC_SETTINGS_TEST_PROFILE;
     assert.ok(profile && path.basename(profile).startsWith('dbc-settings-test-'), 'Use Node launcher for isolated profile');
@@ -49,7 +36,7 @@ if (!process.versions.electron) {
     }
     const check = label => { checks.push(label); console.log(`PASS: ${label}`); };
     async function open(config) {
-        const { SettingsWindow } = require('../build/AppCore/Windows/SettingsWindow.js');
+        const { SettingsWindow } = require('../../build/AppCore/Windows/SettingsWindow.js');
         current = new SettingsWindow(config).window;
         current.webContents.on('console-message', event => {
             if (event.level !== 'error') return;
@@ -70,7 +57,7 @@ if (!process.versions.electron) {
             requests.push(details.url);
             callback({ cancel: /^https?:/i.test(details.url) });
         });
-        const { GlobalConfig } = require('../build/AppCore/Config.js');
+        const { GlobalConfig } = require('../../build/AppCore/Config.js');
         const config = new GlobalConfig(profile);
         await open(config);
         const preferences = current.webContents.getLastWebPreferences();

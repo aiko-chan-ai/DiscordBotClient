@@ -1,29 +1,15 @@
-/* Run after npm run build:ts and npm run discohook: node scripts/testMessageEditor.cjs */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const { once } = require('node:events');
-const root = path.resolve(__dirname, '..');
-if (!process.versions.electron) {
-    const { spawn } = require('node:child_process');
-    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dbc-editor-test-'));
-    const env = { ...process.env, DBC_EDITOR_TEST_PROFILE: profile };
-    delete env.ELECTRON_RUN_AS_NODE;
-    const child = spawn(require('electron'), [__filename], { cwd: root, env, windowsHide: true, stdio: 'inherit' });
-    child.on('error', error => { console.error(error); process.exitCode = 1; });
-    child.on('close', code => {
-        assert.ok(path.dirname(profile) === os.tmpdir() && path.basename(profile).startsWith('dbc-editor-test-'));
-        fs.rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
-        process.exitCode = code ?? 1;
-    });
-} else {
+const root = path.resolve(__dirname, '../..');
+{
     const { app, BrowserWindow, ipcMain } = require('electron');
     const profile = process.env.DBC_EDITOR_TEST_PROFILE;
     app.setPath('userData', profile);
     app.setAppPath(root);
-    const { MessageEditorWindow } = require('../build/AppCore/Windows/MessageEditorWindow.js');
-    require('../build/AppCore/index.js'); // Load the same boot modules as the production entry.
+    const { MessageEditorWindow } = require('../../build/AppCore/Windows/MessageEditorWindow.js');
+    require('../../build/AppCore/index.js'); // Load the same boot modules as the production entry.
     app.on('window-all-closed', () => {});
     const errors = [];
     const requests = [];

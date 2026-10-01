@@ -1,6 +1,5 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
-// Run with: node_modules/.bin/electron scripts/testSettingsStore.cjs
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
@@ -9,8 +8,8 @@ const { app } = require("electron");
 const root = fs.mkdtempSync(path.join(os.tmpdir(), "dbc-settings-test-"));
 app.setPath("userData", root);
 require("tsx/cjs");
-const { GlobalConfig } = require("../src/AppCore/Config.ts");
-const { defaultSettings, settingsDefinitions, validateSetting, validateSettings } = require("../src/shared/Settings.ts");
+const { GlobalConfig } = require("../../src/AppCore/Config.ts");
+const { defaultSettings, settingsDefinitions, validateSetting, validateSettings } = require("../../src/shared/Settings.ts");
 let count = 0;
 let exitCode = 0;
 function test(name, run) {

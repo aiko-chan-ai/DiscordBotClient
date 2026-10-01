@@ -1,32 +1,17 @@
-/* Run after npm run build:ts: node scripts/testAppServer.cjs */
 const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const net = require('node:net');
-const os = require('node:os');
 const path = require('node:path');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 
-if (!process.versions.electron) {
-    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dbc-server-test-'));
-    const env = { ...process.env, DBC_SERVER_TEST_PROFILE: profile };
-    delete env.ELECTRON_RUN_AS_NODE;
-    const child = spawn(require('electron'), [__filename], { cwd: root, env, windowsHide: true, stdio: 'inherit' });
-    child.on('error', error => { console.error(error); process.exitCode = 1; });
-    child.on('close', code => {
-        assert.equal(path.dirname(profile), os.tmpdir());
-        assert.match(path.basename(profile), /^dbc-server-test-/);
-        fs.rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
-        process.exitCode = code ?? 1;
-    });
-} else {
+{
     const { app, net: electronNet } = require('electron');
     const profile = process.env.DBC_SERVER_TEST_PROFILE;
     const useSystemProxy = process.env.DBC_TEST_SYSTEM_PROXY === '1';
     assert.ok(profile && path.basename(profile).startsWith('dbc-server-test-'));
     app.setPath('userData', profile);
     app.setAppPath(root);
-    const { default: startAppServer, isLocalServerCertificate } = require('../build/AppCore/APIServer.js');
+    const { default: startAppServer, isLocalServerCertificate } = require('../../build/AppCore/APIServer.js');
     const connect = (host, port) => new Promise((resolve, reject) => {
         const socket = net.connect({ host, port });
         socket.once('connect', () => { socket.destroy(); resolve(); });

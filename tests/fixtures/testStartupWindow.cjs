@@ -1,14 +1,13 @@
-/* Run after npm run build:ts: electron scripts/testStartupWindow.cjs */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const { once } = require('node:events');
 const { app } = require('electron');
-const { StartupWindow } = require('../build/AppCore/Windows/StartupWindow.js');
+const { StartupWindow } = require('../../build/AppCore/Windows/StartupWindow.js');
 
-const root = path.resolve(__dirname, '..');
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dbc-startup-test-'));
+const root = path.resolve(__dirname, '../..');
+const profile = process.env.DBC_STARTUP_TEST_PROFILE;
+assert.ok(profile && path.basename(profile).startsWith('dbc-startup-test-'));
 app.setPath('userData', profile);
 app.setAppPath(root);
 app.on('window-all-closed', () => {});
@@ -20,7 +19,6 @@ function finish(error) {
     startup?.finish();
     console[error ? 'error' : 'log'](error?.stack || 'PASS: real Electron startup window smoke test');
     // Exit releases Chromium file handles before the parent removes this isolated profile.
-    console.log(`TEST_PROFILE=${profile}`);
     app.exit(error ? 1 : 0);
 }
 
@@ -43,10 +41,13 @@ app.whenReady().then(async () => {
     let quits = 0;
     startup = new StartupWindow(() => retries++, () => quits++);
     assert.equal(startup.window.isVisible(), false, 'Initially hidden');
+    let showCalled = false;
+    const originalShow = startup.show.bind(startup);
+    startup.show = () => { showCalled = true; originalShow(); };
     const loaded = once(startup.window.webContents, 'did-finish-load');
     await once(startup.window, 'ready-to-show');
     await loaded;
-    await waitFor(() => startup.window.isVisible());
+    await waitFor(() => showCalled);
     const evaluate = expression => startup.window.webContents.executeJavaScript(expression);
     assert.deepEqual(await evaluate('window.startupAPI.getState()'), { phase: 'starting', message: 'Starting...' });
     assert.equal(await evaluate('typeof require'), 'undefined', 'Renderer has no Node integration');

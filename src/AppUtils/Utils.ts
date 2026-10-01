@@ -207,9 +207,6 @@ export default class Util {
         return false;
     }
     static async proxy (req: express.Request, res: express.Response) {
-        if (!net.isOnline()) {
-            return res.status(503).send({ message: "chrome://dino" });
-        }
 
         // 1. Create Electron request
         const electronReq = net.request({
@@ -269,7 +266,7 @@ export default class Util {
 
         electronReq.on("error", err => {
             console.error("Proxy request error:", err);
-            if (!res.headersSent) res.status(500).send({ error: err.message });
+            if (!res.headersSent) res.status(502).send({ error: err.message });
         });
 
         // 5. Pipe request body (Express -> Electron)
@@ -288,7 +285,7 @@ export default class Util {
             extensions: [
                 {
                     name: "basicConstraints",
-                    cA: true,
+                    cA: false,
                 },
                 {
                     name: "subjectAltName",

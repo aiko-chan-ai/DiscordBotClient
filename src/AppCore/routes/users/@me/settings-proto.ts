@@ -4,6 +4,7 @@ import { FrecencyUserSettings, PreloadedUserSettings } from "discord-protos";
 import { IpcMainEvent } from "electron";
 import { Request, Response, Router } from "express";
 import { IPCEvent } from "src/AppCore/IPCEvents";
+import { isTrustedAppFrame } from "src/AppCore/IPCManager";
 import Util from "src/AppUtils/Utils";
 
 const app = Router({ mergeParams: true });
@@ -21,7 +22,7 @@ function waitForSettingsEvent (
 ): Promise<[IpcMainEvent, string, string]> {
     return new Promise((resolve, reject) => {
         const onEvent = (event: IpcMainEvent, botId: string, settings: string) => {
-            if (botId !== uid) return; // Not our response, ignore
+            if (botId !== uid || !isTrustedAppFrame(event, globalThis.botClient.discordWebContents)) return;
             clearTimeout(timer);
             emitter.removeListener(eventName, onEvent);
             resolve([event, botId, settings]);
@@ -50,7 +51,7 @@ app.all("/1", async (req, res) => {
             uid,
         );
         // Request user settings from database
-        globalThis.botClient.win.webContents.send(IPCEvent.GetPreloadedUserSettings, uid);
+        globalThis.botClient.discordWebContents.send(IPCEvent.GetPreloadedUserSettings, uid);
         // [event, botId, settings]
         const userSettingEvent = await promise;
         const userSettings = await PreloadedUserSettings.fromBase64(userSettingEvent[2]);
@@ -79,7 +80,7 @@ app.all("/1", async (req, res) => {
                 (userSettings as any)[key] = (decoded as any)[key];
             }
             const base64 = PreloadedUserSettings.toBase64(userSettings);
-            await globalThis.botClient.win.webContents.send(IPCEvent.SetPreloadedUserSettings, uid, base64);
+            await globalThis.botClient.discordWebContents.send(IPCEvent.SetPreloadedUserSettings, uid, base64);
             return resC.send({
                 settings: base64,
             });
@@ -107,7 +108,7 @@ app.all("/2", async (req, res) => {
             uid,
         );
         // Request user settings from database
-        globalThis.botClient.win.webContents.send(IPCEvent.GetFrecencyUserSettings, uid);
+        globalThis.botClient.discordWebContents.send(IPCEvent.GetFrecencyUserSettings, uid);
         // [event, botId, settings]
         const userSettingEvent = await promise;
         const userSettings = await FrecencyUserSettings.fromBase64(userSettingEvent[2]);
@@ -135,7 +136,7 @@ app.all("/2", async (req, res) => {
                 (userSettings as any)[key] = (decoded as any)[key];
             }
             const base64 = FrecencyUserSettings.toBase64(userSettings);
-            await globalThis.botClient.win.webContents.send(IPCEvent.SetFrecencyUserSettings, uid, base64);
+            await globalThis.botClient.discordWebContents.send(IPCEvent.SetFrecencyUserSettings, uid, base64);
             return resC.send({
                 settings: base64,
             });

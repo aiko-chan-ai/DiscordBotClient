@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+    <title>DiscordBotClient</title>
+    <link rel="stylesheet" href="startup.css">
+    <script src="startup.js" defer></script>
+</head>
+<body>
+    <button id="close" class="close" type="button" aria-label="Quit DiscordBotClient"></button>
+    <main>
+        <div class="artwork" aria-hidden="true">
+            <img src="waiting.gif" alt="">
+            <span class="still">◈</span>
+        </div>
+        <p id="status" role="status" aria-live="polite" aria-atomic="true">Starting...</p>
+        <div id="actions" class="actions" hidden>
+            <button id="retry" type="button">Retry</button>
+            <button id="quit" type="button">Quit</button>
+        </div>
+    </main>
+</body>
+</html>

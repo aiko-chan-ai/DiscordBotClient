@@ -1,5 +1,6 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
+import { X509Certificate } from "crypto";
 import { scope } from "electron-log";
 import express from "express";
 import { readFileSync } from "fs";
@@ -27,6 +28,16 @@ if (Constants.VerboseAPIServerLogging) {
 }
 
 const HttpsOptions = Util.generateSelfSignedCertificate();
+const localCertificate = new X509Certificate(HttpsOptions.cert);
+
+/** Trust only the certificate generated for this process, never other invalid HTTPS certificates. */
+export function isLocalServerCertificate (data: string): boolean {
+    try {
+        return localCertificate.raw.equals(new X509Certificate(data).raw);
+    } catch {
+        return false;
+    }
+}
 
 const server = https.createServer(
     {
@@ -91,9 +102,9 @@ export default async function startAppServer (): Promise<number> {
         const callback = () => {
             const address = server.address() as AddressInfo;
             resolve(address.port);
-            logger.log(`API Server listening on https://localhost:${address.port}`);
+            logger.log(`API Server listening on https://127.0.0.1:${address.port}`);
         };
-        server.listen(0).once("listening", callback);
+        server.listen(0, "127.0.0.1").once("listening", callback);
         server.on("error", reject);
     });
 }

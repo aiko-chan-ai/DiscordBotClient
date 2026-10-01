@@ -1,16 +1,13 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
-import { randomUUID } from "crypto";
 import {
     app,
     BrowserWindow,
     dialog,
     ipcMain,
     Menu,
-    MessageChannelMain,
     Notification,
     NotificationConstructorOptions,
-    protocol,
     screen,
     session,
     shell,
@@ -23,32 +20,33 @@ import { autoUpdater } from "electron-updater";
 import EventEmitter from "events";
 import path from "path";
 
-import server from "./APIServer";
+import server, { isLocalServerCertificate } from "./APIServer";
 import GlobalConfig from "./Config";
 import Constants from "./Constants";
-import { IPCEvent } from "./IPCEvents";
-import { setupIPCEvents } from "./IPCManager";
-import messageEditor from "./MessageEditorServer";
+import { isAllowedPopoutURL, setupIPCEvents } from "./IPCManager";
+import { MessageEditorWindow } from "./Windows/MessageEditorWindow";
+import { SettingsWindow } from "./Windows/SettingsWindow";
+import { StartupWindow } from "./Windows/StartupWindow";
 
 export class DiscordBotClient extends EventEmitter {
     logger = scope(Constants.AppName);
     #shouldQuitApp = false;
-    win!: BrowserWindow;
+    private startupWindow?: StartupWindow;
+    appWindow!: BrowserWindow;
+    // Discord currently lives in the app window; callers must target its contents explicitly.
+    discordWebContents!: Electron.WebContents;
     tray!: Tray;
     port!: number;
-    customSession?: Electron.Session;
+    private customDiscordSession?: Electron.Session;
     childWindows = new Map<string, BrowserWindow>();
-    editorWindow?: BrowserWindow;
+    private settingsWindow?: SettingsWindow;
     config = GlobalConfig;
     ipcMain = ipcMain;
-
-    // Beta Features
-    messageEditorPort!: number;
 
     constructor () {
         super();
         this.logger.log("App starting...");
-        this.initApp();
+        void this.initApp().catch(error => this.startupFailed(error));
     }
     initTray (menu: Electron.Menu) {
         if (!this.tray) {
@@ -56,7 +54,7 @@ export class DiscordBotClient extends EventEmitter {
         }
         this.tray.setToolTip(`${Constants.AppName} v${app.getVersion()}`);
         this.tray.on("click", () => {
-            this.win.show();
+            this.showApp();
         });
         this.tray.setContextMenu(menu);
     }
@@ -88,7 +86,7 @@ export class DiscordBotClient extends EventEmitter {
             {
                 label: "Reload",
                 click: () => {
-                    this.win.reload();
+                    this.discordWebContents.reload();
                 },
             },
             {
@@ -96,15 +94,15 @@ export class DiscordBotClient extends EventEmitter {
                 click: () => this.relaunch(),
             },
             {
-                label: "Settings (Config Editor)",
+                label: "Settings",
                 click: () => {
-                    this.openConfigEditorWindow();
+                    this.openSettingsWindow();
                 },
             },
             {
                 label: "Delete all application data and relaunch",
                 click: async () => {
-                    const result = await dialog.showMessageBox(this.win, {
+                    const result = await dialog.showMessageBox(this.appWindow, {
                         type: "warning",
                         buttons: ["Cancel", "Delete and Relaunch"],
                         defaultId: 0,
@@ -122,9 +120,9 @@ export class DiscordBotClient extends EventEmitter {
 
                     if (result.response === 1) {
                         try {
-                            await this.win.webContents.session.clearCache();
-                            await this.win.webContents.session.flushStorageData();
-                            await this.win.webContents.session.clearStorageData({
+                            await this.discordSession.clearCache();
+                            await this.discordSession.flushStorageData();
+                            await this.discordSession.clearStorageData({
                                 storages: [
                                     "cookies",
                                     "filesystem",
@@ -148,7 +146,7 @@ export class DiscordBotClient extends EventEmitter {
             {
                 label: "Toggle DevTools",
                 click: () => {
-                    this.win.webContents.toggleDevTools();
+                    this.discordWebContents.toggleDevTools();
                 },
             },
             {
@@ -163,13 +161,9 @@ export class DiscordBotClient extends EventEmitter {
     }
     async initApp () {
         this.port = await server();
-        this.messageEditorPort = await messageEditor();
         app.setAppUserModelId(Constants.AppID);
         const enabledFeatures = new Set(app.commandLine.getSwitchValue("enable-features").split(","));
         const disabledFeatures = new Set(app.commandLine.getSwitchValue("disable-features").split(","));
-        // Allow Localhost SSL
-        app.commandLine.appendSwitch("allow-insecure-localhost", "true");
-        app.commandLine.appendSwitch("ignore-certificate-errors");
         app.commandLine.appendSwitch("host-rules", `MAP ${Constants.CustomDiscordDomain} 127.0.0.1:${this.port}`);
         // Vesktop
         // Disable renderer backgrounding to prevent the app from unloading when in the background
@@ -178,8 +172,8 @@ export class DiscordBotClient extends EventEmitter {
         app.commandLine.appendSwitch("disable-renderer-backgrounding");
         app.commandLine.appendSwitch("disable-background-timer-throttling");
         app.commandLine.appendSwitch("disable-backgrounding-occluded-windows");
-        // Disable proxy
-        app.commandLine.appendSwitch("no-proxy-server");
+        // Keep direct connections by default; opt in to the OS proxy after restart.
+        if (!this.config.config.use_system_proxy) app.commandLine.appendSwitch("no-proxy-server");
         // Enable & Disable Chromium Features
         Constants.enableFeatures.forEach(feature => {
             enabledFeatures.add(feature);
@@ -211,10 +205,7 @@ export class DiscordBotClient extends EventEmitter {
         });
 
         app.on("second-instance", (event, commandLine, workingDirectory, additionalData) => {
-            const myWindow = BrowserWindow.getAllWindows()?.[0];
-            if (myWindow) {
-                myWindow.show();
-            }
+            this.showApp();
         });
 
         // Patch UserAgent (Switch Plan B SDP > Unified Plan)
@@ -227,40 +218,45 @@ export class DiscordBotClient extends EventEmitter {
             this.#shouldQuitApp = true;
             app.quit();
         } else {
-            protocol.registerSchemesAsPrivileged([
-                {
-                    scheme: "https",
-                    privileges: {
-                        standard: true,
-                        bypassCSP: true,
-                        allowServiceWorkers: true,
-                        supportFetchAPI: true,
-                        corsEnabled: true,
-                        stream: true,
-                    },
-                },
-            ]);
-            app.whenReady().then(async () => {
-                this.logger.info("Creating session...");
-                this.customSession = session.fromPartition("persist:elysia_dbc");
-                // Enable DoH (Cloudflare)
-                app.configureHostResolver({
-                    enableBuiltInResolver: true,
-                    secureDnsMode: "secure",
-                    enableHappyEyeballs: true,
-                    enableAdditionalDnsQueryTypes: true,
-                    secureDnsServers: ["https://cloudflare-dns.com/dns-query"],
-                });
-                this.checkingForUpdates(false);
-                this.createWindow();
-                app.on("activate", () => {
-                    if (BrowserWindow.getAllWindows().length === 0) {
-                        this.createWindow();
-                    } else {
-                        this.win?.show();
-                    }
-                });
-            });
+            void app
+                .whenReady()
+                .then(async () => {
+                    this.startupWindow = new StartupWindow(
+                        () => this.relaunch(),
+                        () => this.quit(),
+                    );
+                    this.logger.info("Creating session...");
+                    this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
+                    this.customDiscordSession.setCertificateVerifyProc(({ hostname, certificate }, callback) => {
+                        // Never load the real remote site into DBC if a system proxy bypasses host-rules.
+                        if (hostname === Constants.CustomDiscordDomain) return callback(isLocalServerCertificate(certificate.data) ? 0 : -2);
+                        if (hostname === "localhost" && isLocalServerCertificate(certificate.data)) return callback(0);
+                        callback(-3);
+                    });
+                    const dnsProvider = this.config.config.doh_provider;
+                    const dohServers: Partial<Record<typeof dnsProvider, string>> = {
+                        cloudflare: "https://cloudflare-dns.com/dns-query",
+                        google: "https://dns.google/dns-query",
+                        quad9: "https://dns.quad9.net/dns-query",
+                    };
+                    const dohServer = dohServers[dnsProvider];
+                    app.configureHostResolver({
+                        enableBuiltInResolver: dnsProvider !== "off",
+                        secureDnsMode: dnsProvider === "off" ? "off" : "automatic",
+                        enableHappyEyeballs: true,
+                        ...(dohServer ? { secureDnsServers: [dohServer] } : {}),
+                    });
+                    if (this.config.config.auto_check_updates) void this.checkingForUpdates(false);
+                    await this.createWindow();
+                    app.on("activate", () => {
+                        if (BrowserWindow.getAllWindows().length === 0) {
+                            void this.createWindow().catch(error => this.startupFailed(error));
+                        } else {
+                            this.showApp();
+                        }
+                    });
+                })
+                .catch(error => this.startupFailed(error));
         }
 
         // Create context menu
@@ -277,16 +273,16 @@ export class DiscordBotClient extends EventEmitter {
 
         setupIPCEvents(this);
     }
-    get session () {
-        if (this.customSession) {
-            return this.customSession;
+    get discordSession () {
+        if (this.customDiscordSession) {
+            return this.customDiscordSession;
         } else {
             return session.defaultSession;
         }
     }
     async sessionPatch () {
         // Disable stripe.com
-        this.session.webRequest.onBeforeRequest(
+        this.discordSession.webRequest.onBeforeRequest(
             {
                 urls: ["https://*.stripe.com/*"],
             },
@@ -299,7 +295,7 @@ export class DiscordBotClient extends EventEmitter {
         );
         /*
         // Rule 1: Remove all CSP headers
-        this.session.webRequest.onHeadersReceived(
+        this.discordSession.webRequest.onHeadersReceived(
             { urls: ["<all_urls>"], types: ["mainFrame", "subFrame"] },
             (details, callback) => {
                 if (!details.responseHeaders) {
@@ -315,7 +311,7 @@ export class DiscordBotClient extends EventEmitter {
         );
         */
         // Rule 2: Force CSS content-type on GitHub raw URLs
-        this.session.webRequest.onHeadersReceived(
+        this.discordSession.webRequest.onHeadersReceived(
             {
                 urls: ["https://raw.githubusercontent.com/*"],
                 types: ["stylesheet"],
@@ -333,7 +329,7 @@ export class DiscordBotClient extends EventEmitter {
             },
         );
         // Load Vencord-Web Extension
-        const extension = await this.session.extensions.loadExtension(Constants.VencordExtensionPath);
+        const extension = await this.discordSession.extensions.loadExtension(Constants.VencordExtensionPath);
         this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
     }
     async createWindow () {
@@ -341,17 +337,20 @@ export class DiscordBotClient extends EventEmitter {
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.workAreaSize;
         // Create the browser window.
-        this.win = new BrowserWindow({
+        this.appWindow = new BrowserWindow({
+            show: false,
             width: Math.floor(width * 0.9),
             height: Math.floor(height * 0.9),
             minWidth: 940,
             minHeight: 500,
             icon: Constants.icon128,
             webPreferences: {
-                webSecurity: false,
-                sandbox: false,
-                preload: path.join(__dirname, "ElectronPreload.js"),
-                session: this.session,
+                webSecurity: true,
+                sandbox: true,
+                contextIsolation: true,
+                nodeIntegration: false,
+                preload: path.join(__dirname, "Preloads", "ElectronPreload.js"),
+                session: this.discordSession,
             },
             backgroundColor: "#36393f",
             titleBarStyle: "hidden",
@@ -359,39 +358,68 @@ export class DiscordBotClient extends EventEmitter {
             title: Constants.AppName,
             trafficLightPosition: { x: 10, y: 10 },
         });
+        this.discordWebContents = this.appWindow.webContents;
         // BrowserWindow Event
-        this.win.on("close", event => {
+        this.appWindow.on("close", event => {
             if (!this.#shouldQuitApp) {
                 event.preventDefault();
-                this.win.hide();
+                this.appWindow.hide();
             }
         });
-        this.win.on("focus", () => {
-            this.win.flashFrame(false);
+        this.appWindow.on("focus", () => {
+            this.appWindow.flashFrame(false);
         });
 
+        this.startupWindow?.loading();
+        const contents = this.discordWebContents;
+        contents.on("did-fail-load", (_event, code, _description, _url, isMainFrame) => {
+            if (isMainFrame && code !== -3 && this.startupWindow) {
+                this.startupWindow.fail("Could not load DBC. Check your connection and try again.");
+            }
+        });
+        contents.on("render-process-gone", () => {
+            if (this.startupWindow) this.startupWindow.fail("DBC stopped while starting. Please try again.");
+        });
         await this.sessionPatch();
 
         this.logger.info(`Electron UserData: ${app.getPath("userData")}`);
-        // Microphone
-        if (process.platform === "darwin") {
-            this.session.setPermissionRequestHandler(async (_webContents, permission, callback, details) => {
-                let granted = true;
-                if ("mediaTypes" in details) {
-                    if (details.mediaTypes?.includes("audio")) {
-                        granted &&= await systemPreferences.askForMediaAccess("microphone");
-                    }
-                    if (details.mediaTypes?.includes("video")) {
-                        granted = false;
-                    }
-                }
-                callback(granted);
-            });
-        }
-        // webContents
-        if (!app.isPackaged) this.win.webContents.openDevTools();
+        const mainOrigin = `https://${Constants.CustomDiscordDomain}`;
+        const isMainOrigin = (url: string) => {
+            try {
+                return new URL(url).origin === mainOrigin;
+            } catch {
+                return false;
+            }
+        };
+        this.discordSession.setPermissionRequestHandler((requester, permission, callback, details) => {
+            if (requester !== contents || !("requestingUrl" in details) || !isMainOrigin(details.requestingUrl)) {
+                return callback(false);
+            }
+            if (["notifications", "fullscreen", "clipboard-sanitized-write", "loopback-network"].includes(permission)) {
+                return callback(true);
+            }
+            if (permission !== "media" || !("mediaTypes" in details) ||
+                !details.mediaTypes?.includes("audio") || details.mediaTypes.includes("video")) {
+                return callback(false);
+            }
+            if (process.platform === "darwin") {
+                void systemPreferences.askForMediaAccess("microphone").then(callback, () => callback(false));
+            } else {
+                callback(true);
+            }
+        });
+        this.discordSession.setPermissionCheckHandler((requester, permission, origin, details) => {
+            if (origin !== mainOrigin) return false;
+            if (permission === "notifications") return true;
+            if (requester !== contents || !details.isMainFrame) return false;
+            // Media checks must reach the request handler, where camera is rejected.
+            return ["fullscreen", "clipboard-sanitized-write", "loopback-network"].includes(permission);
+        });
+        contents.on("will-navigate", (event, url) => {
+            if (!isMainOrigin(url)) event.preventDefault();
+        });
         // Discord popout
-        this.win.webContents.setWindowOpenHandler(({ url }) => {
+        this.discordWebContents.setWindowOpenHandler(({ url }) => {
             this.logger.log("WindowOpenHandler", url);
             switch (url) {
                 case "about:blank":
@@ -404,7 +432,10 @@ export class DiscordBotClient extends EventEmitter {
                             width: 1080,
                             height: 720,
                             webPreferences: {
-                                webSecurity: false,
+                                webSecurity: true,
+                                sandbox: true,
+                                contextIsolation: true,
+                                nodeIntegration: false,
                             },
                         },
                     };
@@ -422,7 +453,10 @@ export class DiscordBotClient extends EventEmitter {
                             height: 720,
                             // titleBarStyle: "hidden",
                             webPreferences: {
-                                webSecurity: false,
+                                webSecurity: true,
+                                sandbox: true,
+                                contextIsolation: true,
+                                nodeIntegration: false,
                             },
                         },
                     };
@@ -460,9 +494,12 @@ export class DiscordBotClient extends EventEmitter {
             return { action: "deny" };
         });
         // WebContents Event
-        this.win.webContents
+        this.discordWebContents
             .on("did-create-window", (window, details) => {
                 window.show();
+                window.webContents.on("will-navigate", (event, url) => {
+                    if (!isAllowedPopoutURL(url, this.port)) event.preventDefault();
+                });
                 window.on("closed", () => {
                     this.childWindows.delete(details.frameName);
                 });
@@ -470,14 +507,38 @@ export class DiscordBotClient extends EventEmitter {
                 this.childWindows.set(details.frameName, window);
             })
             .on("did-start-loading", () => {
-                this.win.setProgressBar(2, { mode: "indeterminate" });
+                this.appWindow.setProgressBar(2, { mode: "indeterminate" });
             })
             .on("did-stop-loading", () => {
-                this.win.setTitle(Constants.AppName);
-                this.win.setProgressBar(-1);
+                this.appWindow.setTitle(Constants.AppName);
+                this.appWindow.setProgressBar(-1);
             });
 
-        this.win.loadURL(`https://${Constants.CustomDiscordDomain}`);
+        // Like Vesktop, only a successful navigation promise completes startup.
+        await contents.loadURL(`https://${Constants.CustomDiscordDomain}`);
+        if (this.#shouldQuitApp || contents.isDestroyed()) return;
+        this.appWindow.show();
+        this.startupWindow?.finish();
+        this.startupWindow = undefined;
+        if (!app.isPackaged) contents.openDevTools();
+    }
+    showApp () {
+        if (this.startupWindow) {
+            this.startupWindow.show();
+        } else if (this.appWindow && !this.appWindow.isDestroyed()) {
+            this.appWindow.show();
+            this.appWindow.setSkipTaskbar(false);
+        }
+    }
+    private async startupFailed (error: unknown) {
+        if (this.#shouldQuitApp) return;
+        this.logger.error("Startup failed", error);
+        await app.whenReady();
+        this.startupWindow ??= new StartupWindow(
+            () => this.relaunch(),
+            () => this.quit(),
+        );
+        this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
     }
     showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);
@@ -588,7 +649,7 @@ export class DiscordBotClient extends EventEmitter {
                 }
 
                 dialog
-                    .showMessageBox(this.win, {
+                    .showMessageBox(this.appWindow, {
                         type: "info",
                         title: "Update Ready",
                         message: `Version ${info.version} has been downloaded. Restart the application to apply the updates?`,
@@ -612,71 +673,19 @@ export class DiscordBotClient extends EventEmitter {
         this.#shouldQuitApp = true;
         app.quit();
     }
-    // Editor Window
-    openConfigEditorWindow () {
-        if (this.editorWindow && !this.editorWindow.isDestroyed()) {
-            this.editorWindow.show();
+    openSettingsWindow () {
+        if (this.settingsWindow && !this.settingsWindow.window.isDestroyed()) {
+            this.settingsWindow.show();
             return;
         }
-        this.editorWindow = new BrowserWindow({
-            width: 1080,
-            height: 720,
-            minWidth: 800,
-            minHeight: 600,
-            webPreferences: {
-                webSecurity: false,
-                sandbox: false,
-                preload: path.join(__dirname, "ConfigEditorPreload.js"),
-            },
-            icon: Constants.icon128,
-            frame: true,
-            autoHideMenuBar: true,
-            /*
-            ...(process.platform === "darwin" && {
-                titleBarStyle: "hidden",
-                trafficLightPosition: { x: 10, y: 10 },
-            }),
-            */
-        });
-        this.editorWindow.loadFile(Constants.ConfigEditorHTMLPath);
-        this.editorWindow.on("closed", () => {
-            this.editorWindow = undefined;
+        this.settingsWindow = new SettingsWindow(this.config);
+        this.settingsWindow.window.on("closed", () => {
+            this.settingsWindow = undefined;
         });
     }
 
-    // Beta
     openDiscordMessageEditorWindow () {
-        const editorWindow = new BrowserWindow({
-            width: 1080,
-            height: 720,
-            minWidth: 800,
-            minHeight: 600,
-            parent: this.win,
-            modal: true,
-            webPreferences: {
-                webSecurity: false,
-                sandbox: false,
-                preload: path.join(__dirname, "MessageEditorPreload.js"),
-                partition: "temp:" + randomUUID(), // Use a temporary session for the message editor
-            },
-            icon: Constants.icon128,
-            frame: true,
-            autoHideMenuBar: true,
-            /*
-            ...(process.platform === "darwin" && {
-                titleBarStyle: "hidden",
-                trafficLightPosition: { x: 10, y: 10 },
-            }),
-            */
-        });
-        editorWindow.loadURL(`http://localhost:${this.messageEditorPort}`);
-        // Handle Message Editor Ports
-        editorWindow.webContents.ipc.once(IPCEvent.MessageEditorReactReady, () => {
-            this.logger.debug("Message Editor is ready. Setting up MessageChannel...");
-            const { port1, port2 } = new MessageChannelMain();
-            editorWindow.webContents.postMessage(IPCEvent.MessageEditorReceivePort, null, [port2]);
-            this.win.webContents.postMessage(IPCEvent.MainAppReceiveEditorPort, null, [port1]);
-        });
+        new MessageEditorWindow(this.appWindow, this.discordWebContents);
     }
 
     get app () {

@@ -44,6 +44,13 @@ export const settingsDefinitions = [
         ],
     },
     {
+        key: "use_system_proxy",
+        displayName: "Use system proxy",
+        description: "Follow OS proxy settings for network requests. The proxy must bypass discord.com so DBC can reach its local page. Applies after restarting DBC.",
+        type: "boolean",
+        defaultValue: false,
+    },
+    {
         key: "guilds_per_shard",
         displayName: "Guilds per shard",
         description: "Target servers per shard. Used to calculate shard count at your next login.",

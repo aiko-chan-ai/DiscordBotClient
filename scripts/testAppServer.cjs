@@ -22,6 +22,7 @@ if (!process.versions.electron) {
 } else {
     const { app, net: electronNet } = require('electron');
     const profile = process.env.DBC_SERVER_TEST_PROFILE;
+    const useSystemProxy = process.env.DBC_TEST_SYSTEM_PROXY === '1';
     assert.ok(profile && path.basename(profile).startsWith('dbc-server-test-'));
     app.setPath('userData', profile);
     app.setAppPath(root);
@@ -37,7 +38,8 @@ if (!process.versions.electron) {
         assert.equal(app.isReady(), false, 'Host rules must be set before Electron is ready');
         app.commandLine.appendSwitch('host-rules', `MAP discord.com 127.0.0.1:${port}`);
         app.commandLine.appendSwitch('ignore-certificate-errors');
-        app.commandLine.appendSwitch('no-proxy-server');
+        if (!useSystemProxy) app.commandLine.appendSwitch('no-proxy-server');
+        assert.equal(app.commandLine.hasSwitch('no-proxy-server'), !useSystemProxy);
         await app.whenReady();
         app.configureHostResolver({ enableBuiltInResolver: false, secureDnsMode: 'off' });
         await connect('127.0.0.1', port);
@@ -46,7 +48,7 @@ if (!process.versions.electron) {
         assert.equal(response.status, 200);
         assert.equal(await response.text(), fs.readFileSync(path.join(root, 'assets/snapshot/index.html'), 'utf8'));
         clearTimeout(watchdog);
-        console.log('PASS: IPv4-only server and offline-DNS host rule serve the bundled app page');
+        console.log(`PASS: ${useSystemProxy ? "system proxy enabled" : "direct connections"} and host rule serve the bundled app page`);
         app.exit(0);
     }).catch(error => { clearTimeout(watchdog); console.error(error); app.exit(1); });
 }

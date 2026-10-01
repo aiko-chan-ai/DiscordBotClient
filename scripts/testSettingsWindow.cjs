@@ -83,7 +83,8 @@ if (!process.versions.electron) {
         assert.deepEqual(snapshot, config.snapshot());
         assert.equal(snapshot.settings.doh_provider, 'off');
         assert.equal(snapshot.settings.auto_check_updates, true);
-        const saved = { ...snapshot.settings, guilds_per_shard: 42, settings_theme: 'dark', doh_provider: 'google', auto_check_updates: false };
+        assert.equal(snapshot.settings.use_system_proxy, false);
+        const saved = { ...snapshot.settings, guilds_per_shard: 42, settings_theme: 'dark', doh_provider: 'google', auto_check_updates: false, use_system_proxy: true };
         assert.deepEqual((await evaluate(`window.settingsAPI.save(${JSON.stringify(saved)})`)).settings, saved);
         assert.deepEqual(new GlobalConfig(profile).config, saved);
         check('Typed IPC get/save persists real JSON');
@@ -97,7 +98,7 @@ if (!process.versions.electron) {
         await once(current.webContents, 'did-finish-load');
         await waitFor(() => evaluate('!!document.querySelector("button")'), 'reload');
         assert.deepEqual((await evaluate('window.settingsAPI.get()')).settings, saved);
-        await waitFor(() => evaluate('document.querySelector("[data-setting=doh_provider] select")?.value === "google" && document.querySelector("[data-setting=auto_check_updates] input")?.checked === false'), 'new settings controls');
+        await waitFor(() => evaluate('document.querySelector("[data-setting=doh_provider] select")?.value === "google" && document.querySelector("[data-setting=auto_check_updates] input")?.checked === false && document.querySelector("[data-setting=use_system_proxy] input")?.checked === true'), 'new settings controls');
         check('Reload retains persisted settings');
         const attacker = new BrowserWindow({ show: false, webPreferences: { preload: path.join(root, 'build/AppCore/Preloads/SettingsPreload.js'), sandbox: true, contextIsolation: true, nodeIntegration: false, partition: 'settings' } });
         await attacker.loadFile(path.join(root, 'build/Renderer/Settings/index.html'));

@@ -64,7 +64,7 @@ try {
         for (const value of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, "100"]) {
             assert.throws(() => validateSettings({ ...defaultSettings, guilds_per_shard: value }));
         }
-        for (const key of ["cache_assets", "suppress_intent_warning", "generate_fake_profile", "auto_check_updates"]) {
+        for (const key of ["cache_assets", "suppress_intent_warning", "generate_fake_profile", "auto_check_updates", "use_system_proxy"]) {
             assert.throws(() => validateSettings({ ...defaultSettings, [key]: "true" }));
         }
         for (const value of [null, [], {}, { ...defaultSettings, extra: true }, { ...defaultSettings, settings_theme: "blue" }, { ...defaultSettings, doh_provider: "custom" }]) {

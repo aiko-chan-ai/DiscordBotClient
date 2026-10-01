@@ -10,6 +10,7 @@ settings.settings_theme = "dark";
 settings.settings_theme = "light";
 settings.doh_provider = "google";
 settings.auto_check_updates = false;
+settings.use_system_proxy = true;
 // @ts-expect-error Provider must be a supported option.
 settings.doh_provider = "custom";
 // @ts-expect-error Definitions determine supported setting keys.

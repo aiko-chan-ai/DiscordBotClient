@@ -32,6 +32,7 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             mainApp.appWindow.hide();
         })
         .on(IPCEvent.Focus, (event, frameName) => {
+            if (!frameName) return mainApp.showApp();
             const win = getWindow(frameName);
             // this.appWindow.focus();
             win.show();

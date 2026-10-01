@@ -34,11 +34,9 @@ class Logger {
     }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-    const logger = new Logger();
-    ipcRenderer.on(IPCEvent.LogFromMainProcess, (_event, scope, level: LogLevel, ...args) => {
-        logger[level](scope, ...args);
-    });
+const logger = new Logger();
+ipcRenderer.on(IPCEvent.LogFromMainProcess, (_event, scope, level: LogLevel, ...args) => {
+    logger[level](scope, ...args);
 });
 
 contextBridge.exposeInMainWorld("BotClientNative", {

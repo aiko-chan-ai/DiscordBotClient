@@ -29,10 +29,12 @@ import Constants from "./Constants";
 import { IPCEvent } from "./IPCEvents";
 import { setupIPCEvents } from "./IPCManager";
 import messageEditor from "./MessageEditorServer";
+import { StartupWindow } from "./StartupWindow";
 
 export class DiscordBotClient extends EventEmitter {
     logger = scope(Constants.AppName);
     #shouldQuitApp = false;
+    private startupWindow?: StartupWindow;
     appWindow!: BrowserWindow;
     // Discord currently lives in the app window; callers must target its contents explicitly.
     discordWebContents!: Electron.WebContents;
@@ -50,7 +52,7 @@ export class DiscordBotClient extends EventEmitter {
     constructor () {
         super();
         this.logger.log("App starting...");
-        this.initApp();
+        void this.initApp().catch(error => this.startupFailed(error));
     }
     initTray (menu: Electron.Menu) {
         if (!this.tray) {
@@ -58,7 +60,7 @@ export class DiscordBotClient extends EventEmitter {
         }
         this.tray.setToolTip(`${Constants.AppName} v${app.getVersion()}`);
         this.tray.on("click", () => {
-            this.appWindow.show();
+            this.showApp();
         });
         this.tray.setContextMenu(menu);
     }
@@ -213,10 +215,7 @@ export class DiscordBotClient extends EventEmitter {
         });
 
         app.on("second-instance", (event, commandLine, workingDirectory, additionalData) => {
-            const myWindow = BrowserWindow.getAllWindows()?.[0];
-            if (myWindow) {
-                myWindow.show();
-            }
+            this.showApp();
         });
 
         // Patch UserAgent (Switch Plan B SDP > Unified Plan)
@@ -242,7 +241,8 @@ export class DiscordBotClient extends EventEmitter {
                     },
                 },
             ]);
-            app.whenReady().then(async () => {
+            void app.whenReady().then(async () => {
+                this.startupWindow = new StartupWindow(() => this.relaunch(), () => this.quit());
                 this.logger.info("Creating session...");
                 this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
                 // Enable DoH (Cloudflare)
@@ -254,15 +254,15 @@ export class DiscordBotClient extends EventEmitter {
                     secureDnsServers: ["https://cloudflare-dns.com/dns-query"],
                 });
                 this.checkingForUpdates(false);
-                this.createWindow();
+                await this.createWindow();
                 app.on("activate", () => {
                     if (BrowserWindow.getAllWindows().length === 0) {
-                        this.createWindow();
+                        void this.createWindow().catch(error => this.startupFailed(error));
                     } else {
-                        this.appWindow?.show();
+                        this.showApp();
                     }
                 });
-            });
+            }).catch(error => this.startupFailed(error));
         }
 
         // Create context menu
@@ -344,6 +344,7 @@ export class DiscordBotClient extends EventEmitter {
         const { width, height } = primaryDisplay.workAreaSize;
         // Create the browser window.
         this.appWindow = new BrowserWindow({
+            show: false,
             width: Math.floor(width * 0.9),
             height: Math.floor(height * 0.9),
             minWidth: 940,
@@ -373,6 +374,16 @@ export class DiscordBotClient extends EventEmitter {
             this.appWindow.flashFrame(false);
         });
 
+        this.startupWindow?.loading();
+        const contents = this.discordWebContents;
+        contents.on("did-fail-load", (_event, code, _description, _url, isMainFrame) => {
+            if (isMainFrame && code !== -3 && this.startupWindow) {
+                this.startupWindow.fail("Could not load DBC. Check your connection and try again.");
+            }
+        });
+        contents.on("render-process-gone", () => {
+            if (this.startupWindow) this.startupWindow.fail("DBC stopped while starting. Please try again.");
+        });
         await this.sessionPatch();
 
         this.logger.info(`Electron UserData: ${app.getPath("userData")}`);
@@ -391,8 +402,6 @@ export class DiscordBotClient extends EventEmitter {
                 callback(granted);
             });
         }
-        // webContents
-        if (!app.isPackaged) this.discordWebContents.openDevTools();
         // Discord popout
         this.discordWebContents.setWindowOpenHandler(({ url }) => {
             this.logger.log("WindowOpenHandler", url);
@@ -480,7 +489,27 @@ export class DiscordBotClient extends EventEmitter {
                 this.appWindow.setProgressBar(-1);
             });
 
-        this.discordWebContents.loadURL(`https://${Constants.CustomDiscordDomain}`);
+        // Like Vesktop, only a successful navigation promise completes startup.
+        await contents.loadURL(`https://${Constants.CustomDiscordDomain}`);
+        if (this.#shouldQuitApp || contents.isDestroyed()) return;
+        this.appWindow.show();
+        this.startupWindow?.finish();
+        this.startupWindow = undefined;
+        if (!app.isPackaged) contents.openDevTools();
+    }
+    showApp () {
+        if (this.startupWindow) { this.startupWindow.show(); }
+        else if (this.appWindow && !this.appWindow.isDestroyed()) {
+            this.appWindow.show();
+            this.appWindow.setSkipTaskbar(false);
+        }
+    }
+    private async startupFailed (error: unknown) {
+        if (this.#shouldQuitApp) return;
+        this.logger.error("Startup failed", error);
+        await app.whenReady();
+        this.startupWindow ??= new StartupWindow(() => this.relaunch(), () => this.quit());
+        this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
     }
     showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);

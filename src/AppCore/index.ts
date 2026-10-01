@@ -33,10 +33,12 @@ import messageEditor from "./MessageEditorServer";
 export class DiscordBotClient extends EventEmitter {
     logger = scope(Constants.AppName);
     #shouldQuitApp = false;
-    win!: BrowserWindow;
+    appWindow!: BrowserWindow;
+    // Discord currently lives in the app window; callers must target its contents explicitly.
+    discordWebContents!: Electron.WebContents;
     tray!: Tray;
     port!: number;
-    customSession?: Electron.Session;
+    private customDiscordSession?: Electron.Session;
     childWindows = new Map<string, BrowserWindow>();
     editorWindow?: BrowserWindow;
     config = GlobalConfig;
@@ -56,7 +58,7 @@ export class DiscordBotClient extends EventEmitter {
         }
         this.tray.setToolTip(`${Constants.AppName} v${app.getVersion()}`);
         this.tray.on("click", () => {
-            this.win.show();
+            this.appWindow.show();
         });
         this.tray.setContextMenu(menu);
     }
@@ -88,7 +90,7 @@ export class DiscordBotClient extends EventEmitter {
             {
                 label: "Reload",
                 click: () => {
-                    this.win.reload();
+                    this.discordWebContents.reload();
                 },
             },
             {
@@ -104,7 +106,7 @@ export class DiscordBotClient extends EventEmitter {
             {
                 label: "Delete all application data and relaunch",
                 click: async () => {
-                    const result = await dialog.showMessageBox(this.win, {
+                    const result = await dialog.showMessageBox(this.appWindow, {
                         type: "warning",
                         buttons: ["Cancel", "Delete and Relaunch"],
                         defaultId: 0,
@@ -122,9 +124,9 @@ export class DiscordBotClient extends EventEmitter {
 
                     if (result.response === 1) {
                         try {
-                            await this.win.webContents.session.clearCache();
-                            await this.win.webContents.session.flushStorageData();
-                            await this.win.webContents.session.clearStorageData({
+                            await this.discordSession.clearCache();
+                            await this.discordSession.flushStorageData();
+                            await this.discordSession.clearStorageData({
                                 storages: [
                                     "cookies",
                                     "filesystem",
@@ -148,7 +150,7 @@ export class DiscordBotClient extends EventEmitter {
             {
                 label: "Toggle DevTools",
                 click: () => {
-                    this.win.webContents.toggleDevTools();
+                    this.discordWebContents.toggleDevTools();
                 },
             },
             {
@@ -242,7 +244,7 @@ export class DiscordBotClient extends EventEmitter {
             ]);
             app.whenReady().then(async () => {
                 this.logger.info("Creating session...");
-                this.customSession = session.fromPartition("persist:elysia_dbc");
+                this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
                 // Enable DoH (Cloudflare)
                 app.configureHostResolver({
                     enableBuiltInResolver: true,
@@ -257,7 +259,7 @@ export class DiscordBotClient extends EventEmitter {
                     if (BrowserWindow.getAllWindows().length === 0) {
                         this.createWindow();
                     } else {
-                        this.win?.show();
+                        this.appWindow?.show();
                     }
                 });
             });
@@ -277,16 +279,16 @@ export class DiscordBotClient extends EventEmitter {
 
         setupIPCEvents(this);
     }
-    get session () {
-        if (this.customSession) {
-            return this.customSession;
+    get discordSession () {
+        if (this.customDiscordSession) {
+            return this.customDiscordSession;
         } else {
             return session.defaultSession;
         }
     }
     async sessionPatch () {
         // Disable stripe.com
-        this.session.webRequest.onBeforeRequest(
+        this.discordSession.webRequest.onBeforeRequest(
             {
                 urls: ["https://*.stripe.com/*"],
             },
@@ -299,7 +301,7 @@ export class DiscordBotClient extends EventEmitter {
         );
         /*
         // Rule 1: Remove all CSP headers
-        this.session.webRequest.onHeadersReceived(
+        this.discordSession.webRequest.onHeadersReceived(
             { urls: ["<all_urls>"], types: ["mainFrame", "subFrame"] },
             (details, callback) => {
                 if (!details.responseHeaders) {
@@ -315,7 +317,7 @@ export class DiscordBotClient extends EventEmitter {
         );
         */
         // Rule 2: Force CSS content-type on GitHub raw URLs
-        this.session.webRequest.onHeadersReceived(
+        this.discordSession.webRequest.onHeadersReceived(
             {
                 urls: ["https://raw.githubusercontent.com/*"],
                 types: ["stylesheet"],
@@ -333,7 +335,7 @@ export class DiscordBotClient extends EventEmitter {
             },
         );
         // Load Vencord-Web Extension
-        const extension = await this.session.extensions.loadExtension(Constants.VencordExtensionPath);
+        const extension = await this.discordSession.extensions.loadExtension(Constants.VencordExtensionPath);
         this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
     }
     async createWindow () {
@@ -341,7 +343,7 @@ export class DiscordBotClient extends EventEmitter {
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.workAreaSize;
         // Create the browser window.
-        this.win = new BrowserWindow({
+        this.appWindow = new BrowserWindow({
             width: Math.floor(width * 0.9),
             height: Math.floor(height * 0.9),
             minWidth: 940,
@@ -351,7 +353,7 @@ export class DiscordBotClient extends EventEmitter {
                 webSecurity: false,
                 sandbox: false,
                 preload: path.join(__dirname, "ElectronPreload.js"),
-                session: this.session,
+                session: this.discordSession,
             },
             backgroundColor: "#36393f",
             titleBarStyle: "hidden",
@@ -359,15 +361,16 @@ export class DiscordBotClient extends EventEmitter {
             title: Constants.AppName,
             trafficLightPosition: { x: 10, y: 10 },
         });
+        this.discordWebContents = this.appWindow.webContents;
         // BrowserWindow Event
-        this.win.on("close", event => {
+        this.appWindow.on("close", event => {
             if (!this.#shouldQuitApp) {
                 event.preventDefault();
-                this.win.hide();
+                this.appWindow.hide();
             }
         });
-        this.win.on("focus", () => {
-            this.win.flashFrame(false);
+        this.appWindow.on("focus", () => {
+            this.appWindow.flashFrame(false);
         });
 
         await this.sessionPatch();
@@ -375,7 +378,7 @@ export class DiscordBotClient extends EventEmitter {
         this.logger.info(`Electron UserData: ${app.getPath("userData")}`);
         // Microphone
         if (process.platform === "darwin") {
-            this.session.setPermissionRequestHandler(async (_webContents, permission, callback, details) => {
+            this.discordSession.setPermissionRequestHandler(async (_webContents, permission, callback, details) => {
                 let granted = true;
                 if ("mediaTypes" in details) {
                     if (details.mediaTypes?.includes("audio")) {
@@ -389,9 +392,9 @@ export class DiscordBotClient extends EventEmitter {
             });
         }
         // webContents
-        if (!app.isPackaged) this.win.webContents.openDevTools();
+        if (!app.isPackaged) this.discordWebContents.openDevTools();
         // Discord popout
-        this.win.webContents.setWindowOpenHandler(({ url }) => {
+        this.discordWebContents.setWindowOpenHandler(({ url }) => {
             this.logger.log("WindowOpenHandler", url);
             switch (url) {
                 case "about:blank":
@@ -460,7 +463,7 @@ export class DiscordBotClient extends EventEmitter {
             return { action: "deny" };
         });
         // WebContents Event
-        this.win.webContents
+        this.discordWebContents
             .on("did-create-window", (window, details) => {
                 window.show();
                 window.on("closed", () => {
@@ -470,14 +473,14 @@ export class DiscordBotClient extends EventEmitter {
                 this.childWindows.set(details.frameName, window);
             })
             .on("did-start-loading", () => {
-                this.win.setProgressBar(2, { mode: "indeterminate" });
+                this.appWindow.setProgressBar(2, { mode: "indeterminate" });
             })
             .on("did-stop-loading", () => {
-                this.win.setTitle(Constants.AppName);
-                this.win.setProgressBar(-1);
+                this.appWindow.setTitle(Constants.AppName);
+                this.appWindow.setProgressBar(-1);
             });
 
-        this.win.loadURL(`https://${Constants.CustomDiscordDomain}`);
+        this.discordWebContents.loadURL(`https://${Constants.CustomDiscordDomain}`);
     }
     showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);
@@ -588,7 +591,7 @@ export class DiscordBotClient extends EventEmitter {
                 }
 
                 dialog
-                    .showMessageBox(this.win, {
+                    .showMessageBox(this.appWindow, {
                         type: "info",
                         title: "Update Ready",
                         message: `Version ${info.version} has been downloaded. Restart the application to apply the updates?`,
@@ -651,7 +654,7 @@ export class DiscordBotClient extends EventEmitter {
             height: 720,
             minWidth: 800,
             minHeight: 600,
-            parent: this.win,
+            parent: this.appWindow,
             modal: true,
             webPreferences: {
                 webSecurity: false,
@@ -675,7 +678,7 @@ export class DiscordBotClient extends EventEmitter {
             this.logger.debug("Message Editor is ready. Setting up MessageChannel...");
             const { port1, port2 } = new MessageChannelMain();
             editorWindow.webContents.postMessage(IPCEvent.MessageEditorReceivePort, null, [port2]);
-            this.win.webContents.postMessage(IPCEvent.MainAppReceiveEditorPort, null, [port1]);
+            this.discordWebContents.postMessage(IPCEvent.MainAppReceiveEditorPort, null, [port1]);
         });
     }
 

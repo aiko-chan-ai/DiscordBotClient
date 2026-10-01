@@ -11,7 +11,7 @@ import { IPCEvent } from "./IPCEvents";
 
 export function setupIPCEvents (mainApp: DiscordBotClient) {
     const getWindow = (framename: string) => {
-        return mainApp.childWindows.get(framename) ?? mainApp.win;
+        return mainApp.childWindows.get(framename) ?? mainApp.appWindow;
     };
     mainApp.ipcMain
         .on(IPCEvent.Minimize, (event, frameName) => {
@@ -29,17 +29,17 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             if (frameName) {
                 return mainApp.childWindows.get(frameName)?.close();
             }
-            mainApp.win.hide();
+            mainApp.appWindow.hide();
         })
         .on(IPCEvent.Focus, (event, frameName) => {
             const win = getWindow(frameName);
-            // this.win.focus();
+            // this.appWindow.focus();
             win.show();
             win.setSkipTaskbar(false);
         })
         .on(IPCEvent.FlashFrame, (event, flag: boolean) => {
-            if (!mainApp.win || mainApp.win.isDestroyed() || (flag && mainApp.win.isFocused())) return;
-            mainApp.win.flashFrame(flag);
+            if (!mainApp.appWindow || mainApp.appWindow.isDestroyed() || (flag && mainApp.appWindow.isFocused())) return;
+            mainApp.appWindow.flashFrame(flag);
         })
         .on(IPCEvent.RequestCloseWindow, event => {
             const win = BrowserWindow.fromWebContents(event.sender);
@@ -47,7 +47,7 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
         });
     mainApp.ipcMain.handle(IPCEvent.GetBotInfo, (event, token) => {
         token = token.replace(/Bot/g, "").trim();
-        return mainApp.session
+        return mainApp.discordSession
             .fetch("https://canary.discord.com/api/v9/applications/@me?with_counts=true", {
                 headers: {
                     Authorization: `Bot ${token}`,

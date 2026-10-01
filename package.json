@@ -169,5 +169,9 @@
       }
     ],
     "asar": false
+  },
+  "allowScripts": {
+    "electron-winstaller@5.4.0": true,
+    "esbuild@0.28.1": true
   }
 }

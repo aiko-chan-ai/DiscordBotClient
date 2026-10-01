@@ -48,7 +48,7 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             win?.close();
         });
     mainApp.ipcMain.handle(IPCEvent.GetBotInfo, (event, token) => {
-        token = token.replace(/Bot/g, "").trim();
+        token = token.replace(/Bot /gi, "").trim();
         return mainApp.discordSession
             .fetch("https://canary.discord.com/api/v9/applications/@me?with_counts=true", {
                 headers: {

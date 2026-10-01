@@ -14,7 +14,6 @@
     "isolatedModules": true,
     "target": "es2024",
     "baseUrl": ".",
-    // "verbatimModuleSyntax": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
@@ -33,6 +32,7 @@
     "VencordExtension/**/*",
     "dist/**/*",
     "scripts/**/*",
-    "Vencord"
+    "Vencord",
+    "src/renderer/**/*"
   ]
 }

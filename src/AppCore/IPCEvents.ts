@@ -23,10 +23,6 @@ export class IPCEvent extends null {
     static GetFrecencyUserSettings = "app:preload:get_frecency_user_settings";
     static GetFrecencyUserSettingsResponse = "app:preload:get_frecency_user_settings_response";
     static SetFrecencyUserSettings = "app:preload:set_frecency_user_settings";
-    // Monaco Editor IPC Events
-    static MonacoEditorGetConfig = "app:editor:get_config";
-    static MonacoEditorGetAutoComplete = "app:editor:get_autocomplete";
-    static MonacoEditorSaveConfig = "app:editor:save_config";
     // Beta Features
     static RequestOpenMessageEditorWindow = "app:request_open_message_editor_window";
     static MessageEditorReactReady = "app:message_editor_ready";

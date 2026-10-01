@@ -12,19 +12,27 @@ export class StartupWindow {
 
     constructor (retry: () => void, quit: () => void) {
         this.window = new BrowserWindow({
-            width: 300, height: 350, resizable: false, maximizable: false,
-            frame: false, show: false, backgroundColor: "#282b30",
-            title: "DiscordBotClient", autoHideMenuBar: true,
+            width: 300,
+            height: 350,
+            resizable: false,
+            maximizable: false,
+            frame: false,
+            show: false,
+            backgroundColor: "#282b30",
+            title: "DiscordBotClient",
+            autoHideMenuBar: true,
             webPreferences: {
                 preload: path.join(__dirname, "StartupPreload.js"),
-                contextIsolation: true, sandbox: true, nodeIntegration: false,
+                contextIsolation: true,
+                sandbox: true,
+                nodeIntegration: false,
                 partition: "startup",
             },
         });
         const contents = this.window.webContents;
         const isOwner = (event: IpcMainEvent | IpcMainInvokeEvent) =>
             event.sender === contents && event.senderFrame === contents.mainFrame;
-        contents.ipc.handle("startup:get-state", event => isOwner(event) ? this.state : undefined);
+        contents.ipc.handle("startup:get-state", event => (isOwner(event) ? this.state : undefined));
         contents.ipc.on("startup:retry", event => {
             if (isOwner(event) && this.state.phase === "error") retry();
         });
@@ -38,7 +46,10 @@ export class StartupWindow {
         this.window.once("ready-to-show", () => this.show());
         void this.window.loadFile(path.join(app.getAppPath(), "assets", "startup", "index.html")).catch(() => {
             if (this.window.isDestroyed()) return;
-            dialog.showErrorBox("Startup failed", "The startup screen could not be loaded. Please reinstall DiscordBotClient.");
+            dialog.showErrorBox(
+                "Startup failed",
+                "The startup screen could not be loaded. Please reinstall DiscordBotClient.",
+            );
             quit();
         });
     }
@@ -50,7 +61,10 @@ export class StartupWindow {
     loading () {
         this.update({ phase: "loading", message: "Loading DBC..." });
         clearTimeout(this.timer);
-        this.timer = setTimeout(() => this.fail("DBC is taking too long to start. Check your connection and try again."), 45000);
+        this.timer = setTimeout(
+            () => this.fail("DBC is taking too long to start. Check your connection and try again."),
+            45000,
+        );
     }
 
     fail (message: string) {

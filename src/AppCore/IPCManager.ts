@@ -39,7 +39,8 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             win.setSkipTaskbar(false);
         })
         .on(IPCEvent.FlashFrame, (event, flag: boolean) => {
-            if (!mainApp.appWindow || mainApp.appWindow.isDestroyed() || (flag && mainApp.appWindow.isFocused())) return;
+            if (!mainApp.appWindow || mainApp.appWindow.isDestroyed() || (flag && mainApp.appWindow.isFocused()))
+            { return; }
             mainApp.appWindow.flashFrame(flag);
         })
         .on(IPCEvent.RequestCloseWindow, event => {
@@ -142,24 +143,4 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
         .on(IPCEvent.GetDefaultUserPatch, event => {
             event.returnValue = Constants.UserDefaultPatch;
         });
-    // Config Editor
-    mainApp.ipcMain.handle(IPCEvent.MonacoEditorGetConfig, event => {
-        return mainApp.config.toString();
-    });
-    mainApp.ipcMain.handle(IPCEvent.MonacoEditorGetAutoComplete, event => {
-        return mainApp.config.monacoAutoComplete();
-    });
-    mainApp.ipcMain.handle(IPCEvent.MonacoEditorSaveConfig, (event, config) => {
-        // Validate and save the config
-        try {
-            mainApp.config.loadConfig(config);
-            mainApp.config.save();
-            mainApp.logger.info("Config saved successfully");
-            return true;
-        } catch (e) {
-            mainApp.logger.error("Invalid config:", e);
-            dialog.showErrorBox("Invalid Config", `The provided config is invalid: ${(e as Error).message}`);
-            return false;
-        }
-    });
 }

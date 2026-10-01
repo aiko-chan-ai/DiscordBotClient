@@ -29,6 +29,7 @@ import Constants from "./Constants";
 import { IPCEvent } from "./IPCEvents";
 import { setupIPCEvents } from "./IPCManager";
 import messageEditor from "./MessageEditorServer";
+import { SettingsWindow } from "./SettingsWindow";
 import { StartupWindow } from "./StartupWindow";
 
 export class DiscordBotClient extends EventEmitter {
@@ -42,7 +43,7 @@ export class DiscordBotClient extends EventEmitter {
     port!: number;
     private customDiscordSession?: Electron.Session;
     childWindows = new Map<string, BrowserWindow>();
-    editorWindow?: BrowserWindow;
+    private settingsWindow?: SettingsWindow;
     config = GlobalConfig;
     ipcMain = ipcMain;
 
@@ -100,9 +101,9 @@ export class DiscordBotClient extends EventEmitter {
                 click: () => this.relaunch(),
             },
             {
-                label: "Settings (Config Editor)",
+                label: "Settings",
                 click: () => {
-                    this.openConfigEditorWindow();
+                    this.openSettingsWindow();
                 },
             },
             {
@@ -241,28 +242,34 @@ export class DiscordBotClient extends EventEmitter {
                     },
                 },
             ]);
-            void app.whenReady().then(async () => {
-                this.startupWindow = new StartupWindow(() => this.relaunch(), () => this.quit());
-                this.logger.info("Creating session...");
-                this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
-                // Enable DoH (Cloudflare)
-                app.configureHostResolver({
-                    enableBuiltInResolver: true,
-                    secureDnsMode: "secure",
-                    enableHappyEyeballs: true,
-                    enableAdditionalDnsQueryTypes: true,
-                    secureDnsServers: ["https://cloudflare-dns.com/dns-query"],
-                });
-                this.checkingForUpdates(false);
-                await this.createWindow();
-                app.on("activate", () => {
-                    if (BrowserWindow.getAllWindows().length === 0) {
-                        void this.createWindow().catch(error => this.startupFailed(error));
-                    } else {
-                        this.showApp();
-                    }
-                });
-            }).catch(error => this.startupFailed(error));
+            void app
+                .whenReady()
+                .then(async () => {
+                    this.startupWindow = new StartupWindow(
+                        () => this.relaunch(),
+                        () => this.quit(),
+                    );
+                    this.logger.info("Creating session...");
+                    this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
+                    // Enable DoH (Cloudflare)
+                    app.configureHostResolver({
+                        enableBuiltInResolver: true,
+                        secureDnsMode: "secure",
+                        enableHappyEyeballs: true,
+                        enableAdditionalDnsQueryTypes: true,
+                        secureDnsServers: ["https://cloudflare-dns.com/dns-query"],
+                    });
+                    this.checkingForUpdates(false);
+                    await this.createWindow();
+                    app.on("activate", () => {
+                        if (BrowserWindow.getAllWindows().length === 0) {
+                            void this.createWindow().catch(error => this.startupFailed(error));
+                        } else {
+                            this.showApp();
+                        }
+                    });
+                })
+                .catch(error => this.startupFailed(error));
         }
 
         // Create context menu
@@ -498,8 +505,9 @@ export class DiscordBotClient extends EventEmitter {
         if (!app.isPackaged) contents.openDevTools();
     }
     showApp () {
-        if (this.startupWindow) { this.startupWindow.show(); }
-        else if (this.appWindow && !this.appWindow.isDestroyed()) {
+        if (this.startupWindow) {
+            this.startupWindow.show();
+        } else if (this.appWindow && !this.appWindow.isDestroyed()) {
             this.appWindow.show();
             this.appWindow.setSkipTaskbar(false);
         }
@@ -508,7 +516,10 @@ export class DiscordBotClient extends EventEmitter {
         if (this.#shouldQuitApp) return;
         this.logger.error("Startup failed", error);
         await app.whenReady();
-        this.startupWindow ??= new StartupWindow(() => this.relaunch(), () => this.quit());
+        this.startupWindow ??= new StartupWindow(
+            () => this.relaunch(),
+            () => this.quit(),
+        );
         this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
     }
     showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
@@ -644,35 +655,14 @@ export class DiscordBotClient extends EventEmitter {
         this.#shouldQuitApp = true;
         app.quit();
     }
-    // Editor Window
-    openConfigEditorWindow () {
-        if (this.editorWindow && !this.editorWindow.isDestroyed()) {
-            this.editorWindow.show();
+    openSettingsWindow () {
+        if (this.settingsWindow && !this.settingsWindow.window.isDestroyed()) {
+            this.settingsWindow.show();
             return;
         }
-        this.editorWindow = new BrowserWindow({
-            width: 1080,
-            height: 720,
-            minWidth: 800,
-            minHeight: 600,
-            webPreferences: {
-                webSecurity: false,
-                sandbox: false,
-                preload: path.join(__dirname, "ConfigEditorPreload.js"),
-            },
-            icon: Constants.icon128,
-            frame: true,
-            autoHideMenuBar: true,
-            /*
-            ...(process.platform === "darwin" && {
-                titleBarStyle: "hidden",
-                trafficLightPosition: { x: 10, y: 10 },
-            }),
-            */
-        });
-        this.editorWindow.loadFile(Constants.ConfigEditorHTMLPath);
-        this.editorWindow.on("closed", () => {
-            this.editorWindow = undefined;
+        this.settingsWindow = new SettingsWindow(this.config);
+        this.settingsWindow.window.on("closed", () => {
+            this.settingsWindow = undefined;
         });
     }
 

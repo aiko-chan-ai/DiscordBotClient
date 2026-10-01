@@ -2,7 +2,7 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 
-import type { SettingsAPI } from "../shared/Settings";
+import type { SettingsAPI } from "../../shared/Settings";
 
 // Sandboxed preloads may only require Electron; shared contracts are type-only.
 const settingsAPI: SettingsAPI = {

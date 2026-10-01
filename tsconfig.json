@@ -33,6 +33,6 @@
     "dist/**/*",
     "scripts/**/*",
     "Vencord",
-    "src/renderer/**/*"
+    "src/Renderer/**/*"
   ]
 }

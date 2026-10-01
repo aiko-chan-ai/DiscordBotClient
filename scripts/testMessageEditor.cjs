@@ -22,7 +22,7 @@ if (!process.versions.electron) {
     const profile = process.env.DBC_EDITOR_TEST_PROFILE;
     app.setPath('userData', profile);
     app.setAppPath(root);
-    const { MessageEditorWindow } = require('../build/AppCore/MessageEditorWindow.js');
+    const { MessageEditorWindow } = require('../build/AppCore/Windows/MessageEditorWindow.js');
     require('../build/AppCore/index.js'); // Load the same boot modules as the production entry.
     app.on('window-all-closed', () => {});
     const errors = [];

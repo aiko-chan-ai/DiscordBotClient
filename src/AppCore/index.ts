@@ -24,9 +24,9 @@ import server from "./APIServer";
 import GlobalConfig from "./Config";
 import Constants from "./Constants";
 import { setupIPCEvents } from "./IPCManager";
-import { MessageEditorWindow } from "./MessageEditorWindow";
-import { SettingsWindow } from "./SettingsWindow";
-import { StartupWindow } from "./StartupWindow";
+import { MessageEditorWindow } from "./Windows/MessageEditorWindow";
+import { SettingsWindow } from "./Windows/SettingsWindow";
+import { StartupWindow } from "./Windows/StartupWindow";
 
 export class DiscordBotClient extends EventEmitter {
     logger = scope(Constants.AppName);
@@ -339,7 +339,7 @@ export class DiscordBotClient extends EventEmitter {
             webPreferences: {
                 webSecurity: false,
                 sandbox: false,
-                preload: path.join(__dirname, "ElectronPreload.js"),
+                preload: path.join(__dirname, "Preloads", "ElectronPreload.js"),
                 session: this.discordSession,
             },
             backgroundColor: "#36393f",

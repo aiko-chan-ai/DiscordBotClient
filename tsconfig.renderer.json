@@ -11,5 +11,5 @@
         "esModuleInterop": true,
         "types": ["vite/client"]
     },
-    "include": ["src/renderer/**/*.ts", "src/renderer/**/*.tsx", "src/shared/**/*.ts"]
+    "include": ["src/Renderer/**/*.ts", "src/Renderer/**/*.tsx", "src/shared/**/*.ts"]
 }

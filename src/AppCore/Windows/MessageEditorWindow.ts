@@ -6,8 +6,8 @@ import { realpath } from "fs/promises";
 import path from "path";
 import { pathToFileURL } from "url";
 
-import Constants from "./Constants";
-import { IPCEvent } from "./IPCEvents";
+import Constants from "../Constants";
+import { IPCEvent } from "../IPCEvents";
 
 const scheme = "dbc-editor";
 const editorURL = `${scheme}://app/`;
@@ -62,7 +62,7 @@ export class MessageEditorWindow {
             autoHideMenuBar: true,
             webPreferences: {
                 session: editorSession,
-                preload: path.join(__dirname, "MessageEditorPreload.js"),
+                preload: path.join(__dirname, "..", "Preloads", "MessageEditorPreload.js"),
                 sandbox: true,
                 contextIsolation: true,
                 nodeIntegration: false,

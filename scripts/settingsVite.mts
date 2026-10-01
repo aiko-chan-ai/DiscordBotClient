@@ -2,11 +2,11 @@ import { defineConfig } from "vite";
 import { fileURLToPath } from "node:url";
 
 export default defineConfig({
-    root: fileURLToPath(new URL("../src/renderer/settings", import.meta.url)),
+    root: fileURLToPath(new URL("../src/Renderer/Settings", import.meta.url)),
     base: "./",
     esbuild: { jsx: "automatic" },
     build: {
-        outDir: fileURLToPath(new URL("../build/renderer/settings", import.meta.url)),
+        outDir: fileURLToPath(new URL("../build/Renderer/Settings", import.meta.url)),
         emptyOutDir: true,
         target: "es2022",
         rollupOptions: {

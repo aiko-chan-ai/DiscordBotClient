@@ -4,13 +4,13 @@ import { app, BrowserWindow, dialog, IpcMainInvokeEvent } from "electron";
 import path from "path";
 import { pathToFileURL } from "url";
 
-import type { GlobalConfig } from "./Config";
+import type { GlobalConfig } from "../Config";
 
 export class SettingsWindow {
     readonly window: BrowserWindow;
 
     constructor (config: GlobalConfig) {
-        const htmlPath = path.join(app.getAppPath(), "build", "renderer", "settings", "index.html");
+        const htmlPath = path.join(app.getAppPath(), "build", "Renderer", "Settings", "index.html");
         const pageURL = pathToFileURL(htmlPath).href;
         this.window = new BrowserWindow({
             width: 840,
@@ -23,7 +23,7 @@ export class SettingsWindow {
             autoHideMenuBar: true,
             icon: path.join(app.getAppPath(), "assets", "icon.png"),
             webPreferences: {
-                preload: path.join(__dirname, "SettingsPreload.js"),
+                preload: path.join(__dirname, "..", "Preloads", "SettingsPreload.js"),
                 sandbox: true,
                 contextIsolation: true,
                 nodeIntegration: false,

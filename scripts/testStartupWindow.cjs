@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { once } = require('node:events');
 const { app } = require('electron');
-const { StartupWindow } = require('../build/AppCore/StartupWindow.js');
+const { StartupWindow } = require('../build/AppCore/Windows/StartupWindow.js');
 
 const root = path.resolve(__dirname, '..');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dbc-startup-test-'));

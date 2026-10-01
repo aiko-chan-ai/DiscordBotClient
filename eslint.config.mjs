@@ -13,7 +13,7 @@ export default [
         ignores: ["dist/", "scripts/", "**/*.js"],
     },
     { languageOptions: { globals: globals.node } },
-    { files: ["src/renderer/**/*.{ts,tsx}"], languageOptions: { globals: globals.browser } },
+    { files: ["src/Renderer/**/*.{ts,tsx}"], languageOptions: { globals: globals.browser } },
     // Configs
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,

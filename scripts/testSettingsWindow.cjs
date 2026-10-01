@@ -49,7 +49,7 @@ if (!process.versions.electron) {
     }
     const check = label => { checks.push(label); console.log(`PASS: ${label}`); };
     async function open(config) {
-        const { SettingsWindow } = require('../build/AppCore/SettingsWindow.js');
+        const { SettingsWindow } = require('../build/AppCore/Windows/SettingsWindow.js');
         current = new SettingsWindow(config).window;
         current.webContents.on('console-message', event => {
             if (event.level !== 'error') return;
@@ -96,8 +96,8 @@ if (!process.versions.electron) {
         await waitFor(() => evaluate('!!document.querySelector("button")'), 'reload');
         assert.deepEqual((await evaluate('window.settingsAPI.get()')).settings, saved);
         check('Reload retains persisted settings');
-        const attacker = new BrowserWindow({ show: false, webPreferences: { preload: path.join(root, 'build/AppCore/SettingsPreload.js'), sandbox: true, contextIsolation: true, nodeIntegration: false, partition: 'settings' } });
-        await attacker.loadFile(path.join(root, 'build/renderer/settings/index.html'));
+        const attacker = new BrowserWindow({ show: false, webPreferences: { preload: path.join(root, 'build/AppCore/Preloads/SettingsPreload.js'), sandbox: true, contextIsolation: true, nodeIntegration: false, partition: 'settings' } });
+        await attacker.loadFile(path.join(root, 'build/Renderer/Settings/index.html'));
         assert.equal(await attacker.webContents.executeJavaScript('window.settingsAPI.get().then(() => false, () => true)'), true);
         assert.equal(await attacker.webContents.executeJavaScript(`window.settingsAPI.save(${JSON.stringify(saved)}).then(() => false, () => true)`), true);
         attacker.destroy();

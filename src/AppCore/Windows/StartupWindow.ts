@@ -22,7 +22,7 @@ export class StartupWindow {
             title: "DiscordBotClient",
             autoHideMenuBar: true,
             webPreferences: {
-                preload: path.join(__dirname, "StartupPreload.js"),
+                preload: path.join(__dirname, "..", "Preloads", "StartupPreload.js"),
                 contextIsolation: true,
                 sandbox: true,
                 nodeIntegration: false,

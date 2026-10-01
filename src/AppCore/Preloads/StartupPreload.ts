@@ -2,7 +2,7 @@
 
 import { contextBridge, ipcRenderer } from "electron";
 
-import type { StartupState } from "./StartupWindow";
+import type { StartupState } from "../Windows/StartupWindow";
 
 // Keep this sandboxed preload self-contained: only Electron is required at runtime.
 contextBridge.exposeInMainWorld("startupAPI", {

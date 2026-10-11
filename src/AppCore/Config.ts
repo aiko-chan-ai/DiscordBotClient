@@ -1,183 +1,124 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
+import { randomUUID } from "crypto";
 import { app } from "electron";
 import fs from "fs";
-import { parse, stringify } from "ini";
+import { parse } from "ini";
 import path from "path";
 
-/**
- * @typedef {Object} Config
- * @property {boolean} cache_assets - Whether to cache assets from `discord.com/assets`.
-  This can improve performance in environments with unstable or slow network connections.
- * @property {number} guilds_per_shard - Number of guilds per shard.
- * @property {boolean} suppress_intent_warning - Suppress intent warning.
- * @property {boolean} generate_fake_profile - Generate a fake profile for the user.
- */
+import { defaultSettings, Settings, settingsDefinitions, SettingsSnapshot, validateSettings } from "../shared/Settings";
 
-export type Config = {
-    cache_assets: boolean;
-    guilds_per_shard: number;
-    suppress_intent_warning: boolean;
-    generate_fake_profile: boolean;
-};
+export type Config = Settings;
 
 export class GlobalConfig {
-    /**
-     * Get the current configuration.
-     * @returns {Config} The current configuration object.
-     */
-    config = this.defaultConfig();
-    iniPath = path.join(app.getPath("userData"), "config.ini");
-    constructor () {
-        if (!fs.existsSync(this.iniPath)) {
-            console.log("Config file not found, creating default config:", this.iniPath);
-            fs.writeFileSync(this.iniPath, this.toString(), "utf-8");
-        } else {
-            console.log("Loading configuration from", this.iniPath);
-            this.loadConfig(fs.readFileSync(this.iniPath, "utf-8"));
-        }
-    }
-    loadConfig (iniString: string) {
-        if (typeof iniString !== "string") {
-            throw new Error("Invalid configuration string provided.");
-        }
-        const oldData = JSON.parse(JSON.stringify(this.config));
+    config: Settings = Object.freeze({ ...defaultSettings });
+    readonly jsonPath: string;
+    readonly iniPath: string;
+    private warning?: string;
+    private readOnly = false;
+
+    constructor (directory = app.getPath("userData")) {
+        this.jsonPath = path.join(directory, "config.json");
+        this.iniPath = path.join(directory, "config.ini");
         try {
-            Object.assign(this.config, parse(iniString));
-            this.validateConfig();
-        } catch (e) {
-            console.error("Failed to parse configuration, reverting to old config", oldData);
-            this.config = oldData;
-            throw e;
+            // Read directly: only ENOENT permits migration, never permissions or other IO errors.
+            let json: string | undefined;
+            try {
+                json = fs.readFileSync(this.jsonPath, "utf8");
+            } catch (error) {
+                if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+            }
+            if (json !== undefined) {
+                const document: unknown = JSON.parse(json);
+                if (!document || typeof document !== "object" || Array.isArray(document)) {
+                    throw new Error("Invalid configuration document.");
+                }
+                const envelope = document as Record<string, unknown>;
+                if (envelope.version !== 1) throw new Error("Unsupported configuration version.");
+                if (Object.keys(envelope).some(key => key !== "version" && key !== "settings")) {
+                    throw new Error("Unsupported configuration document keys.");
+                }
+                this.config = Object.freeze(this.withDefaults(envelope.settings));
+                return;
+            }
+            let settings = { ...defaultSettings };
+            try {
+                settings = this.importIni(fs.readFileSync(this.iniPath, "utf8"));
+            } catch (error) {
+                if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+            }
+            this.save(settings);
+        } catch (error) {
+            this.readOnly = true;
+            this.warning = `Settings could not be loaded or migrated. The original file has been preserved; defaults are active. ${error instanceof Error ? error.message : "Unknown error."}`;
         }
     }
-    /**
-     * @returns {Config} The default configuration object.
-     */
-    defaultConfig () {
+
+    snapshot (): SettingsSnapshot {
         return {
-            cache_assets: false,
-            guilds_per_shard: 100,
-            suppress_intent_warning: false,
-            generate_fake_profile: true,
+            settings: { ...this.config },
+            readOnly: this.readOnly,
+            ...(this.warning ? { warning: this.warning } : {}),
         };
     }
-    /**
-     * Validate the current configuration.
-     */
-    validateConfig () {
-        for (const key in this.config) {
-            if (!Object.prototype.hasOwnProperty.call(this.defaultConfig(), key)) {
-                console.warn(`Unknown configuration key "${key}" found, removing it.`);
-                // @ts-expect-error ???
-                delete this.config[key];
-            } else {
-                // @ts-expect-error ???
-                this.config[key] = this.parseIniValue(this.config[key]);
+
+    save (value: unknown): SettingsSnapshot {
+        if (this.readOnly) throw new Error(this.warning || "Settings are read-only.");
+        const candidate = validateSettings(value);
+        const temporaryPath = `${this.jsonPath}.${randomUUID()}.tmp`;
+        try {
+            fs.mkdirSync(path.dirname(this.jsonPath), { recursive: true });
+            fs.writeFileSync(temporaryPath, `${JSON.stringify({ version: 1, settings: candidate }, null, 4)}\n`, {
+                encoding: "utf8",
+                flag: "wx",
+                mode: 0o600,
+            });
+            fs.renameSync(temporaryPath, this.jsonPath);
+        } catch (error) {
+            try {
+                fs.unlinkSync(temporaryPath);
+            } catch {
+                // No temporary file may have been created.
+            }
+            throw error;
+        }
+        // Publish only after the complete candidate has replaced the durable file.
+        this.config = Object.freeze(candidate);
+        return this.snapshot();
+    }
+
+    private withDefaults (value: unknown): Settings {
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+            throw new Error("Invalid stored settings.");
+        }
+        return validateSettings({ ...defaultSettings, ...value });
+    }
+
+    private importIni (source: string): Settings {
+        // ini.parse tolerates malformed lines and drops dangerous keys; check syntax first.
+        const seen = new Set<string>();
+        for (const raw of source.split(/\r?\n/)) {
+            const line = raw.trim();
+            if (!line || /^[;#]/.test(line)) continue;
+            const match = /^([^=]+)=/.exec(line);
+            const key = match?.[1].trim();
+            if (!key || !Object.hasOwn(defaultSettings, key) || seen.has(key)) {
+                throw new Error("Invalid or unsupported legacy INI setting.");
+            }
+            seen.add(key);
+        }
+        const values = parse(source);
+        for (const key of Object.keys(values)) {
+            const value: unknown = values[key];
+            if (typeof value !== "string") continue;
+            const definition = settingsDefinitions.find(setting => setting.key === key);
+            if (definition?.type === "boolean" && /^(true|false)$/i.test(value)) {
+                values[key] = value.toLowerCase() === "true";
+            } else if (definition?.type === "number" && value.trim() !== "" && Number.isFinite(Number(value))) {
+                values[key] = Number(value);
             }
         }
-        if (typeof this.config.cache_assets !== "boolean") {
-            throw new Error("Invalid value for cache_assets, expected boolean.");
-        }
-        if (typeof this.config.guilds_per_shard !== "number" || this.config.guilds_per_shard <= 0) {
-            throw new Error("Invalid value for guilds_per_shard, expected positive number.");
-        }
-        if (typeof this.config.suppress_intent_warning !== "boolean") {
-            throw new Error("Invalid value for suppress_intent_warning, expected boolean.");
-        }
-        if (typeof this.config.generate_fake_profile !== "boolean") {
-            throw new Error("Invalid value for generate_fake_profile, expected boolean.");
-        }
-    }
-    // eslint-disable-next-line
-    parseIniValue(val: any) {
-        if (typeof val !== "string") return val;
-        if (/^(true|false)$/i.test(val)) return val.toLowerCase() === "true";
-        if (!isNaN(Number(val)) && val.trim() !== "") return Number(val);
-        return val;
-    }
-    /**
-     * Get the INI formatted string of the current configuration.
-     * @returns {string} The INI formatted string.
-     */
-    toString () {
-        this.validateConfig();
-        return stringify(this.config, {
-            align: true,
-        });
-    }
-    save () {
-        fs.writeFileSync(this.iniPath, this.toString(), "utf-8");
-    }
-    monacoAutoComplete () {
-        return {
-            cache_assets: {
-                documentation: `Determines whether asset files from \`discord.com/assets\` should be stored on local storage.
-
-Enabling this option can improve page load speed in environments with unstable or slow network connections, since frequently used assets will be loaded directly from disk.
-
-**Note:**  
-This feature is **not recommended** for most users. Old asset files are not automatically deleted and can only be fully removed by reinstalling the application.
-
-**Type:** \`boolean\`  
-**Default:** \`false\``,
-                enum: {
-                    true: {
-                        documentation: "Enable asset caching.",
-                    },
-                    false: {
-                        documentation: "Disable asset caching (default).",
-                    },
-                },
-            },
-            guilds_per_shard: {
-                documentation: `Defines the maximum number of guilds (Discord servers) that can be handled by a single session (shard) of the application.
-
-This value helps the application calculate the required number of shards. Due to Discord's internal sharding algorithm, the actual number of guilds assigned to each shard may vary and will not always be perfectly distributed.
-
-Setting this to a very large number may cause unexpected or unstable behavior.
-
-**Type:** \`number\`  
-**Default:** \`100\``,
-            },
-            suppress_intent_warning: {
-                documentation: `Specifies whether the application should refuse to log in if the required Privileged Intents (\`MESSAGE_CONTENT\`) are not granted to your bot by Discord.
-
-**Warning:**  
-Disabling this option is not recommended unless you fully understand the consequences.
-
-**Type:** \`boolean\`  
-**Default:** \`true\``,
-                enum: {
-                    true: {
-                        documentation:
-                            "The application will abort startup and warn you if MESSAGE_CONTENT is missing, improving stability and predictability. (default)",
-                    },
-                    false: {
-                        documentation:
-                            "The application will attempt to continue running even without all the recommended intents, but this may result in unexpected or unstable behavior.",
-                    },
-                },
-            },
-            generate_fake_profile: {
-                documentation: `Determines whether to use fake data to enhance (beautify) the user's profile by patching the \`/users/:id/profile\` API response.
-
-When enabled (default), fake or enhanced profile data will be injected, making user profiles appear more polished.
-
-Disabling this option still patches some necessary API fields (to prevent crashes), but does not add additional fake data.
-
-**Type:** \`boolean\`
-**Default:** \`true\``,
-                enum: {
-                    true: {
-                        documentation: "Enable fake profile data injection (default).",
-                    },
-                    false: {
-                        documentation: "Disable fake profile data injection, using only real data from Discord.",
-                    },
-                },
-            },
-        };
+        return this.withDefaults(values);
     }
 }
 

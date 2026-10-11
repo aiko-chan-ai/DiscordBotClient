@@ -68,7 +68,7 @@ function copyAndPatch() {
     if (patchedVencord === vencordContent) {
         console.info("Vencord.js is already patched / Cannot patch Vencord.js");
         console.info("Please check if the file is already patched or if the patch is correct.");
-        process.exit(0);
+        throw new Error("Cannot apply the DBC patch to Vencord.js; inspect the pinned Vencord revision.");
     }
 
     writeFileSync(vencordPath, patchedVencord);

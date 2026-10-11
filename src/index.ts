@@ -53,8 +53,8 @@ hooks.push((message, transport) => {
         }
         return inspect(l);
     });
-    if (app.isReady() && botClient?.win && !botClient?.win.isDestroyed() && botClient?.win.webContents) {
-        botClient.win.webContents.send(
+    if (app.isReady() && botClient.discordWebContents && !botClient.discordWebContents.isDestroyed()) {
+        botClient.discordWebContents.send(
             IPCEvent.LogFromMainProcess,
             message.scope,
             ["error", "warn", "log"].includes(message.level) ? message.level : "debug",

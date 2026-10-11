@@ -1,0 +1,45 @@
+name: Feature request
+description: Suggest an improvement to DBC
+title: "[Feature] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the task or limitation you encounter today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe how DBC should behave from the user's point of view.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - BotClient compatibility
+        - Settings
+        - Message editor
+        - Startup or window behavior
+        - Build or packaging
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workaround
+      description: Optional; mention what you tried or why it falls short.
+    validations:
+      required: false
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples or mockups
+      description: Optional; link a relevant example or attach a sketch. Do not include secrets.
+    validations:
+      required: false

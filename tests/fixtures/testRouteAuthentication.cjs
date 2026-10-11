@@ -20,6 +20,14 @@ app.whenReady().then(async () => {
     const upstreamId = '123456789012345678';
     const token = `Bot ${Buffer.from('999999999999999999').toString('base64')}.valid`;
     const forged = `Bot ${Buffer.from(upstreamId).toString('base64')}.x`;
+    const accepted = new Set([token]);
+    // Fresh tokens the validation cache has never seen, so upstream failure
+    // modes cannot be masked by a warm cache entry.
+    const mintToken = label => {
+        const fresh = `Bot ${Buffer.from(`uncached-${label}`).toString('base64')}.valid`;
+        accepted.add(fresh);
+        return fresh;
+    };
     const originalFetch = net.fetch;
     net.fetch = async (url, options) => {
         if (url.endsWith('/users/@me')) {
@@ -29,7 +37,7 @@ app.whenReady().then(async () => {
             if (mode === 'offline') throw new Error('offline');
             if (mode === 'limited') return new Response('{}', { status: 429, headers: { 'Retry-After': '7' } });
             if (mode === 'server') return new Response('{}', { status: 503 });
-            if (options.headers.authorization !== token) return new Response('{}', { status: 401 });
+            if (!accepted.has(options.headers.authorization)) return new Response('{}', { status: 401 });
             return Response.json(mode === 'malformed' ? {} : { id: upstreamId, bot: mode !== 'human' });
         }
         assert.equal(url, `https://canary.discord.com/api/v9/applications/${upstreamId}/emojis`);
@@ -63,13 +71,15 @@ app.whenReady().then(async () => {
         assert.deepEqual(await (await request(path, token)).json(), [{ id: '42', name: 'example' }]);
         const previousChecks = checks;
         assert.equal((await request(path, token)).status, 200);
-        assert.equal(checks, previousChecks + 1, 'Cache hits still authenticate');
+        assert.equal(checks, previousChecks, 'A second request within the TTL skips upstream validation');
         assert.equal(emojiReads, 1);
         assert.equal((await request(path, forged)).status, 401, 'A forged ID cannot read a warm cache');
+        assert.equal(checks, previousChecks + 1, 'Forged tokens are never served from the validation cache');
         for (const [state, status] of [['offline', 502], ['limited', 429], ['server', 503], ['human', 403], ['malformed', 403]]) {
             mode = state;
+            const cold = mintToken(state);
             for (const suffix of ['/emojis', '/settings-proto/1', '/settings-proto/2']) {
-                const response = await request('/api/v10/users/@me' + suffix, token);
+                const response = await request('/api/v10/users/@me' + suffix, cold);
                 assert.equal(response.status, status);
                 if (state === 'limited') assert.equal(response.headers.get('retry-after'), '7');
             }
@@ -82,9 +92,11 @@ app.whenReady().then(async () => {
             ipcReads++;
             throw new Error('Stop before accessing a real settings database');
         };
+        const checksBeforeSettings = checks;
         for (const slot of [1, 2]) assert.equal((await request(`/api/v10/users/@me/settings-proto/${slot}`, token)).status, 500);
         assert.equal(ipcReads, 2);
-        console.log('PASS: route authentication, aliases, forged tokens, cache isolation and upstream failures');
+        assert.equal(checks, checksBeforeSettings, 'Cached validations still carry the upstream identity');
+        console.log('PASS: route authentication, aliases, forged tokens, validation cache and upstream failures');
     } finally {
         net.fetch = originalFetch;
         server.close();

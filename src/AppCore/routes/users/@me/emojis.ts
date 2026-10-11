@@ -6,7 +6,7 @@ import { APIApplicationEmoji } from "discord-api-types/v10";
 import { net } from "electron";
 import { Router } from "express";
 import Constants from "src/AppCore/Constants";
-import Util from "src/AppUtils/Utils";
+import { validateBotToken } from "src/AppUtils/ValidateBotToken";
 
 const app = Router({ mergeParams: true });
 
@@ -32,11 +32,8 @@ function evictExpiredEntries () {
     }
 }
 
-app.get("/", (req, res) => {
-    const id = Util.getIDFromToken(req.headers.authorization);
-    if (!id) {
-        return res.send([]);
-    }
+app.get("/", validateBotToken, (req, res) => {
+    const id = res.locals.authenticatedBotId as string;
     const cached = cacheMap.get(id);
     if (cached && cached.timeout > Date.now()) {
         return res.send(cached.data);

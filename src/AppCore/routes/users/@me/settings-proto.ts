@@ -6,8 +6,10 @@ import { Request, Response, Router } from "express";
 import { IPCEvent } from "src/AppCore/IPCEvents";
 import { isTrustedAppFrame } from "src/AppCore/IPCManager";
 import Util from "src/AppUtils/Utils";
+import { validateBotToken } from "src/AppUtils/ValidateBotToken";
 
 const app = Router({ mergeParams: true });
+app.use(validateBotToken);
 
 /**
  * Wait for an IPC event matching a specific uid (correlation ID).
@@ -38,12 +40,7 @@ function waitForSettingsEvent (
 }
 
 app.all("/1", async (req, res) => {
-    const uid = Util.getIDFromToken(req.headers.authorization);
-    if (!uid) {
-        return res.send({
-            settings: "",
-        });
-    }
+    const uid = res.locals.authenticatedBotId as string;
     try {
         const promise = waitForSettingsEvent(
             globalThis.botClient.ipcMain,
@@ -95,12 +92,7 @@ app.all("/1", async (req, res) => {
 });
 
 app.all("/2", async (req, res) => {
-    const uid = Util.getIDFromToken(req.headers.authorization);
-    if (!uid) {
-        return res.send({
-            settings: "",
-        });
-    }
+    const uid = res.locals.authenticatedBotId as string;
     try {
         const promise = waitForSettingsEvent(
             globalThis.botClient.ipcMain,

@@ -30,7 +30,7 @@ window.createStartupAnimation = (_canvas, avatar, artwork, onComplete, onReveal)
 
     const motionChanged = () => { if (reduced.matches) complete(true); };
     reduced.addEventListener('change', motionChanged);
-    Promise.all([avatar.decode(), artwork.decode()]).then(() => {
+    Promise.all([avatar.decode(), artwork.decode(), document.fonts.load('700 30px "Playpen Sans"')]).then(() => {
         loaded = true;
         if (stopped || completed) return;
         if (reduced.matches) { complete(true); return; }

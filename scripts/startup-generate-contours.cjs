@@ -5,7 +5,7 @@ const { spawnSync } = require('node:child_process');
 const electron = require('electron');
 const { vectorize } = require('./startup-image-contours.cjs');
 const root = path.resolve(__dirname, '..');
-const sampleWidth = 1024, sampleHeight = 576;
+const sampleHeight = 512, sampleWidth = Math.round(sampleHeight * 16 / 9);
 
 if (!process.versions.electron) {
     const env = { ...process.env };

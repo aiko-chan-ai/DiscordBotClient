@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { once } = require('node:events');
-const { app, shell } = require('electron');
+const { app, session, shell } = require('electron');
 const { StartupWindow } = require('../../build/AppCore/Windows/StartupWindow.js');
 
 const root = path.resolve(__dirname, '../..');
@@ -35,6 +35,7 @@ async function waitFor(predicate, timeout = 3000) {
 }
 
 app.whenReady().then(async () => {
+    session.fromPartition('startup').enableNetworkEmulation({ offline: true });
     let earlyQuits = 0;
     startup = new StartupWindow(() => {}, () => earlyQuits++);
     startup.finish();
@@ -60,6 +61,9 @@ app.whenReady().then(async () => {
     assert.equal(await evaluate('typeof require'), 'undefined', 'Renderer has no Node integration');
     assert.equal(await evaluate('typeof window.startupAPI.animationFinished'), 'function');
     assert.equal(await evaluate('!!document.querySelector("canvas")'), true);
+    assert.equal(await evaluate(`document.fonts.load('700 30px "Playpen Sans"').then(fonts =>
+        fonts.length > 0 && fonts.every(font => font.status === 'loaded'))`), true, 'Bundled Playpen Sans loads offline');
+    assert.match(await evaluate('getComputedStyle(document.querySelector(".boot-title")).fontFamily'), /Playpen Sans/);
     assert.deepEqual(await evaluate('({width:document.getElementById("artwork").naturalWidth,height:document.getElementById("artwork").naturalHeight})'), { width: 2560, height: 1440 });
     assert.equal(await evaluate('(() => { const image = document.getElementById("artwork"), canvas = document.querySelector("canvas"); return image.naturalWidth / image.naturalHeight === canvas.width / canvas.height; })()'), true, 'Artwork and contours use the same aspect ratio');
     assert.match(await evaluate('document.getElementById("artwork-credit").textContent'), /Mihoyo/);
@@ -71,6 +75,7 @@ app.whenReady().then(async () => {
         });
     })()`);
     assert.deepEqual(creditStyle, skipStyle, 'Artwork and Skip share the same control style');
+    assert.match(creditStyle[0], /Playpen Sans/);
     await evaluate('document.getElementById("artwork-credit").click()');
     await waitFor(() => openedArtwork === 'https://www.mihoyo.com/');
     await evaluate('window.startupAPI.retry(); window.startupAPI.getState()');

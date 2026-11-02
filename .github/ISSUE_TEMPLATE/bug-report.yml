@@ -9,9 +9,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: DBC version
+      label: App version
       description: Include the release version or commit SHA.
-      placeholder: "3.9.3 or commit SHA"
+      placeholder: "3.10.1 or commit SHA"
     validations:
       required: true
   - type: dropdown

@@ -3,6 +3,12 @@ name: Publish to Winget
 on:
   release:
     types: [released]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing release tag to publish to WinGet, e.g. v3.10.3'
+        required: true
+        type: string
 
 permissions: {}
 
@@ -13,4 +19,6 @@ jobs:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: aiko-chan-ai.DiscordBotClient
+          release-tag: ${{ inputs.release_tag || github.event.release.tag_name }}
+          # Classic PAT needs public_repo + workflow for komac sync-fork.
           token: ${{ secrets.WINGET_TOKEN }}

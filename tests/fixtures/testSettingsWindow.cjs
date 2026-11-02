@@ -70,6 +70,8 @@ const output = path.join(root, 'plans', '261001-settings');
         assert.deepEqual(snapshot, config.snapshot());
         assert.equal(snapshot.settings.doh_provider, 'off');
         assert.equal(snapshot.settings.auto_check_updates, true);
+        assert.equal(snapshot.settings.startup_animation, 'modern');
+        assert.equal(await evaluate('document.querySelector("[data-setting=startup_animation] select").value'), 'modern');
         assert.equal(snapshot.settings.use_system_proxy, false);
         const saved = { ...snapshot.settings, guilds_per_shard: 42, settings_theme: 'dark', doh_provider: 'google', auto_check_updates: false, use_system_proxy: true };
         assert.deepEqual((await evaluate(`window.settingsAPI.save(${JSON.stringify(saved)})`)).settings, saved);
@@ -149,6 +151,7 @@ async function uiChecks(config, type, click, evaluate, waitFor, check, getWindow
     await waitFor(() => evaluate('document.querySelector("input[inputmode=numeric]").value === "42"'), 'discard');
     check('Invalid input disables Save; Discard restores persisted value');
     await type('input[inputmode=numeric]', '77');
+    await evaluate('(() => { const select = document.querySelector("[data-setting=startup_animation] select"); select.value = "classic"; select.dispatchEvent(new Event("change", { bubbles: true })); })()');
     fs.renameSync(config.jsonPath, `${config.jsonPath}.backup`);
     fs.mkdirSync(config.jsonPath);
     try {
@@ -165,6 +168,7 @@ async function uiChecks(config, type, click, evaluate, waitFor, check, getWindow
     await click('Save changes');
     await waitFor(() => evaluate('document.body.innerText.includes("Settings saved.")'), 'UI save');
     assert.equal(JSON.parse(fs.readFileSync(config.jsonPath, 'utf8')).settings.guilds_per_shard, 77);
+    assert.equal(JSON.parse(fs.readFileSync(config.jsonPath, 'utf8')).settings.startup_animation, 'classic');
     check('Actual renderer form saves edited value through preload to disk');
     getWindow().setContentSize(1040, 760);
     await new Promise(resolve => setTimeout(resolve, 120));
@@ -184,9 +188,11 @@ async function uiChecks(config, type, click, evaluate, waitFor, check, getWindow
     const beforeReset = fs.readFileSync(config.jsonPath, 'utf8');
     await click('Reset to defaults');
     await waitFor(() => evaluate('document.querySelector("input[inputmode=numeric]").value === "100"'), 'reset draft');
+    assert.equal(await evaluate('document.querySelector("[data-setting=startup_animation] select").value'), 'modern');
     assert.equal(fs.readFileSync(config.jsonPath, 'utf8'), beforeReset);
     await click('Discard');
     await waitFor(() => evaluate('document.querySelector("input[inputmode=numeric]").value === "77"'), 'discard reset');
+    assert.equal(await evaluate('document.querySelector("[data-setting=startup_animation] select").value'), 'classic');
     assert.equal(await evaluate('document.querySelectorAll("[data-setting=cache_assets]").length'), 0);
     check('Reset changes draft only; discard restores saved values; hidden cache setting absent');
     for (const [width, height] of [[840, 620], [720, 480]]) {

@@ -97,7 +97,7 @@ window.createStartupTimeline = onReveal => {
     warm() {
       if(reduced)return;
       render(4179);geometry.prepareIdentityTexture();geometry.drawIdentityPieces(0);
-      ctx.clearRect(0,0,1536,1024);geometry.resetTrace();lastUI=-Infinity;render(0);
+      ctx.clearRect(0,0,1536,864);geometry.resetTrace();lastUI=-Infinity;render(0);
     },
     dispose: () => geometry.releaseIdentityTexture(),
   };

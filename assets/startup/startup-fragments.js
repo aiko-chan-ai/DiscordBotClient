@@ -18,7 +18,7 @@ window.createStartupFragments = (canvas, contours) => {
       const first=points[0],last=points[points.length-1],x=(first[0]+last[0])/2,y=(first[1]+last[1])/2;
       const seed=result.length+1;
       result.push({x,y,points:points.map(point=>[point[0]-x,point[1]-y]),
-        sx:(x+(noise(seed)-.5)*440+1536)%1536,sy:(y+(noise(seed+271)-.5)*300+1024)%1024,
+        sx:(x+(noise(seed)-.5)*440+1536)%1536,sy:(y+(noise(seed+271)-.5)*300+864)%864,
         angle:(noise(seed+563)-.5)*Math.PI*2,seed:noise(seed+811)*Math.PI*2});
     }
     for(const path of paths){
@@ -46,11 +46,11 @@ window.createStartupFragments = (canvas, contours) => {
   }
   function prepareIdentityTexture(){
     releaseIdentityTexture();
-    const bounds=canvas.getBoundingClientRect(),scale=Math.max(bounds.width/1536,bounds.height/1024);
+    const bounds=canvas.getBoundingClientRect(),scale=Math.max(bounds.width/1536,bounds.height/864);
     if(!scale)return;
-    const ox=bounds.left+(bounds.width-1536*scale)/2,oy=bounds.top+(bounds.height-1024*scale)/2;
+    const ox=bounds.left+(bounds.width-1536*scale)/2,oy=bounds.top+(bounds.height-864*scale)/2;
     const rect=node=>{const r=node.getBoundingClientRect();return {x:(r.left-ox)/scale,y:(r.top-oy)/scale,w:r.width/scale,h:r.height/scale};};
-    const texture=document.createElement('canvas');texture.width=1536;texture.height=1024;
+    const texture=document.createElement('canvas');texture.width=1536;texture.height=864;
     const ink=texture.getContext('2d');ink.imageSmoothingEnabled=false;
     const avatar=rect($('.avatar')),radar=rect($('.radar')),border=rect($('.avatar-frame'));
     const cx=radar.x+radar.w/2,cy=radar.y+radar.h/2;
@@ -79,12 +79,12 @@ window.createStartupFragments = (canvas, contours) => {
     }
     ink.globalAlpha=1;
     ink.globalCompositeOperation='source-atop';ink.globalAlpha=.24;ink.fillStyle='#9b9099';
-    ink.fillRect(0,0,1536,1024);ink.globalAlpha=1;ink.globalCompositeOperation='source-over';
+    ink.fillRect(0,0,1536,864);ink.globalAlpha=1;ink.globalCompositeOperation='source-over';
     // Geometric tile selection works for file:// images too, without reading protected pixels.
     const tile=36,boxes=[avatar,border,...textBounds];
     const overlaps=(x,y,r)=>x<r.x+r.w&&x+tile>r.x&&y<r.y+r.h&&y+tile>r.y;
-    for(let y=0;y<1024;y+=tile)for(let x=0;x<1536;x+=tile){
-      const w=Math.min(tile,1536-x),h=Math.min(tile,1024-y);
+    for(let y=0;y<864;y+=tile)for(let x=0;x<1536;x+=tile){
+      const w=Math.min(tile,1536-x),h=Math.min(tile,864-y);
       const distance=Math.hypot(x+w/2-cx,y+h/2-cy);
       const onRing=[.3775,.4425,.48].some(radius=>Math.abs(distance-radar.w*radius)<tile);
       if(onRing||boxes.some(box=>overlaps(x,y,box)))identityPieces.push({x,y,w,h,target:fragments[(identityPieces.length*37)%fragments.length]});
@@ -115,7 +115,7 @@ window.createStartupFragments = (canvas, contours) => {
   function trace(p,drift=0,spread=1) {
     const stamp=p===1?1:p+drift*.00001;
     if(stamp===lastTrace)return;lastTrace=stamp;
-    ctx.clearRect(0,0,1536,1024);
+    ctx.clearRect(0,0,1536,864);
     ctx.strokeStyle='#c8c0cd';ctx.lineWidth=1.25;ctx.lineCap='round';ctx.lineJoin='round';
     if(p===1){
       ctx.globalAlpha=1;paths.forEach(path=>ctx.stroke(path.full));

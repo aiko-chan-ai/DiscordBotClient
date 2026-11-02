@@ -224,6 +224,7 @@ export class DiscordBotClient extends EventEmitter {
                     this.startupWindow = new StartupWindow(
                         () => this.relaunch(),
                         () => this.quit(),
+                        this.config.config.startup_animation,
                     );
                     this.logger.info("Creating session...");
                     this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
@@ -541,6 +542,7 @@ export class DiscordBotClient extends EventEmitter {
         this.startupWindow ??= new StartupWindow(
             () => this.relaunch(),
             () => this.quit(),
+            this.config.config.startup_animation,
         );
         this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
     }

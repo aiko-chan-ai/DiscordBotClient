@@ -2,6 +2,7 @@
 
 import { app, BrowserWindow, dialog, IpcMainEvent, IpcMainInvokeEvent, screen, shell } from "electron";
 import path from "path";
+import { defaultSettings, type Settings } from "src/shared/Settings";
 
 export type StartupState = { phase: "starting" | "loading" | "ready" | "error"; message?: string };
 
@@ -13,18 +14,20 @@ export class StartupWindow {
     private revealApplication?: () => void;
     private animationWait?: { resolve: (completed: boolean) => void; timer: ReturnType<typeof setTimeout> };
 
-    constructor (retry: () => void, quit: () => void) {
+    constructor (retry: () => void, quit: () => void, mode: Settings["startup_animation"] = defaultSettings.startup_animation) {
+        const classic = mode === "classic";
+        this.animationDone = classic;
         const area = screen.getPrimaryDisplay().workAreaSize;
         this.window = new BrowserWindow({
-            width: Math.max(940, Math.floor(area.width * 0.9)),
-            height: Math.max(500, Math.floor(area.height * 0.9)),
+            width: classic ? 300 : Math.max(940, Math.floor(area.width * 0.9)),
+            height: classic ? 350 : Math.max(500, Math.floor(area.height * 0.9)),
             resizable: false,
             maximizable: false,
             frame: false,
             show: false,
-            transparent: true,
-            hasShadow: false,
-            backgroundColor: "#00000000",
+            transparent: !classic,
+            hasShadow: classic,
+            backgroundColor: classic ? "#282b30" : "#00000000",
             title: "DiscordBotClient",
             autoHideMenuBar: true,
             webPreferences: {
@@ -33,7 +36,7 @@ export class StartupWindow {
                 sandbox: true,
                 nodeIntegration: false,
                 partition: "startup",
-                backgroundThrottling: false,
+                backgroundThrottling: classic,
             },
         });
         const contents = this.window.webContents;
@@ -68,7 +71,7 @@ export class StartupWindow {
             this.settleAnimation(false);
         });
         this.window.once("ready-to-show", () => this.show());
-        void this.window.loadFile(path.join(app.getAppPath(), "assets", "startup", "index.html")).catch(() => {
+        void this.window.loadFile(path.join(app.getAppPath(), "assets", "startup", classic ? "classic.html" : "index.html")).catch(() => {
             if (this.window.isDestroyed()) return;
             dialog.showErrorBox(
                 "Startup failed",

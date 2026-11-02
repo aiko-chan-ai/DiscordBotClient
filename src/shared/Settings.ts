@@ -30,6 +30,17 @@ export const settingsDefinitions = [
         ],
     },
     {
+        key: "startup_animation",
+        displayName: "Startup animation",
+        description: "Applies after restarting DBC.",
+        type: "select",
+        defaultValue: "modern",
+        options: [
+            { label: "Modern (default)", value: "modern" },
+            { label: "Discord Style", value: "classic" },
+        ],
+    },
+    {
         key: "doh_provider",
         displayName: "DNS over HTTPS",
         description: "Prefer encrypted DNS with system DNS fallback. Applies after restarting DBC.",

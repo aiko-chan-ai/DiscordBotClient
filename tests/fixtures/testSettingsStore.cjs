@@ -85,6 +85,15 @@ try {
         snapshot.settings.cache_assets = false;
         assert.equal(store.config.cache_assets, true);
     });
+    test("startup mode defaults for old config and classic survives restart", () => {
+        const directory = profile("startup-mode", "config.json", JSON.stringify({ version: 1, settings: { settings_theme: "dark" } }));
+        const store = new GlobalConfig(directory);
+        assert.equal(store.config.startup_animation, "modern");
+        store.save({ ...store.config, startup_animation: "classic" });
+        assert.equal(new GlobalConfig(directory).config.startup_animation, "classic");
+        assert.throws(() => store.save({ ...store.config, startup_animation: "disabled" }));
+        assert.equal(new GlobalConfig(directory).config.startup_animation, "classic");
+    });
     test("legacy INI coercion, defaults, and original preservation", () => {
         const original = '; comment\ncache_assets="TRUE"\nguilds_per_shard="250"\n';
         const directory = profile("legacy", "config.ini", original);

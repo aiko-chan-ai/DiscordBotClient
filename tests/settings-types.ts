@@ -11,6 +11,10 @@ settings.settings_theme = "light";
 settings.doh_provider = "google";
 settings.auto_check_updates = false;
 settings.use_system_proxy = true;
+settings.startup_animation = "classic";
+settings.startup_animation = "modern";
+// @ts-expect-error Startup animation must be one of the supported modes.
+settings.startup_animation = "disabled";
 // @ts-expect-error Provider must be a supported option.
 settings.doh_provider = "custom";
 // @ts-expect-error Definitions determine supported setting keys.

@@ -30,7 +30,7 @@
         }
         previous=current;current=next;
       }
-      if(points.length>=8)paths.push(points.filter((_,i)=>i%2===0||i===points.length-1).map(([x,y])=>[Math.round(x*1536/width),Math.round(y*1024/height)]));
+      if(points.length>=8)paths.push(points.filter((_,i)=>i%2===0||i===points.length-1).map(([x,y])=>[Math.round(x*1536/width),Math.round(y*864/height)]));
     }
     // Start at endpoints first, then trace the remaining closed loops.
     for(let i=0;i<count;i++)if(edge[i]&&!visited[i]&&neighbors.reduce((n,d)=>n+(edge[i+d]||0),0)<=1)walk(i);

@@ -51,6 +51,6 @@ body.embedded .end-screen,body.native.launch-mode.closing .end-screen{visibility
 .boot-title.long-title{font-size:clamp(18px,2.5vw,30px);letter-spacing:.12em;padding-left:.12em}
 .closing .feedback{opacity:0}.closing .close{visibility:hidden}.failed .feedback{opacity:1}
 body.native .window::before{content:"";position:absolute;z-index:5;top:0;left:0;right:45px;height:32px;-webkit-app-region:drag}
-#artwork-credit{position:absolute;z-index:7;left:4%;bottom:5%;padding:7px 10px;border:1px solid #ffffff26;border-radius:5px;background:#08060db3;color:#eadde6;font:11px Consolas,monospace;-webkit-app-region:no-drag}
-#artwork-credit:hover{background:#241b26;color:#fff}.closing #artwork-credit{visibility:hidden}
-.skip{padding:7px 10px;background:#08060db3;border-radius:5px;color:#eadde6;opacity:1}
+.startup-control{position:absolute;z-index:7;bottom:5%;display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #ffffff26;border-radius:5px;background:#08060db3;color:#eadde6;font:11px/16px Consolas,monospace;letter-spacing:normal;opacity:1;-webkit-app-region:no-drag}
+.window:hover .startup-control{opacity:1}.startup-control:hover{background:#241b26;color:#fff}.startup-control kbd{margin-left:0}
+#artwork-credit{left:4%}.skip{right:4%}.closing .startup-control{visibility:hidden}

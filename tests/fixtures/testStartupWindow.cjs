@@ -60,8 +60,17 @@ app.whenReady().then(async () => {
     assert.equal(await evaluate('typeof require'), 'undefined', 'Renderer has no Node integration');
     assert.equal(await evaluate('typeof window.startupAPI.animationFinished'), 'function');
     assert.equal(await evaluate('!!document.querySelector("canvas")'), true);
-    assert.deepEqual(await evaluate('({width:document.getElementById("artwork").naturalWidth,height:document.getElementById("artwork").naturalHeight})'), { width: 1536, height: 1024 });
+    assert.deepEqual(await evaluate('({width:document.getElementById("artwork").naturalWidth,height:document.getElementById("artwork").naturalHeight})'), { width: 2560, height: 1440 });
+    assert.equal(await evaluate('(() => { const image = document.getElementById("artwork"), canvas = document.querySelector("canvas"); return image.naturalWidth / image.naturalHeight === canvas.width / canvas.height; })()'), true, 'Artwork and contours use the same aspect ratio');
     assert.match(await evaluate('document.getElementById("artwork-credit").textContent'), /Mihoyo/);
+    const [creditStyle, skipStyle] = await evaluate(`(() => {
+        const properties = ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'padding', 'border', 'borderRadius', 'backgroundColor', 'color', 'opacity', 'height'];
+        return ['artwork-credit', 'skip'].map(id => {
+            const style = getComputedStyle(document.getElementById(id));
+            return properties.map(property => style[property]);
+        });
+    })()`);
+    assert.deepEqual(creditStyle, skipStyle, 'Artwork and Skip share the same control style');
     await evaluate('document.getElementById("artwork-credit").click()');
     await waitFor(() => openedArtwork === 'https://www.mihoyo.com/');
     await evaluate('window.startupAPI.retry(); window.startupAPI.getState()');
@@ -129,6 +138,18 @@ app.whenReady().then(async () => {
         assert.equal(await startup.waitForAnimation(), true, `${method} releases animation without skipping application loading`);
         startup.finish();
     }
+    startup = new StartupWindow(() => {}, () => {}, 'classic');
+    await once(startup.window.webContents, 'did-finish-load');
+    assert.deepEqual(startup.window.getSize(), [300, 350]);
+    assert.equal(startup.window.getBackgroundColor().toLowerCase(), '#282b30');
+    assert.equal(await startup.window.webContents.executeJavaScript('document.querySelector("img").getAttribute("src") === "waiting.gif" && !document.querySelector("canvas")'), true);
+    startup.loading();
+    await waitFor(() => startup.window.webContents.executeJavaScript('document.getElementById("status").textContent === "Loading DBC..."'));
+    fs.writeFileSync(path.join(path.dirname(loadingOutput), 'startup-classic.png'), (await startup.window.webContents.capturePage()).toPNG());
+    assert.equal(await startup.waitForAnimation(), true, 'Classic GIF does not wait for the cinematic sequence');
+    startup.fail('Classic startup failed');
+    await waitFor(() => startup.window.webContents.executeJavaScript('!document.getElementById("actions").hidden'));
+    startup.finish();
     finish();
 }).catch(finish);
 

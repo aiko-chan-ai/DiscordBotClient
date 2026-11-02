@@ -517,6 +517,10 @@ export class DiscordBotClient extends EventEmitter {
         // Like Vesktop, only a successful navigation promise completes startup.
         await contents.loadURL(`https://${Constants.CustomDiscordDomain}`);
         if (this.#shouldQuitApp || contents.isDestroyed()) return;
+        if (this.startupWindow && !await this.startupWindow.waitForAnimation(() => {
+            if (!this.#shouldQuitApp && !contents.isDestroyed()) this.appWindow.showInactive();
+        })) return;
+        if (this.#shouldQuitApp || contents.isDestroyed()) return;
         this.appWindow.show();
         this.startupWindow?.finish();
         this.startupWindow = undefined;

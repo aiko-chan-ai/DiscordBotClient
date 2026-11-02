@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { once } = require('node:events');
-const { app } = require('electron');
+const { app, shell } = require('electron');
 const { StartupWindow } = require('../../build/AppCore/Windows/StartupWindow.js');
 
 const root = path.resolve(__dirname, '../..');
@@ -12,10 +12,14 @@ app.setPath('userData', profile);
 app.setAppPath(root);
 app.on('window-all-closed', () => {});
 let startup;
-const watchdog = setTimeout(() => finish(new Error('Startup smoke test exceeded 65 seconds')), 65000);
+const originalOpenExternal = shell.openExternal;
+let openedArtwork;
+shell.openExternal = async url => { openedArtwork = url; };
+const watchdog = setTimeout(() => finish(new Error('Startup smoke test exceeded 90 seconds')), 90000);
 
 function finish(error) {
     clearTimeout(watchdog);
+    shell.openExternal = originalOpenExternal;
     startup?.finish();
     console[error ? 'error' : 'log'](error?.stack || 'PASS: real Electron startup window smoke test');
     // Exit releases Chromium file handles before the parent removes this isolated profile.
@@ -40,6 +44,9 @@ app.whenReady().then(async () => {
     let retries = 0;
     let quits = 0;
     startup = new StartupWindow(() => retries++, () => quits++);
+    startup.window.webContents.on('console-message', event => {
+        if (event.level === 'error') console.error('Startup renderer:', event.message);
+    });
     assert.equal(startup.window.isVisible(), false, 'Initially hidden');
     let showCalled = false;
     const originalShow = startup.show.bind(startup);
@@ -49,16 +56,44 @@ app.whenReady().then(async () => {
     await loaded;
     await waitFor(() => showCalled);
     const evaluate = expression => startup.window.webContents.executeJavaScript(expression);
-    assert.deepEqual(await evaluate('window.startupAPI.getState()'), { phase: 'starting', message: 'Starting...' });
+    assert.deepEqual(await evaluate('window.startupAPI.getState()'), { phase: 'starting' });
     assert.equal(await evaluate('typeof require'), 'undefined', 'Renderer has no Node integration');
+    assert.equal(await evaluate('typeof window.startupAPI.animationFinished'), 'function');
+    assert.equal(await evaluate('!!document.querySelector("canvas")'), true);
+    assert.deepEqual(await evaluate('({width:document.getElementById("artwork").naturalWidth,height:document.getElementById("artwork").naturalHeight})'), { width: 1536, height: 1024 });
+    assert.match(await evaluate('document.getElementById("artwork-credit").textContent'), /Mihoyo/);
+    await evaluate('document.getElementById("artwork-credit").click()');
+    await waitFor(() => openedArtwork === 'https://www.mihoyo.com/');
     await evaluate('window.startupAPI.retry(); window.startupAPI.getState()');
     assert.equal(retries, 0, 'Retry ignored outside error state');
     startup.loading();
-    await waitFor(() => evaluate('document.getElementById("status").textContent === "Loading DBC..."'));
+    await waitFor(async () => (await evaluate('window.startupAPI.getState()')).phase === 'loading');
+    assert.equal(await evaluate('document.querySelector(".feedback").hidden'), true);
+    assert.doesNotMatch(await evaluate('document.body.innerText'), /SYNC RATIO|TYPE-0|MAGI SYSTEM|DBC is ready|Your bot\. Your client\./);
     assert.equal(await evaluate('document.getElementById("actions").hidden'), true);
     const loadingOutput = path.join(root, 'plans', '261001-startup-window', 'startup-loading-preview.png');
     fs.mkdirSync(path.dirname(loadingOutput), { recursive: true });
     fs.writeFileSync(loadingOutput, (await startup.window.webContents.capturePage()).toPNG());
+    let revealed = false;
+    let reveals = 0;
+    const ready = startup.waitForAnimation(() => reveals++).then(result => { revealed = result; });
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert.equal(revealed, false, 'Ready application waits for the opening sequence');
+    for (const stage of ['identity', 'dispersing', 'drawing', 'portrait', 'shutter']) {
+        await waitFor(() => evaluate(`document.body.dataset.stage === '${stage}'`), 5000);
+        await new Promise(resolve => setTimeout(resolve, stage === 'identity' ? 650 : stage === 'drawing' ? 900 : 180));
+        const capture = await startup.window.webContents.capturePage();
+        fs.writeFileSync(path.join(path.dirname(loadingOutput), `startup-${stage}.png`), capture.toPNG());
+        if (stage === 'drawing') {
+            assert.ok(await evaluate('Number(document.querySelector("canvas").dataset.fragments) > 0'), 'Contour paths become fragments');
+            console.log('Startup contour fragments:', await evaluate('Number(document.querySelector("canvas").dataset.fragments)'));
+            assert.ok(await evaluate('Number(document.querySelector("canvas").dataset.identityPieces) > 0'), 'Avatar texture participates in the fragment transition');
+        }
+    }
+    await ready;
+    assert.equal(revealed, true, 'Natural animation completion releases the ready application');
+    assert.equal(reveals, 1, 'The loaded application is revealed once during the shutter');
+    startup.loading();
     await waitFor(async () => (await evaluate('window.startupAPI.getState()')).phase === 'error', 48000);
     await waitFor(() => evaluate('!document.getElementById("actions").hidden'));
     assert.match(await evaluate('document.getElementById("status").textContent'), /taking too long/);
@@ -76,6 +111,24 @@ app.whenReady().then(async () => {
     assert.equal(quits, 1, 'finish must not invoke quit callback');
     startup.finish();
     console.log(`Screenshot: ${output}`);
+    for (const method of ['click', 'escape', 'reduced-motion']) {
+        startup = new StartupWindow(() => {}, () => {});
+        await once(startup.window.webContents, 'did-finish-load');
+        if (method === 'reduced-motion') {
+            startup.window.webContents.debugger.attach('1.3');
+            await startup.window.webContents.debugger.sendCommand('Emulation.setEmulatedMedia', {
+                features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+            });
+            const reloaded = once(startup.window.webContents, 'did-finish-load');
+            startup.window.webContents.reload();
+            await reloaded;
+        }
+        await waitFor(() => startup.window.webContents.executeJavaScript('!!document.getElementById("skip")'));
+        if (method === 'click') await startup.window.webContents.executeJavaScript('document.getElementById("skip").click()');
+        if (method === 'escape') await startup.window.webContents.executeJavaScript('window.dispatchEvent(new KeyboardEvent("keydown", {key:"Escape"}))');
+        assert.equal(await startup.waitForAnimation(), true, `${method} releases animation without skipping application loading`);
+        startup.finish();
+    }
     finish();
 }).catch(finish);
 

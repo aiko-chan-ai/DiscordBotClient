@@ -3,10 +3,21 @@
 const api = window.startupAPI;
 const status = document.getElementById("status");
 const actions = document.getElementById("actions");
+const feedback = document.querySelector(".feedback");
+const skip = document.getElementById("skip");
+const animation = window.createStartupAnimation(
+    document.querySelector("canvas"), document.getElementById("avatar"), document.getElementById("artwork"),
+    () => { skip.hidden = true; api.animationFinished(); },
+    () => api.revealApplication(),
+);
 
 function render(state) {
-    status.textContent = state.message || (state.phase === "error" ? "Unable to start." : "Starting...");
+    feedback.hidden = state.phase !== "error";
+    status.textContent = state.phase === "error" ? state.message || "Unable to start." : "";
     actions.hidden = state.phase !== "error";
+    document.body.classList.toggle("failed", state.phase === "error");
+    if (state.phase === "ready") animation.ready();
+    if (state.phase === "error") { animation.stop(); skip.hidden = true; }
 }
 
 // Subscribe first so an in-flight snapshot cannot overwrite a newer update.
@@ -18,10 +29,18 @@ const unsubscribe = api.onStateChanged(state => {
 api.getState().then(state => {
     if (!receivedUpdate) render(state);
 }).catch(() => {
-    if (!receivedUpdate) render({ phase: "error", message: "Unable to read startup status. Please retry." });
+    if (!receivedUpdate) render({ phase: "error" });
 });
 
 document.getElementById("retry").addEventListener("click", () => api.retry());
 document.getElementById("quit").addEventListener("click", () => api.quit());
 document.getElementById("close").addEventListener("click", () => api.quit());
+document.getElementById("artwork-credit").addEventListener("click", () => {
+    api.openArtworkCredit().catch(console.error);
+});
+skip.addEventListener("click", () => animation.skip());
+window.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !skip.hidden) { event.preventDefault(); animation.skip(); }
+});
+window.addEventListener("unload", () => animation.stop(), { once: true });
 window.addEventListener("unload", unsubscribe, { once: true });

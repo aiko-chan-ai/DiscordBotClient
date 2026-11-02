@@ -1,25 +1,62 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
-    <title>DiscordBotClient</title>
-    <link rel="stylesheet" href="startup.css">
-    <script src="startup.js" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>DiscordBotClient</title>
+  <link rel="stylesheet" href="startup.css">
+  <script src="default-contours.js" defer></script>
+  <script src="startup-fragments.js" defer></script>
+  <script src="startup-timeline.js" defer></script>
+  <script src="startup-animation.js" defer></script>
+  <script src="startup.js" defer></script>
 </head>
-<body>
-    <button id="close" class="close" type="button" aria-label="Quit DiscordBotClient"></button>
-    <main>
-        <div class="artwork" aria-hidden="true">
-            <img src="waiting.gif" alt="">
-            <span class="still">◈</span>
+<body class="native launch-mode">
+  <main class="preview">
+    <section class="window" aria-label="DiscordBotClient startup animation">
+      <div class="end-screen" aria-hidden="true"></div>
+      <div class="scene" id="scene" aria-hidden="true">
+        <img class="artwork" id="artwork" src="banner.png" alt="" decoding="async" fetchpriority="high">
+        <canvas class="line-art" width="1536" height="1024"></canvas>
+        <div class="shade"></div>
+        <div class="scanlines"></div>
+        <div class="light-sweep"></div>
+        <div class="particles"></div>
+        <div class="hud">
+          <div class="corner top-left"></div><div class="corner top-right"></div>
+          <div class="corner bottom-left"></div><div class="corner bottom-right"></div>
+          <div class="sync">
+            <div class="sync-track"><div class="sync-fill"></div></div>
+          </div>
         </div>
-        <p id="status" role="status" aria-live="polite" aria-atomic="true">Starting...</p>
-        <div id="actions" class="actions" hidden>
-            <button id="retry" type="button">Retry</button>
-            <button id="quit" type="button">Quit</button>
+        <div class="boot-grid"></div>
+        <div class="boot-corners"><i class="corner top-left"></i><i class="corner top-right"></i><i class="corner bottom-left"></i><i class="corner bottom-right"></i></div>
+        <div class="intro">
+          <div class="pulse"><i></i><i></i><b></b></div>
+          <div class="identity">
+            <div class="radar">
+              <svg class="dial" viewBox="0 0 400 400"><circle cx="200" cy="200" r="177"/><circle class="dashed" cx="200" cy="200" r="151"/><g class="ticks"></g><path class="crosshair" d="M200 9V61 M200 339V391 M9 200H61 M339 200H391"/></svg>
+              <div class="avatar-frame"><img class="avatar" id="avatar" src="../icon.png" alt="" decoding="async"></div>
+              <i class="reticle tl"></i><i class="reticle tr"></i><i class="reticle bl"></i><i class="reticle br"></i>
+            </div>
+            <svg class="wave" viewBox="0 0 400 22"><path d="M0 11 Q15 5 30 11 T60 11 T90 11 T120 11 T150 11 T180 11 T210 11 T240 11 T270 11 T300 11 T330 11 T360 11 T400 11"/></svg>
+            <div class="boot-title long-title">DiscordBotClient</div>
+            <div class="boot-caption" hidden></div>
+          </div>
         </div>
-    </main>
+        <div class="transition-flash" aria-hidden="true"></div>
+      </div>
+      <div class="shutter-line" aria-hidden="true"></div>
+      <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
+      <button id="close" class="close" type="button" aria-label="Quit DiscordBotClient">×</button>
+      <button id="skip" class="skip" type="button">Skip <kbd>Esc</kbd></button>
+      <button id="artwork-credit" type="button">Artwork by Mihoyo ↗</button>
+      <section class="feedback" hidden>
+        <p id="status" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div id="actions" class="actions" hidden><button id="retry" type="button">Retry</button><button id="quit" type="button">Quit</button></div>
+      </section>
+    </section>
+  </main>
 </body>
 </html>

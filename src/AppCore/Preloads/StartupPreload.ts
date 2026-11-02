@@ -14,4 +14,7 @@ contextBridge.exposeInMainWorld("startupAPI", {
     },
     retry: () => ipcRenderer.send("startup:retry"),
     quit: () => ipcRenderer.send("startup:quit"),
+    animationFinished: () => ipcRenderer.send("startup:animation-finished"),
+    revealApplication: () => ipcRenderer.send("startup:reveal"),
+    openArtworkCredit: () => ipcRenderer.invoke("startup:artwork-credit"),
 });

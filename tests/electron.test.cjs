@@ -13,7 +13,7 @@ const fixtures = [
     ['Local server', 'testAppServer.cjs', 'DBC_SERVER_TEST_PROFILE', 'dbc-server-test-', 30000],
     ['Main window security', 'testMainWindowSecurity.cjs', 'DBC_SECURITY_TEST_PROFILE', 'dbc-security-test-', 90000],
     ['Message editor', 'testMessageEditor.cjs', 'DBC_EDITOR_TEST_PROFILE', 'dbc-editor-test-', 90000],
-    ['Startup window', 'testStartupWindow.cjs', 'DBC_STARTUP_TEST_PROFILE', 'dbc-startup-test-', 80000],
+    ['Startup window', 'testStartupWindow.cjs', 'DBC_STARTUP_TEST_PROFILE', 'dbc-startup-test-', 110000],
 ];
 
 for (const [name, file, profileKey, prefix, timeout] of fixtures) {

@@ -289,6 +289,8 @@ npm run core:update
 
 ## Credits
 
+Startup animation logic is adapted from [codex-startup-animation](https://github.com/panding999/codex-startup-animation). Startup artwork is credited to [Mihoyo](https://www.mihoyo.com/).
+
 Thanks to [ChrisEric](https://github.com/CE1CECL) for the source code that uses a local proxy to emulate a different version of Discord.
 
 This project was mainly inspired by [SamuelScheit](https://github.com/SamuelScheit)

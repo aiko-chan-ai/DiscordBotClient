@@ -9,6 +9,11 @@ on:
         description: 'Existing release tag to publish to WinGet, e.g. v3.10.3'
         required: true
         type: string
+      skip_pr_check:
+        description: 'Skip existing PR check (use to resubmit after closing a PR; may create duplicates)'
+        required: false
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -17,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: vedantmgoyal2009/winget-releaser@v2
+        env:
+          SKIP_PR_CHECK: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_pr_check && 'true' || 'false' }}
         with:
           identifier: aiko-chan-ai.DiscordBotClient
           release-tag: ${{ inputs.release_tag || github.event.release.tag_name }}

@@ -4,14 +4,14 @@ import { readFileSync } from "fs";
 import { v3 } from "murmurhash";
 import Constants from "src/AppCore/Constants";
 
-const bucketReplacement = JSON.parse(readFileSync(Constants.DiscordUserExperimentsPath, "utf8")) as Record<
+const bucketReplacement = JSON.parse(readFileSync(Constants.DiscordUserExperimentsPath, "utf8")) as unknown[][] | Record<
     string,
     TUserExperiment
 >;
 
 const apexExperiment = JSON.parse(readFileSync(Constants.DiscordApexExperimentsPath, "utf8")) as {
     evaluation_id: string;
-    assignments: number[];
+    assignments: unknown[][];
 };
 
 export interface TUserExperiment {
@@ -19,6 +19,7 @@ export interface TUserExperiment {
     population: number;
     bucket: number;
     override: boolean;
+    hashResult?: number;
     aaMode: boolean;
     triggerDebuggingEnabled: boolean;
     holdoutName: null | string;
@@ -47,11 +48,10 @@ function buildUserExperiment (obj: Record<string, string>, botId: string) {
     let { bucket } = dataFromBucket;
     if (forceEnabledBuckets[obj.id] !== undefined) {
         bucket = forceEnabledBuckets[obj.id];
-        dataFromBucket.override = true;
     }
-    const override = dataFromBucket.override === false ? -1 : 0;
+    const override = forceEnabledBuckets[obj.id] !== undefined || dataFromBucket.override === true ? 0 : -1;
     const { population } = dataFromBucket;
-    const hash_result = v3(`${obj.id}:${botId}`) % 10000;
+    const hash_result = dataFromBucket.hashResult ?? v3(`${obj.id}:${botId}`) % 10000;
     const aa_mode = Number(dataFromBucket.aaMode);
     const trigger_debugging = Number(dataFromBucket.triggerDebuggingEnabled);
 
@@ -70,6 +70,8 @@ function buildUserExperiment (obj: Record<string, string>, botId: string) {
 
 export function UserExperiment (allData: Record<string, string>[], botId: string) {
     try {
+        // Raw READY assignments include experiments that have not registered a client module yet.
+        if (Array.isArray(bucketReplacement)) return structuredClone(bucketReplacement);
         return allData.map(obj => buildUserExperiment(obj, botId)).filter(x => x);
     } catch {
         return [];
@@ -90,7 +92,7 @@ export function ApexExperiment (botId: string) {
     return {
         assignments: {
             "1": {
-                [botId]: apexExperiment,
+                [botId]: structuredClone(apexExperiment),
             },
         },
     };

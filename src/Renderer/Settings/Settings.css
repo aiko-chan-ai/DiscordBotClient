@@ -1,0 +1,144 @@
+* {
+    box-sizing: border-box;
+}
+html,
+body,
+#root {
+    margin: 0;
+    height: 100%;
+}
+body {
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
+.settings-provider {
+    height: 100%;
+    color-scheme: light;
+}
+.settings-provider[data-theme="dark"] {
+    color-scheme: dark;
+}
+.settings-shell {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--colorNeutralBackground1);
+}
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px 32px 20px;
+}
+h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+}
+.settings-header > .fui-Input {
+    width: 220px;
+}
+.settings-content {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 0 32px 20px;
+}
+.settings-content > .fui-MessageBar {
+    margin-bottom: 16px;
+}
+.setting-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+.setting-row:first-child {
+    border-top: 1px solid var(--colorNeutralStroke2);
+}
+.setting-copy {
+    flex: 1;
+    min-width: 0;
+}
+.setting-copy label {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+}
+.setting-copy p {
+    margin: 5px 0 0;
+    color: var(--colorNeutralForeground2);
+    font-size: 13px;
+    line-height: 20px;
+    max-width: 470px;
+}
+.setting-control {
+    width: 170px;
+    flex-shrink: 0;
+}
+.setting-control .fui-Input,
+.setting-control .fui-Select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+}
+.setting-control-boolean {
+    width: auto;
+}
+.setting-control-boolean .fui-Switch {
+    margin-right: -8px;
+}
+.setting-control-number {
+    width: 110px;
+}
+.save-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--colorNeutralStroke2);
+}
+.save-status {
+    margin-left: auto;
+    margin-right: 10px;
+    color: var(--colorNeutralForeground2);
+    font-size: 12px;
+}
+.empty-state {
+    padding: 28px 0;
+    color: var(--colorNeutralForeground2);
+}
+@media (max-width: 600px) {
+    .settings-header {
+        padding: 20px;
+        gap: 16px;
+    }
+    .settings-header > .fui-Input {
+        width: 180px;
+    }
+    .settings-content {
+        padding: 0 20px 16px;
+    }
+    .setting-row {
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .setting-copy {
+        flex-basis: 65%;
+    }
+    .save-bar {
+        flex-wrap: wrap;
+        padding: 12px;
+    }
+    .save-status {
+        flex: 1;
+    }
+}

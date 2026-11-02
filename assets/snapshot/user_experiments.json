@@ -1,13 +1,1 @@
-{
-    "2023-09_iar_user_reporting": {
-        "revision": 0,
-        "population": 2,
-        "bucket": 1,
-        "override": false,
-        "aaMode": false,
-        "triggerDebuggingEnabled": false,
-        "holdoutName": null,
-        "holdoutRevision": null,
-        "holdoutBucket": null
-    }
-}
+[[3013881204,5,11,-1,1,1217,0,0,null,null,null],[2180379513,0,1,-1,2,1033,0,0,null,null,null],[2582794089,0,1,-1,1,7116,0,0,null,null,null]]

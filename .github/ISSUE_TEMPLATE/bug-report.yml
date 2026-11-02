@@ -1,0 +1,73 @@
+name: Bug report
+description: Report a reproducible problem in DBC
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please remove bot tokens, private messages, user IDs, and other sensitive data from logs and screenshots.
+  - type: input
+    id: version
+    attributes:
+      label: DBC version
+      description: Include the release version or commit SHA.
+      placeholder: "3.9.3 or commit SHA"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - Linux
+        - macOS
+    validations:
+      required: true
+  - type: input
+    id: platform-version
+    attributes:
+      label: OS version and architecture
+      placeholder: "Windows 11 x64, Ubuntu 24.04 x64, macOS 15 arm64..."
+    validations:
+      required: true
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation
+      options:
+        - Release installer/package
+        - Built from source
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Start from a fresh app launch and list the actions that trigger the bug.
+      placeholder: |
+        1. Open DBC...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Logs or screenshots
+      description: Redact secrets before posting. Include the Discord web build hash if the issue involves the client UI or BotClient patches.
+      render: text
+    validations:
+      required: false

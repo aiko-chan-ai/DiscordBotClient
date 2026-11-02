@@ -1,9 +1,11 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
-import { APIPublicThreadChannel, APIThreadList, APIThreadMember } from "discord-api-types/v10";
+import { APIPublicThreadChannel, APIThreadMember, RESTGetAPIChannelThreadsArchivedPublicResult } from "discord-api-types/v10";
 import { net } from "electron";
 import { Request, Router } from "express";
 import Constants from "src/AppCore/Constants";
+import { ForumPostError, getForumPosts } from "src/AppUtils/ForumPosts";
+import { validateBotToken } from "src/AppUtils/ValidateBotToken";
 
 const app = Router({ mergeParams: true });
 
@@ -11,31 +13,32 @@ const CACHE_MAX_SIZE = 200;
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 interface ThreadCacheEntry {
-    timestamps: Set<number>;
+    timestamps: number[];
     createdAt: number;
 }
 
 const mapCache = new Map<string, ThreadCacheEntry>();
 
-function getOrCreateCacheEntry (channelId: string): Set<number> {
-    const existing = mapCache.get(channelId);
+function getOrCreateCacheEntry (cacheKey: string): number[] {
+    const existing = mapCache.get(cacheKey);
     if (existing && Date.now() - existing.createdAt < CACHE_TTL_MS) {
         return existing.timestamps;
     }
     // Evict expired entry or create new
-    mapCache.delete(channelId);
+    mapCache.delete(cacheKey);
     // Evict oldest entries if cache is full
     if (mapCache.size >= CACHE_MAX_SIZE) {
         const oldestKey = mapCache.keys().next().value;
         if (oldestKey) mapCache.delete(oldestKey);
     }
-    const entry: ThreadCacheEntry = { timestamps: new Set<number>(), createdAt: Date.now() };
-    mapCache.set(channelId, entry);
+    const entry: ThreadCacheEntry = { timestamps: [], createdAt: Date.now() };
+    mapCache.set(cacheKey, entry);
     return entry.timestamps;
 }
 
 app.all(
     "/",
+    validateBotToken,
     async (
         req: Request<
             {
@@ -57,11 +60,7 @@ app.all(
         res,
     ) => {
         const channelId = req.params.id;
-        let { sort_by, sort_order } = req.query;
-        const { archived, tag_setting, name, tag, limit, offset } = req.query;
-        // Force set
-        sort_by = "archive_time";
-        sort_order = "desc";
+        const { archived, name, tag, limit, offset } = req.query;
         if (tag || name) {
             return res.send({
                 threads: [],
@@ -73,77 +72,56 @@ app.all(
         }
         let threads: APIPublicThreadChannel[] = [];
         let members: APIThreadMember[] = [];
-        const first_messages: unknown[] = [];
-        const public_has_more = false;
-        const set = getOrCreateCacheEntry(channelId);
-        const before = Array.from(set)[Math.max((parseInt(offset || "0", 10) || 0) - 1, 0)];
-        if (archived === "true") {
-            const publicThread = await net
-                .fetch(
-                    `https://canary.discord.com/api/v9/channels/${channelId}/threads/archived/public?limit=${parseInt(limit || "25") || 25}${
-                        before ? `&before=${new Date(before).toISOString()}` : ""
-                    }`,
-                    {
-                        headers: {
-                            authorization: req.headers.authorization,
-                            "user-agent": Constants.UserAgentDiscordBot,
-                        } as Record<string, string>,
-                    },
-                )
-                .then(r => r.json() as Promise<APIThreadList>);
-            threads = (publicThread.threads as APIPublicThreadChannel[]) || [];
-            members = publicThread.members || [];
-            // first_messages = publicThread.first_messages || [];
-            // public_has_more = publicThread.has_more || false;
+        let public_has_more = false;
+        const set = getOrCreateCacheEntry(`${res.locals.authenticatedBotId}:${channelId}`);
+        const pageOffset = Math.max(parseInt(offset || "0", 10) || 0, 0);
+        const pageLimit = Math.min(Math.max(parseInt(limit || "25", 10) || 25, 1), 100);
+        const before = pageOffset > 0 ? set[pageOffset - 1] : undefined;
+        if (pageOffset > 0 && before === undefined) return res.status(400).send({ message: "Load previous thread pages first" });
+        try {
+            if (archived === "true") {
+                const response = await net
+                    .fetch(
+                        `https://canary.discord.com/api/v9/channels/${channelId}/threads/archived/public?limit=${pageLimit}${
+                            before ? `&before=${new Date(before).toISOString()}` : ""
+                        }`,
+                        {
+                            signal: AbortSignal.timeout(10000),
+                            redirect: "error",
+                            headers: {
+                                authorization: req.headers.authorization,
+                                "user-agent": Constants.UserAgentDiscordBot,
+                            } as Record<string, string>,
+                        },
+                    );
+                if (!response.ok) {
+                    const retryAfter = response.headers.get("retry-after");
+                    if (retryAfter) res.setHeader("Retry-After", retryAfter);
+                    return res.status(response.status).send({ message: "Unable to fetch archived threads" });
+                }
+                const publicThread = await response.json() as RESTGetAPIChannelThreadsArchivedPublicResult;
+                threads = (publicThread.threads as APIPublicThreadChannel[]) || [];
+                members = publicThread.members || [];
+                public_has_more = publicThread.has_more === true;
+            }
+            for (let i = 0; i < threads.length; i++) {
+                const timestamp = threads[i].thread_metadata?.archive_timestamp ?? 0;
+                set[pageOffset + i] = new Date(timestamp).getTime();
+            }
+            const posts = await getForumPosts(threads.map(thread => thread.id), req.headers.authorization!);
+            const finalData = {
+                threads: threads,
+                members,
+                has_more: public_has_more,
+                total_results: set.length,
+                first_messages: Object.values(posts).flatMap(post => post.first_message ? [post.first_message] : []),
+                owners: Object.values(posts).flatMap(post => post.owner ? [post.owner] : []),
+            };
+            res.send(finalData);
+        } catch (error) {
+            if (error instanceof ForumPostError && error.retryAfter) res.setHeader("Retry-After", error.retryAfter);
+            res.status(error instanceof ForumPostError ? error.status : 502).send({ message: "Unable to load archived threads" });
         }
-        /*
-	function sorting(a = 0, b = 0) {
-		if (sort_order === 'asc') {
-			return a > b ? 1 : a < b ? -1 : 0; // Ascending order
-		} else {
-			return a < b ? 1 : a > b ? -1 : 0; // Descending order
-		}
-	}
-	switch (sort_by) {
-		case 'archive_time': {
-			threads = threads.sort((a, b) =>
-				sorting(
-					new Date(a.thread_metadata.archive_timestamp)?.getTime(),
-					new Date(a.thread_metadata.archive_timestamp)?.getTime(),
-				),
-			);
-			break;
-		}
-		case 'creation_time': {
-			threads = threads.sort((a, b) =>
-				sorting(
-					new Date(a.thread_metadata.create_timestamp)?.getTime(),
-					new Date(a.thread_metadata.create_timestamp)?.getTime(),
-				),
-			);
-			break;
-		}
-		case 'last_message_time':
-		default: {
-			threads = threads.sort((a, b) =>
-				sorting(BigInt(a.last_message_id), BigInt(b.last_message_id)),
-			);
-			break;
-		}
-	}
-	*/
-        for (let i = 0; i < threads.length; i++) {
-            const timestamp = threads[i].thread_metadata?.archive_timestamp ?? 0;
-            set.add(new Date(timestamp).getTime());
-        }
-        const finalData = {
-            threads: threads,
-            members,
-            has_more: public_has_more,
-            total_results: set.size,
-            first_messages,
-        };
-        res.send(finalData);
     },
 );
 

@@ -1,47 +1,33 @@
 /* Copyright Elysia © 2025 */
 
-import { execSync } from "child_process";
-import fs from "fs";
+import { execFileSync } from "child_process";
+import { existsSync } from "fs";
 import path from "path";
 
-const cloneDir = path.join(".", "Vencord");
-const userPluginDir = path.join(cloneDir, "src", "userplugins", "botClient");
+import versions from "./build-dependencies.json";
 
-function runCommand(command: string, cwd?: string) {
-    execSync(command, {
-        stdio: "inherit",
-        cwd,
-    });
+const root = process.cwd();
+const vencordDir = path.join(root, "Vencord");
+const pluginDir = path.join(vencordDir, "src", "userplugins", "botClient");
+
+function run (command: string, args: string[], cwd = root) {
+    execFileSync(command, args, { cwd, stdio: "inherit" });
 }
 
-(async () => {
-    // Clone or update Vencord
-    if (!fs.existsSync(cloneDir)) {
-        console.log("> Cloning Vendicated/Vencord...");
-        runCommand(`git clone --depth 1 https://github.com/Vendicated/Vencord.git ${cloneDir}`);
-        console.log("> Vencord clone complete.");
-    } else {
-        console.log("> Vencord already exists, updating main branch...");
-        try {
-            runCommand("git fetch origin main", cloneDir);
-            runCommand("git reset --hard origin/main", cloneDir);
-            console.log("> Vencord updated to latest main.");
-        } catch (err) {
-            console.error("> Failed to update Vencord:", err);
-        }
+function prepareCheckout (directory: string, repository: string, revision: string) {
+    if (!existsSync(directory)) {
+        run("git", ["clone", "--filter=blob:none", repository, directory]);
+        run("git", ["checkout", "--detach", revision], directory);
+    } else if (!existsSync(path.join(directory, ".git"))) {
+        throw new Error(directory + " exists but is not a Git checkout.");
     }
 
-    // Clone user plugin only if not exists
-    if (!fs.existsSync(userPluginDir)) {
-        console.log("> Cloning aiko-chan-ai/VencordDBCPlugin...");
-        runCommand(`git clone --depth 1 https://github.com/aiko-chan-ai/VencordDBCPlugin.git ${userPluginDir}`);
-        console.log("> VencordDBCPlugin clone complete.");
-    } else {
-        console.log("> VencordDBCPlugin already exists, skipping clone.");
+    const current = execFileSync("git", ["rev-parse", "HEAD"], { cwd: directory, encoding: "utf8" }).trim();
+    if (current !== revision) {
+        throw new Error(directory + " is at " + current + "; expected " + revision + ". Resolve this checkout manually before building.");
     }
+}
 
-    // Install dependencies
-    console.log("> Installing Vencord dependencies...");
-    runCommand("npx pnpm install --frozen-lockfile", cloneDir);
-    console.log("> Vencord dependencies installed.");
-})();
+prepareCheckout(vencordDir, "https://github.com/Vendicated/Vencord.git", versions.vencord);
+prepareCheckout(pluginDir, "https://github.com/aiko-chan-ai/VencordDBCPlugin.git", versions.botClientPlugin);
+run(process.execPath, [path.join(root, "node_modules", "pnpm", "bin", "pnpm.cjs"), "install", "--frozen-lockfile"], vencordDir);

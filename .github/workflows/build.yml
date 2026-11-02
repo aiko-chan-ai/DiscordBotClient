@@ -1,47 +1,117 @@
-name: Build/release
+name: Build and release
 
 on:
   push:
-    tags:
-      - v*
+    tags: ['v*']
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  release:
-    permissions:
-      contents: write
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+  validate:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: '24.x'
+          persist-credentials: false
+      - name: Match tag to application version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          version=$(node -p "require('./package.json').version")
+          test "$GITHUB_REF_NAME" = "v$version"
 
-      - name: Install dependencies
+  build:
+    needs: validate
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022, macos-15]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install pinned dependencies
         run: npm run requirement
-
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1.6.0
-        with:
-          github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-
-      - name: Upload multiple files
+      - name: Audit application dependencies
+        if: github.event_name == 'push' && runner.os == 'Windows'
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high
+      - name: Audit editor dependencies
+        if: github.event_name == 'push' && runner.os == 'Windows'
+        continue-on-error: true
+        working-directory: discohook
+        run: npm audit --omit=dev --audit-level=high
+      - name: Build Vencord and message editor
+        run: npm run build:deps
+      - name: Lint
+        if: github.event_name == 'push'
+        run: npm run lint
+      - name: Check TypeScript
+        if: github.event_name == 'push'
+        run: npm run typecheck
+      - name: Build application
+        run: npm run build:ts
+      - name: Test Electron integration
+        if: github.event_name == 'push' && runner.os == 'Windows'
+        run: npm test
+      - name: Package without publishing
+        run: npm run build:bin
+      - name: Verify platform artifact
+        shell: bash
+        run: |
+          case "$RUNNER_OS" in
+            Windows) pattern="*.exe" ;;
+            Linux) pattern="*.AppImage" ;;
+            macOS) pattern="*.dmg" ;;
+          esac
+          compgen -G "dist/$pattern" > /dev/null
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DiscordBotClient-nightly-${{ matrix.os }}
+          name: dbc-${{ runner.os }}
+          retention-days: 7
+          if-no-files-found: error
           path: |
             dist/*.exe
             dist/*.AppImage
             dist/*.dmg
+            dist/*.zip
+            dist/latest*.yml
+            dist/*.blockmap
 
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dbc-*
+          merge-multiple: true
+          path: release
+      - name: Create draft release after every platform succeeds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            test "$(gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft)" = true
+            gh release edit "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME"
+            gh release upload "$GITHUB_REF_NAME" release/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" release/* --draft --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+          fi

@@ -1,33 +1,31 @@
-name: Lint
+name: Check source
+
 on:
   push:
-    branches: 
-      - electron-v3
+    branches: [electron-v3]
   pull_request:
-    branches:
-      - electron-v3
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  eslint:
-    name: ESLint
+  check:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Install Node.js v24
-        uses: actions/setup-node@v4
+          persist-credentials: false
+      - uses: actions/setup-node@v4
         with:
-          node-version: 24
-
-      - run: npm install --verbose
-
+          node-version: '24'
+          cache: npm
+      - run: npm ci
       - run: npm run lint
-
-      - run: npm run test:typescript
+      - run: npm run typecheck
+      - run: npm run build:ts

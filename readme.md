@@ -129,12 +129,12 @@ Open a command line and execute the following commands:
 git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
 npm run requirement
-npm run vencord
-npm run build:ts
 npm run build
 ```
 
 This will create an executable called `DiscordBotClient` or `DiscordBotClient.exe` in the `dist` folder, depending on whether you are using Windows or not.
+
+`requirement` installs the root lockfile, checks out the pinned Vencord, BotClient plugin, and Discohook revisions from `scripts/build-dependencies.json`. Existing checkouts are never reset; a mismatched revision stops with an error so local work is not lost. `build` packages locally without publishing. Maintainers should use the [release process](docs/release-process.md) for tags and artifacts. After building, run `npm run typecheck` for TypeScript and `npm test` on Windows for the Electron integration suite. Use `npm start` to launch the app.
 
 ---
 
@@ -256,14 +256,14 @@ Hit me up if you have a similar project, and I'll gladly add it to the list.
 
 ## Star History
 
-![Star History Chart](https://raw.githubusercontent.com/aiko-chan-ai/aiko-chan-ai/refs/heads/main/assets/star-history.svg)
+[![Star History Chart](https://api.star-history.com/svg?repos=aiko-chan-ai/DiscordBotClient&type=Date)](https://star-history.com/#aiko-chan-ai/DiscordBotClient&Date)
 
 ---
 
 ## How to update to the latest Discord version ?
 
 > [!TIP]
-> This is a general guide for building from source, including downloading the latest scripts from Discord, obtaining the newest versions of Vencord and VencordDBCPlugin.
+> This updates the web snapshot. Vencord, the BotClient plugin, and Discohook are pinned separately so a release can be rebuilt from the same sources.
 
 1. Clone this repository and navigate into its directory (skip this step if you have already done so).
 
@@ -272,10 +272,10 @@ git clone https://github.com/aiko-chan-ai/DiscordBotClient.git
 cd DiscordBotClient
 ```
 
-2. Install dependencies and fetch the latest Vencord & VencordDBCPlugin
+2. Install the pinned dependencies
 
 > [!NOTE]
-> If you've done this before, just run “npm install” here and “git pull” for both the Vencord and VencordDBCPlugin repositories.
+> To change an upstream dependency, commit and push the source change, update its revision in `scripts/build-dependencies.json`, and verify the build before committing the app.
 
 ```sh
 npm run requirement
@@ -288,6 +288,8 @@ npm run core:update
 ```
 
 ## Credits
+
+Startup animation logic is adapted from [codex-startup-animation](https://github.com/panding999/codex-startup-animation). Startup artwork is credited to [Mihoyo](https://www.mihoyo.com/).
 
 Thanks to [ChrisEric](https://github.com/CE1CECL) for the source code that uses a local proxy to emulate a different version of Discord.
 

@@ -68,4 +68,9 @@ default to `modern`. Classic uses `classic.html`, `classic.css` and `waiting.gif
 with the shared sandboxed preload and status/Retry/Quit controller; it does not
 wait for the cinematic animation.
 
-Validated with real Electron stage captures and the seven integration tests.
+The Electron startup fixture controls motion preference before its first
+navigation: full motion for timeline/style checks, reduced motion for the
+accessibility case. Its parent forces an ambient reduced-motion preference to
+reproduce Windows CI. This prevents comparing a hidden Skip control with the
+visible artwork credit, and verifies reduced motion without reusing completion
+state from a previous page load.

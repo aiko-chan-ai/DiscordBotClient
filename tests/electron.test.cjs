@@ -15,10 +15,11 @@ const fixtures = [
     ['Local server', 'testAppServer.cjs', 'DBC_SERVER_TEST_PROFILE', 'dbc-server-test-', 30000],
     ['Main window security', 'testMainWindowSecurity.cjs', 'DBC_SECURITY_TEST_PROFILE', 'dbc-security-test-', 90000],
     ['Message editor', 'testMessageEditor.cjs', 'DBC_EDITOR_TEST_PROFILE', 'dbc-editor-test-', 90000],
-    ['Startup window', 'testStartupWindow.cjs', 'DBC_STARTUP_TEST_PROFILE', 'dbc-startup-test-', 110000],
+    // Reproduce Windows CI's ambient motion preference; the fixture must control each case itself.
+    ['Startup window', 'testStartupWindow.cjs', 'DBC_STARTUP_TEST_PROFILE', 'dbc-startup-test-', 110000, ['--force-prefers-reduced-motion=reduce']],
 ];
 
-for (const [name, file, profileKey, prefix, timeout] of fixtures) {
+for (const [name, file, profileKey, prefix, timeout, args = []] of fixtures) {
     test(name, { timeout: timeout + 5000 }, async () => {
         const profile = prefix && fs.mkdtempSync(path.join(os.tmpdir(), prefix));
         const env = { ...process.env };
@@ -27,7 +28,7 @@ for (const [name, file, profileKey, prefix, timeout] of fixtures) {
         let output = '';
         try {
             await new Promise((resolve, reject) => {
-                const child = spawn(electron, [path.join(__dirname, 'fixtures', file)], {
+                const child = spawn(electron, [...args, path.join(__dirname, 'fixtures', file)], {
                     cwd: root, env, windowsHide: true, timeout,
                 });
                 for (const stream of [child.stdout, child.stderr]) {

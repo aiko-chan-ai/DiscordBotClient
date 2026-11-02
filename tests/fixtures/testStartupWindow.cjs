@@ -12,6 +12,7 @@ app.setPath('userData', profile);
 app.setAppPath(root);
 app.on('window-all-closed', () => {});
 let startup;
+let motionPreference = 'no-preference';
 const originalOpenExternal = shell.openExternal;
 let openedArtwork;
 shell.openExternal = async url => { openedArtwork = url; };
@@ -26,22 +27,31 @@ function finish(error) {
     app.exit(error ? 1 : 0);
 }
 
-async function waitFor(predicate, timeout = 3000) {
+async function waitFor(predicate, timeout = 3000, description = 'startup state') {
     const deadline = Date.now() + timeout;
     while (!(await predicate())) {
-        assert.ok(Date.now() < deadline, 'Timed out waiting for startup state');
+        assert.ok(Date.now() < deadline, `Timed out waiting for ${description}`);
         await new Promise(resolve => setTimeout(resolve, 25));
     }
 }
 
 app.whenReady().then(async () => {
-    session.fromPartition('startup').enableNetworkEmulation({ offline: true });
+    const startupSession = session.fromPartition('startup');
+    startupSession.enableNetworkEmulation({ offline: true });
     let earlyQuits = 0;
     startup = new StartupWindow(() => {}, () => earlyQuits++);
     startup.finish();
     await new Promise(resolve => setTimeout(resolve, 250));
     assert.equal(startup.window.isDestroyed(), true);
     assert.equal(earlyQuits, 0, 'Immediate finish must not report load failure or quit');
+    // Windows CI can default to reduced motion. Set each rendered case before navigation.
+    app.on('web-contents-created', (_event, contents) => {
+        if (contents.session !== startupSession) return;
+        contents.debugger.attach('1.3');
+        contents.debugger.sendCommand('Emulation.setEmulatedMedia', {
+            features: [{ name: 'prefers-reduced-motion', value: motionPreference }],
+        }).catch(finish);
+    });
     let retries = 0;
     let quits = 0;
     startup = new StartupWindow(() => retries++, () => quits++);
@@ -57,6 +67,7 @@ app.whenReady().then(async () => {
     await loaded;
     await waitFor(() => showCalled);
     const evaluate = expression => startup.window.webContents.executeJavaScript(expression);
+    assert.equal(await evaluate('matchMedia("(prefers-reduced-motion: reduce)").matches'), false, 'Animation case explicitly enables full motion');
     assert.deepEqual(await evaluate('window.startupAPI.getState()'), { phase: 'starting' });
     assert.equal(await evaluate('typeof require'), 'undefined', 'Renderer has no Node integration');
     assert.equal(await evaluate('typeof window.startupAPI.animationFinished'), 'function');
@@ -67,6 +78,7 @@ app.whenReady().then(async () => {
     assert.deepEqual(await evaluate('({width:document.getElementById("artwork").naturalWidth,height:document.getElementById("artwork").naturalHeight})'), { width: 2560, height: 1440 });
     assert.equal(await evaluate('(() => { const image = document.getElementById("artwork"), canvas = document.querySelector("canvas"); return image.naturalWidth / image.naturalHeight === canvas.width / canvas.height; })()'), true, 'Artwork and contours use the same aspect ratio');
     assert.match(await evaluate('document.getElementById("artwork-credit").textContent'), /Mihoyo/);
+    assert.equal(await evaluate('document.getElementById("skip").hidden'), false, 'Compare controls while both are visible');
     const [creditStyle, skipStyle] = await evaluate(`(() => {
         const properties = ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'padding', 'border', 'borderRadius', 'backgroundColor', 'color', 'opacity', 'height'];
         return ['artwork-credit', 'skip'].map(id => {
@@ -94,7 +106,7 @@ app.whenReady().then(async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     assert.equal(revealed, false, 'Ready application waits for the opening sequence');
     for (const stage of ['identity', 'dispersing', 'drawing', 'portrait', 'shutter']) {
-        await waitFor(() => evaluate(`document.body.dataset.stage === '${stage}'`), 5000);
+        await waitFor(() => evaluate(`document.body.dataset.stage === '${stage}'`), 5000, `animation stage ${stage}`);
         await new Promise(resolve => setTimeout(resolve, stage === 'identity' ? 650 : stage === 'drawing' ? 900 : 180));
         const capture = await startup.window.webContents.capturePage();
         fs.writeFileSync(path.join(path.dirname(loadingOutput), `startup-${stage}.png`), capture.toPNG());
@@ -126,16 +138,12 @@ app.whenReady().then(async () => {
     startup.finish();
     console.log(`Screenshot: ${output}`);
     for (const method of ['click', 'escape', 'reduced-motion']) {
+        motionPreference = method === 'reduced-motion' ? 'reduce' : 'no-preference';
         startup = new StartupWindow(() => {}, () => {});
         await once(startup.window.webContents, 'did-finish-load');
         if (method === 'reduced-motion') {
-            startup.window.webContents.debugger.attach('1.3');
-            await startup.window.webContents.debugger.sendCommand('Emulation.setEmulatedMedia', {
-                features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
-            });
-            const reloaded = once(startup.window.webContents, 'did-finish-load');
-            startup.window.webContents.reload();
-            await reloaded;
+            assert.equal(await startup.window.webContents.executeJavaScript('matchMedia("(prefers-reduced-motion: reduce)").matches'), true);
+            await waitFor(() => startup.window.webContents.executeJavaScript('document.body.dataset.animationComplete === "true" && document.getElementById("skip").hidden'));
         }
         await waitFor(() => startup.window.webContents.executeJavaScript('!!document.getElementById("skip")'));
         if (method === 'click') await startup.window.webContents.executeJavaScript('document.getElementById("skip").click()');

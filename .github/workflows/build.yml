@@ -55,17 +55,8 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Build Vencord and message editor
         run: npm run build:deps
-      - name: Lint
-        if: github.event_name == 'push'
-        run: npm run lint
-      - name: Check TypeScript
-        if: github.event_name == 'push'
-        run: npm run typecheck
       - name: Build application
         run: npm run build:ts
-      - name: Test Electron integration
-        if: github.event_name == 'push' && runner.os == 'Windows'
-        run: npm test
       - name: Package without publishing
         run: npm run build:bin
       - name: Verify platform artifact

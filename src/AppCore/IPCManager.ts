@@ -4,6 +4,7 @@ import { APIApplication, ApplicationFlags, GatewayIntentBits } from "discord-api
 import { app, BrowserWindow, dialog, IpcMainEvent, IpcMainInvokeEvent, WebContents } from "electron";
 import { ApplicationFlagsBitField, IntentsBitField } from "src/AppUtils/DiscordBitField";
 import { ApexExperiment, GuildExperiment, UserExperiment } from "src/AppUtils/Experiments";
+import { cacheValidatedBotToken } from "src/AppUtils/ValidateBotToken";
 
 import type { DiscordBotClient } from ".";
 import Constants from "./Constants";
@@ -81,7 +82,7 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
     mainApp.ipcMain.handle(IPCEvent.GetBotInfo, (event, token) => {
         if (!isTrustedAppFrame(event, mainApp.discordWebContents)) throw new Error("Unauthorized IPC sender.");
         if (typeof token !== "string" || token.length > 512) throw new Error("Invalid bot token.");
-        token = token.replace(/Bot /gi, "").trim();
+        token = token.trim().replace(/^Bot\s+/i, "").trim();
         return mainApp.discordSession
             .fetch("https://canary.discord.com/api/v9/applications/@me?with_counts=true", {
                 headers: {
@@ -128,6 +129,7 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
                     );
                     throw new Error("MESSAGE_CONTENT is required.");
                 }
+                cacheValidatedBotToken(data.bot?.id ?? data.id, token);
                 return {
                     success: true,
                     data,

@@ -137,6 +137,7 @@ const output = path.join(root, 'plans', '261001-settings');
 }
 
 async function uiChecks(config, type, click, evaluate, waitFor, check, getWindow) {
+    fs.mkdirSync(output, { recursive: true });
     await waitFor(() => evaluate('document.querySelector("main").getAttribute("aria-busy") === "false"'), 'settings loaded');
     await waitFor(() => evaluate('!!document.querySelector("input[inputmode=numeric]")'), 'settings controls');
     const beforeEdit = fs.readFileSync(config.jsonPath, 'utf8');

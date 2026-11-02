@@ -4,6 +4,7 @@ import { APIPublicThreadChannel, APIThreadList, APIThreadMember } from "discord-
 import { net } from "electron";
 import { Request, Router } from "express";
 import Constants from "src/AppCore/Constants";
+import { validateBotToken } from "src/AppUtils/ValidateBotToken";
 
 const app = Router({ mergeParams: true });
 
@@ -17,25 +18,26 @@ interface ThreadCacheEntry {
 
 const mapCache = new Map<string, ThreadCacheEntry>();
 
-function getOrCreateCacheEntry (channelId: string): Set<number> {
-    const existing = mapCache.get(channelId);
+function getOrCreateCacheEntry (cacheKey: string): Set<number> {
+    const existing = mapCache.get(cacheKey);
     if (existing && Date.now() - existing.createdAt < CACHE_TTL_MS) {
         return existing.timestamps;
     }
     // Evict expired entry or create new
-    mapCache.delete(channelId);
+    mapCache.delete(cacheKey);
     // Evict oldest entries if cache is full
     if (mapCache.size >= CACHE_MAX_SIZE) {
         const oldestKey = mapCache.keys().next().value;
         if (oldestKey) mapCache.delete(oldestKey);
     }
     const entry: ThreadCacheEntry = { timestamps: new Set<number>(), createdAt: Date.now() };
-    mapCache.set(channelId, entry);
+    mapCache.set(cacheKey, entry);
     return entry.timestamps;
 }
 
 app.all(
     "/",
+    validateBotToken,
     async (
         req: Request<
             {
@@ -75,10 +77,10 @@ app.all(
         let members: APIThreadMember[] = [];
         const first_messages: unknown[] = [];
         const public_has_more = false;
-        const set = getOrCreateCacheEntry(channelId);
+        const set = getOrCreateCacheEntry(`${res.locals.authenticatedBotId}:${channelId}`);
         const before = Array.from(set)[Math.max((parseInt(offset || "0", 10) || 0) - 1, 0)];
         if (archived === "true") {
-            const publicThread = await net
+            const response = await net
                 .fetch(
                     `https://canary.discord.com/api/v9/channels/${channelId}/threads/archived/public?limit=${parseInt(limit || "25") || 25}${
                         before ? `&before=${new Date(before).toISOString()}` : ""
@@ -89,8 +91,9 @@ app.all(
                             "user-agent": Constants.UserAgentDiscordBot,
                         } as Record<string, string>,
                     },
-                )
-                .then(r => r.json() as Promise<APIThreadList>);
+                );
+            if (!response.ok) return res.status(response.status).send({ message: "Unable to fetch archived threads" });
+            const publicThread = await response.json() as APIThreadList;
             threads = (publicThread.threads as APIPublicThreadChannel[]) || [];
             members = publicThread.members || [];
             // first_messages = publicThread.first_messages || [];

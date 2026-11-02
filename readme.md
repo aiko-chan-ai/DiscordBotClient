@@ -256,7 +256,7 @@ Hit me up if you have a similar project, and I'll gladly add it to the list.
 
 ## Star History
 
-![Star History Chart](https://raw.githubusercontent.com/aiko-chan-ai/aiko-chan-ai/refs/heads/main/assets/star-history.svg)
+[![Star History Chart](https://api.star-history.com/svg?repos=aiko-chan-ai/DiscordBotClient&type=Date)](https://star-history.com/#aiko-chan-ai/DiscordBotClient&Date)
 
 ---
 

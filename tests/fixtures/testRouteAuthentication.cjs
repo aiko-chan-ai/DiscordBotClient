@@ -48,7 +48,10 @@ app.whenReady().then(async () => {
         }
         if (url.includes('/threads/archived/public')) {
             if (url.includes('/666666666666666666/')) return new Response('{}', { status: 403 });
-            return Response.json({ threads: [{ thread_metadata: { archive_timestamp: '2026-01-01T00:00:00Z' } }], members: [] });
+            return Response.json({ threads: [{ id: '777777777777777778', thread_metadata: { archive_timestamp: '2026-01-01T00:00:00Z' } }], members: [] });
+        }
+        if (url.endsWith('/messages/777777777777777778')) {
+            return Response.json({ code: 10008 }, { status: 404 });
         }
         assert.equal(url, `https://canary.discord.com/api/v9/applications/${upstreamId}/emojis`);
         emojiReads++;

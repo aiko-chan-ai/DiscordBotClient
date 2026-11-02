@@ -7,6 +7,8 @@ const { test } = require('node:test');
 const root = path.resolve(__dirname, '..');
 const electron = require('electron');
 const fixtures = [
+    ['Experiment snapshots', 'testExperimentSnapshots.cjs', null, null, 30000],
+    ['Forum previews', 'testForumPosts.cjs', null, null, 30000],
     ['Route authentication', 'testRouteAuthentication.cjs', 'DBC_AUTH_TEST_PROFILE', 'dbc-auth-test-', 60000],
     ['Settings storage', 'testSettingsStore.cjs', null, null, 30000],
     ['Settings window', 'testSettingsWindow.cjs', 'DBC_SETTINGS_TEST_PROFILE', 'dbc-settings-test-', 90000],

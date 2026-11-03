@@ -239,8 +239,8 @@ export default class Util {
         });
 
         // 3. Origin & Referer
-        electronReq.setHeader("Origin", "https://canary.discord.com");
-        electronReq.setHeader("Referer", "https://canary.discord.com/");
+        electronReq.setHeader("Origin", "https://discord.com");
+        electronReq.setHeader("Referer", "https://discord.com/");
 
         // 4. Electron -> Express
         electronReq.on("response", electronRes => {

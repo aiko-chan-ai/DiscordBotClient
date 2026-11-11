@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Existing release tag to publish to WinGet, e.g. v3.10.5'
+        description: 'Existing release tag to publish to WinGet, e.g. v3.10.6'
         required: true
         type: string
       skip_pr_check:

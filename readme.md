@@ -185,7 +185,7 @@ Logging in works via the UI on first startup of the application.
 | Discord Build     | Hash    | Vencord  | Client version | Release Status | App Status |
 | ----------------- | ------- | -------- | -------------- | -------------- | ---------- |
 | Latest            | ?       | ?        | ?              | ~~Beta~~       | ℹ          |
-| Stable 657850     | 7f7c08c | v1.15.15 | v3.10.5        | Latest         | ✔          |
+| Stable 657850     | 7f7c08c | v1.15.15 | v3.10.6        | Latest         | ✔          |
 | Stable 589596     | 95c90b9 | v1.15.0  | v3.9.3         | Deprecated     | ✔          |
 | Stable 510733[^7] | 2fcef2a | v1.14.5  | v3.9.1         | EOL            | ✔ ⚠        |
 | Stable 491153[^6] | 496afea | v1.14.1  | v3.8.3         | EOL            | ✔ ⚠        |

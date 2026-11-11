@@ -129,7 +129,7 @@ export interface SettingsAPI {
 }
 
 /** Shared by the form and IPC validation; never coerces input. */
-export function validateSetting(definition: SettingDefinition, value: unknown): string | undefined {
+export function validateSetting (definition: SettingDefinition, value: unknown): string | undefined {
     switch (definition.type) {
         case "boolean":
             return typeof value === "boolean" ? undefined : "Must be a boolean.";
@@ -148,7 +148,7 @@ export function validateSetting(definition: SettingDefinition, value: unknown): 
     }
 }
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
+function isPlainObject (value: unknown): value is Record<string, unknown> {
     return (
         !!value &&
         typeof value === "object" &&
@@ -158,7 +158,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 /** Validate the full IPC payload without coercion or accepting extra properties. */
-export function validateSettings(value: unknown): Settings {
+export function validateSettings (value: unknown): Settings {
     if (!isPlainObject(value)) throw new Error("Settings must be a plain object.");
     const keys = Reflect.ownKeys(value);
     if (

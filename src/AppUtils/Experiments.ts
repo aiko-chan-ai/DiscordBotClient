@@ -37,7 +37,7 @@ const forceEnabledBuckets: Record<string, number> = {
     // "2025-06_dave_for_browser": 2, // Enable
 };
 
-function buildUserExperiment(obj: Record<string, string>, botId: string) {
+function buildUserExperiment (obj: Record<string, string>, botId: string) {
     const dataFromBucket = (bucketReplacement as Record<string, TUserExperiment>)[obj.id];
     if (!dataFromBucket) return null;
     if (disabledBuckets.includes(obj.id)) return null;
@@ -66,7 +66,7 @@ function buildUserExperiment(obj: Record<string, string>, botId: string) {
     return arr;
 }
 
-export function UserExperiment(allData: Record<string, string>[], botId: string) {
+export function UserExperiment (allData: Record<string, string>[], botId: string) {
     try {
         // Raw READY assignments include experiments that have not registered a client module yet.
         if (Array.isArray(bucketReplacement)) return structuredClone(bucketReplacement);
@@ -79,14 +79,14 @@ export function UserExperiment(allData: Record<string, string>[], botId: string)
 // Cache guild experiments to avoid reading file on every call
 let cachedGuildExperiments: unknown = null;
 
-export function GuildExperiment() {
+export function GuildExperiment () {
     if (!cachedGuildExperiments) {
         cachedGuildExperiments = JSON.parse(readFileSync(Constants.DiscordGuildExperimentsPath, "utf8"));
     }
     return cachedGuildExperiments;
 }
 
-export function ApexExperiment(botId: string) {
+export function ApexExperiment (botId: string) {
     return {
         assignments: {
             "1": {

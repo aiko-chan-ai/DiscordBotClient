@@ -23,7 +23,7 @@ const cacheMap = new Map<string, EmojiCacheEntry>();
 /**
  * Evict expired entries from cache to prevent memory leaks
  */
-function evictExpiredEntries() {
+function evictExpiredEntries () {
     const now = Date.now();
     for (const [key, entry] of cacheMap) {
         if (entry.timeout <= now) {

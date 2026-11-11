@@ -10,7 +10,7 @@ import type { DiscordBotClient } from ".";
 import Constants from "./Constants";
 import { IPCEvent } from "./IPCEvents";
 
-export function isTrustedAppFrame(
+export function isTrustedAppFrame (
     event: IpcMainEvent | IpcMainInvokeEvent,
     contents: WebContents | undefined,
 ): boolean {
@@ -22,7 +22,7 @@ export function isTrustedAppFrame(
     }
 }
 
-export function isAllowedPopoutURL(url: string, port: number): boolean {
+export function isAllowedPopoutURL (url: string, port: number): boolean {
     if (url === "about:blank") return true;
     try {
         const parsed = new URL(url);
@@ -40,7 +40,7 @@ export function isAllowedPopoutURL(url: string, port: number): boolean {
     }
 }
 
-export function setupIPCEvents(mainApp: DiscordBotClient) {
+export function setupIPCEvents (mainApp: DiscordBotClient) {
     const getWindow = (event: IpcMainEvent, frameName?: string): BrowserWindow | undefined => {
         if (!event.senderFrame || event.senderFrame !== event.sender.mainFrame) return;
         if (isTrustedAppFrame(event, mainApp.discordWebContents)) {

@@ -9,7 +9,7 @@ import type { GlobalConfig } from "../Config";
 export class SettingsWindow {
     readonly window: BrowserWindow;
 
-    constructor(config: GlobalConfig) {
+    constructor (config: GlobalConfig) {
         const htmlPath = path.join(app.getAppPath(), "build", "Renderer", "Settings", "index.html");
         const pageURL = pathToFileURL(htmlPath).href;
         this.window = new BrowserWindow({
@@ -78,7 +78,7 @@ export class SettingsWindow {
         });
     }
 
-    show() {
+    show () {
         if (this.window.isDestroyed()) return;
         if (this.window.isMinimized()) this.window.restore();
         this.window.show();

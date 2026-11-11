@@ -14,7 +14,7 @@ export class StartupWindow {
     private revealApplication?: () => void;
     private animationWait?: { resolve: (completed: boolean) => void; timer: ReturnType<typeof setTimeout> };
 
-    constructor(
+    constructor (
         retry: () => void,
         quit: () => void,
         mode: Settings["startup_animation"] = defaultSettings.startup_animation,
@@ -87,11 +87,11 @@ export class StartupWindow {
             });
     }
 
-    show() {
+    show () {
         if (!this.window.isDestroyed()) this.window.show();
     }
 
-    loading() {
+    loading () {
         this.update({ phase: "loading" });
         clearTimeout(this.timer);
         this.timer = setTimeout(
@@ -100,19 +100,19 @@ export class StartupWindow {
         );
     }
 
-    fail(message: string) {
+    fail (message: string) {
         clearTimeout(this.timer);
         this.settleAnimation(false);
         this.update({ phase: "error", message });
         this.show();
     }
 
-    private update(state: StartupState) {
+    private update (state: StartupState) {
         this.state = state;
         if (!this.window.isDestroyed()) this.window.webContents.send("startup:state", state);
     }
 
-    waitForAnimation(reveal?: () => void): Promise<boolean> {
+    waitForAnimation (reveal?: () => void): Promise<boolean> {
         if (this.window.isDestroyed() || this.state.phase === "error") return Promise.resolve(false);
         clearTimeout(this.timer);
         this.revealApplication = reveal;
@@ -124,7 +124,7 @@ export class StartupWindow {
         });
     }
 
-    private settleAnimation(completed: boolean) {
+    private settleAnimation (completed: boolean) {
         const pending = this.animationWait;
         this.animationWait = undefined;
         this.revealApplication = undefined;
@@ -133,7 +133,7 @@ export class StartupWindow {
         pending.resolve(completed);
     }
 
-    finish() {
+    finish () {
         clearTimeout(this.timer);
         this.settleAnimation(false);
         if (!this.window.isDestroyed()) this.window.destroy();

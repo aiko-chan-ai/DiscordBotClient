@@ -23,7 +23,7 @@ interface ThreadCacheEntry {
 
 const mapCache = new Map<string, ThreadCacheEntry>();
 
-function getOrCreateCacheEntry(cacheKey: string): number[] {
+function getOrCreateCacheEntry (cacheKey: string): number[] {
     const existing = mapCache.get(cacheKey);
     if (existing && Date.now() - existing.createdAt < CACHE_TTL_MS) {
         return existing.timestamps;
@@ -82,7 +82,7 @@ app.all(
         const pageLimit = Math.min(Math.max(parseInt(limit || "25", 10) || 25, 1), 100);
         const before = pageOffset > 0 ? set[pageOffset - 1] : undefined;
         if (pageOffset > 0 && before === undefined)
-            return res.status(400).send({ message: "Load previous thread pages first" });
+        { return res.status(400).send({ message: "Load previous thread pages first" }); }
         try {
             if (archived === "true") {
                 const response = await net.fetch(

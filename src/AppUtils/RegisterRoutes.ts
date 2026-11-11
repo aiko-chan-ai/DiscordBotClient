@@ -19,7 +19,7 @@ export interface TraverseDirectoryOptions {
 const DEFAULT_EXCLUDE_DIR = /^\./;
 const DEFAULT_FILTER = /^([^.].*)(?<!\.d)\.(ts|js)$/;
 
-export function traverseDirectorySync(options: TraverseDirectoryOptions): string[] {
+export function traverseDirectorySync (options: TraverseDirectoryOptions): string[] {
     if (!options.dirname.endsWith("/")) options.dirname += "/";
     if (!options.filter) options.filter = DEFAULT_FILTER;
     if (!options.excludeDirs) options.excludeDirs = DEFAULT_EXCLUDE_DIR;
@@ -49,7 +49,7 @@ export function traverseDirectorySync(options: TraverseDirectoryOptions): string
     return result;
 }
 
-export function registerRoutesSync(app: Express, path: string, autoPrefix: string[] = []) {
+export function registerRoutesSync (app: Express, path: string, autoPrefix: string[] = []) {
     const route = Router({ mergeParams: true });
     const root = resolve(path);
     const files = traverseDirectorySync({
@@ -75,7 +75,7 @@ export function registerRoutesSync(app: Express, path: string, autoPrefix: strin
     return result;
 }
 
-export function registerRouteSync(
+export function registerRouteSync (
     route: Router,
     root: string,
     file: string,

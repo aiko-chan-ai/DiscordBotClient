@@ -10,7 +10,7 @@ import Util from "./Utils";
 const TOKEN_CACHE_TTL_MS = 5 * 60 * 1000;
 const tokenCache = new Map<string, { hash: Buffer; expiresAt: number }>();
 
-function hashToken(token: string): Buffer {
+function hashToken (token: string): Buffer {
     return createHash("sha256")
         .update(
             token
@@ -22,7 +22,7 @@ function hashToken(token: string): Buffer {
 }
 
 // Call only after Discord has authenticated this token and returned its identity.
-export function cacheValidatedBotToken(botId: string, token: string): void {
+export function cacheValidatedBotToken (botId: string, token: string): void {
     if (typeof botId !== "string" || !/^\d+$/.test(botId)) return;
     tokenCache.delete(botId);
     if (tokenCache.size >= 100) tokenCache.delete(tokenCache.keys().next().value!);

@@ -31,7 +31,7 @@ export class BitField {
     /**
      * @param {BitFieldResolvable} [bits=this.constructor.DefaultBit] Bit(s) to read from
      */
-    constructor(bits = this.constructor.DefaultBit) {
+    constructor (bits = this.constructor.DefaultBit) {
         /**
          * Bitfield of the packed bits
          *
@@ -46,7 +46,7 @@ export class BitField {
      * @param {BitFieldResolvable} bit Bit(s) to check for
      * @returns {boolean}
      */
-    any(bit) {
+    any (bit) {
         return (this.bitfield & this.constructor.resolve(bit)) !== this.constructor.DefaultBit;
     }
 
@@ -56,7 +56,7 @@ export class BitField {
      * @param {BitFieldResolvable} bit Bit(s) to check for
      * @returns {boolean}
      */
-    equals(bit) {
+    equals (bit) {
         return this.bitfield === this.constructor.resolve(bit);
     }
 
@@ -66,7 +66,7 @@ export class BitField {
      * @param {BitFieldResolvable} bit Bit(s) to check for
      * @returns {boolean}
      */
-    has(bit) {
+    has (bit) {
         const resolvedBit = this.constructor.resolve(bit);
         return (this.bitfield & resolvedBit) === resolvedBit;
     }
@@ -78,7 +78,7 @@ export class BitField {
      * @param {...*} hasParams Additional parameters for the has method, if any
      * @returns {string[]}
      */
-    missing(bits, ...hasParams) {
+    missing (bits, ...hasParams) {
         return new this.constructor(bits).remove(this).toArray(...hasParams);
     }
 
@@ -87,7 +87,7 @@ export class BitField {
      *
      * @returns {Readonly<BitField>}
      */
-    freeze() {
+    freeze () {
         return Object.freeze(this);
     }
 
@@ -97,7 +97,7 @@ export class BitField {
      * @param {...BitFieldResolvable} [bits] Bits to add
      * @returns {BitField} These bits or new BitField if the instance is frozen.
      */
-    add(...bits) {
+    add (...bits) {
         let total = this.constructor.DefaultBit;
         for (const bit of bits) {
             total |= this.constructor.resolve(bit);
@@ -114,7 +114,7 @@ export class BitField {
      * @param {...BitFieldResolvable} [bits] Bits to remove
      * @returns {BitField} These bits or new BitField if the instance is frozen.
      */
-    remove(...bits) {
+    remove (...bits) {
         let total = this.constructor.DefaultBit;
         for (const bit of bits) {
             total |= this.constructor.resolve(bit);
@@ -132,7 +132,7 @@ export class BitField {
      * @param {...*} hasParams Additional parameters for the has method, if any
      * @returns {Object}
      */
-    serialize(...hasParams) {
+    serialize (...hasParams) {
         const serialized = {};
         for (const [flag, bit] of Object.entries(this.constructor.Flags)) {
             if (isNaN(flag)) serialized[flag] = this.has(bit, ...hasParams);
@@ -147,19 +147,19 @@ export class BitField {
      * @param {...*} hasParams Additional parameters for the has method, if any
      * @returns {string[]}
      */
-    toArray(...hasParams) {
+    toArray (...hasParams) {
         return [...this[Symbol.iterator](...hasParams)];
     }
 
-    toJSON() {
+    toJSON () {
         return typeof this.bitfield === "number" ? this.bitfield : this.bitfield.toString();
     }
 
-    valueOf() {
+    valueOf () {
         return this.bitfield;
     }
 
-    *[Symbol.iterator](...hasParams) {
+    *[Symbol.iterator] (...hasParams) {
         for (const bitName of Object.keys(this.constructor.Flags)) {
             if (isNaN(bitName) && this.has(bitName, ...hasParams)) yield bitName;
         }
@@ -181,7 +181,7 @@ export class BitField {
      * @param {BitFieldResolvable} [bit] bit(s) to resolve
      * @returns {number|bigint}
      */
-    static resolve(bit) {
+    static resolve (bit) {
         const { DefaultBit } = this;
         if (typeof DefaultBit === typeof bit && bit >= DefaultBit) return bit;
         if (bit instanceof BitField) return bit.bitfield;

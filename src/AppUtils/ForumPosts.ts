@@ -5,7 +5,7 @@ import { net } from "electron";
 import Constants from "src/AppCore/Constants";
 
 export class ForumPostError extends Error {
-    constructor(
+    constructor (
         public status: number,
         public retryAfter: string | null = null,
     ) {
@@ -13,7 +13,7 @@ export class ForumPostError extends Error {
     }
 }
 
-export async function getForumPosts(threadIds: string[], authorization: string) {
+export async function getForumPosts (threadIds: string[], authorization: string) {
     const threads: Record<string, { first_message: APIMessage | null; owner: APIMessage["author"] | null }> = {};
     // Forum starter messages have the same ID as their thread. Bound parallel REST requests.
     for (let offset = 0; offset < threadIds.length; offset += 4) {

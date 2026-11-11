@@ -31,7 +31,7 @@ const HttpsOptions = Util.generateSelfSignedCertificate();
 const localCertificate = new X509Certificate(HttpsOptions.cert);
 
 /** Trust only the certificate generated for this process, never other invalid HTTPS certificates. */
-export function isLocalServerCertificate(data: string): boolean {
+export function isLocalServerCertificate (data: string): boolean {
     try {
         return localCertificate.raw.equals(new X509Certificate(data).raw);
     } catch {
@@ -97,7 +97,7 @@ app.use((req, res, next) => {
     return Util.proxy(req, res);
 });
 
-export default async function startAppServer(): Promise<number> {
+export default async function startAppServer (): Promise<number> {
     return new Promise((resolve, reject) => {
         const callback = () => {
             const address = server.address() as AddressInfo;

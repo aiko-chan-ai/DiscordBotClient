@@ -23,7 +23,7 @@ protocol.registerSchemesAsPrivileged([
 export class MessageEditorWindow {
     readonly window: BrowserWindow;
 
-    constructor(parent: BrowserWindow, recipient: WebContents) {
+    constructor (parent: BrowserWindow, recipient: WebContents) {
         const editorSession = session.fromPartition(`editor:${randomUUID()}`);
         editorSession.protocol.handle(scheme, async request => {
             if (request.method !== "GET") return new Response(null, { status: 405 });

@@ -13,7 +13,7 @@ const app = Router({ mergeParams: true });
 
 // Ref: https://github.com/discord-userdoccers/discord-userdoccers/pull/346
 
-function convertGuildObjectToGuildProfileObject(guild: APIGuild & { code?: number }) {
+function convertGuildObjectToGuildProfileObject (guild: APIGuild & { code?: number }) {
     if (!guild.id && guild.code) {
         return {
             isError: true,

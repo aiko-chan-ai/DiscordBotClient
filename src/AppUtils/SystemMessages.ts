@@ -4,7 +4,7 @@ import { APIMessage, MessageType } from "discord-api-types/v10";
 import probe from "probe-image-size";
 import Constants from "src/AppCore/Constants";
 
-export async function GetSystemMessage() {
+export async function GetSystemMessage () {
     let result;
     const urlSponsors = "https://raw.githubusercontent.com/aiko-chan-ai/aiko-chan-ai/refs/heads/main/sponsors.png";
     try {

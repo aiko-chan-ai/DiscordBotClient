@@ -19,7 +19,7 @@ declare global {
 }
 
 type Draft = { [Key in keyof Settings]: Settings[Key] extends number ? string : Settings[Key] };
-function toDraft(settings: Settings): Draft {
+function toDraft (settings: Settings): Draft {
     return Object.fromEntries(
         settingsDefinitions.map(definition => [
             definition.key,
@@ -28,7 +28,7 @@ function toDraft(settings: Settings): Draft {
     ) as Draft;
 }
 
-export function useSettings() {
+export function useSettings () {
     const [snapshot, setSnapshot] = useState<SettingsSnapshot>();
     const [draft, setDraft] = useState(() => toDraft(defaultSettings));
     const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ export function useSettings() {
     const valid = !Object.values(errors).some(Boolean);
     const dirty = !!snapshot && JSON.stringify(draft) !== JSON.stringify(toDraft(snapshot.settings));
 
-    async function load() {
+    async function load () {
         if (busy.current) return;
         busy.current = true;
         setLoading(true);
@@ -87,11 +87,11 @@ export function useSettings() {
         return () => window.removeEventListener("beforeunload", guard);
     }, [dirty, saving]);
 
-    function edit(key: keyof Settings, value: string | boolean) {
+    function edit (key: keyof Settings, value: string | boolean) {
         setDraft(current => ({ ...current, [key]: value }));
         setNotice("");
     }
-    async function save() {
+    async function save () {
         if (busy.current || !snapshot || !dirty || !valid || snapshot.readOnly) return;
         busy.current = true;
         setSaving(true);
@@ -113,12 +113,12 @@ export function useSettings() {
             if (alive.current) setSaving(false);
         }
     }
-    function discard() {
+    function discard () {
         if (snapshot) setDraft(toDraft(snapshot.settings));
         setError("");
         setNotice("");
     }
-    function reset() {
+    function reset () {
         setDraft(toDraft(defaultSettings));
         setError("");
         setNotice("");

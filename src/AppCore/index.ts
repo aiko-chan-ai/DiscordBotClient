@@ -43,12 +43,12 @@ export class DiscordBotClient extends EventEmitter {
     config = GlobalConfig;
     ipcMain = ipcMain;
 
-    constructor() {
+    constructor () {
         super();
         this.logger.log("App starting...");
         void this.initApp().catch(error => this.startupFailed(error));
     }
-    initTray(menu: Electron.Menu) {
+    initTray (menu: Electron.Menu) {
         if (!this.tray) {
             this.tray = new Tray(Constants.icon16);
         }
@@ -58,7 +58,7 @@ export class DiscordBotClient extends EventEmitter {
         });
         this.tray.setContextMenu(menu);
     }
-    setupTray() {
+    setupTray () {
         const menu = Menu.buildFromTemplate([
             {
                 label: `${Constants.AppName} v${app.getVersion()}`,
@@ -159,7 +159,7 @@ export class DiscordBotClient extends EventEmitter {
         ]);
         this.initTray(menu);
     }
-    async initApp() {
+    async initApp () {
         this.port = await server();
         app.setAppUserModelId(Constants.AppID);
         const enabledFeatures = new Set(app.commandLine.getSwitchValue("enable-features").split(","));
@@ -276,14 +276,14 @@ export class DiscordBotClient extends EventEmitter {
 
         setupIPCEvents(this);
     }
-    get discordSession() {
+    get discordSession () {
         if (this.customDiscordSession) {
             return this.customDiscordSession;
         } else {
             return session.defaultSession;
         }
     }
-    async sessionPatch() {
+    async sessionPatch () {
         // Disable stripe.com
         this.discordSession.webRequest.onBeforeRequest(
             {
@@ -335,7 +335,7 @@ export class DiscordBotClient extends EventEmitter {
         const extension = await this.discordSession.extensions.loadExtension(Constants.VencordExtensionPath);
         this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
     }
-    async createWindow() {
+    async createWindow () {
         this.setupTray();
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.workAreaSize;
@@ -570,7 +570,7 @@ export class DiscordBotClient extends EventEmitter {
         this.startupWindow = undefined;
         if (!app.isPackaged) contents.openDevTools();
     }
-    showApp() {
+    showApp () {
         if (this.startupWindow) {
             this.startupWindow.show();
         } else if (this.appWindow && !this.appWindow.isDestroyed()) {
@@ -578,7 +578,7 @@ export class DiscordBotClient extends EventEmitter {
             this.appWindow.setSkipTaskbar(false);
         }
     }
-    private async startupFailed(error: unknown) {
+    private async startupFailed (error: unknown) {
         if (this.#shouldQuitApp) return;
         this.logger.error("Startup failed", error);
         await app.whenReady();
@@ -589,9 +589,9 @@ export class DiscordBotClient extends EventEmitter {
         );
         this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
     }
-    showNotification(options: NotificationConstructorOptions, callback?: () => unknown) {
+    showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);
-        function handleClick() {
+        function handleClick () {
             notif.close();
             if (callback && typeof callback === "function") callback();
         }
@@ -602,7 +602,7 @@ export class DiscordBotClient extends EventEmitter {
         }, 15000).unref();
         notif.show();
     }
-    checkingForUpdates(forceEmitted = false) {
+    checkingForUpdates (forceEmitted = false) {
         if (!app.isPackaged) {
             // autoUpdater.forceDevUpdateConfig = true; // ! Test
             if (forceEmitted) {
@@ -713,16 +713,16 @@ export class DiscordBotClient extends EventEmitter {
             autoUpdater.checkForUpdates();
         });
     }
-    relaunch() {
+    relaunch () {
         this.#shouldQuitApp = true;
         app.relaunch();
         app.quit();
     }
-    quit() {
+    quit () {
         this.#shouldQuitApp = true;
         app.quit();
     }
-    openSettingsWindow() {
+    openSettingsWindow () {
         if (this.settingsWindow && !this.settingsWindow.window.isDestroyed()) {
             this.settingsWindow.show();
             return;
@@ -733,11 +733,11 @@ export class DiscordBotClient extends EventEmitter {
         });
     }
 
-    openDiscordMessageEditorWindow() {
+    openDiscordMessageEditorWindow () {
         new MessageEditorWindow(this.appWindow, this.discordWebContents);
     }
 
-    get app() {
+    get app () {
         return app;
     }
 }

@@ -90,8 +90,12 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
                     "User-Agent": Constants.UserAgentDiscordBot,
                 },
             })
-            .then(res => {
-                if (!res.ok) throw new Error(res.statusText);
+            .then(async res => {
+                if (!res.ok) {
+                    const errData = (await res.json().catch(() => null)) as { message?: string; code?: number } | null;
+                    const errorMsg = errData?.message || res.statusText || `HTTP ${res.status}`;
+                    throw new Error(`Discord API Error [${res.status}]: ${errorMsg}`);
+                }
                 return res.json() as Promise<APIApplication>;
             })
             .then(data => {

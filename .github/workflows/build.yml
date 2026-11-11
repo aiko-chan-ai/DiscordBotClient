@@ -88,12 +88,28 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/download-artifact@v4
         with:
           pattern: dbc-*
           merge-multiple: true
           path: release
+
+      - name: Generate Checksums
+        shell: bash
+        run: |
+          cd release
+          sha256sum * > SHA256SUMS 2>/dev/null || true
+          sed -i '/SHA256SUMS/d' SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'release/*'
+
       - name: Create draft release after every platform succeeds
         env:
           GH_TOKEN: ${{ github.token }}

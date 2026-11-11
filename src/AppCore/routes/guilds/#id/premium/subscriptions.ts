@@ -8,7 +8,7 @@ import Constants from "src/AppCore/Constants";
 
 const app = Router({ mergeParams: true });
 
-function createFakeBoost (guildId: string) {
+function createFakeBoost(guildId: string) {
     const botId = DiscordSnowflake.generate().toString();
     return {
         id: DiscordSnowflake.generate().toString(),

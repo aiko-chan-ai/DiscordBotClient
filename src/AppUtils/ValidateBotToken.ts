@@ -10,12 +10,19 @@ import Util from "./Utils";
 const TOKEN_CACHE_TTL_MS = 5 * 60 * 1000;
 const tokenCache = new Map<string, { hash: Buffer; expiresAt: number }>();
 
-function hashToken (token: string): Buffer {
-    return createHash("sha256").update(token.trim().replace(/^Bot\s+/i, "").trim()).digest();
+function hashToken(token: string): Buffer {
+    return createHash("sha256")
+        .update(
+            token
+                .trim()
+                .replace(/^Bot\s+/i, "")
+                .trim(),
+        )
+        .digest();
 }
 
 // Call only after Discord has authenticated this token and returned its identity.
-export function cacheValidatedBotToken (botId: string, token: string): void {
+export function cacheValidatedBotToken(botId: string, token: string): void {
     if (typeof botId !== "string" || !/^\d+$/.test(botId)) return;
     tokenCache.delete(botId);
     if (tokenCache.size >= 100) tokenCache.delete(tokenCache.keys().next().value!);
@@ -48,7 +55,7 @@ export const validateBotToken: RequestHandler = async (req, res, next) => {
             res.status(response.status).send({ message: "Bot token validation failed" });
             return;
         }
-        const user = await response.json() as { id?: unknown; bot?: unknown };
+        const user = (await response.json()) as { id?: unknown; bot?: unknown };
         if (!user || typeof user.id !== "string" || !/^\d+$/.test(user.id) || user.bot !== true) {
             res.status(403).send({ message: "Expected a valid bot account" });
             return;

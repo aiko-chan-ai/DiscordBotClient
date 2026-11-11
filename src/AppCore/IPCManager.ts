@@ -10,7 +10,10 @@ import type { DiscordBotClient } from ".";
 import Constants from "./Constants";
 import { IPCEvent } from "./IPCEvents";
 
-export function isTrustedAppFrame (event: IpcMainEvent | IpcMainInvokeEvent, contents: WebContents | undefined): boolean {
+export function isTrustedAppFrame(
+    event: IpcMainEvent | IpcMainInvokeEvent,
+    contents: WebContents | undefined,
+): boolean {
     if (!contents || event.sender !== contents || event.senderFrame !== contents.mainFrame) return false;
     try {
         return new URL(event.senderFrame.url).origin === `https://${Constants.CustomDiscordDomain}`;
@@ -19,22 +22,25 @@ export function isTrustedAppFrame (event: IpcMainEvent | IpcMainInvokeEvent, con
     }
 }
 
-export function isAllowedPopoutURL (url: string, port: number): boolean {
+export function isAllowedPopoutURL(url: string, port: number): boolean {
     if (url === "about:blank") return true;
     try {
         const parsed = new URL(url);
-        return parsed.pathname === "/popout" && [
-            "https://discord.com",
-            "https://ptb.discord.com",
-            "https://canary.discord.com",
-            `https://localhost:${port}`,
-        ].includes(parsed.origin);
+        return (
+            parsed.pathname === "/popout" &&
+            [
+                "https://discord.com",
+                "https://ptb.discord.com",
+                "https://canary.discord.com",
+                `https://localhost:${port}`,
+            ].includes(parsed.origin)
+        );
     } catch {
         return false;
     }
 }
 
-export function setupIPCEvents (mainApp: DiscordBotClient) {
+export function setupIPCEvents(mainApp: DiscordBotClient) {
     const getWindow = (event: IpcMainEvent, frameName?: string): BrowserWindow | undefined => {
         if (!event.senderFrame || event.senderFrame !== event.sender.mainFrame) return;
         if (isTrustedAppFrame(event, mainApp.discordWebContents)) {
@@ -72,8 +78,14 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             win.setSkipTaskbar(false);
         })
         .on(IPCEvent.FlashFrame, (event, flag: boolean) => {
-            if (!getWindow(event) || !mainApp.appWindow || mainApp.appWindow.isDestroyed() || (flag && mainApp.appWindow.isFocused()))
-            { return; }
+            if (
+                !getWindow(event) ||
+                !mainApp.appWindow ||
+                mainApp.appWindow.isDestroyed() ||
+                (flag && mainApp.appWindow.isFocused())
+            ) {
+                return;
+            }
             mainApp.appWindow.flashFrame(flag);
         })
         .on(IPCEvent.RequestCloseWindow, event => {
@@ -82,7 +94,10 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
     mainApp.ipcMain.handle(IPCEvent.GetBotInfo, (event, token) => {
         if (!isTrustedAppFrame(event, mainApp.discordWebContents)) throw new Error("Unauthorized IPC sender.");
         if (typeof token !== "string" || token.length > 512) throw new Error("Invalid bot token.");
-        token = token.trim().replace(/^Bot\s+/i, "").trim();
+        token = token
+            .trim()
+            .replace(/^Bot\s+/i, "")
+            .trim();
         return mainApp.discordSession
             .fetch("https://canary.discord.com/api/v9/applications/@me?with_counts=true", {
                 headers: {
@@ -185,6 +200,8 @@ export function setupIPCEvents (mainApp: DiscordBotClient) {
             }
         })
         .on(IPCEvent.GetDefaultUserPatch, event => {
-            event.returnValue = isTrustedAppFrame(event, mainApp.discordWebContents) ? Constants.UserDefaultPatch : null;
+            event.returnValue = isTrustedAppFrame(event, mainApp.discordWebContents)
+                ? Constants.UserDefaultPatch
+                : null;
         });
 }

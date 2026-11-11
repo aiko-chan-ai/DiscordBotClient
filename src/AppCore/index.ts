@@ -43,12 +43,12 @@ export class DiscordBotClient extends EventEmitter {
     config = GlobalConfig;
     ipcMain = ipcMain;
 
-    constructor () {
+    constructor() {
         super();
         this.logger.log("App starting...");
         void this.initApp().catch(error => this.startupFailed(error));
     }
-    initTray (menu: Electron.Menu) {
+    initTray(menu: Electron.Menu) {
         if (!this.tray) {
             this.tray = new Tray(Constants.icon16);
         }
@@ -58,7 +58,7 @@ export class DiscordBotClient extends EventEmitter {
         });
         this.tray.setContextMenu(menu);
     }
-    setupTray () {
+    setupTray() {
         const menu = Menu.buildFromTemplate([
             {
                 label: `${Constants.AppName} v${app.getVersion()}`,
@@ -159,7 +159,7 @@ export class DiscordBotClient extends EventEmitter {
         ]);
         this.initTray(menu);
     }
-    async initApp () {
+    async initApp() {
         this.port = await server();
         app.setAppUserModelId(Constants.AppID);
         const enabledFeatures = new Set(app.commandLine.getSwitchValue("enable-features").split(","));
@@ -230,7 +230,9 @@ export class DiscordBotClient extends EventEmitter {
                     this.customDiscordSession = session.fromPartition("persist:elysia_dbc");
                     this.customDiscordSession.setCertificateVerifyProc(({ hostname, certificate }, callback) => {
                         // Never load the real remote site into DBC if a system proxy bypasses host-rules.
-                        if (hostname === Constants.CustomDiscordDomain) return callback(isLocalServerCertificate(certificate.data) ? 0 : -2);
+                        if (hostname === Constants.CustomDiscordDomain) {
+                            return callback(isLocalServerCertificate(certificate.data) ? 0 : -2);
+                        }
                         if (hostname === "localhost" && isLocalServerCertificate(certificate.data)) return callback(0);
                         callback(-3);
                     });
@@ -274,14 +276,14 @@ export class DiscordBotClient extends EventEmitter {
 
         setupIPCEvents(this);
     }
-    get discordSession () {
+    get discordSession() {
         if (this.customDiscordSession) {
             return this.customDiscordSession;
         } else {
             return session.defaultSession;
         }
     }
-    async sessionPatch () {
+    async sessionPatch() {
         // Disable stripe.com
         this.discordSession.webRequest.onBeforeRequest(
             {
@@ -333,7 +335,7 @@ export class DiscordBotClient extends EventEmitter {
         const extension = await this.discordSession.extensions.loadExtension(Constants.VencordExtensionPath);
         this.logger.info(`Loaded Vencord Extension v${extension.version} from ${Constants.VencordExtensionPath}`);
     }
-    async createWindow () {
+    async createWindow() {
         this.setupTray();
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.workAreaSize;
@@ -384,7 +386,8 @@ export class DiscordBotClient extends EventEmitter {
         await this.sessionPatch();
 
         this.logger.info(`Electron UserData: ${app.getPath("userData")}`);
-        const mainOrigin = `https://${Constants.CustomDiscordDomain}`;
+
+        const mainOrigin = new URL(`https://${Constants.CustomDiscordDomain}`).origin;
         const isMainOrigin = (url: string) => {
             try {
                 return new URL(url).origin === mainOrigin;
@@ -392,30 +395,65 @@ export class DiscordBotClient extends EventEmitter {
                 return false;
             }
         };
+
+        const allowedPermissions = ["fullscreen", "clipboard-sanitized-write", "loopback-network"];
+
         this.discordSession.setPermissionRequestHandler((requester, permission, callback, details) => {
-            if (requester !== contents || !("requestingUrl" in details) || !isMainOrigin(details.requestingUrl)) {
+            if (!("requestingUrl" in details) || !isMainOrigin(details.requestingUrl)) {
                 return callback(false);
             }
-            if (["notifications", "fullscreen", "clipboard-sanitized-write", "loopback-network"].includes(permission)) {
+
+            if (permission === "notifications") {
                 return callback(true);
             }
-            if (permission !== "media" || !("mediaTypes" in details) ||
-                !details.mediaTypes?.includes("audio") || details.mediaTypes.includes("video")) {
+
+            if (requester !== contents || !details.isMainFrame) {
                 return callback(false);
             }
+
+            if (allowedPermissions.includes(permission)) {
+                return callback(true);
+            }
+
+            if (
+                permission !== "media" ||
+                !("mediaTypes" in details) ||
+                !details.mediaTypes?.includes("audio") ||
+                details.mediaTypes.includes("video")
+            ) {
+                return callback(false);
+            }
+
             if (process.platform === "darwin") {
                 void systemPreferences.askForMediaAccess("microphone").then(callback, () => callback(false));
             } else {
                 callback(true);
             }
         });
+
         this.discordSession.setPermissionCheckHandler((requester, permission, origin, details) => {
-            if (origin !== mainOrigin) return false;
+            if (!isMainOrigin(origin)) return false;
+
             if (permission === "notifications") return true;
+
             if (requester !== contents || !details.isMainFrame) return false;
-            // Media checks must reach the request handler, where camera is rejected.
-            return ["fullscreen", "clipboard-sanitized-write", "loopback-network"].includes(permission);
+
+            if (allowedPermissions.includes(permission)) {
+                return true;
+            }
+
+            if (permission === "media") {
+                if (details.mediaType !== "audio") return false;
+                if (process.platform === "darwin") {
+                    const status = systemPreferences.getMediaAccessStatus("microphone");
+                    return status !== "denied" && status !== "restricted";
+                }
+                return true;
+            }
+
+            return false;
         });
+
         contents.on("will-navigate", (event, url) => {
             if (!isMainOrigin(url)) event.preventDefault();
         });
@@ -518,16 +556,21 @@ export class DiscordBotClient extends EventEmitter {
         // Like Vesktop, only a successful navigation promise completes startup.
         await contents.loadURL(`https://${Constants.CustomDiscordDomain}`);
         if (this.#shouldQuitApp || contents.isDestroyed()) return;
-        if (this.startupWindow && !await this.startupWindow.waitForAnimation(() => {
-            if (!this.#shouldQuitApp && !contents.isDestroyed()) this.appWindow.showInactive();
-        })) return;
+        if (
+            this.startupWindow &&
+            !(await this.startupWindow.waitForAnimation(() => {
+                if (!this.#shouldQuitApp && !contents.isDestroyed()) this.appWindow.showInactive();
+            }))
+        ) {
+            return;
+        }
         if (this.#shouldQuitApp || contents.isDestroyed()) return;
         this.appWindow.show();
         this.startupWindow?.finish();
         this.startupWindow = undefined;
         if (!app.isPackaged) contents.openDevTools();
     }
-    showApp () {
+    showApp() {
         if (this.startupWindow) {
             this.startupWindow.show();
         } else if (this.appWindow && !this.appWindow.isDestroyed()) {
@@ -535,7 +578,7 @@ export class DiscordBotClient extends EventEmitter {
             this.appWindow.setSkipTaskbar(false);
         }
     }
-    private async startupFailed (error: unknown) {
+    private async startupFailed(error: unknown) {
         if (this.#shouldQuitApp) return;
         this.logger.error("Startup failed", error);
         await app.whenReady();
@@ -546,9 +589,9 @@ export class DiscordBotClient extends EventEmitter {
         );
         this.startupWindow.fail("Unable to start DiscordBotClient. Please try again.");
     }
-    showNotification (options: NotificationConstructorOptions, callback?: () => unknown) {
+    showNotification(options: NotificationConstructorOptions, callback?: () => unknown) {
         const notif = new Notification(options);
-        function handleClick () {
+        function handleClick() {
             notif.close();
             if (callback && typeof callback === "function") callback();
         }
@@ -559,7 +602,7 @@ export class DiscordBotClient extends EventEmitter {
         }, 15000).unref();
         notif.show();
     }
-    checkingForUpdates (forceEmitted = false) {
+    checkingForUpdates(forceEmitted = false) {
         if (!app.isPackaged) {
             // autoUpdater.forceDevUpdateConfig = true; // ! Test
             if (forceEmitted) {
@@ -670,16 +713,16 @@ export class DiscordBotClient extends EventEmitter {
             autoUpdater.checkForUpdates();
         });
     }
-    relaunch () {
+    relaunch() {
         this.#shouldQuitApp = true;
         app.relaunch();
         app.quit();
     }
-    quit () {
+    quit() {
         this.#shouldQuitApp = true;
         app.quit();
     }
-    openSettingsWindow () {
+    openSettingsWindow() {
         if (this.settingsWindow && !this.settingsWindow.window.isDestroyed()) {
             this.settingsWindow.show();
             return;
@@ -690,11 +733,11 @@ export class DiscordBotClient extends EventEmitter {
         });
     }
 
-    openDiscordMessageEditorWindow () {
+    openDiscordMessageEditorWindow() {
         new MessageEditorWindow(this.appWindow, this.discordWebContents);
     }
 
-    get app () {
+    get app() {
         return app;
     }
 }

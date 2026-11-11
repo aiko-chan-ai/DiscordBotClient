@@ -12,7 +12,7 @@ import { UserFlagsBitField } from "./DiscordBitField";
 import { BadgesBasedUserDataAndExtends as UserBadges } from "./UserBadges";
 
 export default class Util {
-    static ProfilePatch (
+    static ProfilePatch(
         userData: APIUser,
         guildMember: APIGuildMember | null = null,
         guildId: string | null = null,
@@ -109,7 +109,7 @@ export default class Util {
             wishlist_settings: {},
         };
     }
-    static getIDFromToken (token = ""): string | null {
+    static getIDFromToken(token = ""): string | null {
         if (!token) return null;
         token = token.replace(/^(Bot|Bearer)\s*/i, "");
         const parts = token.split(".");
@@ -124,7 +124,7 @@ export default class Util {
         }
     }
 
-    static getDataFromRequest (
+    static getDataFromRequest(
         req: express.Request,
         res: express.Response,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -162,7 +162,7 @@ export default class Util {
      * @param {number} addYear
      * @returns
      */
-    static makeISODate (addYear = 0) {
+    static makeISODate(addYear = 0) {
         const date = new Date();
         date.setFullYear(date.getFullYear() + addYear);
         return date.toISOString().replace("Z", "000+00:00");
@@ -173,7 +173,7 @@ export default class Util {
      * @param {number} addYear
      * @returns
      */
-    static makeISODateWithoutMilliseconds (addYear = 0) {
+    static makeISODateWithoutMilliseconds(addYear = 0) {
         const date = new Date();
         date.setFullYear(date.getFullYear() + addYear);
         return date.toISOString().replace(/\.\d+Z/, "+00:00");
@@ -186,7 +186,7 @@ export default class Util {
      * @param versionB - The new version to check (e.g., "v1.3.0" or "1.3.0").
      * @returns `true` if `versionB` is newer than `versionA`, otherwise `false`.
      */
-    static isNewerVersion (versionA: string, versionB: string) {
+    static isNewerVersion(versionA: string, versionB: string) {
         const normalizeVersion = (version: string) => version.replace(/^v/, "");
 
         const parseVersion = (version: string) => {
@@ -206,8 +206,7 @@ export default class Util {
 
         return false;
     }
-    static async proxy (req: express.Request, res: express.Response) {
-
+    static async proxy(req: express.Request, res: express.Response) {
         // 1. Create Electron request
         const electronReq = net.request({
             method: req.method as string,
@@ -285,7 +284,7 @@ export default class Util {
             electronReq.end();
         }
     }
-    static generateSelfSignedCertificate () {
+    static generateSelfSignedCertificate() {
         return selfsigned.generate([{ name: "commonName", value: "localhost" }], {
             days: 3650,
             keySize: 2048,

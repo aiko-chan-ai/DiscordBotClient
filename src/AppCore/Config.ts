@@ -17,7 +17,7 @@ export class GlobalConfig {
     private warning?: string;
     private readOnly = false;
 
-    constructor (directory = app.getPath("userData")) {
+    constructor(directory = app.getPath("userData")) {
         this.jsonPath = path.join(directory, "config.json");
         this.iniPath = path.join(directory, "config.ini");
         try {
@@ -54,7 +54,7 @@ export class GlobalConfig {
         }
     }
 
-    snapshot (): SettingsSnapshot {
+    snapshot(): SettingsSnapshot {
         return {
             settings: { ...this.config },
             readOnly: this.readOnly,
@@ -62,7 +62,7 @@ export class GlobalConfig {
         };
     }
 
-    save (value: unknown): SettingsSnapshot {
+    save(value: unknown): SettingsSnapshot {
         if (this.readOnly) throw new Error(this.warning || "Settings are read-only.");
         const candidate = validateSettings(value);
         const temporaryPath = `${this.jsonPath}.${randomUUID()}.tmp`;
@@ -87,14 +87,14 @@ export class GlobalConfig {
         return this.snapshot();
     }
 
-    private withDefaults (value: unknown): Settings {
+    private withDefaults(value: unknown): Settings {
         if (!value || typeof value !== "object" || Array.isArray(value)) {
             throw new Error("Invalid stored settings.");
         }
         return validateSettings({ ...defaultSettings, ...value });
     }
 
-    private importIni (source: string): Settings {
+    private importIni(source: string): Settings {
         // ini.parse tolerates malformed lines and drops dangerous keys; check syntax first.
         const seen = new Set<string>();
         for (const raw of source.split(/\r?\n/)) {

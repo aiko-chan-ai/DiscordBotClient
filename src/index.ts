@@ -16,7 +16,7 @@ BigInt.prototype.toJSON = function () {
 const log = scope(Constants.AppName);
 Object.assign(console, scope("ConsoleProxy"));
 errorHandler.startCatching({
-    onError ({ createIssue, error, processType, versions }) {
+    onError({ createIssue, error, processType, versions }) {
         log.error(error, processType, versions);
         return false;
     },

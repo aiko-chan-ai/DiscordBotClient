@@ -20,7 +20,7 @@ export class IntentsBitField extends BitField {
      */
     static Flags = GatewayIntentBits;
 
-    static getIntents (...removeIntents: GatewayIntentBits[]): number {
+    static getIntents(...removeIntents: GatewayIntentBits[]): number {
         const allIntents = Object.values(GatewayIntentBits).filter(v => typeof v === "number") as number[];
         let intents = allIntents.reduce((acc, bit) => acc | bit, 0);
         for (const remove of removeIntents) {

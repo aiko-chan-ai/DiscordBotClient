@@ -1,6 +1,10 @@
 /* Copyright Elysia © 2025. All rights reserved */
 
-import { APIPublicThreadChannel, APIThreadMember, RESTGetAPIChannelThreadsArchivedPublicResult } from "discord-api-types/v10";
+import {
+    APIPublicThreadChannel,
+    APIThreadMember,
+    RESTGetAPIChannelThreadsArchivedPublicResult,
+} from "discord-api-types/v10";
 import { net } from "electron";
 import { Request, Router } from "express";
 import Constants from "src/AppCore/Constants";
@@ -19,7 +23,7 @@ interface ThreadCacheEntry {
 
 const mapCache = new Map<string, ThreadCacheEntry>();
 
-function getOrCreateCacheEntry (cacheKey: string): number[] {
+function getOrCreateCacheEntry(cacheKey: string): number[] {
     const existing = mapCache.get(cacheKey);
     if (existing && Date.now() - existing.createdAt < CACHE_TTL_MS) {
         return existing.timestamps;
@@ -77,29 +81,29 @@ app.all(
         const pageOffset = Math.max(parseInt(offset || "0", 10) || 0, 0);
         const pageLimit = Math.min(Math.max(parseInt(limit || "25", 10) || 25, 1), 100);
         const before = pageOffset > 0 ? set[pageOffset - 1] : undefined;
-        if (pageOffset > 0 && before === undefined) return res.status(400).send({ message: "Load previous thread pages first" });
+        if (pageOffset > 0 && before === undefined)
+            return res.status(400).send({ message: "Load previous thread pages first" });
         try {
             if (archived === "true") {
-                const response = await net
-                    .fetch(
-                        `https://canary.discord.com/api/v9/channels/${channelId}/threads/archived/public?limit=${pageLimit}${
-                            before ? `&before=${new Date(before).toISOString()}` : ""
-                        }`,
-                        {
-                            signal: AbortSignal.timeout(10000),
-                            redirect: "error",
-                            headers: {
-                                authorization: req.headers.authorization,
-                                "user-agent": Constants.UserAgentDiscordBot,
-                            } as Record<string, string>,
-                        },
-                    );
+                const response = await net.fetch(
+                    `https://canary.discord.com/api/v9/channels/${channelId}/threads/archived/public?limit=${pageLimit}${
+                        before ? `&before=${new Date(before).toISOString()}` : ""
+                    }`,
+                    {
+                        signal: AbortSignal.timeout(10000),
+                        redirect: "error",
+                        headers: {
+                            authorization: req.headers.authorization,
+                            "user-agent": Constants.UserAgentDiscordBot,
+                        } as Record<string, string>,
+                    },
+                );
                 if (!response.ok) {
                     const retryAfter = response.headers.get("retry-after");
                     if (retryAfter) res.setHeader("Retry-After", retryAfter);
                     return res.status(response.status).send({ message: "Unable to fetch archived threads" });
                 }
-                const publicThread = await response.json() as RESTGetAPIChannelThreadsArchivedPublicResult;
+                const publicThread = (await response.json()) as RESTGetAPIChannelThreadsArchivedPublicResult;
                 threads = (publicThread.threads as APIPublicThreadChannel[]) || [];
                 members = publicThread.members || [];
                 public_has_more = publicThread.has_more === true;
@@ -108,19 +112,24 @@ app.all(
                 const timestamp = threads[i].thread_metadata?.archive_timestamp ?? 0;
                 set[pageOffset + i] = new Date(timestamp).getTime();
             }
-            const posts = await getForumPosts(threads.map(thread => thread.id), req.headers.authorization!);
+            const posts = await getForumPosts(
+                threads.map(thread => thread.id),
+                req.headers.authorization!,
+            );
             const finalData = {
                 threads: threads,
                 members,
                 has_more: public_has_more,
                 total_results: set.length,
-                first_messages: Object.values(posts).flatMap(post => post.first_message ? [post.first_message] : []),
-                owners: Object.values(posts).flatMap(post => post.owner ? [post.owner] : []),
+                first_messages: Object.values(posts).flatMap(post => (post.first_message ? [post.first_message] : [])),
+                owners: Object.values(posts).flatMap(post => (post.owner ? [post.owner] : [])),
             };
             res.send(finalData);
         } catch (error) {
             if (error instanceof ForumPostError && error.retryAfter) res.setHeader("Retry-After", error.retryAfter);
-            res.status(error instanceof ForumPostError ? error.status : 502).send({ message: "Unable to load archived threads" });
+            res.status(error instanceof ForumPostError ? error.status : 502).send({
+                message: "Unable to load archived threads",
+            });
         }
     },
 );

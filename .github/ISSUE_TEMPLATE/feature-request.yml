@@ -1,5 +1,6 @@
 name: Feature request
 description: Suggest an improvement to DBC
+labels: [Feature]
 title: "[Feature] "
 body:
   - type: textarea

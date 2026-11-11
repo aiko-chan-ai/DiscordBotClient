@@ -212,7 +212,7 @@ export default class Util {
         const electronReq = net.request({
             method: req.method as string,
             url: `https://canary.discord.com${req.originalUrl}`,
-            redirect: "follow",
+            redirect: "manual",
             useSessionCookies: true,
         });
 
@@ -224,16 +224,18 @@ export default class Util {
             "transfer-encoding",
             "upgrade",
             "origin",
+            "cookie",
             "referer",
         ];
 
         Object.entries(req.headers).forEach(([key, value]) => {
-            if (value && !skipHeaders.includes(key.toLowerCase())) {
+            const lowerKey = key.toLowerCase();
+            if (value && !skipHeaders.includes(lowerKey) && !lowerKey.startsWith("sec-")) {
                 try {
                     const headerValue = Array.isArray(value) ? value.join(", ") : value;
                     electronReq.setHeader(key, headerValue);
                 } catch {
-                    //
+                    // invalid header value, skip it
                 }
             }
         });
@@ -242,7 +244,13 @@ export default class Util {
         electronReq.setHeader("Origin", "https://discord.com");
         electronReq.setHeader("Referer", "https://discord.com/");
 
-        // 4. Electron -> Express
+        // 4. Handle request body for methods that typically have a body
+        const hasBody = ["POST", "PUT", "PATCH", "DELETE"].includes(req.method.toUpperCase());
+        if (hasBody) {
+            electronReq.chunkedEncoding = true;
+        }
+
+        // 5. Electron -> Express
         electronReq.on("response", electronRes => {
             res.status(electronRes.statusCode);
             const skipResHeaders = ["content-encoding", "content-length", "transfer-encoding"];
@@ -269,8 +277,8 @@ export default class Util {
             if (!res.headersSent) res.status(502).send({ error: err.message });
         });
 
-        // 5. Pipe request body (Express -> Electron)
-        if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+        // 6. Pipe request body (Express -> Electron)
+        if (hasBody) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             req.pipe(electronReq as any);
         } else {

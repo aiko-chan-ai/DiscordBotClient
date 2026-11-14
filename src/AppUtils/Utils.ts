@@ -245,7 +245,7 @@ export default class Util {
 
         // 4. Handle request body for methods that typically have a body
         const hasBody = ["POST", "PUT", "PATCH", "DELETE"].includes(req.method.toUpperCase());
-        if (hasBody) {
+        if (hasBody && parseInt(req.headers["content-length"] as string ?? "0", 10) > 0) {
             electronReq.chunkedEncoding = true;
         }
 

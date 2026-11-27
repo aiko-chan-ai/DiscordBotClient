@@ -33,7 +33,7 @@ export default class Util {
                 badges.push(
                     UserBadges.BotCommands,
                     UserBadges.ApplicationAutomod,
-                    UserBadges.ApplicationGuildSubscription,
+                    UserBadges.ApplicationGuildSubscription(userData.global_name ?? userData.username),
                 );
             } else {
                 badges.push(

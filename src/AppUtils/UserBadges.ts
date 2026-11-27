@@ -280,11 +280,13 @@ export class BadgesBasedUserDataAndExtends extends BadgesNitro {
         icon: "7d9ae358c8c5e118768335dbe68b4fb8",
         link: "https://discord.com/settings/inventory",
     };
-    static ApplicationGuildSubscription = {
-        id: "application_guild_subscription",
-        description: "This server has {bot} Premium",
-        icon: "d2010c413a8da2208b7e4f35bd8cd4ac",
-    };
+    static ApplicationGuildSubscription (bot: string) {
+        return {
+            id: "application_guild_subscription",
+            description: `This server has ${bot} Premium`,
+            icon: "d2010c413a8da2208b7e4f35bd8cd4ac",
+        };
+    }
     static AprilFools2026 = {
         id: "april_fools_2026",
         description: "Level 67 Reached",
